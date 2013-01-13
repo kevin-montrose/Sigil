@@ -32,6 +32,16 @@ namespace Sigil
             {
                 throw new SigilException("Locals [" + string.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used", Stack);
             }
+
+            if (UnusedLabels.Count != 0)
+            {
+                throw new SigilException("Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] where declared but never used", Stack);
+            }
+
+            if (UnmarkedLabels.Count != 0)
+            {
+                throw new SigilException("Labels [" + string.Join(", ", UnmarkedLabels.Select(l => l.Name)) + "] where declared but never marked", Stack);
+            }
         }
     }
 }

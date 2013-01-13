@@ -42,6 +42,8 @@ namespace Sigil
                 throw new SigilException("label [" + label.Name + "] has already been marked, and cannot be marked a second time", Stack);
             }
 
+            UnmarkedLabels.Remove(label);
+
             IL.MarkLabel(label.Label);
         }
     }
