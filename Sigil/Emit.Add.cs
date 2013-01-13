@@ -11,17 +11,25 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void Add(EmitLocal val2)
+        public void Add(EmitLocal loadVal2)
         {
-            LoadLocal(val2);
+            LoadLocal(loadVal2);
             Add();
         }
 
-        public void Add(EmitLocal val1, EmitLocal val2)
+        public void Add(EmitLocal loadVal1, EmitLocal loadVal2)
         {
-            LoadLocal(val1);
-            LoadLocal(val2);
+            LoadLocal(loadVal1);
+            LoadLocal(loadVal2);
             Add();
+        }
+
+        public void Add(EmitLocal loadVa1, EmitLocal loadVal2, EmitLocal storeVal)
+        {
+            LoadLocal(loadVa1);
+            LoadLocal(loadVal2);
+            Add();
+            StoreLocal(storeVal);
         }
 
         public void Add()
