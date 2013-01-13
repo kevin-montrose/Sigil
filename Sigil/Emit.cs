@@ -11,6 +11,8 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private bool Invalidated;
+
         private ILGenerator IL;
         private Type ReturnType;
         private Type[] ParameterTypes;
@@ -35,6 +37,11 @@ namespace Sigil
 
         private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop)
         {
+            if (Invalidated)
+            {
+                throw new SigilException("Cannot modify Emit after a delegate has been generated from it", Stack);
+            }
+
             if (pop > 0)
             {
                 Stack = Stack.Pop(pop);
@@ -87,7 +94,11 @@ namespace Sigil
         {
             Validate();
 
-            return (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
+            var ret = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
+
+            Invalidated = true;
+            
+            return ret;
         }
 
         public static Emit<DelegateType> NewDynamicMethod(string name)

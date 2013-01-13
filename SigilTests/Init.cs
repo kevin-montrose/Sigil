@@ -30,5 +30,26 @@ namespace SigilTests
                 Assert.AreEqual("DelegateType must be a delegate, found System.String", e.Message);
             }
         }
+
+        [TestMethod]
+        public void EmitSingleReturn()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            try
+            {
+                e1.LoadConstant(100);
+                Assert.Fail("Shouldn't be able to modify emit after a delegate has been created");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual(e.Message, "Cannot modify Emit after a delegate has been generated from it");
+            }
+
+            del();
+        }
     }
 }
