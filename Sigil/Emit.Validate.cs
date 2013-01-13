@@ -27,6 +27,11 @@ namespace Sigil
             {
                 throw new SigilException("Delegate must end with Return", Stack);
             }
+
+            if (UnusedLocals.Count != 0)
+            {
+                throw new SigilException("Locals [" + string.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used", Stack);
+            }
         }
     }
 }

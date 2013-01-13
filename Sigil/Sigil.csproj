@@ -46,15 +46,20 @@
     <Compile Include="Emit.LoadConstant.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Locals.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Return.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.Validate.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="EmitLocal.cs" />
     <Compile Include="Impl\ExtensionMethods.cs" />
     <Compile Include="Impl\StackState.cs" />
     <Compile Include="Impl\TypeOnStack.cs" />
+    <Compile Include="Emit.LoadLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SigilException.cs" />
   </ItemGroup>

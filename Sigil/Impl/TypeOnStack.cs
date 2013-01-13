@@ -80,6 +80,31 @@ namespace Sigil.Impl
         {
             return PointerTypeCache<T>.Get();
         }
+
+        public static TypeOnStack Get(Type type)
+        {
+            if (type.IsPointer)
+            {
+                var nonPointer = type.GetElementType();
+
+                var get = typeof(TypeOnStack).GetMethod("GetPointer").MakeGenericMethod(nonPointer);
+
+                return (TypeOnStack)get.Invoke(null, new object[0]);
+            }
+
+            if (type.IsByRef)
+            {
+                var nonRef = type.GetElementType();
+
+                var get = typeof(TypeOnStack).GetMethod("GetReference").MakeGenericMethod(nonRef);
+
+                return (TypeOnStack)get.Invoke(null, new object[0]);
+            }
+
+            var getM = typeof(TypeOnStack).GetMethods().Single(w => w.Name == "Get" && w.IsGenericMethod).MakeGenericMethod(type);
+
+            return (TypeOnStack)getM.Invoke(null, new object[0]);
+        }
     }
 
     // Stand in for native int type

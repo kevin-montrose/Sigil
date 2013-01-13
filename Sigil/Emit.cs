@@ -22,6 +22,8 @@ namespace Sigil
 
         private List<Tuple<OpCode, StackState>> InstructionStream;
 
+        private HashSet<EmitLocal> UnusedLocals;
+
         private Emit(DynamicMethod dynMethod)
         {
             DynMethod = dynMethod;
@@ -33,6 +35,18 @@ namespace Sigil
 
             Stack = new StackState();
             InstructionStream = new List<Tuple<OpCode, StackState>>();
+            UnusedLocals = new HashSet<EmitLocal>();
+        }
+
+        public DelegateType CreateDelegate()
+        {
+            Validate();
+
+            var ret = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
+
+            Invalidated = true;
+
+            return ret;
         }
 
         private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop)
@@ -90,15 +104,11 @@ namespace Sigil
             IL.Emit(instr, param);
         }
 
-        public DelegateType CreateDelegate()
+        private void UpdateState(OpCode instr, LocalBuilder param, TypeOnStack addToStack = null, int pop = 0)
         {
-            Validate();
+            UpdateStackAndInstrStream(instr, addToStack, pop);
 
-            var ret = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
-
-            Invalidated = true;
-            
-            return ret;
+            IL.Emit(instr, param);
         }
 
         public static Emit<DelegateType> NewDynamicMethod(string name)

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Add.cs" />
     <Compile Include="Init.cs" />
+    <Compile Include="LoadLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Return.cs" />
   </ItemGroup>
