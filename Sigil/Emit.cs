@@ -33,7 +33,7 @@ namespace Sigil
             InstructionStream = new List<Tuple<OpCode, StackState>>();
         }
 
-        private void UpdateState(OpCode instr, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop)
         {
             if (pop > 0)
             {
@@ -46,6 +46,41 @@ namespace Sigil
             }
 
             InstructionStream.Add(Tuple.Create(instr, Stack));
+        }
+
+        private void UpdateState(OpCode instr, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr);
+        }
+
+        private void UpdateState(OpCode instr, int param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
+        }
+
+        private void UpdateState(OpCode instr, long param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
+        }
+
+        private void UpdateState(OpCode instr, float param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
+        }
+
+        private void UpdateState(OpCode instr, double param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
         }
 
         public DelegateType CreateDelegate()

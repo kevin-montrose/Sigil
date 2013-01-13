@@ -30,8 +30,6 @@ namespace Sigil
                 if (val2 == TypeOnStack.Get<int>())
                 {
                     UpdateState(OpCodes.Add, TypeOnStack.Get<int>(), pop: 2);
-                    
-                    IL.Emit(OpCodes.Add);
 
                     return;
                 }
@@ -40,16 +38,12 @@ namespace Sigil
                 {
                     UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
 
-                    IL.Emit(OpCodes.Add);
-
                     return;
                 }
 
                 if (val2.IsReference || val2.IsPointer)
                 {
                     UpdateState(OpCodes.Add, val2, pop: 2);
-
-                    IL.Emit(OpCodes.Add);
 
                     return;
                 }
@@ -63,8 +57,6 @@ namespace Sigil
                 {
                     UpdateState(OpCodes.Add, TypeOnStack.Get<long>(), pop: 2);
 
-                    IL.Emit(OpCodes.Add);
-
                     return;
                 }
 
@@ -77,8 +69,6 @@ namespace Sigil
                 {
                     UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
 
-                    IL.Emit(OpCodes.Add);
-
                     return;
                 }
 
@@ -86,16 +76,12 @@ namespace Sigil
                 {
                     UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
 
-                    IL.Emit(OpCodes.Add);
-
                     return;
                 }
 
                 if (val2.IsReference || val2.IsPointer)
                 {
                     UpdateState(OpCodes.Add, val2, pop: 2);
-
-                    IL.Emit(OpCodes.Add);
 
                     return;
                 }
@@ -109,8 +95,6 @@ namespace Sigil
                 {
                     UpdateState(OpCodes.Add, TypeOnStack.Get<StackFloat>(), pop: 2);
 
-                    IL.Emit(OpCodes.Add);
-
                     return;
                 }
 
@@ -123,8 +107,6 @@ namespace Sigil
                 {
                     UpdateState(OpCodes.Add, val1, pop: 2);
 
-                    IL.Emit(OpCodes.Add);
-
                     return;
                 }
 
@@ -136,8 +118,6 @@ namespace Sigil
                 if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
                 {
                     UpdateState(OpCodes.Add, val1, pop: 2);
-
-                    IL.Emit(OpCodes.Add);
 
                     return;
                 }

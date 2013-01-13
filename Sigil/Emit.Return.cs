@@ -20,7 +20,6 @@ namespace Sigil
                     throw new SigilException("Returning from a void method must leave the stack empty", Stack);
                 }
 
-                IL.Emit(OpCodes.Ret);
                 UpdateState(OpCodes.Ret);
 
                 return;
@@ -44,8 +43,6 @@ namespace Sigil
             {
                 throw new SigilException("Return expects one value to be on the stack", Stack);
             }
-
-            IL.Emit(OpCodes.Ret);
         }
     }
 }
