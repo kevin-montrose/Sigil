@@ -11,6 +11,19 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        public void Add(EmitLocal val2)
+        {
+            LoadLocal(val2);
+            Add();
+        }
+
+        public void Add(EmitLocal val1, EmitLocal val2)
+        {
+            LoadLocal(val1);
+            LoadLocal(val2);
+            Add();
+        }
+
         public void Add()
         {
             var args = Stack.Top(2);
