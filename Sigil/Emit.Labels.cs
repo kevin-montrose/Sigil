@@ -44,6 +44,8 @@ namespace Sigil
 
             UnmarkedLabels.Remove(label);
 
+            Marks[label] = Stack;
+
             IL.MarkLabel(label.Label);
         }
     }

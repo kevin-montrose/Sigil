@@ -26,6 +26,9 @@ namespace Sigil
         private HashSet<EmitLabel> UnusedLabels;
         private HashSet<EmitLabel> UnmarkedLabels;
 
+        private Dictionary<StackState, EmitLabel> Branches;
+        private Dictionary<EmitLabel, StackState> Marks;
+
         private Emit(DynamicMethod dynMethod)
         {
             DynMethod = dynMethod;
@@ -40,6 +43,9 @@ namespace Sigil
             UnusedLocals = new HashSet<EmitLocal>();
             UnusedLabels = new HashSet<EmitLabel>();
             UnmarkedLabels = new HashSet<EmitLabel>();
+
+            Branches = new Dictionary<StackState, EmitLabel>();
+            Marks = new Dictionary<EmitLabel, StackState>();
         }
 
         public DelegateType CreateDelegate()

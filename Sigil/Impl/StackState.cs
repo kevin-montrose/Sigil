@@ -67,5 +67,31 @@ namespace Sigil.Impl
 
             return ret;
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as StackState;
+            if (other == null) return false;
+
+            var cur = this;
+
+            while (!cur.IsRoot && !other.IsRoot)
+            {
+                if (cur.Value != other.Value)
+                    return false;
+
+                cur = cur.Previous;
+                other = other.Previous;
+            }
+
+            return cur.IsRoot && other.IsRoot;
+        }
+
+        public override int GetHashCode()
+        {
+            if (IsRoot) return 0;
+
+            return Value.GetHashCode() ^ Previous.GetHashCode();
+        }
     }
 }

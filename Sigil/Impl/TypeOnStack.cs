@@ -105,6 +105,19 @@ namespace Sigil.Impl
 
             return (TypeOnStack)getM.Invoke(null, new object[0]);
         }
+
+        public override string ToString()
+        {
+            var ret = Type.FullName;
+
+            if (Type == typeof(NativeInt)) ret = "native int";
+            if (Type == typeof(StackFloat)) ret = "F";
+
+            if (IsPointer) ret += "*";
+            if (IsReference) ret += "&";
+
+            return ret;
+        }
     }
 
     // Stand in for native int type

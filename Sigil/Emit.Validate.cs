@@ -42,6 +42,16 @@ namespace Sigil
             {
                 throw new SigilException("Labels [" + string.Join(", ", UnmarkedLabels.Select(l => l.Name)) + "] where declared but never marked", Stack);
             }
+
+            foreach (var kv in Branches)
+            {
+                var mark = Marks[kv.Value];
+
+                if (!kv.Key.Equals(mark))
+                {
+                    throw new SigilException("Branch to " + kv.Value.Name + " has a stack that doesn't match the destination", kv.Key, mark);
+                }
+            }
         }
     }
 }

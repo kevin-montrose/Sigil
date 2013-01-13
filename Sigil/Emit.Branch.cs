@@ -25,6 +25,8 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
+            Branches[Stack] = label;
+
             UpdateState(OpCodes.Br, label.Label);
         }
     }
