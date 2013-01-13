@@ -1,0 +1,143 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using Sigil.Impl;
+using System.Reflection.Emit;
+
+namespace Sigil
+{
+    public partial class Emit<DelegateType>
+    {
+        public void Add()
+        {
+            var args = Stack.Top(2);
+
+            if (args == null)
+            {
+                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
+            }
+
+            var val2 = args[0];
+            var val1 = args[1];
+            
+            // See: http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.add.aspx
+            //   For legal arguments table
+            if (val1 == TypeOnStack.Get<int>())
+            {
+                if (val2 == TypeOnStack.Get<int>())
+                {
+                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<int>());
+                    
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                if (val2 == TypeOnStack.Get<NativeInt>())
+                {
+                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<NativeInt>());
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                if (val2.IsReference || val2.IsPointer)
+                {
+                    Stack = Stack.Pop(2).Push(val2);
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                throw new SigilException("Adding to an int32 expects an int32, native int, reference, or pointer as second value; found " + val2, Stack);
+            }
+
+            if (val1 == TypeOnStack.Get<long>())
+            {
+                if (val2 == TypeOnStack.Get<long>())
+                {
+                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<long>());
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                throw new SigilException("Adding to an int64 expects an in64 as second value; found " + val2, Stack);
+            }
+
+            if (val1 == TypeOnStack.Get<NativeInt>())
+            {
+                if (val2 == TypeOnStack.Get<int>())
+                {
+                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<NativeInt>());
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                if (val2 == TypeOnStack.Get<NativeInt>())
+                {
+                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<NativeInt>());
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                if (val2.IsReference || val2.IsPointer)
+                {
+                    Stack = Stack.Pop(2).Push(val2);
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                throw new SigilException("Adding to a native int expects an int32, native int, reference, or pointer as second value; found " + val2, Stack);
+            }
+
+            if (val1 == TypeOnStack.Get<StackFloat>())
+            {
+                if (val2 == TypeOnStack.Get<StackFloat>())
+                {
+                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<StackFloat>());
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
+                }
+
+                throw new SigilException("Adding to a float expects a float as second value; found " + val2, Stack);
+            }
+
+            if (val1.IsReference)
+            {
+                if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
+                {
+                    Stack = Stack.Pop(2).Push(val1);
+                }
+
+                throw new SigilException("Adding to a reference expects an int32, or a native int as second value; found " + val2, Stack);
+            }
+
+            if (val1.IsPointer)
+            {
+                if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
+                {
+                    Stack = Stack.Pop(2).Push(val1);
+                }
+
+                throw new SigilException("Adding to a pointer expects an int32, or a native int as second value; found " + val2, Stack);
+            }
+
+            throw new SigilException("Add expects an int32, int64, native int, float, reference, or pointer as first value; found " + val1, Stack);
+        }
+    }
+}
