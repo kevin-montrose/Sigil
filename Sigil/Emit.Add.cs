@@ -29,7 +29,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>())
                 {
-                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<int>());
+                    UpdateState(OpCodes.Add, TypeOnStack.Get<int>(), pop: 2);
                     
                     IL.Emit(OpCodes.Add);
 
@@ -38,7 +38,7 @@ namespace Sigil
 
                 if (val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<NativeInt>());
+                    UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
 
                     IL.Emit(OpCodes.Add);
 
@@ -47,7 +47,7 @@ namespace Sigil
 
                 if (val2.IsReference || val2.IsPointer)
                 {
-                    Stack = Stack.Pop(2).Push(val2);
+                    UpdateState(OpCodes.Add, val2, pop: 2);
 
                     IL.Emit(OpCodes.Add);
 
@@ -61,7 +61,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<long>())
                 {
-                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<long>());
+                    UpdateState(OpCodes.Add, TypeOnStack.Get<long>(), pop: 2);
 
                     IL.Emit(OpCodes.Add);
 
@@ -75,7 +75,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>())
                 {
-                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<NativeInt>());
+                    UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
 
                     IL.Emit(OpCodes.Add);
 
@@ -84,7 +84,7 @@ namespace Sigil
 
                 if (val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<NativeInt>());
+                    UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
 
                     IL.Emit(OpCodes.Add);
 
@@ -93,7 +93,7 @@ namespace Sigil
 
                 if (val2.IsReference || val2.IsPointer)
                 {
-                    Stack = Stack.Pop(2).Push(val2);
+                    UpdateState(OpCodes.Add, val2, pop: 2);
 
                     IL.Emit(OpCodes.Add);
 
@@ -107,7 +107,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<StackFloat>())
                 {
-                    Stack = Stack.Pop(2).Push(TypeOnStack.Get<StackFloat>());
+                    UpdateState(OpCodes.Add, TypeOnStack.Get<StackFloat>(), pop: 2);
 
                     IL.Emit(OpCodes.Add);
 
@@ -121,7 +121,11 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    Stack = Stack.Pop(2).Push(val1);
+                    UpdateState(OpCodes.Add, val1, pop: 2);
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
                 }
 
                 throw new SigilException("Adding to a reference expects an int32, or a native int as second value; found " + val2, Stack);
@@ -131,7 +135,11 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    Stack = Stack.Pop(2).Push(val1);
+                    UpdateState(OpCodes.Add, val1, pop: 2);
+
+                    IL.Emit(OpCodes.Add);
+
+                    return;
                 }
 
                 throw new SigilException("Adding to a pointer expects an int32, or a native int as second value; found " + val2, Stack);

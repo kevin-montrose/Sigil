@@ -18,6 +18,8 @@ namespace Sigil
 
         private StackState Stack;
 
+        private List<Tuple<OpCode, StackState>> InstructionStream;
+
         private Emit(DynamicMethod dynMethod)
         {
             DynMethod = dynMethod;
@@ -28,10 +30,28 @@ namespace Sigil
             ParameterTypes = DynMethod.GetParameters().Select(p => p.ParameterType).ToArray();
 
             Stack = new StackState();
+            InstructionStream = new List<Tuple<OpCode, StackState>>();
+        }
+
+        private void UpdateState(OpCode instr, TypeOnStack addToStack = null, int pop = 0)
+        {
+            if (pop > 0)
+            {
+                Stack = Stack.Pop(pop);
+            }
+
+            if (addToStack != null)
+            {
+                Stack = Stack.Push(addToStack);
+            }
+
+            InstructionStream.Add(Tuple.Create(instr, Stack));
         }
 
         public DelegateType CreateDelegate()
         {
+            Validate();
+
             return (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
         }
 

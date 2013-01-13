@@ -49,6 +49,9 @@
     <Compile Include="Emit.Return.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Validate.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Impl\ExtensionMethods.cs" />
     <Compile Include="Impl\StackState.cs" />
     <Compile Include="Impl\TypeOnStack.cs" />

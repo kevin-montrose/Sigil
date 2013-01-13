@@ -21,6 +21,7 @@ namespace Sigil
                 }
 
                 IL.Emit(OpCodes.Ret);
+                UpdateState(OpCodes.Ret);
 
                 return;
             }
@@ -37,7 +38,7 @@ namespace Sigil
                 throw new SigilException("Return expects a value assignable to " + ReturnType.FullName + " to be on the stack; found " + retType[0], Stack);
             }
 
-            Stack = Stack.Pop();
+            UpdateState(OpCodes.Ret, pop: 1);
 
             if (!Stack.IsRoot)
             {
