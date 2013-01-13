@@ -29,7 +29,7 @@ namespace Sigil
                 case 8: UpdateState(OpCodes.Ldc_I4_8, TypeOnStack.Get<int>()); return;
             }
 
-            if (i >= 0 && i <= byte.MaxValue)
+            if (i >= byte.MinValue && i <= byte.MaxValue)
             {
                 UpdateState(OpCodes.Ldc_I4_S, i, TypeOnStack.Get<int>());
                 return;

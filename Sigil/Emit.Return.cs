@@ -31,7 +31,7 @@ namespace Sigil
                 return;
             }
 
-            var retType = Stack.Top(1);
+            var retType = Stack.Top();
 
             if(retType == null)
             {

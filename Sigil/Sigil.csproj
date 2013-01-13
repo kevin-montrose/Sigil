@@ -52,6 +52,9 @@
     <Compile Include="Emit.Return.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.StoreLocal.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Validate.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

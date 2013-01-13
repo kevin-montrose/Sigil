@@ -49,7 +49,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public TypeOnStack[] Top(int n)
+        public TypeOnStack[] Top(int n = 1)
         {
             var ret = new TypeOnStack[n];
 
