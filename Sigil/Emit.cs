@@ -23,6 +23,8 @@ namespace Sigil
         private List<Tuple<OpCode, StackState>> InstructionStream;
 
         private HashSet<EmitLocal> UnusedLocals;
+        private HashSet<EmitLabel> UnusedLabels;
+        private HashSet<EmitLabel> UnmarkedLabels;
 
         private Emit(DynamicMethod dynMethod)
         {
@@ -36,6 +38,8 @@ namespace Sigil
             Stack = new StackState();
             InstructionStream = new List<Tuple<OpCode, StackState>>();
             UnusedLocals = new HashSet<EmitLocal>();
+            UnusedLabels = new HashSet<EmitLabel>();
+            UnmarkedLabels = new HashSet<EmitLabel>();
         }
 
         public DelegateType CreateDelegate()
@@ -105,6 +109,13 @@ namespace Sigil
         }
 
         private void UpdateState(OpCode instr, LocalBuilder param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
+        }
+
+        private void UpdateState(OpCode instr, Label param, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, addToStack, pop);
 

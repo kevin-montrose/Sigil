@@ -42,7 +42,11 @@
     <Compile Include="Emit.Add.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Branch.cs" />
     <Compile Include="Emit.cs" />
+    <Compile Include="Emit.Labels.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.LoadConstant.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
@@ -58,6 +62,7 @@
     <Compile Include="Emit.Validate.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="EmitLabel.cs" />
     <Compile Include="EmitLocal.cs" />
     <Compile Include="Impl\ExtensionMethods.cs" />
     <Compile Include="Impl\StackState.cs" />
