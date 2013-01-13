@@ -59,7 +59,9 @@
     <Compile Include="Impl\ExtensionMethods.cs" />
     <Compile Include="Impl\StackState.cs" />
     <Compile Include="Impl\TypeOnStack.cs" />
-    <Compile Include="Emit.LoadLocal.cs" />
+    <Compile Include="Emit.LoadLocal.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SigilException.cs" />
   </ItemGroup>
