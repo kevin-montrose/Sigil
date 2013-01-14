@@ -32,39 +32,71 @@ namespace Sigil
             StoreLocal(storeVal);
         }
 
-        public void Add()
+        public void AddOverflow(EmitLocal loadVal2)
         {
-            var args = Stack.Top(2);
+            LoadLocal(loadVal2);
+            AddOverflow();
+        }
 
-            if (args == null)
-            {
-                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
-            }
+        public void AddOverflow(EmitLocal loadVal1, EmitLocal loadVal2)
+        {
+            LoadLocal(loadVal1);
+            LoadLocal(loadVal2);
+            AddOverflow();
+        }
 
-            var val2 = args[0];
-            var val1 = args[1];
-            
+        public void AddOverflow(EmitLocal loadVa1, EmitLocal loadVal2, EmitLocal storeVal)
+        {
+            LoadLocal(loadVa1);
+            LoadLocal(loadVal2);
+            AddOverflow();
+            StoreLocal(storeVal);
+        }
+
+        public void UnsignedAddOverflow(EmitLocal loadVal2)
+        {
+            LoadLocal(loadVal2);
+            UnsignedAddOverflow();
+        }
+
+        public void UnsignedAddOverflow(EmitLocal loadVal1, EmitLocal loadVal2)
+        {
+            LoadLocal(loadVal1);
+            LoadLocal(loadVal2);
+            UnsignedAddOverflow();
+        }
+
+        public void UnsignedAddOverflow(EmitLocal loadVa1, EmitLocal loadVal2, EmitLocal storeVal)
+        {
+            LoadLocal(loadVa1);
+            LoadLocal(loadVal2);
+            UnsignedAddOverflow();
+            StoreLocal(storeVal);
+        }
+
+        private void VerifyAndAdd(OpCode addOp, TypeOnStack val1, TypeOnStack val2)
+        {
             // See: http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.add.aspx
             //   For legal arguments table
             if (val1 == TypeOnStack.Get<int>())
             {
                 if (val2 == TypeOnStack.Get<int>())
                 {
-                    UpdateState(OpCodes.Add, TypeOnStack.Get<int>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<int>(), pop: 2);
 
                     return;
                 }
 
                 if (val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<NativeInt>(), pop: 2);
 
                     return;
                 }
 
                 if (val2.IsReference || val2.IsPointer)
                 {
-                    UpdateState(OpCodes.Add, val2, pop: 2);
+                    UpdateState(addOp, val2, pop: 2);
 
                     return;
                 }
@@ -76,7 +108,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<long>())
                 {
-                    UpdateState(OpCodes.Add, TypeOnStack.Get<long>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<long>(), pop: 2);
 
                     return;
                 }
@@ -88,21 +120,21 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>())
                 {
-                    UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<NativeInt>(), pop: 2);
 
                     return;
                 }
 
                 if (val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    UpdateState(OpCodes.Add, TypeOnStack.Get<NativeInt>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<NativeInt>(), pop: 2);
 
                     return;
                 }
 
                 if (val2.IsReference || val2.IsPointer)
                 {
-                    UpdateState(OpCodes.Add, val2, pop: 2);
+                    UpdateState(addOp, val2, pop: 2);
 
                     return;
                 }
@@ -114,7 +146,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<StackFloat>())
                 {
-                    UpdateState(OpCodes.Add, TypeOnStack.Get<StackFloat>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<StackFloat>(), pop: 2);
 
                     return;
                 }
@@ -126,7 +158,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    UpdateState(OpCodes.Add, val1, pop: 2);
+                    UpdateState(addOp, val1, pop: 2);
 
                     return;
                 }
@@ -138,7 +170,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
                 {
-                    UpdateState(OpCodes.Add, val1, pop: 2);
+                    UpdateState(addOp, val1, pop: 2);
 
                     return;
                 }
@@ -147,6 +179,51 @@ namespace Sigil
             }
 
             throw new SigilException("Add expects an int32, int64, native int, float, reference, or pointer as first value; found " + val1, Stack);
+        }
+
+        public void Add()
+        {
+            var args = Stack.Top(2);
+
+            if (args == null)
+            {
+                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
+            }
+
+            var val2 = args[0];
+            var val1 = args[1];
+
+            VerifyAndAdd(OpCodes.Add, val1, val2);
+        }
+
+        public void AddOverflow()
+        {
+            var args = Stack.Top(2);
+
+            if (args == null)
+            {
+                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
+            }
+
+            var val2 = args[0];
+            var val1 = args[1];
+
+            VerifyAndAdd(OpCodes.Add_Ovf, val1, val2);
+        }
+
+        public void UnsignedAddOverflow()
+        {
+            var args = Stack.Top(2);
+
+            if (args == null)
+            {
+                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
+            }
+
+            var val2 = args[0];
+            var val1 = args[1];
+
+            VerifyAndAdd(OpCodes.Add_Ovf_Un, val1, val2);
         }
     }
 }
