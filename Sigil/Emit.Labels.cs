@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,6 +9,26 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        // Go through and slap *_S everywhere it's needed for branches
+        private void PatchBranches()
+        {
+            foreach (var start in BranchPatches.Keys.OrderBy(o => o))
+            {
+                var item = BranchPatches[start];
+                var patcher = item.Item2;
+                var label = item.Item1;
+
+                var stop = Marks[label].Item2;
+
+                var distance = IL.ByteDistance(start, stop);
+
+                if (distance >= sbyte.MinValue && distance <= sbyte.MaxValue)
+                {
+                    patcher(OpCodes.Br_S);
+                }
+            }
+        }
+
         public EmitLabel CreateLabel()
         {
             return CreateLabel("_" + Guid.NewGuid().ToString().Replace("-", ""));
@@ -44,9 +65,9 @@ namespace Sigil
 
             UnmarkedLabels.Remove(label);
 
-            Marks[label] = Stack;
-
             IL.MarkLabel(label.Label);
+
+            Marks[label] = Tuple.Create(Stack, IL.Index);
         }
     }
 }

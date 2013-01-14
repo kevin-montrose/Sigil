@@ -25,9 +25,13 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            Branches[Stack] = label;
+            BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Br, label.Label);
+            UpdateState(OpCodes.Br, label.Label, out update);
+
+            Branches[Stack] = Tuple.Create(label, IL.Index);
+
+            BranchPatches[IL.Index] = Tuple.Create(label, update);
         }
     }
 }

@@ -28,8 +28,10 @@ namespace Sigil
         private HashSet<EmitLabel> UnusedLabels;
         private HashSet<EmitLabel> UnmarkedLabels;
 
-        private Dictionary<StackState, EmitLabel> Branches;
-        private Dictionary<EmitLabel, StackState> Marks;
+        private Dictionary<StackState, Tuple<EmitLabel, int>> Branches;
+        private Dictionary<EmitLabel, Tuple<StackState, int>> Marks;
+
+        private Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate>> BranchPatches;
 
         private Emit(DynamicMethod dynMethod)
         {
@@ -46,12 +48,16 @@ namespace Sigil
             UnusedLabels = new HashSet<EmitLabel>();
             UnmarkedLabels = new HashSet<EmitLabel>();
 
-            Branches = new Dictionary<StackState, EmitLabel>();
-            Marks = new Dictionary<EmitLabel, StackState>();
+            Branches = new Dictionary<StackState, Tuple<EmitLabel, int>>();
+            Marks = new Dictionary<EmitLabel, Tuple<StackState, int>>();
+
+            BranchPatches = new Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate>>();
         }
 
         public DelegateType CreateDelegate()
         {
+            PatchBranches();
+
             Validate();
 
             var il = DynMethod.GetILGenerator();
@@ -126,11 +132,11 @@ namespace Sigil
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, BufferedILGenerator.DefineLabelDelegate param, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, BufferedILGenerator.DefineLabelDelegate param, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, addToStack, pop);
 
-            IL.Emit(instr, param);
+            IL.Emit(instr, param, out update);
         }
 
         public static Emit<DelegateType> NewDynamicMethod(string name)

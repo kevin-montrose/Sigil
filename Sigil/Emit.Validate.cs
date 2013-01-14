@@ -45,11 +45,11 @@ namespace Sigil
 
             foreach (var kv in Branches)
             {
-                var mark = Marks[kv.Value];
+                var mark = Marks[kv.Value.Item1].Item1;
 
                 if (!kv.Key.Equals(mark))
                 {
-                    throw new SigilException("Branch to " + kv.Value.Name + " has a stack that doesn't match the destination", kv.Key, mark);
+                    throw new SigilException("Branch to " + kv.Value.Item1.Name + " has a stack that doesn't match the destination", kv.Key, mark);
                 }
             }
         }

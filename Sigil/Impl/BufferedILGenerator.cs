@@ -9,6 +9,7 @@ namespace Sigil.Impl
 {
     internal class BufferedILGenerator
     {
+        public delegate void UpdateOpCodeDelegate(OpCode newOpcode);
         public delegate Label DefineLabelDelegate(ILGenerator il);
         public delegate LocalBuilder DeclareLocallDelegate(ILGenerator il);
 
@@ -73,9 +74,22 @@ namespace Sigil.Impl
             Buffer.Add(il => il.Emit(op, d));
         }
 
-        public void Emit(OpCode op, DefineLabelDelegate label)
+        public void Emit(OpCode op, DefineLabelDelegate label, out UpdateOpCodeDelegate update)
         {
-            Buffer.Add(il => il.Emit(op, label(il)));
+            var localOp = op;
+
+            update =
+                newOpcode =>
+                {
+                    localOp = newOpcode;
+                };
+
+            Buffer.Add(
+                il => 
+                    {
+                        il.Emit(localOp, label(il));
+                    }
+            );
         }
 
         public void Emit(OpCode op, DeclareLocallDelegate local)
