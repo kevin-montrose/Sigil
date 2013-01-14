@@ -54,8 +54,8 @@ namespace Sigil.Impl
                     new TypeOnStack
                     {
                         Type = typeof(Type),
-                        IsReference = true,
-                        IsPointer = false
+                        IsReference = false,
+                        IsPointer = true
                     };
             }
 
