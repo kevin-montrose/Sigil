@@ -31,7 +31,7 @@ namespace Sigil
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update);
+            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
         }
     }
 }

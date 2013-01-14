@@ -31,7 +31,7 @@ namespace Sigil
         private Dictionary<StackState, Tuple<EmitLabel, int>> Branches;
         private Dictionary<EmitLabel, Tuple<StackState, int>> Marks;
 
-        private Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate>> BranchPatches;
+        private Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
         private Emit(DynamicMethod dynMethod)
         {
@@ -51,7 +51,7 @@ namespace Sigil
             Branches = new Dictionary<StackState, Tuple<EmitLabel, int>>();
             Marks = new Dictionary<EmitLabel, Tuple<StackState, int>>();
 
-            BranchPatches = new Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate>>();
+            BranchPatches = new Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>>();
         }
 
         public DelegateType CreateDelegate()

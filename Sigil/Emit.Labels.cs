@@ -15,8 +15,10 @@ namespace Sigil
             foreach (var start in BranchPatches.Keys.OrderBy(o => o))
             {
                 var item = BranchPatches[start];
-                var patcher = item.Item2;
+
                 var label = item.Item1;
+                var patcher = item.Item2;
+                var originalOp = item.Item3;
 
                 var stop = Marks[label].Item2;
 
@@ -24,9 +26,18 @@ namespace Sigil
 
                 if (distance >= sbyte.MinValue && distance <= sbyte.MaxValue)
                 {
-                    patcher(OpCodes.Br_S);
+                    if (originalOp == OpCodes.Br)
+                    {
+                        patcher(OpCodes.Br_S);
+                        continue;
+                    }
+
+                    throw new Exception("Unexpected OpCode: " + originalOp);
                 }
             }
+
+            // We can't use this data again, so nuke it
+            BranchPatches = null;
         }
 
         public EmitLabel CreateLabel()
