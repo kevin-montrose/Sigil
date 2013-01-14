@@ -11,21 +11,24 @@ namespace Sigil
     public class EmitLocal
     {
         public string Name { get; private set; }
-        public Type LocalType { get { return Builder.LocalType; } }
+        public Type LocalType { get; private set; }
 
         internal TypeOnStack StackType { get; private set; }
-        internal int Index { get { return Builder.LocalIndex; } }
+        internal int Index { get; private set; }
 
-        internal LocalBuilder Builder { get; private set; }
+        //internal LocalBuilder Builder { get; private set; }
+        internal BufferedILGenerator.DeclareLocallDelegate Local { get; private set; }
         internal object Owner { get; private set; }
 
-        internal EmitLocal(object owner, LocalBuilder local, string name)
+        internal EmitLocal(object owner, int index, Type localType, BufferedILGenerator.DeclareLocallDelegate local, string name)
         {
             Owner = owner;
-            Builder = local;
+            Local = local;
             Name = name;
 
-            StackType = TypeOnStack.Get(Builder.LocalType);
+            Index = index;
+            LocalType = localType;
+            StackType = TypeOnStack.Get(localType);
         }
 
         public override string ToString()

@@ -13,7 +13,7 @@ namespace Sigil
     {
         private bool Invalidated;
 
-        private ILGenerator IL;
+        private BufferedILGenerator IL;
         private Type ReturnType;
         private Type[] ParameterTypes;
         private DynamicMethod DynMethod;
@@ -21,6 +21,8 @@ namespace Sigil
         private StackState Stack;
 
         private List<Tuple<OpCode, StackState>> InstructionStream;
+
+        private int NextLocalIndex = 0;
 
         private HashSet<EmitLocal> UnusedLocals;
         private HashSet<EmitLabel> UnusedLabels;
@@ -33,10 +35,10 @@ namespace Sigil
         {
             DynMethod = dynMethod;
 
-            IL = DynMethod.GetILGenerator();
-
             ReturnType = DynMethod.ReturnType;
             ParameterTypes = DynMethod.GetParameters().Select(p => p.ParameterType).ToArray();
+
+            IL = new BufferedILGenerator(typeof(DelegateType));
 
             Stack = new StackState();
             InstructionStream = new List<Tuple<OpCode, StackState>>();
@@ -51,6 +53,9 @@ namespace Sigil
         public DelegateType CreateDelegate()
         {
             Validate();
+
+            var il = DynMethod.GetILGenerator();
+            IL.UnBuffer(il);
 
             var ret = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
 
@@ -114,14 +119,14 @@ namespace Sigil
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, LocalBuilder param, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, BufferedILGenerator.DeclareLocallDelegate param, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, Label param, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, BufferedILGenerator.DefineLabelDelegate param, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, addToStack, pop);
 

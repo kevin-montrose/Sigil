@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -11,11 +12,11 @@ namespace Sigil
     {
         public string Name { get; private set; }
 
-        internal Label Label { get; private set; }
+        internal BufferedILGenerator.DefineLabelDelegate Label { get; private set; }
 
         internal object Owner { get; private set; }
 
-        internal EmitLabel(object owner, Label label, string name)
+        internal EmitLabel(object owner, BufferedILGenerator.DefineLabelDelegate label, string name)
         {
             Owner = owner;
             Name = name;

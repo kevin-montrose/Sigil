@@ -88,7 +88,7 @@ namespace Sigil.Impl
             ILGenerator forIl = null;
             Label? l = null;
 
-            return
+            DefineLabelDelegate ret =
                 il =>
                 {
                     if(forIl != null && forIl != il)
@@ -103,6 +103,10 @@ namespace Sigil.Impl
 
                     return l.Value;
                 };
+
+            Buffer.Add(il => { ret(il); });
+
+            return ret;
         }
 
         public void MarkLabel(DefineLabelDelegate label)
@@ -115,7 +119,7 @@ namespace Sigil.Impl
             ILGenerator forIl = null;
             LocalBuilder l = null;
 
-            return
+            DeclareLocallDelegate ret =
                 il =>
                 {
                     if(forIl != null && il != forIl)
@@ -130,6 +134,10 @@ namespace Sigil.Impl
 
                     return l;
                 };
+
+            Buffer.Add(il => { ret(il); });
+
+            return ret;
         }
     }
 }

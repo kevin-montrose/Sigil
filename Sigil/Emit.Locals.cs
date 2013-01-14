@@ -27,7 +27,10 @@ namespace Sigil
         {
             var local = IL.DeclareLocal(type);
 
-            var ret = new EmitLocal(this, local, name);
+            var localIndex = NextLocalIndex;
+            NextLocalIndex++;
+
+            var ret = new EmitLocal(this, localIndex, type, local, name);
 
             UnusedLocals.Add(ret);
 
