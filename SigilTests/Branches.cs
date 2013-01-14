@@ -12,6 +12,33 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
+        public void MultiLabel()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+
+            e1.LoadConstant(1);
+            var one = e1.CreateLabel("one");
+            e1.Branch(one);
+            
+            e1.LoadConstant(2);
+            e1.Add();
+
+            e1.MarkLabel(one);
+            var two = e1.CreateLabel("two");
+            e1.Branch(two);
+
+            e1.LoadConstant(3);
+            e1.Add();
+
+            e1.MarkLabel(two);
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            Assert.AreEqual(1, del());
+        }
+
+        [TestMethod]
         public void BrS()
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");

@@ -38,6 +38,60 @@ namespace Sigil
                         continue;
                     }
 
+                    if (originalOp == OpCodes.Bne_Un)
+                    {
+                        patcher(OpCodes.Bne_Un_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Bge)
+                    {
+                        patcher(OpCodes.Bge_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Bge_Un)
+                    {
+                        patcher(OpCodes.Bge_Un_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Bgt)
+                    {
+                        patcher(OpCodes.Bgt_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Bgt_Un)
+                    {
+                        patcher(OpCodes.Bgt_Un_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Ble)
+                    {
+                        patcher(OpCodes.Ble_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Ble_Un)
+                    {
+                        patcher(OpCodes.Ble_Un_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Blt)
+                    {
+                        patcher(OpCodes.Blt_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Blt_Un)
+                    {
+                        patcher(OpCodes.Blt_Un_S);
+                        continue;
+                    }
+
                     throw new Exception("Unexpected OpCode: " + originalOp);
                 }
             }
