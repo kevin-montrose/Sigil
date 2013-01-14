@@ -55,6 +55,7 @@
     <Compile Include="Emit.Locals.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Nop.cs" />
     <Compile Include="Emit.Return.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

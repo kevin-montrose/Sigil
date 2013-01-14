@@ -30,5 +30,27 @@ namespace SigilTests
 
             Assert.AreEqual(456, del());
         }
+
+        [TestMethod]
+        public void NonS()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+
+            var after = e1.CreateLabel("after");
+            e1.LoadConstant(111);
+            e1.Branch(after);
+
+            for (var i = 0; i < 1000; i++)
+            {
+                e1.Nop();
+            }
+
+            e1.MarkLabel(after);
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            Assert.AreEqual(111, del());
+        }
     }
 }
