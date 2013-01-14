@@ -35,12 +35,12 @@ namespace Sigil
 
             if (UnusedLabels.Count != 0)
             {
-                throw new SigilException("Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] where declared but never used", Stack);
+                throw new SigilException("Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used", Stack);
             }
 
             if (UnmarkedLabels.Count != 0)
             {
-                throw new SigilException("Labels [" + string.Join(", ", UnmarkedLabels.Select(l => l.Name)) + "] where declared but never marked", Stack);
+                throw new SigilException("Labels [" + string.Join(", ", UnmarkedLabels.Select(l => l.Name)) + "] were declared but never marked", Stack);
             }
 
             foreach (var kv in Branches)
