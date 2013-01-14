@@ -12,7 +12,7 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
-        public void Br()
+        public void BrS()
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
@@ -32,7 +32,7 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void NonS()
+        public void Br()
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
@@ -51,6 +51,55 @@ namespace SigilTests
             var del = e1.CreateDelegate();
 
             Assert.AreEqual(111, del());
+        }
+
+        [TestMethod]
+        public void BeqS()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+
+            var after = e1.CreateLabel("after");
+            e1.LoadConstant(314);
+            e1.LoadConstant(456);
+            e1.LoadConstant(456);
+            e1.BranchIfEqual(after);
+
+            e1.LoadConstant(111);
+            e1.Add();
+
+            e1.MarkLabel(after);
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            Assert.AreEqual(314, del());
+        }
+
+        [TestMethod]
+        public void Beq()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+
+            var after = e1.CreateLabel("after");
+            e1.LoadConstant(314);
+            e1.LoadConstant(456);
+            e1.LoadConstant(456);
+            e1.BranchIfEqual(after);
+
+            for (var i = 0; i < 1234; i++)
+            {
+                e1.Nop();
+            }
+
+            e1.LoadConstant(111);
+            e1.Add();
+
+            e1.MarkLabel(after);
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            Assert.AreEqual(314, del());
         }
     }
 }

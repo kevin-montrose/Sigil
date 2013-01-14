@@ -32,6 +32,12 @@ namespace Sigil
                         continue;
                     }
 
+                    if (originalOp == OpCodes.Beq)
+                    {
+                        patcher(OpCodes.Beq_S);
+                        continue;
+                    }
+
                     throw new Exception("Unexpected OpCode: " + originalOp);
                 }
             }
