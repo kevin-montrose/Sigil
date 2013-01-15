@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +73,11 @@ namespace Sigil.Impl
         public void Emit(OpCode op, double d)
         {
             Buffer.Add(il => il.Emit(op, d));
+        }
+
+        public void Emit(OpCode op, MethodInfo method)
+        {
+            Buffer.Add(il => il.Emit(op, method));
         }
 
         public void Emit(OpCode op, DefineLabelDelegate label, out UpdateOpCodeDelegate update)

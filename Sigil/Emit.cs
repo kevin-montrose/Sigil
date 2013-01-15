@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Sigil.Impl;
+using System.Reflection;
 
 namespace Sigil
 {
@@ -137,6 +138,13 @@ namespace Sigil
             UpdateStackAndInstrStream(instr, addToStack, pop);
 
             IL.Emit(instr, param, out update);
+        }
+
+        private void UpdateState(OpCode instr, MethodInfo method, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, method);
         }
 
         public static Emit<DelegateType> NewDynamicMethod(string name)

@@ -52,6 +52,7 @@
   <ItemGroup>
     <Compile Include="Add.cs" />
     <Compile Include="Branches.cs" />
+    <Compile Include="Calls.cs" />
     <Compile Include="Init.cs" />
     <Compile Include="LoadLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

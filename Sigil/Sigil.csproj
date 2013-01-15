@@ -45,6 +45,7 @@
     <Compile Include="Emit.Branch.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Call.cs" />
     <Compile Include="Emit.cs" />
     <Compile Include="Emit.Labels.cs">
       <DependentUpon>Emit.cs</DependentUpon>
