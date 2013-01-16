@@ -92,6 +92,18 @@ namespace Sigil
                         continue;
                     }
 
+                    if (originalOp == OpCodes.Brfalse)
+                    {
+                        patcher(OpCodes.Brfalse_S);
+                        continue;
+                    }
+
+                    if (originalOp == OpCodes.Brtrue)
+                    {
+                        patcher(OpCodes.Brtrue_S);
+                        continue;
+                    }
+
                     throw new Exception("Unexpected OpCode: " + originalOp);
                 }
             }

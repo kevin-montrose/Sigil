@@ -333,5 +333,65 @@ namespace Sigil
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
         }
+
+        public void BranchIfFalse(EmitLabel label)
+        {
+            if (label == null)
+            {
+                throw new ArgumentNullException("label");
+            }
+
+            if (label.Owner != this)
+            {
+                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+            }
+
+            var top = Stack.Top(1);
+
+            if (top == null)
+            {
+                throw new SigilException("BranchIfFalse expects one value to be on the stack", Stack);
+            }
+
+            UnusedLabels.Remove(label);
+
+            BufferedILGenerator.UpdateOpCodeDelegate update;
+
+            UpdateState(OpCodes.Brfalse, label.Label, out update, pop: 1);
+
+            Branches[Stack] = Tuple.Create(label, IL.Index);
+
+            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brfalse);
+        }
+
+        public void BranchIfTrue(EmitLabel label)
+        {
+            if (label == null)
+            {
+                throw new ArgumentNullException("label");
+            }
+
+            if (label.Owner != this)
+            {
+                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+            }
+
+            var top = Stack.Top(1);
+
+            if (top == null)
+            {
+                throw new SigilException("BranchIfTrue expects one value to be on the stack", Stack);
+            }
+
+            UnusedLabels.Remove(label);
+
+            BufferedILGenerator.UpdateOpCodeDelegate update;
+
+            UpdateState(OpCodes.Brtrue, label.Label, out update, pop: 1);
+
+            Branches[Stack] = Tuple.Create(label, IL.Index);
+
+            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brtrue);
+        }
     }
 }
