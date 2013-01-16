@@ -50,5 +50,24 @@ namespace SigilTests
 
             Assert.AreEqual(314159, del());
         }
+
+        class StringInstanceClass
+        {
+            public string Go(int hello) { return hello.ToString(); }
+        }
+
+        [TestMethod]
+        public void StringInstance()
+        {
+            var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
+            e1.NewObject<StringInstanceClass>();
+            e1.LoadConstant(8675309);
+            e1.Call(typeof(StringInstanceClass).GetMethod("Go"));
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            Assert.AreEqual("8675309", del());
+        }
     }
 }
