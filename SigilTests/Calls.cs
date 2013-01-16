@@ -32,5 +32,23 @@ namespace SigilTests
             del();
             Assert.IsTrue(DoesNothingWasCalled);
         }
+
+        class VoidInstanceClass
+        {
+            public int Go() { return 314159; }
+        }
+
+        [TestMethod]
+        public void VoidInstance()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            e1.NewObject<VoidInstanceClass>();
+            e1.Call(typeof(VoidInstanceClass).GetMethod("Go"));
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            Assert.AreEqual(314159, del());
+        }
     }
 }

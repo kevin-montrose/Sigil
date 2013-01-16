@@ -80,6 +80,11 @@ namespace Sigil.Impl
             Buffer.Add(il => il.Emit(op, method));
         }
 
+        public void Emit(OpCode op, ConstructorInfo cons)
+        {
+            Buffer.Add(il => il.Emit(op, cons));
+        }
+
         public void Emit(OpCode op, DefineLabelDelegate label, out UpdateOpCodeDelegate update)
         {
             var localOp = op;

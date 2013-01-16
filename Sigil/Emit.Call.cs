@@ -20,7 +20,13 @@ namespace Sigil
 
             var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
 
-            var onStack = Stack.Top(expectedParams.Count).ToList();
+            // Instance methods expect this to preceed parameters
+            if (!method.IsStatic)
+            {
+                expectedParams.Insert(0, TypeOnStack.Get(method.DeclaringType));
+            }
+
+            var onStack = Stack.Top(expectedParams.Count);
 
             if (onStack == null)
             {
@@ -28,12 +34,12 @@ namespace Sigil
             }
 
             // Things come off the stack in "Reverse" order
-            onStack.Reverse();
+            var onStackR = onStack.Reverse().ToList();
 
             for (var i = 0; i < expectedParams.Count; i++)
             {
                 var shouldBe = expectedParams[i];
-                var actuallyIs = onStack[i];
+                var actuallyIs = onStackR[i];
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {

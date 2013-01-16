@@ -147,6 +147,13 @@ namespace Sigil
             IL.Emit(instr, method);
         }
 
+        private void UpdateState(OpCode instr, ConstructorInfo cons, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, cons);
+        }
+
         public static Emit<DelegateType> NewDynamicMethod(string name)
         {
             var delType = typeof(DelegateType);
@@ -169,7 +176,7 @@ namespace Sigil
             var returnType = invoke.ReturnType;
             var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
 
-            var dynMethod = new DynamicMethod(name, returnType, parameterTypes);
+            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, restrictedSkipVisibility: true);
 
             return new Emit<DelegateType>(dynMethod);
         }
