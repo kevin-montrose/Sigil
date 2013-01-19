@@ -25,6 +25,7 @@ namespace Sigil
 
             var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
 
+            // "this" parameter
             expectedParams.Insert(0, TypeOnStack.Get(method.DeclaringType));
 
             var onStack = Stack.Top(expectedParams.Count);

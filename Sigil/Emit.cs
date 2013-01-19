@@ -154,6 +154,13 @@ namespace Sigil
             IL.Emit(instr, cons);
         }
 
+        private void UpdateState(OpCode instr, Type type, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, type);
+        }
+
         public static Emit<DelegateType> NewDynamicMethod(string name)
         {
             var delType = typeof(DelegateType);

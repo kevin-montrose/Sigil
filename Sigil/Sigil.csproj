@@ -42,6 +42,9 @@
     <Compile Include="Emit.Add.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Box.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Branch.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
@@ -71,6 +74,9 @@
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.StoreLocal.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Emit.Unbox.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.Validate.cs">
