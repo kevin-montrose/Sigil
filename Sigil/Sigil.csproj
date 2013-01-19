@@ -76,6 +76,12 @@
     <Compile Include="Emit.Duplicate.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.InitializeBlock.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Emit.InitializeObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Labels.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
