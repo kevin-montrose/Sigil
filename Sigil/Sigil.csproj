@@ -58,7 +58,9 @@
     <Compile Include="Emit.Labels.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Emit.LoadArgument.cs" />
+    <Compile Include="Emit.LoadArgument.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.LoadConstant.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
