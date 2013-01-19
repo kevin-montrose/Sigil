@@ -74,5 +74,45 @@ namespace Sigil
 
             UpdateState(OpCodes.Not, val, pop: 1);
         }
+
+        private void VerifyAndShift(string name, OpCode op)
+        {
+            var onStack = Stack.Top(2);
+
+            if (onStack == null)
+            {
+                throw new SigilException(name + " expects two values on the stack", Stack);
+            }
+
+            var shift = onStack[0];
+            var value = onStack[1];
+
+            if (value != TypeOnStack.Get<int>() && value != TypeOnStack.Get<long>() && value != TypeOnStack.Get<NativeInt>())
+            {
+                throw new SigilException(name + " expects the value to be shifted to be an int, long, or native int; found" + value, Stack);
+            }
+
+            if (shift != TypeOnStack.Get<int>() && shift != TypeOnStack.Get<NativeInt>())
+            {
+                throw new SigilException(name + " expects the shift to be an int or native int; found " + shift, Stack);
+            }
+
+            UpdateState(op, value, pop: 2);
+        }
+
+        public void ShiftLeft()
+        {
+            VerifyAndShift("ShiftLeft", OpCodes.Shl);
+        }
+
+        public void ShiftRight()
+        {
+            VerifyAndShift("ShiftRight", OpCodes.Shr);
+        }
+
+        public void UnsignedShiftRight()
+        {
+            VerifyAndShift("UnsignedShiftRight", OpCodes.Shr_Un);
+        }
     }
 }
