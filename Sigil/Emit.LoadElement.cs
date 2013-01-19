@@ -33,6 +33,11 @@ namespace Sigil
                 throw new SigilException("LoadElement expects an array as the second element on the stack, found " + array, Stack);
             }
 
+            if (array.Type.GetArrayRank() != 1)
+            {
+                throw new SigilException("LoadElement expects a 1-dimensional array, found " + array, Stack);
+            }
+
             OpCode? instr = null;
             var elemType = array.Type.GetElementType();
 
