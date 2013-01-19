@@ -11,69 +11,6 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void Add(EmitLocal loadVal2)
-        {
-            LoadLocal(loadVal2);
-            Add();
-        }
-
-        public void Add(EmitLocal loadVal1, EmitLocal loadVal2)
-        {
-            LoadLocal(loadVal1);
-            LoadLocal(loadVal2);
-            Add();
-        }
-
-        public void Add(EmitLocal loadVa1, EmitLocal loadVal2, EmitLocal storeVal)
-        {
-            LoadLocal(loadVa1);
-            LoadLocal(loadVal2);
-            Add();
-            StoreLocal(storeVal);
-        }
-
-        public void AddOverflow(EmitLocal loadVal2)
-        {
-            LoadLocal(loadVal2);
-            AddOverflow();
-        }
-
-        public void AddOverflow(EmitLocal loadVal1, EmitLocal loadVal2)
-        {
-            LoadLocal(loadVal1);
-            LoadLocal(loadVal2);
-            AddOverflow();
-        }
-
-        public void AddOverflow(EmitLocal loadVa1, EmitLocal loadVal2, EmitLocal storeVal)
-        {
-            LoadLocal(loadVa1);
-            LoadLocal(loadVal2);
-            AddOverflow();
-            StoreLocal(storeVal);
-        }
-
-        public void UnsignedAddOverflow(EmitLocal loadVal2)
-        {
-            LoadLocal(loadVal2);
-            UnsignedAddOverflow();
-        }
-
-        public void UnsignedAddOverflow(EmitLocal loadVal1, EmitLocal loadVal2)
-        {
-            LoadLocal(loadVal1);
-            LoadLocal(loadVal2);
-            UnsignedAddOverflow();
-        }
-
-        public void UnsignedAddOverflow(EmitLocal loadVa1, EmitLocal loadVal2, EmitLocal storeVal)
-        {
-            LoadLocal(loadVa1);
-            LoadLocal(loadVal2);
-            UnsignedAddOverflow();
-            StoreLocal(storeVal);
-        }
-
         private void VerifyAndAdd(OpCode addOp, TypeOnStack val1, TypeOnStack val2)
         {
             // See: http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.add.aspx

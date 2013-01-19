@@ -11,12 +11,6 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void Return(EmitLocal val)
-        {
-            LoadLocal(val);
-            Return();
-        }
-
         public void Return()
         {
             if (ReturnType == typeof(void))
