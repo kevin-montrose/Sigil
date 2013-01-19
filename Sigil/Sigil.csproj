@@ -73,6 +73,9 @@
     <Compile Include="Emit.LoadConstant.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.LoadElement.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Locals.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
