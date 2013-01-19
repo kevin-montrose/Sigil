@@ -34,6 +34,8 @@ namespace Sigil
 
         private Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
+        private DelegateType CreatedDelegate;
+
         private Emit(DynamicMethod dynMethod)
         {
             DynMethod = dynMethod;
@@ -57,6 +59,9 @@ namespace Sigil
 
         public DelegateType CreateDelegate()
         {
+            if (CreatedDelegate != null) return CreatedDelegate;
+
+            InjectTailCall();
             PatchBranches();
 
             Validate();
@@ -64,18 +69,43 @@ namespace Sigil
             var il = DynMethod.GetILGenerator();
             IL.UnBuffer(il);
 
-            var ret = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
+            CreatedDelegate = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
 
             Invalidated = true;
 
-            return ret;
+            return CreatedDelegate;
+        }
+
+        private void InsertInstruction(int index, OpCode instr)
+        {
+            IL.Insert(index, OpCodes.Tailcall);
+
+            // We need to update our state to account for the new insertion
+            foreach (var kv in Branches.Where(w => w.Value.Item2 >= index).ToList())
+            {
+                Branches[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+            }
+
+            foreach (var kv in Marks.Where(w => w.Value.Item2 >= index).ToList())
+            {
+                Marks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+            }
+
+            var needUpdateKeys = BranchPatches.Keys.Where(k => k >= index).ToList();
+
+            foreach (var key in needUpdateKeys)
+            {
+                var cur = BranchPatches[key];
+                BranchPatches.Remove(key);
+                BranchPatches[key + 1] = cur;
+            }
         }
 
         private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop)
         {
             if (Invalidated)
             {
-                throw new SigilException("Cannot modify Emit after a delegate has been generated from it", Stack);
+                throw new InvalidOperationException("Cannot modify Emit after a delegate has been generated from it");
             }
 
             if (pop > 0)

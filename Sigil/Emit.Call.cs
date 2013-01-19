@@ -11,6 +11,20 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private void InjectTailCall()
+        {
+            if (InstructionStream.Count < 2) return;
+
+            var last = InstructionStream[InstructionStream.Count - 1];
+            var nextToLast = InstructionStream[InstructionStream.Count - 2];
+
+            if (last.Item1 != OpCodes.Ret) return;
+
+            if (!new[] { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt }.Contains(nextToLast.Item1)) return;
+
+            InsertInstruction(IL.Index - 2, OpCodes.Tailcall);
+        }
+
         public void Call(MethodInfo method)
         {
             if (method == null)

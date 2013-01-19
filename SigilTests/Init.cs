@@ -44,7 +44,7 @@ namespace SigilTests
                 e1.LoadConstant(100);
                 Assert.Fail("Shouldn't be able to modify emit after a delegate has been created");
             }
-            catch (SigilException e)
+            catch (InvalidOperationException e)
             {
                 Assert.AreEqual(e.Message, "Cannot modify Emit after a delegate has been generated from it");
             }

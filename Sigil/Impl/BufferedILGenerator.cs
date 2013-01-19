@@ -50,6 +50,16 @@ namespace Sigil.Impl
             return il.ILOffset;
         }
 
+        public void Insert(int ix, OpCode op)
+        {
+            if (ix < 0 || ix > Buffer.Count)
+            {
+                throw new ArgumentOutOfRangeException("ix", "Expected value between 0 and " + Buffer.Count);
+            }
+
+            Buffer.Insert(ix, il => il.Emit(op));
+        }
+
         public void Emit(OpCode op)
         {
             Buffer.Add(il => il.Emit(op));
