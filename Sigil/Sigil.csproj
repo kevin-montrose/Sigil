@@ -82,6 +82,9 @@
     <Compile Include="Emit.Locals.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.NewArray.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.NewObject.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

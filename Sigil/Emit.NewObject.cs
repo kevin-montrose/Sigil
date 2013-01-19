@@ -112,11 +112,6 @@ namespace Sigil
                 throw new ArgumentNullException("parameterTypes");
             }
 
-            if (type.IsValueType)
-            {
-                throw new SigilException("Type must be a ReferenceType", Stack);
-            }
-
             var cons = type.GetConstructor(parameterTypes);
             if (cons == null)
             {
