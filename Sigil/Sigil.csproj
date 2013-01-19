@@ -60,6 +60,9 @@
     <Compile Include="Emit.Compare.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Convert.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.cs" />
     <Compile Include="Emit.Labels.cs">
       <DependentUpon>Emit.cs</DependentUpon>

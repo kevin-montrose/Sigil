@@ -35,13 +35,13 @@ namespace Sigil
             UpdateState(OpCodes.Cgt, TypeOnStack.Get<int>(), pop: 2);
         }
 
-        public void CompareGreaterThanUnsigned()
+        public void UnsignedCompareGreaterThan()
         {
             var top = Stack.Top(2);
 
             if (top == null)
             {
-                throw new SigilException("CompareGreaterThanUnsigned expects two values on the stack", Stack);
+                throw new SigilException("UnsignedCompareGreaterThan expects two values on the stack", Stack);
             }
 
             UpdateState(OpCodes.Cgt_Un, TypeOnStack.Get<int>(), pop: 2);
@@ -84,13 +84,13 @@ namespace Sigil
             UpdateState(OpCodes.Clt, TypeOnStack.Get<int>(), pop: 2);
         }
 
-        public void CompareLessThanUnsigned()
+        public void UnsignedCompareLessThan()
         {
             var top = Stack.Top(2);
 
             if (top == null)
             {
-                throw new SigilException("CompareLessThanUnsigned expects two values on the stack", Stack);
+                throw new SigilException("UnsignedCompareLessThan expects two values on the stack", Stack);
             }
 
             UpdateState(OpCodes.Clt_Un, TypeOnStack.Get<int>(), pop: 2);
