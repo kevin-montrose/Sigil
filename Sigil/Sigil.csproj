@@ -66,7 +66,9 @@
     <Compile Include="Emit.Convert.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Emit.CopyBlock.cs" />
+    <Compile Include="Emit.CopyBlock.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.cs" />
     <Compile Include="Emit.Duplicate.cs">
       <DependentUpon>Emit.cs</DependentUpon>
