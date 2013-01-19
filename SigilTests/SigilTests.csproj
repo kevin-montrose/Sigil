@@ -55,6 +55,7 @@
     <Compile Include="Branches.cs" />
     <Compile Include="Calls.cs" />
     <Compile Include="Init.cs" />
+    <Compile Include="LoadArguments.cs" />
     <Compile Include="LoadLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Return.cs" />
