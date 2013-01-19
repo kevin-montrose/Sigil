@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
@@ -51,6 +52,26 @@ namespace Sigil
         public void LoadConstant(double d)
         {
             UpdateState(OpCodes.Ldc_R8, d, TypeOnStack.Get<StackFloat>());
+        }
+
+        public void LoadConstant(string str)
+        {
+            UpdateState(OpCodes.Ldstr, str, TypeOnStack.Get<string>());
+        }
+
+        public void LoadConstant(FieldInfo field)
+        {
+            UpdateState(OpCodes.Ldtoken, field, TypeOnStack.Get<RuntimeFieldHandle>());
+        }
+
+        public void LoadConstant(MethodInfo method)
+        {
+            UpdateState(OpCodes.Ldtoken, method, TypeOnStack.Get<RuntimeMethodHandle>());
+        }
+
+        public void LoadConstant(TypeInfo type)
+        {
+            UpdateState(OpCodes.Ldtoken, type, TypeOnStack.Get<RuntimeTypeHandle>());
         }
     }
 }
