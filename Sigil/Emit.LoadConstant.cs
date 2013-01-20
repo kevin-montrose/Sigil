@@ -73,5 +73,10 @@ namespace Sigil
         {
             UpdateState(OpCodes.Ldtoken, type, TypeOnStack.Get<RuntimeTypeHandle>());
         }
+
+        public void LoadNull()
+        {
+            UpdateState(OpCodes.Ldnull, TypeOnStack.Get<object>());
+        }
     }
 }
