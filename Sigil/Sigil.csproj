@@ -115,6 +115,9 @@
     <Compile Include="Emit.Return.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.StoreArgument.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.StoreLocal.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
