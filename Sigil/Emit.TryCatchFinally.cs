@@ -19,7 +19,7 @@ namespace Sigil
             }
 
             var labelDel = IL.BeginExceptionBlock();
-            var label = new EmitLabel(this, labelDel, Guid.NewGuid().ToString().Replace("-", ""));
+            var label = new EmitLabel(this, labelDel, "__exceptionBlockEnd");
 
             var ret = new EmitExceptionBlock(label);
 
@@ -79,6 +79,8 @@ namespace Sigil
             TryBlocks[forTry] = Tuple.Create(location.Item1, IL.Index);
 
             Stack = new StackState();
+
+            Marks[forTry.Label] = Tuple.Create(Stack, IL.Index);
         }
 
         public EmitCatchBlock BeginCatchBlock<ExceptionType>(EmitExceptionBlock forTry)
@@ -169,8 +171,12 @@ namespace Sigil
             // There's no equivalent to EndCatchBlock in raw ILGenerator, so no call here.
             //   But that's kind of weird from a just-in-time validation standpoint.
 
-            Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate ignored;
-            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label.Label, out ignored);
+            Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label.Label, out update);
+
+            Branches[Stack] = Tuple.Create(forCatch.ExceptionBlock.Label, IL.Index);
+
+            BranchPatches[IL.Index] = Tuple.Create(forCatch.ExceptionBlock.Label, update, OpCodes.Leave);
 
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
         }

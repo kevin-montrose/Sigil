@@ -104,6 +104,12 @@ namespace Sigil
                         continue;
                     }
 
+                    if (originalOp == OpCodes.Leave)
+                    {
+                        patcher(OpCodes.Leave_S);
+                        continue;
+                    }
+
                     throw new Exception("Unexpected OpCode: " + originalOp);
                 }
             }

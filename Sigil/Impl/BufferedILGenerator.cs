@@ -50,7 +50,11 @@ namespace Sigil.Impl
 
             foreach (var x in Buffer.Skip(start).Take(stop - start))
             {
-                x(il, ignored);
+                try
+                {
+                    x(il, ignored);
+                }
+                catch (NotSupportedException) { /* suppress these because ILGenerator keeps *just enough* state to be annoying */ }
             }
 
             return il.ILOffset;
