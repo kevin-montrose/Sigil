@@ -133,6 +133,42 @@ namespace Sigil.Impl
             Buffer.Add(il => il.Emit(op, local(il)));
         }
 
+        public DefineLabelDelegate BeginExceptionBlock()
+        {
+            ILGenerator forIl = null;
+            Label? l = null;
+
+            DefineLabelDelegate ret =
+                il =>
+                {
+                    if (forIl != null && forIl != il)
+                    {
+                        l = null;
+                    }
+
+                    if (l != null) return l.Value;
+
+                    forIl = il;
+                    l = forIl.BeginExceptionBlock();
+
+                    return l.Value;
+                };
+
+            Buffer.Add(il => { ret(il); });
+
+            return ret;
+        }
+
+        public void BeginCatchBlock(Type exception)
+        {
+            Buffer.Add(il => il.BeginCatchBlock(exception));
+        }
+
+        public void EndExceptionBlock()
+        {
+            Buffer.Add(il => il.EndExceptionBlock());
+        }
+
         public DefineLabelDelegate DefineLabel()
         {
             ILGenerator forIl = null;

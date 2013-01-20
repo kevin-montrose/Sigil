@@ -41,7 +41,7 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilException("Return expects one value to be on the stack", Stack);
+                throw new SigilException("Return should leave the stack empty", Stack);
             }
         }
     }

@@ -133,12 +133,17 @@
     <Compile Include="Emit.StoreLocal.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.TryCatchFinally.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Unbox.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.Validate.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="EmitCatchBlock.cs" />
+    <Compile Include="EmitExceptionBlock.cs" />
     <Compile Include="EmitLabel.cs" />
     <Compile Include="EmitLocal.cs" />
     <Compile Include="Impl\BufferedILGenerator.cs" />

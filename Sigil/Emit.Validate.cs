@@ -52,6 +52,22 @@ namespace Sigil
                     throw new SigilException("Branch to " + kv.Value.Item1.Name + " has a stack that doesn't match the destination", kv.Key, mark);
                 }
             }
+
+            foreach (var kv in TryBlocks)
+            {
+                if (kv.Value.Item2 == -1)
+                {
+                    throw new SigilException("Unended EmitExceptionBlock " + kv.Key, Stack);
+                }
+            }
+
+            foreach (var kv in CatchBlocks)
+            {
+                if (kv.Value.Item2 == -1)
+                {
+                    throw new Exception("Invalid State, all EmitExceptionBlock are ended but EmitCatchBlock " + kv.Key + " isn't ended");
+                }
+            }
         }
     }
 }
