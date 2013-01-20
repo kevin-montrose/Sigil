@@ -107,6 +107,33 @@ namespace Sigil
                 BranchPatches.Remove(key);
                 BranchPatches[key + 1] = cur;
             }
+
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            {
+                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
+            }
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+            {
+                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+            }
+
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            {
+                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
+            }
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+            {
+                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+            }
+
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            {
+                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
+            }
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+            {
+                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+            }
         }
 
         private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop)
