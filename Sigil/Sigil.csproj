@@ -39,13 +39,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Emit.Arithmetic.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Bitwise.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.CastClass.cs">
-      <DependentUpon>Emit.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Emit.Add.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.Box.cs">
