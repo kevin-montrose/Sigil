@@ -34,6 +34,8 @@ namespace Sigil
 
         private Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
+        private Stack<EmitExceptionBlock> CurrentExceptionBlock;
+
         private Dictionary<EmitExceptionBlock, Tuple<int, int>> TryBlocks;
         private Dictionary<EmitCatchBlock, Tuple<int, int>> CatchBlocks;
         private Dictionary<EmitFinallyBlock, Tuple<int, int>> FinallyBlocks;
@@ -59,6 +61,8 @@ namespace Sigil
             Marks = new Dictionary<EmitLabel, Tuple<StackState, int>>();
 
             BranchPatches = new Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>>();
+
+            CurrentExceptionBlock = new Stack<EmitExceptionBlock>();
 
             TryBlocks = new Dictionary<EmitExceptionBlock, Tuple<int, int>>();
             CatchBlocks = new Dictionary<EmitCatchBlock, Tuple<int, int>>();

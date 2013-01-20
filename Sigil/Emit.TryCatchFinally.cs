@@ -25,6 +25,8 @@ namespace Sigil
 
             TryBlocks[ret] = Tuple.Create(IL.Index, -1);
 
+            CurrentExceptionBlock.Push(ret);
+
             return ret;
         }
 
@@ -46,6 +48,11 @@ namespace Sigil
             if (location.Item2 != -1)
             {
                 throw new SigilException("EmitExceptionBlock has already been ended", Stack);
+            }
+
+            if (forTry != CurrentExceptionBlock.Peek())
+            {
+                throw new SigilException("Cannot end outer EmitExceptionBlock " + forTry + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is open", Stack);
             }
 
             // Can't close an exception block while there are outstanding catch blocks
@@ -81,6 +88,8 @@ namespace Sigil
             Stack = new StackState();
 
             Marks[forTry.Label] = Tuple.Create(Stack, IL.Index);
+
+            CurrentExceptionBlock.Pop();
         }
 
         public EmitCatchBlock BeginCatchBlock<ExceptionType>(EmitExceptionBlock forTry)
@@ -110,6 +119,11 @@ namespace Sigil
                 throw new ArgumentException("forTry is not owned by this Emit, and thus cannot be used");
             }
 
+            if (forTry != CurrentExceptionBlock.Peek())
+            {
+                throw new SigilException("Cannot start EmitCatchBlock on " + forTry + " while inner EmitExceptionBlock is still open", Stack);
+            }
+
             if (!Stack.IsRoot)
             {
                 throw new SigilException("Stack should be empty when BeginCatchBlock is called", Stack);
@@ -117,7 +131,7 @@ namespace Sigil
 
             if(!typeof(Exception).IsAssignableFrom(exceptionType))
             {
-                throw new SigilException("BeginCatchBlock expects a type descending from Exception, found "+exceptionType, Stack);
+                throw new SigilException("BeginCatchBlock expects a type descending from Exception, found " + exceptionType, Stack);
             }
 
             var tryBlock = TryBlocks[forTry];
@@ -198,6 +212,11 @@ namespace Sigil
             if (tryBlock.Item2 != -1)
             {
                 throw new SigilException("BeginFinallyBlock expects an unclosed exception block, but " + forTry + " is already closed", Stack);
+            }
+
+            if (forTry != CurrentExceptionBlock.Peek())
+            {
+                throw new SigilException("Cannot begin EmitFinallyBlock on " + tryBlock + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is still open", Stack);
             }
 
             if (!Stack.IsRoot)
