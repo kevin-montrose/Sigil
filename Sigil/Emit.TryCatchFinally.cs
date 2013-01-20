@@ -59,8 +59,21 @@ namespace Sigil
                 }
             }
 
-            Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate ignored;
-            IL.Emit(OpCodes.Leave, forTry.Label.Label, out ignored);
+            foreach (var kv in FinallyBlocks)
+            {
+                if (kv.Key.ExceptionBlock != forTry) continue;
+
+                if (kv.Value.Item2 == -1)
+                {
+                    throw new SigilException("Cannot end EmitExceptionBlock, EmitFinallyBlock " + kv.Key + " has not been ended", Stack);
+                }
+            }
+
+            if (!CatchBlocks.Any(k => k.Key.ExceptionBlock == forTry) && !FinallyBlocks.Any(k => k.Key.ExceptionBlock == forTry))
+            {
+                throw new SigilException("Cannot end EmitExceptionBlock without defining at least one of a catch or finally block", Stack);
+            }
+
             IL.EndExceptionBlock();
 
             TryBlocks[forTry] = Tuple.Create(location.Item1, IL.Index);
@@ -157,9 +170,79 @@ namespace Sigil
             //   But that's kind of weird from a just-in-time validation standpoint.
 
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate ignored;
-            IL.Emit(OpCodes.Leave, forCatch.ExceptionBlock.Label.Label, out ignored);
+            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label.Label, out ignored);
 
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
+        }
+
+        public EmitFinallyBlock BeginFinallyBlock(EmitExceptionBlock forTry)
+        {
+            if (forTry == null)
+            {
+                throw new ArgumentNullException("forTry");
+            }
+
+            if (forTry.Owner != this)
+            {
+                throw new ArgumentException("forTry is not owned by this Emit, and thus cannot be used");
+            }
+
+            var tryBlock = TryBlocks[forTry];
+
+            if (tryBlock.Item2 != -1)
+            {
+                throw new SigilException("BeginFinallyBlock expects an unclosed exception block, but " + forTry + " is already closed", Stack);
+            }
+
+            if (!Stack.IsRoot)
+            {
+                throw new SigilException("Stack should be empty when BeginFinallyBlock is called", Stack);
+            }
+
+            if (FinallyBlocks.Any(kv => kv.Key.ExceptionBlock == forTry))
+            {
+                throw new SigilException("There can only be one finally block per EmitExceptionBlock, and one is already defined for " + forTry, Stack);
+            }
+
+            var ret = new EmitFinallyBlock(this, forTry);
+
+            IL.BeginFinallyBlock();
+
+            FinallyBlocks[ret] = Tuple.Create(IL.Index, -1);
+
+            return ret;
+        }
+
+        public void EndFinallyBlock(EmitFinallyBlock forFinally)
+        {
+            if (forFinally == null)
+            {
+                throw new ArgumentNullException("forFinally");
+            }
+
+            if (forFinally.Owner != this)
+            {
+                throw new ArgumentException("forFinally is not owned by this Emit, and thus cannot be used");
+            }
+
+            var finallyBlock = FinallyBlocks[forFinally];
+
+            if (finallyBlock.Item2 != -1)
+            {
+                throw new SigilException("EndFinallyBlock expects an unclosed finally block, but " + forFinally + " is already closed", Stack);
+            }
+
+            if (!Stack.IsRoot)
+            {
+                throw new SigilException("Stack should be empty when EndFinallyBlock is called", Stack);
+            }
+
+            // There's no equivalent to EndFinallyBlock in raw ILGenerator, so no call here.
+            //   But that's kind of weird from a just-in-time validation standpoint.
+
+            UpdateState(OpCodes.Endfinally);
+
+            FinallyBlocks[forFinally] = Tuple.Create(finallyBlock.Item1, IL.Index);
         }
     }
 }

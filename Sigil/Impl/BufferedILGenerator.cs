@@ -16,7 +16,7 @@ namespace Sigil.Impl
 
         public int Index { get { return Buffer.Count; } }
 
-        private List<Action<ILGenerator>> Buffer = new List<Action<ILGenerator>>();
+        private List<Action<ILGenerator, StringBuilder>> Buffer = new List<Action<ILGenerator, StringBuilder>>();
 
         private Type DelegateType;
 
@@ -25,12 +25,16 @@ namespace Sigil.Impl
             DelegateType = delegateType;
         }
 
-        public void UnBuffer(ILGenerator il)
+        public string UnBuffer(ILGenerator il)
         {
+            var log = new StringBuilder();
+
             foreach (var x in Buffer)
             {
-                x(il);
+                x(il, log);
             }
+
+            return log.ToString();
         }
 
         public int ByteDistance(int start, int stop)
@@ -42,9 +46,11 @@ namespace Sigil.Impl
             var dynMethod = new DynamicMethod(Guid.NewGuid().ToString(), returnType, parameterTypes);
             var il = dynMethod.GetILGenerator();
 
+            var ignored = new StringBuilder();
+
             foreach (var x in Buffer.Skip(start).Take(stop - start))
             {
-                x(il);
+                x(il, ignored);
             }
 
             return il.ILOffset;
@@ -57,57 +63,57 @@ namespace Sigil.Impl
                 throw new ArgumentOutOfRangeException("ix", "Expected value between 0 and " + Buffer.Count);
             }
 
-            Buffer.Insert(ix, il => il.Emit(op));
+            Buffer.Insert(ix, (il, log) => { il.Emit(op); log.AppendLine(op.ToString()); });
         }
 
         public void Emit(OpCode op)
         {
-            Buffer.Add(il => il.Emit(op));
+            Buffer.Add((il, log) => { il.Emit(op); log.AppendLine(op.ToString()); });
         }
 
         public void Emit(OpCode op, int i)
         {
-            Buffer.Add(il => il.Emit(op, i));
+            Buffer.Add((il, log) => { il.Emit(op, i); log.AppendLine(op + " " + i); });
         }
 
         public void Emit(OpCode op, long l)
         {
-            Buffer.Add(il => il.Emit(op, l));
+            Buffer.Add((il, log) => { il.Emit(op, l); log.AppendLine(op + " " + l); });
         }
 
         public void Emit(OpCode op, float f)
         {
-            Buffer.Add(il => il.Emit(op, f));
+            Buffer.Add((il, log) => { il.Emit(op, f); log.AppendLine(op + " " + f); });
         }
 
         public void Emit(OpCode op, double d)
         {
-            Buffer.Add(il => il.Emit(op, d));
+            Buffer.Add((il, log) => { il.Emit(op, d); log.AppendLine(op + " " + d); });
         }
 
         public void Emit(OpCode op, MethodInfo method)
         {
-            Buffer.Add(il => il.Emit(op, method));
+            Buffer.Add((il, log) => { il.Emit(op, method); log.AppendLine(op + " " + method); });
         }
 
         public void Emit(OpCode op, ConstructorInfo cons)
         {
-            Buffer.Add(il => il.Emit(op, cons));
+            Buffer.Add((il, log) => { il.Emit(op, cons); log.AppendLine(op + " " + cons); });
         }
 
         public void Emit(OpCode op, Type type)
         {
-            Buffer.Add(il => il.Emit(op, type));
+            Buffer.Add((il, log) => { il.Emit(op, type); log.AppendLine(op + " " + type); });
         }
 
         public void Emit(OpCode op, FieldInfo field)
         {
-            Buffer.Add(il => il.Emit(op, field));
+            Buffer.Add((il, log) => { il.Emit(op, field); log.AppendLine(op + " " + field); });
         }
 
         public void Emit(OpCode op, string str)
         {
-            Buffer.Add(il => il.Emit(op, str));
+            Buffer.Add((il, log) => { il.Emit(op, str); log.AppendLine(op + " '" + str + "'"); });
         }
 
         public void Emit(OpCode op, DefineLabelDelegate label, out UpdateOpCodeDelegate update)
@@ -121,16 +127,27 @@ namespace Sigil.Impl
                 };
 
             Buffer.Add(
-                il => 
+                (il, log) => 
                     {
-                        il.Emit(localOp, label(il));
+                        var l = label(il);
+                        il.Emit(localOp, l);
+                        
+                        log.AppendLine(op + " " + l);
                     }
             );
         }
 
         public void Emit(OpCode op, DeclareLocallDelegate local)
         {
-            Buffer.Add(il => il.Emit(op, local(il)));
+            Buffer.Add(
+                (il, log) => 
+                    {
+                        var l = local(il);
+                        il.Emit(op, l);
+
+                        log.AppendLine(op + " " + l);
+                    }
+            );
         }
 
         public DefineLabelDelegate BeginExceptionBlock()
@@ -154,19 +171,52 @@ namespace Sigil.Impl
                     return l.Value;
                 };
 
-            Buffer.Add(il => { ret(il); });
+            Buffer.Add(
+                (il, log) => 
+                { 
+                    ret(il);
+
+                    log.AppendLine("--BeginExceptionBlock--");
+                }
+            );
 
             return ret;
         }
 
         public void BeginCatchBlock(Type exception)
         {
-            Buffer.Add(il => il.BeginCatchBlock(exception));
+            Buffer.Add(
+                (il, log) =>
+                {
+                    il.BeginCatchBlock(exception);
+
+                    log.AppendLine("--BeginCatchBlock(" + exception + ")--");
+                }
+            );
         }
 
         public void EndExceptionBlock()
         {
-            Buffer.Add(il => il.EndExceptionBlock());
+            Buffer.Add(
+                (il, log) =>
+                {
+                    il.EndExceptionBlock();
+
+                    log.AppendLine("--EndExceptionBlock--");
+                }
+            );
+        }
+
+        public void BeginFinallyBlock()
+        {
+            Buffer.Add(
+                (il, log) =>
+                {
+                    il.BeginFinallyBlock();
+
+                    log.AppendLine("--BeginFinallyBlock--");
+                }
+            );
         }
 
         public DefineLabelDelegate DefineLabel()
@@ -190,14 +240,27 @@ namespace Sigil.Impl
                     return l.Value;
                 };
 
-            Buffer.Add(il => { ret(il); });
+            Buffer.Add(
+                (il, log) => 
+                { 
+                    ret(il);
+                }
+            );
 
             return ret;
         }
 
         public void MarkLabel(DefineLabelDelegate label)
         {
-            Buffer.Add(il => il.MarkLabel(label(il)));
+            Buffer.Add(
+                (il, log) =>
+                {
+                    var l = label(il);
+                    il.MarkLabel(l);
+
+                    log.AppendLine("--MarkLabel(" + l + ")--");
+                }
+            );
         }
 
         public DeclareLocallDelegate DeclareLocal(Type type)
@@ -221,7 +284,12 @@ namespace Sigil.Impl
                     return l;
                 };
 
-            Buffer.Add(il => { ret(il); });
+            Buffer.Add(
+                (il, log) => 
+                { 
+                    ret(il); 
+                }
+            );
 
             return ret;
         }

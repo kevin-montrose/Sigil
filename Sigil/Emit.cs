@@ -36,6 +36,7 @@ namespace Sigil
 
         private Dictionary<EmitExceptionBlock, Tuple<int, int>> TryBlocks;
         private Dictionary<EmitCatchBlock, Tuple<int, int>> CatchBlocks;
+        private Dictionary<EmitFinallyBlock, Tuple<int, int>> FinallyBlocks;
 
         private DelegateType CreatedDelegate;
 
@@ -61,6 +62,7 @@ namespace Sigil
 
             TryBlocks = new Dictionary<EmitExceptionBlock, Tuple<int, int>>();
             CatchBlocks = new Dictionary<EmitCatchBlock, Tuple<int, int>>();
+            FinallyBlocks = new Dictionary<EmitFinallyBlock, Tuple<int, int>>();
         }
 
         public DelegateType CreateDelegate()
@@ -73,7 +75,7 @@ namespace Sigil
             Validate();
 
             var il = DynMethod.GetILGenerator();
-            IL.UnBuffer(il);
+            var log = IL.UnBuffer(il);
 
             CreatedDelegate = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
 

@@ -42,5 +42,37 @@ namespace SigilTests
 
             Assert.AreEqual("Whatever", d1());
         }
+
+        [TestMethod]
+        public void Finally()
+        {
+            var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
+            var y = e1.CreateLocal<string>("y");
+
+            e1.LoadConstant("");
+            e1.StoreLocal(y);
+            
+            var exc = e1.BeginExceptionBlock();
+            e1.Call(typeof(TryCatchFinally).GetMethod("Throws"));
+            
+            var excCatch = e1.BeginCatchBlock<Exception>(exc);
+            e1.CallVirtual(typeof(Exception).GetProperty("Message").GetGetMethod());
+            e1.StoreLocal(y);
+            e1.EndCatchBlock(excCatch);
+            
+            var fbk = e1.BeginFinallyBlock(exc);
+            e1.LoadConstant("Finally!");
+            e1.StoreLocal(y);
+            e1.EndFinallyBlock(fbk);
+
+            e1.EndExceptionBlock(exc);
+
+            e1.LoadLocal(y);
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual("Finally!", d1());
+        }
     }
 }
