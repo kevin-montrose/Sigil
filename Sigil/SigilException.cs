@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
+    [Serializable]
     public class SigilException : Exception
     {
         private StackState Stack;
