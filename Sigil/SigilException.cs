@@ -12,7 +12,7 @@ namespace Sigil
     {
         private StackState Stack;
         private StackState SecondStack;
-
+        
         internal SigilException(string message) : base(message) { }
 
         internal SigilException(string message, StackState stack) : base(message)

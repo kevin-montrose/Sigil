@@ -93,11 +93,23 @@ namespace Sigil
                 throw new SigilException(name + " expects an int32, int64, native int, or float as a first value; found " + val1, Stack);
             }
 
-            if (val1 == TypeOnStack.Get<StackFloat>())
+            if (val1 == TypeOnStack.Get<float>())
             {
-                if (val2 == TypeOnStack.Get<StackFloat>())
+                if (val2 == TypeOnStack.Get<float>())
                 {
-                    UpdateState(addOp, TypeOnStack.Get<StackFloat>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<float>(), pop: 2);
+
+                    return;
+                }
+
+                throw new SigilException(name + " with a float expects a float as second value; found " + val2, Stack);
+            }
+
+            if (val1 == TypeOnStack.Get<double>())
+            {
+                if (val2 == TypeOnStack.Get<double>())
+                {
+                    UpdateState(addOp, TypeOnStack.Get<double>(), pop: 2);
 
                     return;
                 }

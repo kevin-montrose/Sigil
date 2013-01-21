@@ -111,7 +111,6 @@ namespace Sigil.Impl
             var ret = Type.FullName;
 
             if (Type == typeof(NativeInt)) ret = "native int";
-            if (Type == typeof(StackFloat)) ret = "F";
 
             if (IsPointer) ret += "*";
             if (IsReference) ret += "&";
@@ -122,7 +121,4 @@ namespace Sigil.Impl
 
     // Stand in for native int type
     internal class NativeInt { }
-
-    // Stand in for "float" as defined on the stack; no distinction between float/double
-    internal class StackFloat { }
 }

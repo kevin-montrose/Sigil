@@ -46,12 +46,12 @@ namespace Sigil
 
         public void LoadConstant(float f)
         {
-            UpdateState(OpCodes.Ldc_R4, f, TypeOnStack.Get<StackFloat>());
+            UpdateState(OpCodes.Ldc_R4, f, TypeOnStack.Get<float>());
         }
 
         public void LoadConstant(double d)
         {
-            UpdateState(OpCodes.Ldc_R8, d, TypeOnStack.Get<StackFloat>());
+            UpdateState(OpCodes.Ldc_R8, d, TypeOnStack.Get<double>());
         }
 
         public void LoadConstant(string str)
