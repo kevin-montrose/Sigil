@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
-    public class EmitExceptionBlock
+    public class ExceptionBlock
     {
         internal object Owner { get { return Label.Owner; } }
 
         public Label Label { get; private set; }
 
-        internal EmitExceptionBlock(Label label)
+        internal ExceptionBlock(Label label)
         {
             Label = label;
         }

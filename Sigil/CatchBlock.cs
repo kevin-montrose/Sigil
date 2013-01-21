@@ -10,14 +10,14 @@ namespace Sigil
 {
     public class CatchBlock
     {
-        public EmitExceptionBlock ExceptionBlock { get; private set; }
+        public ExceptionBlock ExceptionBlock { get; private set; }
         public bool IsCatchAll { get { return ExceptionType == typeof(Exception); } }
 
         public Type ExceptionType { get; private set; }
 
         internal object Owner { get; private set; }
 
-        internal CatchBlock(object owner, Type exceptionType, EmitExceptionBlock forTry)
+        internal CatchBlock(object owner, Type exceptionType, ExceptionBlock forTry)
         {
             Owner = owner;
             ExceptionType = exceptionType;

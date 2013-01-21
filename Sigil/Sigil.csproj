@@ -143,7 +143,7 @@
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="CatchBlock.cs" />
-    <Compile Include="EmitExceptionBlock.cs" />
+    <Compile Include="ExceptionBlock.cs" />
     <Compile Include="FinallyBlock.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Local.cs" />

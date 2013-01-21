@@ -11,7 +11,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public EmitExceptionBlock BeginExceptionBlock()
+        public ExceptionBlock BeginExceptionBlock()
         {
             if (!Stack.IsRoot)
             {
@@ -21,7 +21,7 @@ namespace Sigil
             var labelDel = IL.BeginExceptionBlock();
             var label = new Label(this, labelDel, "__exceptionBlockEnd");
 
-            var ret = new EmitExceptionBlock(label);
+            var ret = new ExceptionBlock(label);
 
             TryBlocks[ret] = Tuple.Create(IL.Index, -1);
 
@@ -30,7 +30,7 @@ namespace Sigil
             return ret;
         }
 
-        public void EndExceptionBlock(EmitExceptionBlock forTry)
+        public void EndExceptionBlock(ExceptionBlock forTry)
         {
             if (forTry == null)
             {
@@ -47,12 +47,12 @@ namespace Sigil
             // Can't close the same exception block twice
             if (location.Item2 != -1)
             {
-                throw new SigilException("EmitExceptionBlock has already been ended", Stack);
+                throw new SigilException("ExceptionBlock has already been ended", Stack);
             }
 
             if (forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot end outer EmitExceptionBlock " + forTry + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is open", Stack);
+                throw new SigilException("Cannot end outer ExceptionBlock " + forTry + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is open", Stack);
             }
 
             // Can't close an exception block while there are outstanding catch blocks
@@ -62,7 +62,7 @@ namespace Sigil
 
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Cannot end EmitExceptionBlock, CatchBlock " + kv.Key + " has not been ended", Stack);
+                    throw new SigilException("Cannot end ExceptionBlock, CatchBlock " + kv.Key + " has not been ended", Stack);
                 }
             }
 
@@ -72,13 +72,13 @@ namespace Sigil
 
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Cannot end EmitExceptionBlock, FinallyBlock " + kv.Key + " has not been ended", Stack);
+                    throw new SigilException("Cannot end ExceptionBlock, FinallyBlock " + kv.Key + " has not been ended", Stack);
                 }
             }
 
             if (!CatchBlocks.Any(k => k.Key.ExceptionBlock == forTry) && !FinallyBlocks.Any(k => k.Key.ExceptionBlock == forTry))
             {
-                throw new SigilException("Cannot end EmitExceptionBlock without defining at least one of a catch or finally block", Stack);
+                throw new SigilException("Cannot end ExceptionBlock without defining at least one of a catch or finally block", Stack);
             }
 
             IL.EndExceptionBlock();
@@ -92,17 +92,17 @@ namespace Sigil
             CurrentExceptionBlock.Pop();
         }
 
-        public CatchBlock BeginCatchBlock<ExceptionType>(EmitExceptionBlock forTry)
+        public CatchBlock BeginCatchBlock<ExceptionType>(ExceptionBlock forTry)
         {
             return BeginCatchBlock(forTry, typeof(ExceptionType));
         }
 
-        public CatchBlock BeginCatchAllBlock(EmitExceptionBlock forTry)
+        public CatchBlock BeginCatchAllBlock(ExceptionBlock forTry)
         {
             return BeginCatchBlock<Exception>(forTry);
         }
 
-        public CatchBlock BeginCatchBlock(EmitExceptionBlock forTry, Type exceptionType)
+        public CatchBlock BeginCatchBlock(ExceptionBlock forTry, Type exceptionType)
         {
             if (exceptionType == null)
             {
@@ -121,7 +121,7 @@ namespace Sigil
 
             if (forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot start CatchBlock on " + forTry + " while inner EmitExceptionBlock is still open", Stack);
+                throw new SigilException("Cannot start CatchBlock on " + forTry + " while inner ExceptionBlock is still open", Stack);
             }
 
             if (!Stack.IsRoot)
@@ -195,7 +195,7 @@ namespace Sigil
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
         }
 
-        public FinallyBlock BeginFinallyBlock(EmitExceptionBlock forTry)
+        public FinallyBlock BeginFinallyBlock(ExceptionBlock forTry)
         {
             if (forTry == null)
             {
@@ -216,7 +216,7 @@ namespace Sigil
 
             if (forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot begin FinallyBlock on " + tryBlock + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is still open", Stack);
+                throw new SigilException("Cannot begin FinallyBlock on " + tryBlock + " while inner ExceptionBlock " + CurrentExceptionBlock.Peek() + " is still open", Stack);
             }
 
             if (!Stack.IsRoot)
@@ -226,7 +226,7 @@ namespace Sigil
 
             if (FinallyBlocks.Any(kv => kv.Key.ExceptionBlock == forTry))
             {
-                throw new SigilException("There can only be one finally block per EmitExceptionBlock, and one is already defined for " + forTry, Stack);
+                throw new SigilException("There can only be one finally block per ExceptionBlock, and one is already defined for " + forTry, Stack);
             }
 
             var ret = new FinallyBlock(this, forTry);

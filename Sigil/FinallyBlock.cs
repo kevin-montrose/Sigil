@@ -8,11 +8,11 @@ namespace Sigil
 {
     public class FinallyBlock
     {
-        public EmitExceptionBlock ExceptionBlock { get; private set; }
+        public ExceptionBlock ExceptionBlock { get; private set; }
 
         internal object Owner { get; private set; }
 
-        internal FinallyBlock(object owner, EmitExceptionBlock forTry)
+        internal FinallyBlock(object owner, ExceptionBlock forTry)
         {
             ExceptionBlock = forTry;
             Owner = owner;

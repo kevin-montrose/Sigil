@@ -46,7 +46,7 @@ namespace Sigil
             {
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Unended EmitExceptionBlock " + kv.Key, Stack);
+                    throw new SigilException("Unended ExceptionBlock " + kv.Key, Stack);
                 }
             }
 
@@ -54,7 +54,7 @@ namespace Sigil
             {
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new Exception("Invalid State, all EmitExceptionBlocks are ended but CatchBlock " + kv.Key + " isn't ended");
+                    throw new Exception("Invalid State, all ExceptionBlocks are ended but CatchBlock " + kv.Key + " isn't ended");
                 }
             }
 
@@ -62,7 +62,7 @@ namespace Sigil
             {
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new Exception("Invalid State, all EmitExceptionBlocks are ended but FinallyBlock " + kv.Key + " isn't ended");
+                    throw new Exception("Invalid State, all ExceptionBlocks are ended but FinallyBlock " + kv.Key + " isn't ended");
                 }
             }
         }
@@ -104,7 +104,7 @@ namespace Sigil
                 {
                     if (instr.Item3 != OpCodes.Leave)
                     {
-                        throw new SigilException("Cannot branch from inside " + fromTryBlock + " to outside, exit the EmitExceptionBlock first");
+                        throw new SigilException("Cannot branch from inside " + fromTryBlock + " to outside, exit the ExceptionBlock first");
                     }
                 }
 
@@ -112,13 +112,13 @@ namespace Sigil
                 {
                     if (instr.Item3 != OpCodes.Leave)
                     {
-                        throw new SigilException("Cannot branch from inside " + fromCatchBlock + " to outside, exit the EmitExceptionBlock first");
+                        throw new SigilException("Cannot branch from inside " + fromCatchBlock + " to outside, exit the ExceptionBlock first");
                     }
                 }
 
                 if (fromFinallyBlock != null && toFinallyBlock != fromFinallyBlock)
                 {
-                    throw new SigilException("Cannot branch from inside " + fromFinallyBlock + " to outside, exit the EmitExceptionBlock first");
+                    throw new SigilException("Cannot branch from inside " + fromFinallyBlock + " to outside, exit the ExceptionBlock first");
                 }
 
                 if (toFinallyBlock != null && fromFinallyBlock != toFinallyBlock)

@@ -34,9 +34,9 @@ namespace Sigil
 
         private Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
-        private Stack<EmitExceptionBlock> CurrentExceptionBlock;
+        private Stack<ExceptionBlock> CurrentExceptionBlock;
 
-        private Dictionary<EmitExceptionBlock, Tuple<int, int>> TryBlocks;
+        private Dictionary<ExceptionBlock, Tuple<int, int>> TryBlocks;
         private Dictionary<CatchBlock, Tuple<int, int>> CatchBlocks;
         private Dictionary<FinallyBlock, Tuple<int, int>> FinallyBlocks;
 
@@ -62,9 +62,9 @@ namespace Sigil
 
             BranchPatches = new Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>>();
 
-            CurrentExceptionBlock = new Stack<EmitExceptionBlock>();
+            CurrentExceptionBlock = new Stack<ExceptionBlock>();
 
-            TryBlocks = new Dictionary<EmitExceptionBlock, Tuple<int, int>>();
+            TryBlocks = new Dictionary<ExceptionBlock, Tuple<int, int>>();
             CatchBlocks = new Dictionary<CatchBlock, Tuple<int, int>>();
             FinallyBlocks = new Dictionary<FinallyBlock, Tuple<int, int>>();
         }
