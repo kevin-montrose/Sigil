@@ -8,7 +8,7 @@ using Sigil.Impl;
 
 namespace Sigil
 {
-    public class EmitCatchBlock
+    public class CatchBlock
     {
         public EmitExceptionBlock ExceptionBlock { get; private set; }
         public bool IsCatchAll { get { return ExceptionType == typeof(Exception); } }
@@ -17,7 +17,7 @@ namespace Sigil
 
         internal object Owner { get; private set; }
 
-        internal EmitCatchBlock(object owner, Type exceptionType, EmitExceptionBlock forTry)
+        internal CatchBlock(object owner, Type exceptionType, EmitExceptionBlock forTry)
         {
             Owner = owner;
             ExceptionType = exceptionType;

@@ -37,7 +37,7 @@ namespace Sigil
         private Stack<EmitExceptionBlock> CurrentExceptionBlock;
 
         private Dictionary<EmitExceptionBlock, Tuple<int, int>> TryBlocks;
-        private Dictionary<EmitCatchBlock, Tuple<int, int>> CatchBlocks;
+        private Dictionary<CatchBlock, Tuple<int, int>> CatchBlocks;
         private Dictionary<EmitFinallyBlock, Tuple<int, int>> FinallyBlocks;
 
         private DelegateType CreatedDelegate;
@@ -65,7 +65,7 @@ namespace Sigil
             CurrentExceptionBlock = new Stack<EmitExceptionBlock>();
 
             TryBlocks = new Dictionary<EmitExceptionBlock, Tuple<int, int>>();
-            CatchBlocks = new Dictionary<EmitCatchBlock, Tuple<int, int>>();
+            CatchBlocks = new Dictionary<CatchBlock, Tuple<int, int>>();
             FinallyBlocks = new Dictionary<EmitFinallyBlock, Tuple<int, int>>();
         }
 

@@ -62,7 +62,7 @@ namespace Sigil
 
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Cannot end EmitExceptionBlock, EmitCatchBlock " + kv.Key + " has not been ended", Stack);
+                    throw new SigilException("Cannot end EmitExceptionBlock, CatchBlock " + kv.Key + " has not been ended", Stack);
                 }
             }
 
@@ -92,17 +92,17 @@ namespace Sigil
             CurrentExceptionBlock.Pop();
         }
 
-        public EmitCatchBlock BeginCatchBlock<ExceptionType>(EmitExceptionBlock forTry)
+        public CatchBlock BeginCatchBlock<ExceptionType>(EmitExceptionBlock forTry)
         {
             return BeginCatchBlock(forTry, typeof(ExceptionType));
         }
 
-        public EmitCatchBlock BeginCatchAllBlock(EmitExceptionBlock forTry)
+        public CatchBlock BeginCatchAllBlock(EmitExceptionBlock forTry)
         {
             return BeginCatchBlock<Exception>(forTry);
         }
 
-        public EmitCatchBlock BeginCatchBlock(EmitExceptionBlock forTry, Type exceptionType)
+        public CatchBlock BeginCatchBlock(EmitExceptionBlock forTry, Type exceptionType)
         {
             if (exceptionType == null)
             {
@@ -121,7 +121,7 @@ namespace Sigil
 
             if (forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot start EmitCatchBlock on " + forTry + " while inner EmitExceptionBlock is still open", Stack);
+                throw new SigilException("Cannot start CatchBlock on " + forTry + " while inner EmitExceptionBlock is still open", Stack);
             }
 
             if (!Stack.IsRoot)
@@ -151,14 +151,14 @@ namespace Sigil
             Stack = new StackState();
             Stack = Stack.Push(TypeOnStack.Get(exceptionType));
 
-            var ret = new EmitCatchBlock(this, exceptionType, forTry);
+            var ret = new CatchBlock(this, exceptionType, forTry);
 
             CatchBlocks[ret] = Tuple.Create(IL.Index, -1);
 
             return ret;
         }
 
-        public void EndCatchBlock(EmitCatchBlock forCatch)
+        public void EndCatchBlock(CatchBlock forCatch)
         {
             if (forCatch == null)
             {
@@ -179,7 +179,7 @@ namespace Sigil
 
             if (location.Item2 != -1)
             {
-                throw new SigilException("EmitCatchBlock  has already been ended", Stack);
+                throw new SigilException("CatchBlock  has already been ended", Stack);
             }
 
             // There's no equivalent to EndCatchBlock in raw ILGenerator, so no call here.

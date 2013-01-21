@@ -54,7 +54,7 @@ namespace Sigil
             {
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new Exception("Invalid State, all EmitExceptionBlocks are ended but EmitCatchBlock " + kv.Key + " isn't ended");
+                    throw new Exception("Invalid State, all EmitExceptionBlocks are ended but CatchBlock " + kv.Key + " isn't ended");
                 }
             }
 

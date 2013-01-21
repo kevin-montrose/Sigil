@@ -142,7 +142,7 @@
     <Compile Include="Emit.Validate.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
-    <Compile Include="EmitCatchBlock.cs" />
+    <Compile Include="CatchBlock.cs" />
     <Compile Include="EmitExceptionBlock.cs" />
     <Compile Include="EmitFinallyBlock.cs" />
     <Compile Include="Label.cs" />
