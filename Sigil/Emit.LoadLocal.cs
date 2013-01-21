@@ -9,7 +9,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void LoadLocal(EmitLocal local)
+        public void LoadLocal(Local local)
         {
             if (local == null)
             {
@@ -37,7 +37,7 @@ namespace Sigil
                 return;
             }
 
-            UpdateState(OpCodes.Ldloc, local.Local, local.StackType);
+            UpdateState(OpCodes.Ldloc, local.LocalDel, local.StackType);
         }
     }
 }

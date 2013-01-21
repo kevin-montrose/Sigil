@@ -146,7 +146,7 @@
     <Compile Include="EmitExceptionBlock.cs" />
     <Compile Include="EmitFinallyBlock.cs" />
     <Compile Include="Label.cs" />
-    <Compile Include="EmitLocal.cs" />
+    <Compile Include="Local.cs" />
     <Compile Include="Impl\BufferedILGenerator.cs" />
     <Compile Include="Impl\ExtensionMethods.cs" />
     <Compile Include="Impl\StackState.cs" />

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
-    public class EmitLocal
+    public class Local
     {
         public string Name { get; private set; }
         public Type LocalType { get; private set; }
@@ -17,13 +17,13 @@ namespace Sigil
         internal int Index { get; private set; }
 
         //internal LocalBuilder Builder { get; private set; }
-        internal BufferedILGenerator.DeclareLocallDelegate Local { get; private set; }
+        internal BufferedILGenerator.DeclareLocallDelegate LocalDel { get; private set; }
         internal object Owner { get; private set; }
 
-        internal EmitLocal(object owner, int index, Type localType, BufferedILGenerator.DeclareLocallDelegate local, string name)
+        internal Local(object owner, int index, Type localType, BufferedILGenerator.DeclareLocallDelegate local, string name)
         {
             Owner = owner;
-            Local = local;
+            LocalDel = local;
             Name = name;
 
             Index = index;

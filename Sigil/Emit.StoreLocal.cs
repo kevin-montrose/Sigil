@@ -11,7 +11,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void StoreLocal(EmitLocal local)
+        public void StoreLocal(Local local)
         {
             if (local == null)
             {
@@ -51,7 +51,7 @@ namespace Sigil
                 return;
             }
 
-            UpdateState(OpCodes.Stloc, local.Local, pop: 1);
+            UpdateState(OpCodes.Stloc, local.LocalDel, pop: 1);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Sigil
 
         private int NextLocalIndex = 0;
 
-        private HashSet<EmitLocal> UnusedLocals;
+        private HashSet<Local> UnusedLocals;
         private HashSet<Label> UnusedLabels;
         private HashSet<Label> UnmarkedLabels;
 
@@ -53,7 +53,7 @@ namespace Sigil
 
             Stack = new StackState();
             InstructionStream = new List<Tuple<OpCode, StackState>>();
-            UnusedLocals = new HashSet<EmitLocal>();
+            UnusedLocals = new HashSet<Local>();
             UnusedLabels = new HashSet<Label>();
             UnmarkedLabels = new HashSet<Label>();
 
