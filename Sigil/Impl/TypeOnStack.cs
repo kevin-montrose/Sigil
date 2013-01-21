@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -62,9 +63,40 @@ namespace Sigil.Impl
             public static TypeOnStack Get() { return Value; }
         }
 
-        public Type Type { get; set; }
-        public bool IsReference { get; set; }
-        public bool IsPointer { get; set; }
+        public static bool operator ==(TypeOnStack a, TypeOnStack b)
+        {
+            if (object.ReferenceEquals(a, b)) return true;
+            if (object.ReferenceEquals(a, null)) return false;
+            if (object.ReferenceEquals(b, null)) return false;
+
+            // There's not exact map of NativeInt in .NET; but once it's on the stack IntPtr can be manipulated similarly
+            if (a.Type == typeof(NativeInt) && b.Type == typeof(IntPtr) || b.Type == typeof(NativeInt) && a.Type == typeof(IntPtr))
+            {
+                return a.IsPointer == b.IsPointer && a.IsReference == b.IsReference;
+            }
+
+            return
+                a.Type == b.Type &&
+                a.IsPointer == b.IsPointer &&
+                a.IsReference == b.IsReference;
+        }
+
+        public static bool operator !=(TypeOnStack a, TypeOnStack b)
+        {
+            return !(a == b);
+        }
+
+        private static readonly Dictionary<Tuple<CallingConventions, Type, Type, Type[]>, TypeOnStack> KnownFunctionPointerCache = new Dictionary<Tuple<CallingConventions, Type, Type, Type[]>, TypeOnStack>();
+
+        public Type Type { get; private set; }
+        public bool IsReference { get; private set; }
+        public bool IsPointer { get; private set; }
+
+        public bool HasAttachedMethodInfo { get; private set; }
+        public CallingConventions CallingConvention { get; private set; }
+        public Type InstanceType { get; private set; }
+        public Type ReturnType { get; private set; }
+        public Type[] ParameterTypes { get; private set; }
 
         public static TypeOnStack Get<T>()
         {
@@ -106,6 +138,34 @@ namespace Sigil.Impl
             return (TypeOnStack)getM.Invoke(null, new object[0]);
         }
 
+        public static TypeOnStack GetKnownFunctionPointer(CallingConventions conv, Type instanceType, Type returnType, Type[] parameterTypes)
+        {
+            var key = Tuple.Create(conv, instanceType, returnType, parameterTypes);
+
+            TypeOnStack ret;
+
+            lock (KnownFunctionPointerCache)
+            {
+                if (!KnownFunctionPointerCache.TryGetValue(key, out ret))
+                {
+                    ret =
+                        new TypeOnStack
+                        {
+                            HasAttachedMethodInfo = true,
+                            Type = typeof(NativeInt),
+                            CallingConvention = conv,
+                            InstanceType = instanceType,
+                            ReturnType = returnType,
+                            ParameterTypes = parameterTypes
+                        };
+
+                    KnownFunctionPointerCache[key] = ret;
+                }
+            }
+
+            return ret;
+        }
+
         public override string ToString()
         {
             var ret = Type.FullName;
@@ -116,6 +176,22 @@ namespace Sigil.Impl
             if (IsReference) ret += "&";
 
             return ret;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as TypeOnStack;
+            return this == other;
+        }
+
+        public override int GetHashCode()
+        {
+            return
+                (int)(
+                    Type.GetHashCode() ^
+                    (IsPointer ? 0x0000FFFF : 0) ^
+                    (IsReference ? 0xFFFF0000 : 0)
+                );
         }
     }
 

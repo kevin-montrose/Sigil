@@ -26,6 +26,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,6 +55,7 @@
     <Compile Include="Add.cs" />
     <Compile Include="Boxing.cs" />
     <Compile Include="Branches.cs" />
+    <Compile Include="CallIndirect.cs" />
     <Compile Include="Calls.cs" />
     <Compile Include="Init.cs" />
     <Compile Include="LoadArguments.cs" />

@@ -154,6 +154,18 @@ namespace Sigil.Impl
             );
         }
 
+        public void Emit(OpCode op, CallingConventions callConventions, Type returnType, Type[] parameterTypes)
+        {
+            Buffer.Add(
+                (il, log) =>
+                {
+                    il.EmitCalli(op, callConventions, returnType, parameterTypes, null);
+
+                    log.AppendLine(op + " " + callConventions + " " + returnType + " " + string.Join(" ", (IEnumerable<Type>)parameterTypes));
+                }
+            );
+        }
+
         public DefineLabelDelegate BeginExceptionBlock()
         {
             ILGenerator forIl = null;

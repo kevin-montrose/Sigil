@@ -12,6 +12,14 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private static readonly ModuleBuilder Module;
+
+        static Emit()
+        {
+            var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Sigil.Emit.DynamicAssembly"), AssemblyBuilderAccess.Run);
+            Module = asm.DefineDynamicModule("DynamicModule");
+        }
+
         private bool Invalidated;
 
         private BufferedILGenerator IL;
@@ -244,6 +252,13 @@ namespace Sigil
             IL.Emit(instr, str);
         }
 
+        private void UpdateState(OpCode instr, CallingConventions callConventions, Type returnType, Type[] parameterTypes, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, returnType != typeof(void) ? TypeOnStack.Get(returnType) : null, pop);
+
+            IL.Emit(instr, callConventions, returnType, parameterTypes);
+        }
+
         public static Emit<DelegateType> NewDynamicMethod(string name)
         {
             var delType = typeof(DelegateType);
@@ -266,7 +281,7 @@ namespace Sigil
             var returnType = invoke.ReturnType;
             var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
 
-            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, restrictedSkipVisibility: true);
+            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, Module, skipVisibility: true);
 
             return new Emit<DelegateType>(dynMethod);
         }
