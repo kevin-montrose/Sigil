@@ -62,7 +62,7 @@ namespace Sigil
             {
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new Exception("Invalid State, all EmitExceptionBlocks are ended but EmitFinallyBlock " + kv.Key + " isn't ended");
+                    throw new Exception("Invalid State, all EmitExceptionBlocks are ended but FinallyBlock " + kv.Key + " isn't ended");
                 }
             }
         }
@@ -123,7 +123,7 @@ namespace Sigil
 
                 if (toFinallyBlock != null && fromFinallyBlock != toFinallyBlock)
                 {
-                    throw new SigilException("Cannot branch into an EmitFinallyBlock");
+                    throw new SigilException("Cannot branch into an FinallyBlock");
                 }
             }
         }

@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
-    public class EmitFinallyBlock
+    public class FinallyBlock
     {
         public EmitExceptionBlock ExceptionBlock { get; private set; }
 
         internal object Owner { get; private set; }
 
-        internal EmitFinallyBlock(object owner, EmitExceptionBlock forTry)
+        internal FinallyBlock(object owner, EmitExceptionBlock forTry)
         {
             ExceptionBlock = forTry;
             Owner = owner;

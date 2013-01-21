@@ -72,7 +72,7 @@ namespace Sigil
 
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Cannot end EmitExceptionBlock, EmitFinallyBlock " + kv.Key + " has not been ended", Stack);
+                    throw new SigilException("Cannot end EmitExceptionBlock, FinallyBlock " + kv.Key + " has not been ended", Stack);
                 }
             }
 
@@ -195,7 +195,7 @@ namespace Sigil
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
         }
 
-        public EmitFinallyBlock BeginFinallyBlock(EmitExceptionBlock forTry)
+        public FinallyBlock BeginFinallyBlock(EmitExceptionBlock forTry)
         {
             if (forTry == null)
             {
@@ -216,7 +216,7 @@ namespace Sigil
 
             if (forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot begin EmitFinallyBlock on " + tryBlock + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is still open", Stack);
+                throw new SigilException("Cannot begin FinallyBlock on " + tryBlock + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is still open", Stack);
             }
 
             if (!Stack.IsRoot)
@@ -229,7 +229,7 @@ namespace Sigil
                 throw new SigilException("There can only be one finally block per EmitExceptionBlock, and one is already defined for " + forTry, Stack);
             }
 
-            var ret = new EmitFinallyBlock(this, forTry);
+            var ret = new FinallyBlock(this, forTry);
 
             IL.BeginFinallyBlock();
 
@@ -238,7 +238,7 @@ namespace Sigil
             return ret;
         }
 
-        public void EndFinallyBlock(EmitFinallyBlock forFinally)
+        public void EndFinallyBlock(FinallyBlock forFinally)
         {
             if (forFinally == null)
             {
