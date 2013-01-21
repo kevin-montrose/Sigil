@@ -113,9 +113,6 @@ namespace Sigil
                     throw new Exception("Unexpected OpCode: " + originalOp);
                 }
             }
-
-            // We can't use this data again, so nuke it
-            BranchPatches = null;
         }
 
         public EmitLabel CreateLabel()
