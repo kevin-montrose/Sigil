@@ -115,16 +115,16 @@ namespace Sigil
             }
         }
 
-        public EmitLabel CreateLabel()
+        public Label CreateLabel()
         {
             return CreateLabel("_" + Guid.NewGuid().ToString().Replace("-", ""));
         }
 
-        public EmitLabel CreateLabel(string name)
+        public Label CreateLabel(string name)
         {
             var label = IL.DefineLabel();
 
-            var ret = new EmitLabel(this, label, name);
+            var ret = new Label(this, label, name);
 
             UnusedLabels.Add(ret);
             UnmarkedLabels.Add(ret);
@@ -132,7 +132,7 @@ namespace Sigil
             return ret;
         }
 
-        public void MarkLabel(EmitLabel label)
+        public void MarkLabel(Label label)
         {
             if (label == null)
             {
@@ -151,7 +151,7 @@ namespace Sigil
 
             UnmarkedLabels.Remove(label);
 
-            IL.MarkLabel(label.Label);
+            IL.MarkLabel(label.LabelDel);
 
             Marks[label] = Tuple.Create(Stack, IL.Index);
         }

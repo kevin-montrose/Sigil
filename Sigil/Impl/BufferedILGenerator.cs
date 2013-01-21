@@ -11,7 +11,7 @@ namespace Sigil.Impl
     internal class BufferedILGenerator
     {
         public delegate void UpdateOpCodeDelegate(OpCode newOpcode);
-        public delegate Label DefineLabelDelegate(ILGenerator il);
+        public delegate System.Reflection.Emit.Label DefineLabelDelegate(ILGenerator il);
         public delegate LocalBuilder DeclareLocallDelegate(ILGenerator il);
 
         public int Index { get { return Buffer.Count; } }
@@ -157,7 +157,7 @@ namespace Sigil.Impl
         public DefineLabelDelegate BeginExceptionBlock()
         {
             ILGenerator forIl = null;
-            Label? l = null;
+            System.Reflection.Emit.Label? l = null;
 
             DefineLabelDelegate ret =
                 il =>
@@ -226,7 +226,7 @@ namespace Sigil.Impl
         public DefineLabelDelegate DefineLabel()
         {
             ILGenerator forIl = null;
-            Label? l = null;
+            System.Reflection.Emit.Label? l = null;
 
             DefineLabelDelegate ret =
                 il =>

@@ -11,7 +11,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void Branch(EmitLabel label)
+        public void Branch(Label label)
         {
             if (label == null)
             {
@@ -27,14 +27,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Br, label.Label, out update);
+            UpdateState(OpCodes.Br, label.LabelDel, out update);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
         }
 
-        public void BranchIfEqual(EmitLabel label)
+        public void BranchIfEqual(Label label)
         {
             if (label == null)
             {
@@ -57,14 +57,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Beq, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Beq, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
         }
 
-        public void BranchIfNotEqual(EmitLabel label)
+        public void BranchIfNotEqual(Label label)
         {
             if (label == null)
             {
@@ -87,14 +87,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bne_Un, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Bne_Un, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bne_Un);
         }
 
-        public void BranchIfGreaterOrEqual(EmitLabel label)
+        public void BranchIfGreaterOrEqual(Label label)
         {
             if (label == null)
             {
@@ -117,14 +117,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bge, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Bge, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge);
         }
 
-        public void UnsignedBranchIfGreaterOrEqual(EmitLabel label)
+        public void UnsignedBranchIfGreaterOrEqual(Label label)
         {
             if (label == null)
             {
@@ -147,14 +147,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bge_Un, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Bge_Un, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge_Un);
         }
 
-        public void BranchIfGreater(EmitLabel label)
+        public void BranchIfGreater(Label label)
         {
             if (label == null)
             {
@@ -177,14 +177,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bgt, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Bgt, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt);
         }
 
-        public void UnsignedBranchIfGreater(EmitLabel label)
+        public void UnsignedBranchIfGreater(Label label)
         {
             if (label == null)
             {
@@ -207,14 +207,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bgt_Un, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Bgt_Un, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt_Un);
         }
 
-        public void BranchIfLessOrEqual(EmitLabel label)
+        public void BranchIfLessOrEqual(Label label)
         {
             if (label == null)
             {
@@ -237,14 +237,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Ble, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Ble, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble);
         }
 
-        public void UnsignedBranchIfLessOrEqual(EmitLabel label)
+        public void UnsignedBranchIfLessOrEqual(Label label)
         {
             if (label == null)
             {
@@ -267,14 +267,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Ble_Un, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Ble_Un, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble_Un);
         }
 
-        public void BranchIfLess(EmitLabel label)
+        public void BranchIfLess(Label label)
         {
             if (label == null)
             {
@@ -297,14 +297,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Blt, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Blt, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt);
         }
 
-        public void UnsignedBranchIfLess(EmitLabel label)
+        public void UnsignedBranchIfLess(Label label)
         {
             if (label == null)
             {
@@ -327,14 +327,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Blt_Un, label.Label, out update, pop: 2);
+            UpdateState(OpCodes.Blt_Un, label.LabelDel, out update, pop: 2);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
         }
 
-        public void BranchIfFalse(EmitLabel label)
+        public void BranchIfFalse(Label label)
         {
             if (label == null)
             {
@@ -357,14 +357,14 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Brfalse, label.Label, out update, pop: 1);
+            UpdateState(OpCodes.Brfalse, label.LabelDel, out update, pop: 1);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brfalse);
         }
 
-        public void BranchIfTrue(EmitLabel label)
+        public void BranchIfTrue(Label label)
         {
             if (label == null)
             {
@@ -387,7 +387,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Brtrue, label.Label, out update, pop: 1);
+            UpdateState(OpCodes.Brtrue, label.LabelDel, out update, pop: 1);
 
             Branches[Stack] = Tuple.Create(label, IL.Index);
 

@@ -26,13 +26,13 @@ namespace Sigil
         private int NextLocalIndex = 0;
 
         private HashSet<EmitLocal> UnusedLocals;
-        private HashSet<EmitLabel> UnusedLabels;
-        private HashSet<EmitLabel> UnmarkedLabels;
+        private HashSet<Label> UnusedLabels;
+        private HashSet<Label> UnmarkedLabels;
 
-        private Dictionary<StackState, Tuple<EmitLabel, int>> Branches;
-        private Dictionary<EmitLabel, Tuple<StackState, int>> Marks;
+        private Dictionary<StackState, Tuple<Label, int>> Branches;
+        private Dictionary<Label, Tuple<StackState, int>> Marks;
 
-        private Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
+        private Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
         private Stack<EmitExceptionBlock> CurrentExceptionBlock;
 
@@ -54,13 +54,13 @@ namespace Sigil
             Stack = new StackState();
             InstructionStream = new List<Tuple<OpCode, StackState>>();
             UnusedLocals = new HashSet<EmitLocal>();
-            UnusedLabels = new HashSet<EmitLabel>();
-            UnmarkedLabels = new HashSet<EmitLabel>();
+            UnusedLabels = new HashSet<Label>();
+            UnmarkedLabels = new HashSet<Label>();
 
-            Branches = new Dictionary<StackState, Tuple<EmitLabel, int>>();
-            Marks = new Dictionary<EmitLabel, Tuple<StackState, int>>();
+            Branches = new Dictionary<StackState, Tuple<Label, int>>();
+            Marks = new Dictionary<Label, Tuple<StackState, int>>();
 
-            BranchPatches = new Dictionary<int, Tuple<EmitLabel, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>>();
+            BranchPatches = new Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>>();
 
             CurrentExceptionBlock = new Stack<EmitExceptionBlock>();
 

@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
-    public class EmitLabel
+    public class Label
     {
         public string Name { get; private set; }
 
-        internal BufferedILGenerator.DefineLabelDelegate Label { get; private set; }
+        internal BufferedILGenerator.DefineLabelDelegate LabelDel { get; private set; }
 
         internal object Owner { get; private set; }
 
-        internal EmitLabel(object owner, BufferedILGenerator.DefineLabelDelegate label, string name)
+        internal Label(object owner, BufferedILGenerator.DefineLabelDelegate label, string name)
         {
             Owner = owner;
             Name = name;
-            Label = label;
+            LabelDel = label;
         }
 
         public override string ToString()

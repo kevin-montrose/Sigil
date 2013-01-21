@@ -10,9 +10,9 @@ namespace Sigil
     {
         internal object Owner { get { return Label.Owner; } }
 
-        public EmitLabel Label { get; private set; }
+        public Label Label { get; private set; }
 
-        internal EmitExceptionBlock(EmitLabel label)
+        internal EmitExceptionBlock(Label label)
         {
             Label = label;
         }

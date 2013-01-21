@@ -19,7 +19,7 @@ namespace Sigil
             }
 
             var labelDel = IL.BeginExceptionBlock();
-            var label = new EmitLabel(this, labelDel, "__exceptionBlockEnd");
+            var label = new Label(this, labelDel, "__exceptionBlockEnd");
 
             var ret = new EmitExceptionBlock(label);
 
@@ -186,7 +186,7 @@ namespace Sigil
             //   But that's kind of weird from a just-in-time validation standpoint.
 
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label.Label, out update);
+            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label.LabelDel, out update);
 
             Branches[Stack] = Tuple.Create(forCatch.ExceptionBlock.Label, IL.Index);
 
