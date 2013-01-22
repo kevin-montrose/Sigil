@@ -115,6 +115,9 @@
     <Compile Include="Emit.LoadVirtualFunctionPointer.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.LocalAllocate.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Locals.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
