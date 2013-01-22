@@ -97,6 +97,9 @@
     <Compile Include="Emit.LoadArgument.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.LoadArgumentAddress.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.LoadConstant.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
