@@ -45,6 +45,7 @@
     <Compile Include="Emit.Bitwise.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Break.cs" />
     <Compile Include="Emit.CallIndirect.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
