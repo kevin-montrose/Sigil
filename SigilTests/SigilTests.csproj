@@ -62,6 +62,7 @@
     <Compile Include="Init.cs" />
     <Compile Include="LoadArguments.cs" />
     <Compile Include="LoadElement.cs" />
+    <Compile Include="LoadElementAddress.cs" />
     <Compile Include="LoadFields.cs" />
     <Compile Include="LoadLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

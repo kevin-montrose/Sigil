@@ -106,10 +106,16 @@
     <Compile Include="Emit.LoadElement.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.LoadElementAddress.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.LoadField.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.LoadFunctionPointer.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Emit.LoadIndirect.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.LoadLength.cs">
