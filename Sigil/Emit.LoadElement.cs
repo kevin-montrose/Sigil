@@ -98,7 +98,8 @@ namespace Sigil
 
             if (!instr.HasValue)
             {
-                throw new Exception("Couldn't infer proper Ldelem* opcode from " + elemType);
+                UpdateState(OpCodes.Ldelem, elemType, TypeOnStack.Get(elemType), pop: 2);
+                return;
             }
 
             UpdateState(instr.Value, TypeOnStack.Get(elemType), pop: 2);
