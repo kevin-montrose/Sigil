@@ -58,6 +58,7 @@
     <Compile Include="Break.cs" />
     <Compile Include="CallIndirect.cs" />
     <Compile Include="Calls.cs" />
+    <Compile Include="CheckFinite.cs" />
     <Compile Include="Init.cs" />
     <Compile Include="LoadArguments.cs" />
     <Compile Include="LoadElement.cs" />

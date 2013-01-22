@@ -45,7 +45,9 @@
     <Compile Include="Emit.Bitwise.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Emit.Break.cs" />
+    <Compile Include="Emit.Break.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.CallIndirect.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
@@ -155,6 +157,9 @@
     <Compile Include="CatchBlock.cs" />
     <Compile Include="ExceptionBlock.cs" />
     <Compile Include="FinallyBlock.cs" />
+    <Compile Include="Emit.CheckFinite.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Label.cs" />
     <Compile Include="Local.cs" />
     <Compile Include="Impl\BufferedILGenerator.cs" />
