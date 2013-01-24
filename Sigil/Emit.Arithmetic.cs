@@ -345,5 +345,24 @@ namespace Sigil
 
             VerifyAndDoArithmetic("UnsignedSubtractOverflow", OpCodes.Sub_Ovf_Un, val1, val2);
         }
+
+        public void Negate()
+        {
+            var onStack = Stack.Top();
+
+            if (onStack == null)
+            {
+                throw new SigilException("Negate expected a value to be on the stack, but it was empty", Stack);
+            }
+
+            var val = onStack[0];
+
+            if (val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>() && val != TypeOnStack.Get<NativeInt>())
+            {
+                throw new SigilException("Negate expects an int, float, double, or native int; found " + val, Stack);
+            }
+
+            UpdateState(OpCodes.Neg, val, pop: 1);
+        }
     }
 }
