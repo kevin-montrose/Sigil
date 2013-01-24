@@ -68,7 +68,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public override bool Equals(object obj)
+        public bool AreEquivalent(object obj)
         {
             var other = obj as StackState;
             if (other == null) return false;
@@ -85,13 +85,6 @@ namespace Sigil.Impl
             }
 
             return cur.IsRoot && other.IsRoot;
-        }
-
-        public override int GetHashCode()
-        {
-            if (IsRoot) return 0;
-
-            return Value.GetHashCode() ^ Previous.GetHashCode();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Sigil
             {
                 var mark = Marks[kv.Value.Item1].Item1;
 
-                if (!kv.Key.Equals(mark))
+                if (!kv.Key.AreEquivalent(mark))
                 {
                     throw new SigilException("Branch to " + kv.Value.Item1.Name + " has a stack that doesn't match the destination", kv.Key, mark);
                 }
