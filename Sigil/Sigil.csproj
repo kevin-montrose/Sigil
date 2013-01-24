@@ -112,6 +112,9 @@
     <Compile Include="Emit.LoadField.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.LoadFieldAddress.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.LoadFunctionPointer.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
