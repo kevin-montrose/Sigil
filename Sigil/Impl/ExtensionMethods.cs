@@ -34,5 +34,10 @@ namespace Sigil.Impl
 
             return type1.Type.IsAssignableFrom(type2.Type);
         }
+
+        public static bool IsAssignableFrom(this TypeOnStack type1, Type type2)
+        {
+            return type1.IsAssignableFrom(TypeOnStack.Get(type2));
+        }
     }
 }

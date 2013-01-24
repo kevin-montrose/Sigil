@@ -163,6 +163,9 @@
     <Compile Include="Emit.StoreField.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.StoreIndirect.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.StoreLocal.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
