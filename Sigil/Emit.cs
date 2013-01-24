@@ -217,6 +217,13 @@ namespace Sigil
             IL.Emit(instr, param, out update);
         }
 
+        private void UpdateState(OpCode instr, BufferedILGenerator.DefineLabelDelegate[] param, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param, out update);
+        }
+
         private void UpdateState(OpCode instr, MethodInfo method, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, addToStack, pop);

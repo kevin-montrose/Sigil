@@ -132,12 +132,33 @@ namespace Sigil.Impl
 
             Buffer.Add(
                 (il, log) => 
-                    {
-                        var l = label(il);
-                        il.Emit(localOp, l);
+                {
+                    var l = label(il);
+                    il.Emit(localOp, l);
                         
-                        log.AppendLine(op + " " + l);
-                    }
+                    log.AppendLine(op + " " + l);
+                }
+            );
+        }
+
+        public void Emit(OpCode op, DefineLabelDelegate[] labels, out UpdateOpCodeDelegate update)
+        {
+            var localOp = op;
+
+            update =
+                newOpcode =>
+                {
+                    localOp = newOpcode;
+                };
+
+            Buffer.Add(
+                (il, log) =>
+                {
+                    var ls = labels.Select(l => l(il)).ToArray();
+                    il.Emit(localOp, ls);
+
+                    log.AppendLine(op + " " + string.Join(", ", ls));
+                }
             );
         }
 

@@ -172,6 +172,9 @@
     <Compile Include="Emit.StoreObject.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Switch.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Throw.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

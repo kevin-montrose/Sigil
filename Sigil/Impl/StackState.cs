@@ -29,6 +29,17 @@ namespace Sigil.Impl
             Value = val;
         }
 
+        public StackState Unique()
+        {
+            return
+                new StackState
+                {
+                    Previous = Previous,
+                    Value = Value,
+                    IsRoot = IsRoot
+                };
+        }
+
         public StackState Push(TypeOnStack val)
         {
             return new StackState(this, val);
