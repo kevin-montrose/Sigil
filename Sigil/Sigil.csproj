@@ -169,6 +169,9 @@
     <Compile Include="Emit.StoreLocal.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.StoreObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.Throw.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
