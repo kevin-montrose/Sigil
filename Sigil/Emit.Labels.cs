@@ -26,6 +26,12 @@ namespace Sigil
 
                 if (distance >= sbyte.MinValue && distance <= sbyte.MaxValue)
                 {
+                    if (originalOp == OpCodes.Switch)
+                    {
+                        // No short form to be had
+                        continue;
+                    }
+
                     if (originalOp == OpCodes.Br)
                     {
                         patcher(OpCodes.Br_S);
