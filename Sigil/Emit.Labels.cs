@@ -20,6 +20,11 @@ namespace Sigil
                 var patcher = item.Item2;
                 var originalOp = item.Item3;
 
+                if (!Marks.ContainsKey(label))
+                {
+                    throw new SigilException("Usage of unmarked label " + label);
+                }
+
                 var stop = Marks[label].Item2;
 
                 var distance = IL.ByteDistance(start, stop);
