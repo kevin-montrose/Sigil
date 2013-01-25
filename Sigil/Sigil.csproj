@@ -97,6 +97,9 @@
     <Compile Include="Emit.Labels.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.Leave.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.LoadArgument.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

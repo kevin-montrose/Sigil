@@ -97,5 +97,20 @@ namespace Sigil.Impl
 
             return cur.IsRoot && other.IsRoot;
         }
+
+        public int Count()
+        {
+            var i = 0;
+
+            var cur = this;
+
+            while (!cur.IsRoot)
+            {
+                i++;
+                cur = cur.Previous;
+            }
+
+            return i;
+        }
     }
 }
