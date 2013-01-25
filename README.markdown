@@ -135,6 +135,8 @@ Many methods in Sigil map to multiple OpCodes, the ideal one is chosen automatic
 For example, `Br_S` is chosen when `Branch(Label)` is called if the offset needed is small enough for `Br_S` to be used instead of `Br`.
 Similarly, `LoadIndirect<Type>()` chooses the correct version of `Ldind_*` based on it's generic parameter.
 
+The `tailcall` prefix is also inserted automatically, but not the `volatile` and `unaligned` prefixes.
+
 #Sigil is a WORK IN PROGRESS
 
 Use at your own risk, there are almost certainly serious bugs at the moment.
