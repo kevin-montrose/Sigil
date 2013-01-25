@@ -24,7 +24,7 @@ namespace SigilTests
         public void Simple()
         {
             var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
-            var y = e1.CreateLocal<string>("y");
+            var y = e1.DeclareLocal<string>("y");
 
             e1.LoadConstant("");
             e1.StoreLocal(y);
@@ -47,7 +47,7 @@ namespace SigilTests
         public void Finally()
         {
             var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
-            var y = e1.CreateLocal<string>("y");
+            var y = e1.DeclareLocal<string>("y");
 
             e1.LoadConstant("");
             e1.StoreLocal(y);

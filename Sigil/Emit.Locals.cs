@@ -8,23 +8,33 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public Local CreateLocal<LocalType>()
+        public Local DeclareLocal<LocalType>()
         {
-            return CreateLocal<LocalType>("_" + Guid.NewGuid().ToString().Replace("-", ""));
+            return DeclareLocal<LocalType>("_" + Guid.NewGuid().ToString().Replace("-", ""));
         }
 
-        public Local CreateLocal<LocalType>(string name)
+        public Local DeclareLocal<LocalType>(string name)
         {
-            return CreateLocal(typeof(LocalType), name);
+            return DeclareLocal(typeof(LocalType), name);
         }
 
-        public Local CreateLocal(Type type)
+        public Local DeclareLocal(Type type)
         {
-            return CreateLocal(type, "_" + Guid.NewGuid().ToString().Replace("-", ""));
+            return DeclareLocal(type, "_" + Guid.NewGuid().ToString().Replace("-", ""));
         }
 
-        public Local CreateLocal(Type type, string name)
+        public Local DeclareLocal(Type type, string name)
         {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+
             var local = IL.DeclareLocal(type);
 
             var localIndex = NextLocalIndex;

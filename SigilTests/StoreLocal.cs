@@ -16,7 +16,7 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
-            var bar = e1.CreateLocal<int>("bar");
+            var bar = e1.DeclareLocal<int>("bar");
             e1.LoadConstant(12);
             e1.LoadConstant(34);
             e1.Add();

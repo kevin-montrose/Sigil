@@ -68,6 +68,7 @@
     <Compile Include="LoadlLocalAddress.cs" />
     <Compile Include="LoadLocal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Readme.cs" />
     <Compile Include="Return.cs" />
     <Compile Include="StoreIndirect.cs" />
     <Compile Include="StoreLocal.cs" />

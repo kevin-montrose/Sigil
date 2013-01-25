@@ -17,14 +17,14 @@ namespace SigilTests
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
             e1.LoadConstant(1);
-            var one = e1.CreateLabel("one");
+            var one = e1.DefineLabel("one");
             e1.Branch(one);
             
             e1.LoadConstant(2);
             e1.Add();
 
             e1.MarkLabel(one);
-            var two = e1.CreateLabel("two");
+            var two = e1.DefineLabel("two");
             e1.Branch(two);
 
             e1.LoadConstant(3);
@@ -43,7 +43,7 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
-            var after = e1.CreateLabel("after");
+            var after = e1.DefineLabel("after");
             e1.LoadConstant(456);
             e1.Branch(after);
             
@@ -63,7 +63,7 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
-            var after = e1.CreateLabel("after");
+            var after = e1.DefineLabel("after");
             e1.LoadConstant(111);
             e1.Branch(after);
 
@@ -85,7 +85,7 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
-            var after = e1.CreateLabel("after");
+            var after = e1.DefineLabel("after");
             e1.LoadConstant(314);
             e1.LoadConstant(456);
             e1.LoadConstant(456);
@@ -107,7 +107,7 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
 
-            var after = e1.CreateLabel("after");
+            var after = e1.DefineLabel("after");
             e1.LoadConstant(314);
             e1.LoadConstant(456);
             e1.LoadConstant(456);

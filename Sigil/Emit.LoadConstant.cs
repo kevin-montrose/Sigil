@@ -11,6 +11,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        public void LoadConstant(bool b)
+        {
+            LoadConstant(b ? 1 : 0);
+        }
+
         /// <summary>
         /// Push a constant integer onto the stack.
         /// </summary>

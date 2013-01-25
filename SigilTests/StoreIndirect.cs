@@ -15,7 +15,7 @@ namespace SigilTests
         public void Simple()
         {
             var e1 = Emit<Func<double>>.NewDynamicMethod("E1");
-            var a = e1.CreateLocal<double>("a");
+            var a = e1.DeclareLocal<double>("a");
             e1.LoadLocalAddress(a);
             e1.LoadConstant(3.1415926);
             e1.StoreIndirect<double>();

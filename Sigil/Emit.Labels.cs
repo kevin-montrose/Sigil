@@ -121,12 +121,12 @@ namespace Sigil
             }
         }
 
-        public Label CreateLabel()
+        public Label DefineLabel()
         {
-            return CreateLabel("_" + Guid.NewGuid().ToString().Replace("-", ""));
+            return DefineLabel("_" + Guid.NewGuid().ToString().Replace("-", ""));
         }
 
-        public Label CreateLabel(string name)
+        public Label DefineLabel(string name)
         {
             var label = IL.DefineLabel();
 
