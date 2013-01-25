@@ -29,7 +29,45 @@ namespace Sigil
 
         public string PrintStacks()
         {
-            throw new NotImplementedException();
+            var sb = new StringBuilder();
+
+            if (Stack == null)
+            {
+                return "";
+            }
+
+            if (SecondStack == null)
+            {
+                sb.AppendLine("Top of stack");
+                sb.AppendLine("------------");
+            }
+            else
+            {
+                sb.AppendLine("Top of stack at branch");
+                sb.AppendLine("----------------------");
+            }
+
+            EmitStack(sb, Stack);
+
+            if (SecondStack != null)
+            {
+                sb.AppendLine();
+                sb.AppendLine("Top of stack at label");
+                sb.AppendLine("---------------------");
+
+                EmitStack(sb, SecondStack);
+            }
+
+            return sb.ToString();
+        }
+
+        private static void EmitStack(StringBuilder sb, StackState stack)
+        {
+            while (!stack.IsRoot)
+            {
+                sb.AppendLine(stack.Value.ToString());
+                stack = stack.Pop();
+            }
         }
     }
 }
