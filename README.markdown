@@ -48,13 +48,13 @@ emiter.Return();
 
 SigilExceptions include the types on the stack when thrown, to aid in debugging.
 
-##Locals
+###Locals
 
 Sigil exposes `DeclareLocal<Type>()` for creating new locals, and a number of OpCodes take locals as operands.
 
 If a local is unused in a method body, a SigilException will be thrown when `CreateDelegate()` is called.
 
-##Labels, Try, Catch, and Finally
+###Labels, Try, Catch, and Finally
 
 Sigil exposes `DefineLabel`, `MarkLabel`, `BeginExceptionBlock`, `EndExceptionBlock`, `BeginCatchBlock`, `BeginCatchAllBlock`, `EndCatchBlock`, `BeginFinallyBlock`, and `EndFinallyBlock`.
 
