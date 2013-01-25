@@ -12,11 +12,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void StoreField(FieldInfo field)
+        public void StoreField(FieldInfo field, bool isVolatile = false, int? unaligned = null)
         {
             if (field == null)
             {
                 throw new ArgumentNullException("field");
+            }
+
+            if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
+            {
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+            }
+
+            if (unaligned.HasValue && field.IsStatic)
+            {
+                throw new ArgumentException("unaligned cannot be used with static fields");
             }
 
             if (!field.IsStatic)
@@ -41,6 +51,16 @@ namespace Sigil
                     throw new SigilException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, Stack);
                 }
 
+                if (isVolatile)
+                {
+                    UpdateState(OpCodes.Volatile);
+                }
+
+                if (unaligned.HasValue)
+                {
+                    UpdateState(OpCodes.Unaligned, unaligned.Value);
+                }
+
                 UpdateState(OpCodes.Stfld, field, pop: 2);
             }
             else
@@ -57,6 +77,11 @@ namespace Sigil
                 if (!field.FieldType.IsAssignableFrom(val))
                 {
                     throw new SigilException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, Stack);
+                }
+
+                if (isVolatile)
+                {
+                    UpdateState(OpCodes.Volatile);
                 }
 
                 UpdateState(OpCodes.Stsfld, field, pop: 1);

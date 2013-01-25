@@ -130,6 +130,9 @@
     <Compile Include="Emit.LoadLocalAddress.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.LoadObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.LoadVirtualFunctionPointer.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

@@ -50,6 +50,21 @@ namespace Sigil
                 }
             }
 
+            if (TryBlocks.Any(t => t.Value.Item2 == -1))
+            {
+                throw new SigilException("Jump cannot transfer control from an exception block", Stack);
+            }
+
+            if (CatchBlocks.Any(t => t.Value.Item2 == -1))
+            {
+                throw new SigilException("Jump cannot transfer control from a catch block", Stack);
+            }
+
+            if (FinallyBlocks.Any(t => t.Value.Item2 == -1))
+            {
+                throw new SigilException("Jump cannot transfer control from a finally block", Stack);
+            }
+
             UpdateState(OpCodes.Jmp, method);
         }
     }

@@ -11,16 +11,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void LoadIndirect<Type>()
+        public void LoadIndirect<Type>(bool isVolatile = false, int? unaligned = null)
         {
-            LoadIndirect(typeof(Type));
+            LoadIndirect(typeof(Type), isVolatile, unaligned);
         }
 
-        public void LoadIndirect(Type type)
+        public void LoadIndirect(Type type, bool isVolatile = false, int? unaligned = null)
         {
             if (type == null)
             {
                 throw new ArgumentNullException("type");
+            }
+
+            if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
+            {
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
             }
 
             var onStack = Stack.Top();
@@ -105,6 +110,16 @@ namespace Sigil
             if (!instr.HasValue)
             {
                 throw new Exception("Couldn't infer proper Ldind* opcode from " + type);
+            }
+
+            if (isVolatile)
+            {
+                UpdateState(OpCodes.Volatile);
+            }
+
+            if (unaligned.HasValue)
+            {
+                UpdateState(OpCodes.Unaligned, unaligned.Value);
             }
 
             UpdateState(instr.Value, TypeOnStack.Get(type), pop: 1);

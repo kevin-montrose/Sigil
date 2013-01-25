@@ -11,16 +11,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void StoreIndirect<Type>()
+        public void StoreIndirect<Type>(bool isVolatile = false, int? unaligned = null)
         {
-            StoreIndirect(typeof(Type));
+            StoreIndirect(typeof(Type), isVolatile, unaligned);
         }
 
-        public void StoreIndirect(Type type)
+        public void StoreIndirect(Type type, bool isVolatile = false, int? unaligned = null)
         {
             if (type == null)
             {
                 throw new ArgumentNullException("type");
+            }
+
+            if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
+            {
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
             }
 
             var onStack = Stack.Top(2);
@@ -41,6 +46,16 @@ namespace Sigil
             if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeInt>())
             {
                 throw new SigilException("StoreIndirected expected a reference, pointer, or native int on the stack; found " + addr, Stack);
+            }
+
+            if (isVolatile)
+            {
+                UpdateState(OpCodes.Volatile);
+            }
+
+            if (unaligned.HasValue)
+            {
+                UpdateState(OpCodes.Unaligned, unaligned.Value);
             }
 
             if (type == typeof(sbyte) || type == typeof(byte))

@@ -11,7 +11,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void CallVirtual(MethodInfo method)
+        public void CallVirtual(MethodInfo method, Type constrained = null)
         {
             if (method == null)
             {
@@ -50,6 +50,12 @@ namespace Sigil
             }
 
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);
+
+            // Shove the constrained prefix in if it's supplied
+            if (constrained != null)
+            {
+                UpdateState(OpCodes.Constrained, constrained);
+            }
 
             UpdateState(OpCodes.Callvirt, method, resultType, pop: expectedParams.Count);
         }

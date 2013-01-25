@@ -11,12 +11,12 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void StoreObject<ValueType>(bool isVolatile = false, int? unaligned = null)
+        public void LoadObject<ValueType>(bool isVolatile = false, int? unaligned = null)
         {
-            StoreObject(typeof(ValueType), isVolatile, unaligned);
+            LoadObject(typeof(ValueType), isVolatile, unaligned);
         }
 
-        public void StoreObject(Type valueType, bool isVolatile = false, int? unaligned = null)
+        public void LoadObject(Type valueType, bool isVolatile = false, int? unaligned = null)
         {
             if (valueType == null)
             {
@@ -25,7 +25,7 @@ namespace Sigil
 
             if (!valueType.IsValueType)
             {
-                throw new ArgumentException("valueType must be a ValueType");
+                throw new ArgumentException("valueType must be a ValueType", "valueType");
             }
 
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
@@ -33,24 +33,17 @@ namespace Sigil
                 throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
             }
 
-            var onStack = Stack.Top(2);
-
+            var onStack = Stack.Top();
             if (onStack == null)
             {
-                throw new SigilException("StoreObject expects two values on the stack", Stack);
+                throw new SigilException("LoadObject expected a value on the stack, but it was empty", Stack);
             }
 
-            var val = onStack[0];
-            var addr = onStack[1];
+            var ptr = onStack[0];
 
-            if (TypeOnStack.Get(valueType) != val)
+            if (!ptr.IsReference && !ptr.IsPointer && ptr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("StoreObject expected a " + valueType + " to be on the stack, found " + val, Stack);
-            }
-
-            if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeInt>())
-            {
-                throw new SigilException("StoreObject expected a reference, pointer, or native int; found " + addr, Stack);
+                throw new SigilException("LoadObject expected a reference, pointer, or native int; found " + ptr, Stack);
             }
 
             if (isVolatile)
@@ -63,7 +56,7 @@ namespace Sigil
                 UpdateState(OpCodes.Unaligned, unaligned.Value);
             }
 
-            UpdateState(OpCodes.Stobj, pop: 2);
+            UpdateState(OpCodes.Ldobj, TypeOnStack.Get(valueType), pop: 1);
         }
     }
 }

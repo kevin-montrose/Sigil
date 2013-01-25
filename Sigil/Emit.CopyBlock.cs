@@ -11,8 +11,13 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void CopyBlock()
+        public void CopyBlock(bool isVolatile = false, int? unaligned = null)
         {
+            if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
+            {
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+            }
+
             var onStack = Stack.Top(3);
 
             if (onStack == null)
@@ -42,6 +47,16 @@ namespace Sigil
             if (source != dest)
             {
                 throw new SigilException("CopyBlock expects source and destination types to match; found " + source + " and " + dest, Stack);
+            }
+
+            if (isVolatile)
+            {
+                UpdateState(OpCodes.Volatile);
+            }
+
+            if (unaligned.HasValue)
+            {
+                UpdateState(OpCodes.Unaligned, unaligned.Value);
             }
 
             UpdateState(OpCodes.Cpblk, pop: 3);

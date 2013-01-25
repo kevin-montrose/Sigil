@@ -11,8 +11,13 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public void InitializeBlock()
+        public void InitializeBlock(bool isVolatile = false, int? unaligned = null)
         {
+            if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
+            {
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+            }
+
             var onStack = Stack.Top(3);
 
             if (onStack == null)
@@ -37,6 +42,16 @@ namespace Sigil
             if (count != TypeOnStack.Get<int>())
             {
                 throw new SigilException("InitBlock expects the count to be an int; found " + count, Stack);
+            }
+
+            if(isVolatile)
+            {
+                UpdateState(OpCodes.Volatile);
+            }
+
+            if (unaligned.HasValue)
+            {
+                UpdateState(OpCodes.Unaligned, unaligned.Value);
             }
 
             UpdateState(OpCodes.Initblk, pop: 3);
