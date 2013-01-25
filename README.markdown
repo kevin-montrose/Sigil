@@ -4,15 +4,15 @@ A fail-fast, validating helper for [DynamicMethod](http://msdn.microsoft.com/en-
 
 ##Usage
 
-Sigil is a roughly 1-to-1 replacement for direct ILGenerator.  Rather than calling ILGenerator.Emit(OpCode, ...), you call Emit<DelegateType>.OpCode(...).
+Sigil is a roughly 1-to-1 replacement for ILGenerator.  Rather than calling ILGenerator.Emit(OpCode, ...), you call Emit<DelegateType>.OpCode(...).
 
-Unlike ILGenerator, Sigil will fail as soon as an error is detected in the emited IL.
+Unlike ILGenerator, Sigil will fail as soon as an error is detected in the emitted IL.
 
 ###Creating an Emit
 
 Sigil currently only supports creating DynamicMethods.
 
-To create an Emit<DelegateType:
+To create an `Emit<DelegateType>`:
 ```
 var emiter = Emit<Func<int>>.NewDynamicMethod("MyMethod");
 ```
@@ -128,7 +128,7 @@ Func<string, bool> del =
    };
 ```
 
-###Smart OpCode Choice
+###Automated OpCode Choice
 
 Many methods in Sigil map to multiple OpCodes, the ideal one is chosen automatically.
 
