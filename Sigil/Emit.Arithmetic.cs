@@ -60,6 +60,30 @@ namespace Sigil
                 throw new SigilException(name + " with to an int64 expects an in64 as second value; found " + val2, Stack);
             }
 
+            if (val1 == TypeOnStack.Get<float>())
+            {
+                if (val2 == TypeOnStack.Get<float>())
+                {
+                    UpdateState(addOp, TypeOnStack.Get<float>(), pop: 2);
+
+                    return;
+                }
+
+                throw new SigilException(name + " with a float expects a float as second value; found " + val2, Stack);
+            }
+
+            if (val1 == TypeOnStack.Get<double>())
+            {
+                if (val2 == TypeOnStack.Get<double>())
+                {
+                    UpdateState(addOp, TypeOnStack.Get<double>(), pop: 2);
+
+                    return;
+                }
+
+                throw new SigilException(name + " with a double expects a double as second value; found " + val2, Stack);
+            }
+
             if (allowReference)
             {
                 if (val1 == TypeOnStack.Get<NativeInt>())
@@ -87,39 +111,8 @@ namespace Sigil
 
                     throw new SigilException(name + " with a native int expects an int32, native int, reference, or pointer as a second value; found " + val2, Stack);
                 }
-            }
-            else
-            {
-                throw new SigilException(name + " expects an int32, int64, native int, or float as a first value; found " + val1, Stack);
-            }
 
-            if (val1 == TypeOnStack.Get<float>())
-            {
-                if (val2 == TypeOnStack.Get<float>())
-                {
-                    UpdateState(addOp, TypeOnStack.Get<float>(), pop: 2);
-
-                    return;
-                }
-
-                throw new SigilException(name + " with a float expects a float as second value; found " + val2, Stack);
-            }
-
-            if (val1 == TypeOnStack.Get<double>())
-            {
-                if (val2 == TypeOnStack.Get<double>())
-                {
-                    UpdateState(addOp, TypeOnStack.Get<double>(), pop: 2);
-
-                    return;
-                }
-
-                throw new SigilException(name + " with a float expects a float as second value; found " + val2, Stack);
-            }
-
-            if (allowReference)
-            {
-                if (val1.IsReference)
+                if (val1.IsReference || val1.IsPointer)
                 {
                     if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
                     {
@@ -128,19 +121,7 @@ namespace Sigil
                         return;
                     }
 
-                    throw new SigilException(name + " with a reference expects an int32, or a native int as second value; found " + val2, Stack);
-                }
-
-                if (val1.IsPointer)
-                {
-                    if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
-                    {
-                        UpdateState(addOp, val1, pop: 2);
-
-                        return;
-                    }
-
-                    throw new SigilException(name + " with a pointer expects an int32, or a native int as second value; found " + val2, Stack);
+                    throw new SigilException(name + " with a reference or pointer expects an int32, or a native int as second value; found " + val2, Stack);
                 }
             }
             else

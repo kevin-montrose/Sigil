@@ -220,5 +220,140 @@ namespace SigilTests
                 Assert.AreEqual("ShiftLeft expects the shift to be an int or native int; found System.String", e.Message);
             }
         }
+
+        [TestMethod]
+        public void Add()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            e1.LoadConstant("123");
+            e1.LoadConstant(4);
+
+            try
+            {
+                e1.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add expects an int32, int64, native int, float, reference, or pointer as first value; found System.String", e.Message);
+            }
+
+            var e2 = Emit<Action>.NewDynamicMethod("E2");
+            e2.LoadConstant(123);
+            e2.LoadConstant("4");
+
+            try
+            {
+                e2.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
+            }
+
+            var e3 = Emit<Action>.NewDynamicMethod("E3");
+            e3.LoadConstant(123L);
+            e3.LoadConstant("4");
+
+            try
+            {
+                e3.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add with to an int64 expects an in64 as second value; found System.String", e.Message);
+            }
+
+            var e4 = Emit<Action>.NewDynamicMethod("E4");
+            e4.LoadConstant(123);
+            e4.ConvertToNativeInt();
+            e4.LoadConstant("4");
+
+            try
+            {
+                e4.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add with a native int expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
+            }
+
+            var e5 = Emit<Action>.NewDynamicMethod("E5");
+            e5.LoadConstant(123f);
+            e5.LoadConstant("4");
+
+            try
+            {
+                e5.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add with a float expects a float as second value; found System.String", e.Message);
+            }
+
+            var e6 = Emit<Action>.NewDynamicMethod("E6");
+            e6.LoadConstant(123.0);
+            e6.LoadConstant("4");
+
+            try
+            {
+                e6.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add with a double expects a double as second value; found System.String", e.Message);
+            }
+
+            var e7 = Emit<Action<int>>.NewDynamicMethod("E7");
+            e7.LoadArgumentAddress(0);
+            e7.LoadConstant("4");
+
+            try
+            {
+                e7.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add with a reference or pointer expects an int32, or a native int as second value; found System.String", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Mult()
+        {
+            var e1 = Emit<Action<int>>.NewDynamicMethod("E1");
+            e1.LoadArgumentAddress(0);
+            e1.LoadConstant(1);
+
+            try
+            {
+                e1.Multiply();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Multiply expects an int32, int64, native int, or float as a first value; found System.Int32*", e.Message);
+            }
+
+            var e2 = Emit<Action<int>>.NewDynamicMethod("E2");
+            e2.LoadConstant(1);
+            e2.LoadArgumentAddress(0);
+
+            try
+            {
+                e2.Multiply();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Multiply with an int32 expects an int32 or native int as a second value; found System.Int32*", e.Message);
+            }
+        }
     }
 }
