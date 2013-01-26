@@ -37,7 +37,7 @@ namespace Sigil.Impl
             return log.ToString();
         }
 
-        public int ByteDistance(int start, int stop)
+        private int LengthTo(int end)
         {
             var invoke = DelegateType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
@@ -48,16 +48,20 @@ namespace Sigil.Impl
 
             var ignored = new StringBuilder();
 
-            foreach (var x in Buffer.Skip(start).Take(stop - start))
+            foreach (var x in Buffer.Take(end))
             {
-                try
-                {
-                    x(il, ignored);
-                }
-                catch (NotSupportedException) { /* suppress these because ILGenerator keeps *just enough* state to be annoying */ }
+                x(il, ignored);
             }
 
             return il.ILOffset;
+        }
+
+        public int ByteDistance(int start, int stop)
+        {
+            var toStart = LengthTo(start);
+            var toStop = LengthTo(stop);
+
+            return toStop - toStart;
         }
 
         public void Insert(int ix, OpCode op)

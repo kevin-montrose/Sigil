@@ -584,5 +584,32 @@ namespace SigilTests
                 Assert.AreEqual("Negate expects an int, float, double, or native int; found System.String", e.Message);
             }
         }
+
+        [TestMethod]
+        public void BranchOutOfTry()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var l = e1.DefineLabel("end");
+
+            var t = e1.BeginExceptionBlock();
+            e1.Branch(l);
+            var c = e1.BeginCatchAllBlock(t);
+            e1.Pop();
+            e1.EndCatchBlock(c);
+            e1.EndExceptionBlock(t);
+
+            e1.MarkLabel(l);
+            e1.Return();
+
+            try
+            {
+                var d1 = e1.CreateDelegate();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Cannot branch from inside Sigil.ExceptionBlock to outside, exit the ExceptionBlock first", e.Message);
+            }
+        }
     }
 }
