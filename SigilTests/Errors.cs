@@ -172,5 +172,53 @@ namespace SigilTests
                 Assert.AreEqual("Stack should be empty when BeginExceptionBlock is called", s.Message);
             }
         }
+
+        [TestMethod]
+        public void ShiftEmptyStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.ShiftLeft();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("ShiftLeft expects two values on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void ShiftBadValues()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            e1.LoadConstant("123");
+            e1.LoadConstant(4);
+
+            try
+            {
+                e1.ShiftLeft();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("ShiftLeft expects the value to be shifted to be an int, long, or native int; found System.String", e.Message);
+            }
+
+            var e2= Emit<Action>.NewDynamicMethod("E2");
+            e2.LoadConstant(123);
+            e2.LoadConstant("4");
+
+            try
+            {
+                e2.ShiftLeft();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("ShiftLeft expects the shift to be an int or native int; found System.String", e.Message);
+            }
+        }
     }
 }

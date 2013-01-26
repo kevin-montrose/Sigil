@@ -89,7 +89,7 @@ namespace Sigil
 
             if (value != TypeOnStack.Get<int>() && value != TypeOnStack.Get<long>() && value != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException(name + " expects the value to be shifted to be an int, long, or native int; found" + value, Stack);
+                throw new SigilException(name + " expects the value to be shifted to be an int, long, or native int; found " + value, Stack);
             }
 
             if (shift != TypeOnStack.Get<int>() && shift != TypeOnStack.Get<NativeInt>())

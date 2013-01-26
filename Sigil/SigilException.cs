@@ -70,5 +70,17 @@ namespace Sigil
                 stack = stack.Pop();
             }
         }
+
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+            {
+                throw new System.ArgumentNullException("info");
+            }
+
+            info.AddValue("Message", Message);
+            info.AddValue("Stack", Stack);
+            info.AddValue("SecondStack", SecondStack);
+        }
     }
 }
