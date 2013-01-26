@@ -116,12 +116,23 @@ namespace Sigil
 
             if (forTry.Owner != this)
             {
-                throw new ArgumentException("forTry is not owned by this Emit, and thus cannot be used");
+                throw new ArgumentException(forTry + " is not owned by this Emit, and thus cannot be used");
             }
 
-            if (forTry != CurrentExceptionBlock.Peek())
+            if (CurrentExceptionBlock.Count > 0 && forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot start CatchBlock on " + forTry + " while inner ExceptionBlock is still open", Stack);
+                throw new InvalidOperationException("Cannot start CatchBlock on " + forTry + " while inner ExceptionBlock is still open");
+            }
+
+            if (!typeof(Exception).IsAssignableFrom(exceptionType))
+            {
+                throw new ArgumentException("BeginCatchBlock expects a type descending from Exception, found " + exceptionType, "exceptionType");
+            }
+
+            var currentlyOpen = CatchBlocks.Where(c => c.Key.ExceptionBlock == forTry && c.Value.Item2 == -1).Select(s => s.Key).SingleOrDefault();
+            if (currentlyOpen != null)
+            {
+                throw new InvalidOperationException("Cannot start a new catch block, " + currentlyOpen + " has not been ended");
             }
 
             if (!Stack.IsRoot)
@@ -129,22 +140,11 @@ namespace Sigil
                 throw new SigilException("Stack should be empty when BeginCatchBlock is called", Stack);
             }
 
-            if(!typeof(Exception).IsAssignableFrom(exceptionType))
-            {
-                throw new SigilException("BeginCatchBlock expects a type descending from Exception, found " + exceptionType, Stack);
-            }
-
             var tryBlock = TryBlocks[forTry];
 
             if (tryBlock.Item2 != -1)
             {
                 throw new SigilException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", Stack);
-            }
-
-            var currentlyOpen = CatchBlocks.Where(c => c.Key.ExceptionBlock == forTry && c.Value.Item2 == -1).Select(s => s.Key).SingleOrDefault();
-            if (currentlyOpen != null)
-            {
-                throw new SigilException("Cannot start a new catch block, " + currentlyOpen + " has not been ended", Stack);
             }
 
             IL.BeginCatchBlock(exceptionType);

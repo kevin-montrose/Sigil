@@ -59,6 +59,7 @@
     <Compile Include="CallIndirect.cs" />
     <Compile Include="Calls.cs" />
     <Compile Include="CheckFinite.cs" />
+    <Compile Include="Errors.cs" />
     <Compile Include="Init.cs" />
     <Compile Include="Jump.cs" />
     <Compile Include="LoadArguments.cs" />
