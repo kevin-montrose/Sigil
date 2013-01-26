@@ -55,7 +55,29 @@ namespace Sigil
             DynMethod = dynMethod;
 
             ReturnType = DynMethod.ReturnType;
-            ParameterTypes = DynMethod.GetParameters().Select(p => p.ParameterType).ToArray();
+            ParameterTypes = 
+                DynMethod
+                    .GetParameters()
+                    .Select(
+                        p =>
+                        {
+                            var type = p.ParameterType;
+
+                            // All 32-bit ints on the stack
+                            if(type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort) || type == typeof(uint))
+                            {
+                                type = typeof(int);
+                            }
+
+                            // Just a 64-bit int on the stack
+                            if(type == typeof(ulong))
+                            {
+                                type = typeof(long);
+                            }
+
+                            return type;
+                        }
+                    ).ToArray();
 
             IL = new BufferedILGenerator(typeof(DelegateType));
 
