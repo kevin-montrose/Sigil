@@ -322,10 +322,22 @@ namespace SigilTests
             {
                 Assert.AreEqual("Add with a reference or pointer expects an int32, or a native int as second value; found System.String", e.Message);
             }
+
+            var e8 = Emit<Action<int>>.NewDynamicMethod("E8");
+
+            try
+            {
+                e8.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add requires 2 arguments be on the stack", e.Message);
+            }
         }
 
         [TestMethod]
-        public void Mult()
+        public void Multiply()
         {
             var e1 = Emit<Action<int>>.NewDynamicMethod("E1");
             e1.LoadArgumentAddress(0);
@@ -353,6 +365,223 @@ namespace SigilTests
             catch (SigilException e)
             {
                 Assert.AreEqual("Multiply with an int32 expects an int32 or native int as a second value; found System.Int32*", e.Message);
+            }
+
+            var e3 = Emit<Action<int>>.NewDynamicMethod("E3");
+
+            try
+            {
+                e3.Multiply();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Multiply requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void AddOverflow()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.AddOverflow();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("AddOverflow requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void UnsignedAddOverflow()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.UnsignedAddOverflow();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("UnsignedAddOverflow requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void MultiplyOverflow()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.MultiplyOverflow();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("MultiplyOverflow requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void UnsignedMultiplyOverflow()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.UnsignedMultiplyOverflow();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("UnsignedMultiplyOverflow requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Divide()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Divide();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Divide requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void UnsignedDivide()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.UnsignedDivide();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("UnsignedDivide requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Remainder()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Remainder();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Remainder requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void UnsignedRemainder()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.UnsignedRemainder();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("UnsignedRemainder requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Subtract()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Subtract();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Subtract requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void SubtractOverflow()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.SubtractOverflow();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("SubtractOverflow requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void UnsignedSubtractOverflow()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.UnsignedSubtractOverflow();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("UnsignedSubtractOverflow requires 2 arguments be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void Negate()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Negate();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Negate expected a value to be on the stack, but it was empty", e.Message);
+            }
+
+            var e2 = Emit<Action>.NewDynamicMethod("E2");
+            e2.LoadConstant("Hello");
+
+            try
+            {
+                e2.Negate();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Negate expects an int, float, double, or native int; found System.String", e.Message);
             }
         }
     }

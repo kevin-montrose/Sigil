@@ -153,7 +153,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
+                throw new SigilException("AddOverflow requires 2 arguments be on the stack", Stack);
             }
 
             var val2 = args[0];
@@ -168,7 +168,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
+                throw new SigilException("UnsignedAddOverflow requires 2 arguments be on the stack", Stack);
             }
 
             var val2 = args[0];
@@ -183,13 +183,13 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Div requires 2 arguments be on the stack", Stack);
+                throw new SigilException("Divide requires 2 arguments be on the stack", Stack);
             }
 
             var val2 = args[0];
             var val1 = args[1];
 
-            VerifyAndDoArithmetic("Div", OpCodes.Div, val1, val2);
+            VerifyAndDoArithmetic("Divide", OpCodes.Div, val1, val2);
         }
 
         public void UnsignedDivide()
@@ -198,13 +198,13 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("UnsignedDiv requires 2 arguments be on the stack", Stack);
+                throw new SigilException("UnsignedDivide requires 2 arguments be on the stack", Stack);
             }
 
             var val2 = args[0];
             var val1 = args[1];
 
-            VerifyAndDoArithmetic("UnsignedDiv", OpCodes.Div_Un, val1, val2);
+            VerifyAndDoArithmetic("UnsignedDivide", OpCodes.Div_Un, val1, val2);
         }
 
         public void Multiply()

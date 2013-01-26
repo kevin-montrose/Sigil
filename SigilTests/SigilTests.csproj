@@ -59,6 +59,7 @@
     <Compile Include="CallIndirect.cs" />
     <Compile Include="Calls.cs" />
     <Compile Include="CheckFinite.cs" />
+    <Compile Include="Divide.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="Init.cs" />
     <Compile Include="Jump.cs" />
@@ -68,12 +69,16 @@
     <Compile Include="LoadFields.cs" />
     <Compile Include="LoadlLocalAddress.cs" />
     <Compile Include="LoadLocal.cs" />
+    <Compile Include="Multiply.cs" />
+    <Compile Include="Negate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readme.cs" />
+    <Compile Include="Remainder.cs" />
     <Compile Include="Return.cs" />
     <Compile Include="Shifts.cs" />
     <Compile Include="StoreIndirect.cs" />
     <Compile Include="StoreLocal.cs" />
+    <Compile Include="Subtract.cs" />
     <Compile Include="TryCatchFinally.cs" />
   </ItemGroup>
   <ItemGroup>
