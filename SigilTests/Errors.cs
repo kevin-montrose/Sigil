@@ -781,5 +781,66 @@ namespace SigilTests
                 Assert.AreEqual("There can only be one finally block per ExceptionBlock, and one is already defined for Sigil.ExceptionBlock", e.Message);
             }
         }
+
+        [TestMethod]
+        public void Box()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Box(null);
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("valueType", e.ParamName);
+            }
+
+            var e2 = Emit<Action>.NewDynamicMethod("E2");
+
+            try
+            {
+                e2.Box<string>();
+            }
+            catch (ArgumentException e)
+            {
+                Assert.AreEqual("valueType", e.ParamName);
+            }
+
+            var e3 = Emit<Action>.NewDynamicMethod("E3");
+
+            try
+            {
+                e3.Box<int>();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Box expects a value on the stack, but found none", e.Message);
+            }
+
+            var e4 = Emit<Action>.NewDynamicMethod("E4");
+            e4.LoadConstant("hello world");
+
+            try
+            {
+                e4.Box<byte>();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("System.String cannot be boxed as an System.Byte", e.Message);
+            }
+
+            var e5 = Emit<Action>.NewDynamicMethod("E5");
+            e5.LoadConstant(1234);
+
+            try
+            {
+                e5.Box<Guid>();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Expected System.Guid to be on the stack, found System.Int32", e.Message);
+            }
+        }
     }
 }

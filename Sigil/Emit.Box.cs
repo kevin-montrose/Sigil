@@ -23,14 +23,9 @@ namespace Sigil
                 throw new ArgumentNullException("valueType");
             }
 
-            if (!valueType.IsValueType || valueType.IsByRef || valueType.IsPointer)
+            if (!valueType.IsValueType || valueType.IsByRef || valueType.IsPointer || valueType == typeof(void))
             {
-                throw new SigilException("Only ValueTypes can be boxed, found " + valueType, Stack);
-            }
-
-            if (valueType == typeof(void))
-            {
-                throw new SigilException("Void cannot be boxed", Stack);
+                throw new ArgumentException("Only ValueTypes can be boxed, found " + valueType, "valueType");
             }
 
             var top = Stack.Top();
