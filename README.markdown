@@ -21,7 +21,7 @@ var emiter = Emit<Func<int>>.NewDynamicMethod("MyMethod");
 
 There are methods on Emit<DelegateType> for each legal CIL opcode.  Note that not all CIL opcodes are legal within DynamicMethods.
 
-DynamicMethods are created using a different Module with the current assemblies trust, if loaded under full trust unverifiable instructions are legal.
+DynamicMethods are created using a different Module with the current assembly's trust level, if loaded under full trust unverifiable instructions are legal.
 
 ```
 // Create a delegate that sums two integers
