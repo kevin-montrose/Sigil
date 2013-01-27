@@ -53,6 +53,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Add.cs" />
+    <Compile Include="Bitwise.cs" />
     <Compile Include="Boxing.cs" />
     <Compile Include="Branches.cs" />
     <Compile Include="Break.cs" />

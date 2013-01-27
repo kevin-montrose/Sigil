@@ -16,7 +16,6 @@ namespace Sigil
         internal TypeOnStack StackType { get; private set; }
         internal int Index { get; private set; }
 
-        //internal LocalBuilder Builder { get; private set; }
         internal BufferedILGenerator.DeclareLocallDelegate LocalDel { get; private set; }
         internal object Owner { get; private set; }
 
