@@ -74,5 +74,27 @@ namespace SigilTests
 
             Assert.AreEqual("Finally!", d1());
         }
+
+        [TestMethod]
+        public void IsCatchAll()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var t1 = e1.BeginExceptionBlock();
+            var c1 = e1.BeginCatchAllBlock(t1);
+
+            Assert.IsTrue(c1.IsCatchAll);
+
+            var e2 = Emit<Action>.NewDynamicMethod("E2");
+            var t2 = e2.BeginExceptionBlock();
+            var c2 = e2.BeginCatchBlock<Exception>(t2);
+
+            Assert.IsTrue(c2.IsCatchAll);
+
+            var e3 = Emit<Action>.NewDynamicMethod("E3");
+            var t3 = e3.BeginExceptionBlock();
+            var c3 = e3.BeginCatchBlock<StackOverflowException>(t3);
+
+            Assert.IsFalse(c3.IsCatchAll);
+        }
     }
 }

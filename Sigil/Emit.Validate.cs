@@ -35,7 +35,7 @@ namespace Sigil
 
                 if (!kv.Key.AreEquivalent(mark))
                 {
-                    throw new SigilException("Branch to " + kv.Value.Item1.Name + " has a stack that doesn't match the destination", kv.Key, mark);
+                    throw new SigilException("Branch to " + kv.Value.Item1 + " has a stack that doesn't match the destination", kv.Key, mark);
                 }
             }
         }

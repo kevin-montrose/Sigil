@@ -64,6 +64,11 @@ namespace Sigil
 
         private static void EmitStack(StringBuilder sb, StackState stack)
         {
+            if (stack.IsRoot)
+            {
+                sb.AppendLine("!!EMPTY!!");
+            }
+
             while (!stack.IsRoot)
             {
                 sb.AppendLine(stack.Value.ToString());
@@ -71,6 +76,7 @@ namespace Sigil
             }
         }
 
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -78,9 +84,7 @@ namespace Sigil
                 throw new System.ArgumentNullException("info");
             }
 
-            info.AddValue("Message", Message);
-            info.AddValue("Stack", Stack);
-            info.AddValue("SecondStack", SecondStack);
+            base.GetObjectData(info, context);
         }
     }
 }

@@ -842,5 +842,51 @@ namespace SigilTests
                 Assert.AreEqual("Expected System.Guid to be on the stack, found System.Int32", e.Message);
             }
         }
+
+        [TestMethod]
+        public void BadBranch()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var l = e1.DefineLabel("l");
+
+            e1.LoadConstant(1);
+            e1.Branch(l);
+            
+            e1.Pop();
+            e1.Return();
+
+            e1.MarkLabel(l);
+            e1.Return();
+
+            try
+            {
+                var d1 = e1.CreateDelegate();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Branch to l has a stack that doesn't match the destination", e.Message);
+                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n", e.PrintStacks());
+            }
+        }
+
+        [TestMethod]
+        public void StackCheck()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            e1.LoadConstant(1);
+            e1.LoadConstant("123");
+
+            try
+            {
+                e1.Add();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
+                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String\r\nSystem.Int32\r\n", e.PrintStacks());
+            }
+        }
     }
 }
