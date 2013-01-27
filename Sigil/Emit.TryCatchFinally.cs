@@ -188,7 +188,7 @@ namespace Sigil
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label.LabelDel, out update);
 
-            Branches[Stack] = Tuple.Create(forCatch.ExceptionBlock.Label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(forCatch.ExceptionBlock.Label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(forCatch.ExceptionBlock.Label, update, OpCodes.Leave);
 

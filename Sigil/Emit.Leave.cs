@@ -30,7 +30,7 @@ namespace Sigil
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Leave, label.LabelDel, out update, pop: Stack.Count());
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Leave);
         }

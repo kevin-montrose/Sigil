@@ -29,7 +29,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Br, label.LabelDel, out update);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
         }
@@ -59,7 +59,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Beq, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
         }
@@ -89,7 +89,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Bne_Un, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bne_Un);
         }
@@ -119,7 +119,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Bge, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge);
         }
@@ -149,7 +149,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Bge_Un, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge_Un);
         }
@@ -179,7 +179,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Bgt, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt);
         }
@@ -209,7 +209,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Bgt_Un, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt_Un);
         }
@@ -239,7 +239,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Ble, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble);
         }
@@ -269,7 +269,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Ble_Un, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble_Un);
         }
@@ -299,7 +299,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Blt, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt);
         }
@@ -329,7 +329,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Blt_Un, label.LabelDel, out update, pop: 2);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
         }
@@ -359,7 +359,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Brfalse, label.LabelDel, out update, pop: 1);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brfalse);
         }
@@ -389,7 +389,7 @@ namespace Sigil
 
             UpdateState(OpCodes.Brtrue, label.LabelDel, out update, pop: 1);
 
-            Branches[Stack] = Tuple.Create(label, IL.Index);
+            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brtrue);
         }

@@ -611,5 +611,85 @@ namespace SigilTests
                 Assert.AreEqual("Cannot branch from inside Sigil.ExceptionBlock to outside, exit the ExceptionBlock first", e.Message);
             }
         }
+
+        [TestMethod]
+        public void BranchOutOfCatch()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var l = e1.DefineLabel("end");
+
+            var t = e1.BeginExceptionBlock();
+            var c = e1.BeginCatchAllBlock(t);
+            e1.Pop();
+            e1.Branch(l);
+            e1.EndCatchBlock(c);
+            e1.EndExceptionBlock(t);
+
+            e1.MarkLabel(l);
+            e1.Return();
+
+            try
+            {
+                var d1 = e1.CreateDelegate();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Cannot branch from inside Sigil.CatchBlock to outside, exit the ExceptionBlock first", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void BranchOutOfFinally()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var l = e1.DefineLabel("end");
+
+            var t = e1.BeginExceptionBlock();
+            var f = e1.BeginFinallyBlock(t);
+            e1.Branch(l);
+            e1.EndFinallyBlock(f);
+            e1.EndExceptionBlock(t);
+
+            e1.MarkLabel(l);
+            e1.Return();
+
+            try
+            {
+                var d1 = e1.CreateDelegate();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Cannot branch from inside Sigil.FinallyBlock to outside, exit the ExceptionBlock first", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void BranchIntoFinally()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var l = e1.DefineLabel("inFinally");
+
+            e1.Branch(l);
+
+            var t = e1.BeginExceptionBlock();
+            var f = e1.BeginFinallyBlock(t);
+            e1.MarkLabel(l);
+            e1.EndFinallyBlock(f);
+            e1.EndExceptionBlock(t);
+
+            e1.Return();
+
+            try
+            {
+                var d1 = e1.CreateDelegate();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Cannot branch into a FinallyBlock", e.Message);
+            }
+        }
     }
 }

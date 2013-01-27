@@ -100,14 +100,6 @@ namespace Sigil
                     continue;
                 }
 
-                if (fromTryBlock != null && toTryBlock != fromTryBlock)
-                {
-                    if (instr.Item3 != OpCodes.Leave)
-                    {
-                        throw new SigilException("Cannot branch from inside " + fromTryBlock + " to outside, exit the ExceptionBlock first");
-                    }
-                }
-
                 if (fromCatchBlock != null && toCatchBlock != fromCatchBlock)
                 {
                     if (instr.Item3 != OpCodes.Leave)
@@ -123,7 +115,15 @@ namespace Sigil
 
                 if (toFinallyBlock != null && fromFinallyBlock != toFinallyBlock)
                 {
-                    throw new SigilException("Cannot branch into an FinallyBlock");
+                    throw new SigilException("Cannot branch into a FinallyBlock");
+                }
+
+                if (fromTryBlock != null && toTryBlock != fromTryBlock)
+                {
+                    if (instr.Item3 != OpCodes.Leave)
+                    {
+                        throw new SigilException("Cannot branch from inside " + fromTryBlock + " to outside, exit the ExceptionBlock first");
+                    }
                 }
             }
         }
