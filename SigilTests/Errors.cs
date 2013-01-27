@@ -691,5 +691,95 @@ namespace SigilTests
                 Assert.AreEqual("Cannot branch into a FinallyBlock", e.Message);
             }
         }
+
+        [TestMethod]
+        public void BeginFinallyBlock()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.BeginFinallyBlock(null);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("forTry", e.ParamName);
+            }
+
+            var e2 = Emit<Action>.NewDynamicMethod("E2");
+            var e3 = Emit<Action>.NewDynamicMethod("E3");
+            var t2 = e2.BeginExceptionBlock();
+
+            try
+            {
+                e3.BeginFinallyBlock(t2);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (ArgumentException e)
+            {
+                Assert.AreEqual("forTry is not owned by this Emit, and thus cannot be used", e.Message);
+            }
+
+            var e4 = Emit<Action>.NewDynamicMethod("E4");
+            var t4 = e4.BeginExceptionBlock();
+            var c4 = e4.BeginCatchAllBlock(t4);
+            e4.Pop();
+            e4.EndCatchBlock(c4);
+            e4.EndExceptionBlock(t4);
+
+            try
+            {
+                e4.BeginFinallyBlock(t4);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.AreEqual("BeginFinallyBlock expects an unclosed exception block, but Sigil.ExceptionBlock is already closed", e.Message);
+            }
+
+            var e5 = Emit<Action>.NewDynamicMethod("E5");
+            var t5 = e5.BeginExceptionBlock();
+            var t55 = e5.BeginExceptionBlock();
+
+            try
+            {
+                var f5 = e5.BeginFinallyBlock(t5);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.AreEqual("Cannot begin FinallyBlock on Sigil.ExceptionBlock while inner ExceptionBlock Sigil.ExceptionBlock is still open", e.Message);
+            }
+
+            var e6 = Emit<Action>.NewDynamicMethod("E6");
+            var t6 = e6.BeginExceptionBlock();
+            e6.LoadConstant(123);
+
+            try
+            {
+                e6.BeginFinallyBlock(t6);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Stack should be empty when BeginFinallyBlock is called", e.Message);
+            }
+
+            var e7 = Emit<Action>.NewDynamicMethod("E7");
+            var t7 = e7.BeginExceptionBlock();
+            var f7 = e7.BeginFinallyBlock(t7);
+            e7.EndFinallyBlock(f7);
+
+            try
+            {
+                e7.BeginFinallyBlock(t7);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.AreEqual("There can only be one finally block per ExceptionBlock, and one is already defined for Sigil.ExceptionBlock", e.Message);
+            }
+        }
     }
 }

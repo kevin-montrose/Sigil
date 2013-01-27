@@ -50,7 +50,7 @@ namespace Sigil
                 throw new SigilException("ExceptionBlock has already been ended", Stack);
             }
 
-            if (forTry != CurrentExceptionBlock.Peek())
+            if (CurrentExceptionBlock.Count > 0 && forTry != CurrentExceptionBlock.Peek())
             {
                 throw new SigilException("Cannot end outer ExceptionBlock " + forTry + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is open", Stack);
             }
@@ -211,22 +211,22 @@ namespace Sigil
 
             if (tryBlock.Item2 != -1)
             {
-                throw new SigilException("BeginFinallyBlock expects an unclosed exception block, but " + forTry + " is already closed", Stack);
+                throw new InvalidOperationException("BeginFinallyBlock expects an unclosed exception block, but " + forTry + " is already closed");
             }
 
-            if (forTry != CurrentExceptionBlock.Peek())
+            if (CurrentExceptionBlock.Count > 0 && forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot begin FinallyBlock on " + tryBlock + " while inner ExceptionBlock " + CurrentExceptionBlock.Peek() + " is still open", Stack);
+                throw new InvalidOperationException("Cannot begin FinallyBlock on " + forTry + " while inner ExceptionBlock " + CurrentExceptionBlock.Peek() + " is still open");
+            }
+
+            if (FinallyBlocks.Any(kv => kv.Key.ExceptionBlock == forTry))
+            {
+                throw new InvalidOperationException("There can only be one finally block per ExceptionBlock, and one is already defined for " + forTry);
             }
 
             if (!Stack.IsRoot)
             {
                 throw new SigilException("Stack should be empty when BeginFinallyBlock is called", Stack);
-            }
-
-            if (FinallyBlocks.Any(kv => kv.Key.ExceptionBlock == forTry))
-            {
-                throw new SigilException("There can only be one finally block per ExceptionBlock, and one is already defined for " + forTry, Stack);
             }
 
             var ret = new FinallyBlock(this, forTry);
