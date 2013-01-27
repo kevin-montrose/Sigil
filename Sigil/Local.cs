@@ -8,9 +8,25 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
+    /// <summary>
+    /// Represents a variable local to the delegate being created.
+    /// 
+    /// To create a Local, call DeclareLocal().
+    /// </summary>
     public class Local
     {
+        /// <summary>
+        /// The name of this local.
+        /// 
+        /// If one is omitted during creation a random one is created instead.
+        /// 
+        /// Names are purely for debugging aid, and will not appear in the generated delegate.
+        /// </summary>
         public string Name { get; private set; }
+
+        /// <summary>
+        /// The type stored in this local.
+        /// </summary>
         public Type LocalType { get; private set; }
 
         internal TypeOnStack StackType { get; private set; }
@@ -30,6 +46,9 @@ namespace Sigil
             StackType = TypeOnStack.Get(localType);
         }
 
+        /// <summary>
+        /// Returns the type and name of this Local, in string form.
+        /// </summary>
         public override string ToString()
         {
             return LocalType.FullName + " " + Name;

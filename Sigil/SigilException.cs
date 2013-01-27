@@ -8,6 +8,15 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
+    /// <summary>
+    /// A SigilException is thrown whenever a CIL stream becomes invalid.
+    /// 
+    /// There are many possible causes of this including: operator type mismatches, underflowing the stack, and branching from one stack state to another.
+    /// 
+    /// Invalid arguments, non-sensical parameters, and other non-correctness related errors will throw more specific exceptions.
+    /// 
+    /// SigilExceptions will typically include the state of the stack (or stacks) at the instruction in error.
+    /// </summary>
     [Serializable]
     public class SigilException : Exception, ISerializable
     {
@@ -28,6 +37,11 @@ namespace Sigil
             SecondStack = atLabel;
         }
 
+        /// <summary>
+        /// Returns a string representation of any stacks attached to this exception.
+        /// 
+        /// This is meant for debugging purposes, and should not be called during normal operation.
+        /// </summary>
         public string PrintStacks()
         {
             var sb = new StringBuilder();
@@ -76,6 +90,9 @@ namespace Sigil
             }
         }
 
+        /// <summary>
+        /// Implementation for ISerializable.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
@@ -85,6 +102,15 @@ namespace Sigil
             }
 
             base.GetObjectData(info, context);
+        }
+
+        /// <summary>
+        /// Returns the message and stacks on this exception, in string form.
+        /// </summary>
+        public override string ToString()
+        {
+            return
+                Message + "\r\n\r\n" + PrintStacks();
         }
     }
 }

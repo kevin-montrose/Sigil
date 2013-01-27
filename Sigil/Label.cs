@@ -8,8 +8,22 @@ using System.Threading.Tasks;
 
 namespace Sigil
 {
+    /// <summary>
+    /// Represents a Label in a CIL stream, and thus a Leave and Branch target.
+    /// 
+    /// To create a Label call DefineLabel().
+    /// 
+    /// Before creating a delegate, all Labels must be marked.  To mark a label, call MarkLabel().
+    /// </summary>
     public class Label
     {
+        /// <summary>
+        /// The name of this Label.
+        /// 
+        /// If one is omitted during creation a random one is created instead.
+        /// 
+        /// Names are purely for debugging aid, and will not appear in the generated delegate.
+        /// </summary>
         public string Name { get; private set; }
 
         internal BufferedILGenerator.DefineLabelDelegate LabelDel { get; private set; }
@@ -23,6 +37,9 @@ namespace Sigil
             LabelDel = label;
         }
 
+        /// <summary>
+        /// Equivalent to Name.
+        /// </summary>
         public override string ToString()
         {
             return Name;
