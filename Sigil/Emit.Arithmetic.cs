@@ -132,6 +132,9 @@ namespace Sigil
             throw new SigilException(name + " expects an int32, int64, native int, float, reference, or pointer as first value; found " + val1, Stack);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, adds them, and pushes the result.
+        /// </summary>
         public void Add()
         {
             var args = Stack.Top(2);
@@ -147,6 +150,11 @@ namespace Sigil
             VerifyAndDoArithmetic("Add", OpCodes.Add, val1, val2, allowReference: true);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, adds them, and pushes the result.
+        /// 
+        /// Throws an OverflowException if the result overflows the destination type.
+        /// </summary>
         public void AddOverflow()
         {
             var args = Stack.Top(2);
@@ -162,6 +170,11 @@ namespace Sigil
             VerifyAndDoArithmetic("AddOverflow", OpCodes.Add_Ovf, val1, val2, allowReference: true);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, adds them as if they were unsigned, and pushes the result.
+        /// 
+        /// Throws an OverflowException if the result overflows the destination type.
+        /// </summary>
         public void UnsignedAddOverflow()
         {
             var args = Stack.Top(2);
@@ -177,6 +190,9 @@ namespace Sigil
             VerifyAndDoArithmetic("UnsignedAddOverflow", OpCodes.Add_Ovf_Un, val1, val2, allowReference: true);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, divides the second by the first, and pushes the result.
+        /// </summary>
         public void Divide()
         {
             var args = Stack.Top(2);
@@ -192,6 +208,9 @@ namespace Sigil
             VerifyAndDoArithmetic("Divide", OpCodes.Div, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, divides the second by the first as if they were unsigned, and pushes the result.
+        /// </summary>
         public void UnsignedDivide()
         {
             var args = Stack.Top(2);
@@ -207,6 +226,9 @@ namespace Sigil
             VerifyAndDoArithmetic("UnsignedDivide", OpCodes.Div_Un, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, multiplies them, and pushes the result.
+        /// </summary>
         public void Multiply()
         {
             var args = Stack.Top(2);
@@ -222,6 +244,11 @@ namespace Sigil
             VerifyAndDoArithmetic("Multiply", OpCodes.Mul, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, multiplies them, and pushes the result.
+        /// 
+        /// Throws an OverflowException if the result overflows the destination type.
+        /// </summary>
         public void MultiplyOverflow()
         {
             var args = Stack.Top(2);
@@ -237,6 +264,11 @@ namespace Sigil
             VerifyAndDoArithmetic("MultiplyOverflow", OpCodes.Mul_Ovf, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, multiplies them as if they were unsigned, and pushes the result.
+        /// 
+        /// Throws an OverflowException if the result overflows the destination type.
+        /// </summary>
         public void UnsignedMultiplyOverflow()
         {
             var args = Stack.Top(2);
@@ -252,6 +284,9 @@ namespace Sigil
             VerifyAndDoArithmetic("UnsignedMultiplyOverflow", OpCodes.Mul_Ovf_Un, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, calculates the remainder of the second divided by the first, and pushes the result.
+        /// </summary>
         public void Remainder()
         {
             var args = Stack.Top(2);
@@ -267,6 +302,9 @@ namespace Sigil
             VerifyAndDoArithmetic("Remainder", OpCodes.Rem, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, calculates the remainder of the second divided by the first as if both were unsigned, and pushes the result.
+        /// </summary>
         public void UnsignedRemainder()
         {
             var args = Stack.Top(2);
@@ -282,6 +320,9 @@ namespace Sigil
             VerifyAndDoArithmetic("UnsignedRemainder", OpCodes.Rem_Un, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, subtracts the first from the second, and pushes the result.
+        /// </summary>
         public void Subtract()
         {
             var args = Stack.Top(2);
@@ -297,6 +338,11 @@ namespace Sigil
             VerifyAndDoArithmetic("Subtract", OpCodes.Sub, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, subtracts the first from the second, and pushes the result.
+        /// 
+        /// Throws an OverflowException if the result overflows the destination type.
+        /// </summary>
         public void SubtractOverflow()
         {
             var args = Stack.Top(2);
@@ -312,6 +358,11 @@ namespace Sigil
             VerifyAndDoArithmetic("SubtractOverflow", OpCodes.Sub_Ovf, val1, val2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, subtracts the first from the second as if they were unsigned, and pushes the result.
+        /// 
+        /// Throws an OverflowException if the result overflows the destination type.
+        /// </summary>
         public void UnsignedSubtractOverflow()
         {
             var args = Stack.Top(2);
@@ -327,6 +378,9 @@ namespace Sigil
             VerifyAndDoArithmetic("UnsignedSubtractOverflow", OpCodes.Sub_Ovf_Un, val1, val2);
         }
 
+        /// <summary>
+        /// Pops an argument off the stack, negates it, and pushes the result.
+        /// </summary>
         public void Negate()
         {
             var onStack = Stack.Top();

@@ -10,6 +10,11 @@ using System.Reflection;
 
 namespace Sigil
 {
+    /// <summary>
+    /// Helper for CIL generation that fails as soon as a sequence of instructions
+    /// can be shown to be invalid.
+    /// </summary>
+    /// <typeparam name="DelegateType">The type of delegate being built</typeparam>
     public partial class Emit<DelegateType>
     {
         private static readonly ModuleBuilder Module;
@@ -99,11 +104,25 @@ namespace Sigil
             FinallyBlocks = new Dictionary<FinallyBlock, Tuple<int, int>>();
         }
 
+        /// <summary>
+        /// Returns a proxy for this Emit that exposes method names that more closely
+        /// match the fields on System.Reflection.Emit.OpCodes.
+        /// 
+        /// IF you're well versed in ILGenerator, the shorthand version may be easier to use.
+        /// </summary>
         public EmitShorthand<DelegateType> AsShorthand()
         {
             return new EmitShorthand<DelegateType>(this);
         }
 
+        /// <summary>
+        /// Converts the CIL stream into a delegate.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// </summary>
         public DelegateType CreateDelegate()
         {
             if (CreatedDelegate != null) return CreatedDelegate;
