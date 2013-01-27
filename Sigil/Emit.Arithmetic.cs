@@ -392,9 +392,9 @@ namespace Sigil
 
             var val = onStack[0];
 
-            if (val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>() && val != TypeOnStack.Get<NativeInt>())
+            if (val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>() && val != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("Negate expects an int, float, double, or native int; found " + val, Stack);
+                throw new SigilException("Negate expects an int, long, float, double, or native int; found " + val, Stack);
             }
 
             UpdateState(OpCodes.Neg, val, pop: 1);

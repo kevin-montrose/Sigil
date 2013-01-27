@@ -581,7 +581,7 @@ namespace SigilTests
             }
             catch (SigilException e)
             {
-                Assert.AreEqual("Negate expects an int, float, double, or native int; found System.String", e.Message);
+                Assert.AreEqual("Negate expects an int, long, float, double, or native int; found System.String", e.Message);
             }
         }
 
