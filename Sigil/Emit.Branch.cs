@@ -64,7 +64,7 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
         }
 
-        public void BranchIfNotEqual(Label label)
+        public void UnsignedBranchIfNotEqual(Label label)
         {
             if (label == null)
             {

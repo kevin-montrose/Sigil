@@ -95,16 +95,36 @@ namespace Sigil
 
         public void LoadConstant(FieldInfo field)
         {
+            if (field == null)
+            {
+                throw new ArgumentNullException("field");
+            }
+
             UpdateState(OpCodes.Ldtoken, field, TypeOnStack.Get<RuntimeFieldHandle>());
         }
 
         public void LoadConstant(MethodInfo method)
         {
+            if (method == null)
+            {
+                throw new ArgumentNullException("method");
+            }
+
             UpdateState(OpCodes.Ldtoken, method, TypeOnStack.Get<RuntimeMethodHandle>());
         }
 
-        public void LoadConstant(TypeInfo type)
+        public void LoadConstant<Type>()
         {
+            LoadConstant(typeof(Type));
+        }
+
+        public void LoadConstant(Type type)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
             UpdateState(OpCodes.Ldtoken, type, TypeOnStack.Get<RuntimeTypeHandle>());
         }
 

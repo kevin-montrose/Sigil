@@ -99,6 +99,11 @@ namespace Sigil
             FinallyBlocks = new Dictionary<FinallyBlock, Tuple<int, int>>();
         }
 
+        public EmitShorthand<DelegateType> AsShorthand()
+        {
+            return new EmitShorthand<DelegateType>(this);
+        }
+
         public DelegateType CreateDelegate()
         {
             if (CreatedDelegate != null) return CreatedDelegate;
