@@ -3,6 +3,7 @@ using Sigil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,63 @@ namespace SigilTests
     [TestClass]
     public class Add
     {
+        [TestMethod]
+        public void BlogPost()
+        {
+            {
+                var method = new DynamicMethod("AddOneAndTwo", typeof(int), Type.EmptyTypes);
+                var il = method.GetILGenerator();
+                il.Emit(OpCodes.Ldc_I4, 1);
+                il.Emit(OpCodes.Ldc_I4, 2);
+                il.Emit(OpCodes.Add);
+                il.Emit(OpCodes.Ret);
+
+                var del = (Func<int>)method.CreateDelegate(typeof(Func<int>));
+
+                Assert.AreEqual(3, del());
+            }
+
+            {
+                var method = new DynamicMethod("AddOneAndTwo", typeof(int), Type.EmptyTypes);
+                var il = method.GetILGenerator();
+                il.Emit(OpCodes.Ldc_I4, 1);
+                il.Emit(OpCodes.Add);
+                il.Emit(OpCodes.Ret);
+
+                var del = (Func<int>)method.CreateDelegate(typeof(Func<int>));
+
+                try
+                {
+                    del();
+                    Assert.Fail();
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Common Language Runtime detected an invalid program.", e.Message);
+                }
+            }
+
+            {
+
+                try
+                {
+                    var il = Emit<Func<int>>.NewDynamicMethod("AddOneAndTwo");
+                    il.LoadConstant(1);
+                    il.Add();
+                    il.Return();
+
+                    var del = il.CreateDelegate();
+
+                    del();
+                    Assert.Fail();
+                }
+                catch (Exception e)
+                {
+                    Assert.AreEqual("Add requires 2 arguments be on the stack", e.Message);
+                }
+            }
+        }
+
         [TestMethod]
         public void IntInt()
         {
