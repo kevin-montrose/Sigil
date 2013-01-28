@@ -171,6 +171,48 @@ namespace Sigil
             return CreateDelegate(out ignored);
         }
 
+        /// <summary>
+        /// Create a new Emit.
+        /// 
+        /// A name for the inner DynamicMethod is generated automatically.
+        /// </summary>
+        public static Emit<DelegateType> NewDynamicMethod()
+        {
+            var name = Guid.NewGuid().ToString().Replace("-", "");
+
+            return NewDynamicMethod(name);
+        }
+
+        /// <summary>
+        /// Creates a new Emit, using the provided name for the inner DynamicMethod.
+        /// </summary>
+        public static Emit<DelegateType> NewDynamicMethod(string name)
+        {
+            var delType = typeof(DelegateType);
+
+            var baseTypes = new HashSet<Type>();
+            baseTypes.Add(delType);
+            var bType = delType.BaseType;
+            while (bType != null)
+            {
+                baseTypes.Add(bType);
+                bType = bType.BaseType;
+            }
+
+            if (!baseTypes.Contains(typeof(Delegate)))
+            {
+                throw new ArgumentException("DelegateType must be a delegate, found " + delType.FullName);
+            }
+
+            var invoke = delType.GetMethod("Invoke");
+            var returnType = invoke.ReturnType;
+            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+
+            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, Module, skipVisibility: true);
+
+            return new Emit<DelegateType>(dynMethod);
+        }
+
         private void InsertInstruction(int index, OpCode instr)
         {
             IL.Insert(index, instr);
@@ -350,33 +392,6 @@ namespace Sigil
             UpdateStackAndInstrStream(instr, returnType != typeof(void) ? TypeOnStack.Get(returnType) : null, pop);
 
             IL.Emit(instr, callConventions, returnType, parameterTypes);
-        }
-
-        public static Emit<DelegateType> NewDynamicMethod(string name)
-        {
-            var delType = typeof(DelegateType);
-
-            var baseTypes = new HashSet<Type>();
-            baseTypes.Add(delType);
-            var bType = delType.BaseType;
-            while (bType != null)
-            {
-                baseTypes.Add(bType);
-                bType = bType.BaseType;
-            }
-
-            if (!baseTypes.Contains(typeof(Delegate)))
-            {
-                throw new ArgumentException("DelegateType must be a delegate, found " + delType.FullName);
-            }
-
-            var invoke = delType.GetMethod("Invoke");
-            var returnType = invoke.ReturnType;
-            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
-
-            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, Module, skipVisibility: true);
-
-            return new Emit<DelegateType>(dynMethod);
         }
     }
 }
