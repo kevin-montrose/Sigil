@@ -126,10 +126,20 @@ namespace Sigil
         /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
         /// 
         /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// `instructions` will be set to a representation of the instructions making up the returned delegate.
+        /// Note that this string is typically *not* enough to regenerate the delegate, it is available for
+        /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
+        /// a future failure in the returned delegate fails validation (indicative of a bug in Sigil) or
+        /// behaves unexpectedly (indicative of a logic bug in the consumer code).
         /// </summary>
-        public DelegateType CreateDelegate()
+        public DelegateType CreateDelegate(out string instructions)
         {
-            if (CreatedDelegate != null) return CreatedDelegate;
+            if (CreatedDelegate != null)
+            {
+                instructions = null;
+                return CreatedDelegate;
+            }
 
             InjectTailCall();
             InjectReadOnly();
@@ -138,13 +148,27 @@ namespace Sigil
             Validate();
 
             var il = DynMethod.GetILGenerator();
-            var log = IL.UnBuffer(il);
+            instructions = IL.UnBuffer(il);
 
             CreatedDelegate = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
 
             Invalidated = true;
 
             return CreatedDelegate;
+        }
+
+        /// <summary>
+        /// Converts the CIL stream into a delegate.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// </summary>
+        public DelegateType CreateDelegate()
+        {
+            string ignored;
+            return CreateDelegate(out ignored);
         }
 
         private void InsertInstruction(int index, OpCode instr)

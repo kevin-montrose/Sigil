@@ -22,9 +22,11 @@ namespace SigilTests
             e1.LoadIndirect<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            string instrs;
+            var d1 = e1.CreateDelegate(out instrs);
 
             Assert.AreEqual(2, d1(new[] { 1, 2, 3 }, 1));
+            Assert.IsTrue(instrs.Contains("readonly."));
         }
 
         [TestMethod]
@@ -41,7 +43,8 @@ namespace SigilTests
             e1.StoreIndirect<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            string instrs;
+            var d1 = e1.CreateDelegate(out instrs);
 
             var x = new[] { 1, 2, 3 };
             d1(x, 1);
@@ -49,6 +52,8 @@ namespace SigilTests
             Assert.AreEqual(1, x[0]);
             Assert.AreEqual(3, x[1]);
             Assert.AreEqual(3, x[2]);
+
+            Assert.IsFalse(instrs.Contains("readonly."));
         }
     }
 }
