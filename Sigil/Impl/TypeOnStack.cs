@@ -99,28 +99,28 @@ namespace Sigil.Impl
         public Type ReturnType { get; private set; }
         public Type[] ParameterTypes { get; private set; }
 
-        private List<Tuple<OpCode, int>> UsedBy { get; set; }
+        private List<Tuple<OpCode, int, bool>> UsedBy { get; set; }
 
         /// <summary>
         /// Call to indicate that something on the stack was used
         /// as the #{index}'d (starting at 0) parameter to the {code} 
         /// opcode.
         /// </summary>
-        public void Mark(OpCode code, int index)
+        public void Mark(OpCode code, int index, bool isThis)
         {
             if (UsedBy == null) return;
 
-            UsedBy.Add(Tuple.Create(code, index));
+            UsedBy.Add(Tuple.Create(code, index, isThis));
         }
 
         /// <summary>
         /// Returns the # of times this value was used as the given #{index}'d parameter to the {code} instruction.
         /// </summary>
-        public int CountMarks(OpCode code, int index)
+        public int CountMarks(OpCode code, int index, bool isThis)
         {
             if (UsedBy == null) throw new Exception(this + " is not markable");
 
-            var val = Tuple.Create(code, index);
+            var val = Tuple.Create(code, index, isThis);
 
             return UsedBy.Count(c => c.Equals(val));
         }
@@ -198,7 +198,7 @@ namespace Sigil.Impl
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
-                    UsedBy = new List<Tuple<OpCode,int>>()
+                    UsedBy = new List<Tuple<OpCode, int, bool>>()
                 };
         }
 

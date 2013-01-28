@@ -234,7 +234,7 @@ namespace Sigil
             }
         }
 
-        private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop)
+        private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop, bool firstParamIsThis = false)
         {
             if (Invalidated)
             {
@@ -243,7 +243,7 @@ namespace Sigil
 
             if (pop > 0)
             {
-                Stack = Stack.Pop(instr, pop);
+                Stack = Stack.Pop(instr, pop, firstParamIsThis);
             }
 
             if (addToStack != null)
@@ -310,9 +310,9 @@ namespace Sigil
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, MethodInfo method, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, MethodInfo method, TypeOnStack addToStack = null, int pop = 0, bool firstParamIsThis = false)
         {
-            UpdateStackAndInstrStream(instr, addToStack, pop);
+            UpdateStackAndInstrStream(instr, addToStack, pop, firstParamIsThis);
 
             IL.Emit(instr, method);
         }

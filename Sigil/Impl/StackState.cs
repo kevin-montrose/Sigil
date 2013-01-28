@@ -52,7 +52,7 @@ namespace Sigil.Impl
             return Previous;
         }
 
-        public StackState Pop(OpCode op, int num)
+        public StackState Pop(OpCode op, int num, bool firstParamIsThis)
         {
             var ret = this;
 
@@ -63,7 +63,7 @@ namespace Sigil.Impl
                 num--;
 
                 // keep track of what ops used what values on the stack
-                ret.Value.Mark(op, num);
+                ret.Value.Mark(op, num, isThis: (firstParamIsThis && num == 0));
 
                 ret = ret.Previous;
             }

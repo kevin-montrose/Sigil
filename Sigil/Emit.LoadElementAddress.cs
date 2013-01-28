@@ -21,28 +21,27 @@ namespace Sigil
                 var at = elem.Item1;
                 var value = elem.Item2;
 
-                var asObjToLdfd = value.CountMarks(OpCodes.Ldfld, 0);
-                var asObjToLdfda = value.CountMarks(OpCodes.Ldflda, 0);
-                var asObjToStfd = value.CountMarks(OpCodes.Stfld, 0);
+                var asObjToLdfd = value.CountMarks(OpCodes.Ldfld, 0, false);
+                var asObjToLdfda = value.CountMarks(OpCodes.Ldflda, 0, false);
+                var asObjToStfd = value.CountMarks(OpCodes.Stfld, 0, false);
 
-                // Need to detect that the 0th parameter is *actually* a `this` pointer here
-                //var asObjToCall = value.CountMarks(OpCodes.Call, 0);
+                var asObjToCall = value.CountMarks(OpCodes.Call, 0, true);
 
-                var asPtrToLdobj = value.CountMarks(OpCodes.Ldobj, 0);
+                var asPtrToLdobj = value.CountMarks(OpCodes.Ldobj, 0, false);
                 var asPtrToLdind =
-                    value.CountMarks(OpCodes.Ldind_I, 0) +
-                    value.CountMarks(OpCodes.Ldind_I1, 0) +
-                    value.CountMarks(OpCodes.Ldind_I2, 0) +
-                    value.CountMarks(OpCodes.Ldind_I4, 0) +
-                    value.CountMarks(OpCodes.Ldind_I8, 0) +
-                    value.CountMarks(OpCodes.Ldind_R4, 0) +
-                    value.CountMarks(OpCodes.Ldind_R8, 0) +
-                    value.CountMarks(OpCodes.Ldind_Ref, 0) +
-                    value.CountMarks(OpCodes.Ldind_U1, 0) +
-                    value.CountMarks(OpCodes.Ldind_U2, 0) +
-                    value.CountMarks(OpCodes.Ldind_U4, 0);
+                    value.CountMarks(OpCodes.Ldind_I, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_I1, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_I2, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_I4, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_I8, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_R4, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_R8, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_Ref, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_U1, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_U2, 0, false) +
+                    value.CountMarks(OpCodes.Ldind_U4, 0, false);
 
-                var asSourceToCpobj = value.CountMarks(OpCodes.Cpobj, 1);
+                var asSourceToCpobj = value.CountMarks(OpCodes.Cpobj, 1, false);
 
                 var totalAllowedUses =
                     asObjToLdfd +
@@ -50,7 +49,8 @@ namespace Sigil
                     asObjToStfd +
                     asPtrToLdobj +
                     asPtrToLdind +
-                    asSourceToCpobj;
+                    asSourceToCpobj +
+                    asObjToCall;
 
                 var totalActualUses = value.CountMarks();
 
@@ -100,7 +100,7 @@ namespace Sigil
 
             var arrElemType = array.Type.GetElementType();
 
-            if (arrElemType != elementType)
+            if (!arrElemType.IsAssignableFrom(elementType))
             {
                 throw new SigilException("LoadElementAddress found array of type " + array + ", but expected elements of type " + arrElemType, Stack);
             }
