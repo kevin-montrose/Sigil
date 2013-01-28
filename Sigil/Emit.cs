@@ -53,6 +53,8 @@ namespace Sigil
         private Dictionary<CatchBlock, Tuple<int, int>> CatchBlocks;
         private Dictionary<FinallyBlock, Tuple<int, int>> FinallyBlocks;
 
+        private List<Tuple<int, TypeOnStack>> ReadonlyPatches;
+
         private DelegateType CreatedDelegate;
 
         private Emit(DynamicMethod dynMethod)
@@ -102,6 +104,8 @@ namespace Sigil
             TryBlocks = new Dictionary<ExceptionBlock, Tuple<int, int>>();
             CatchBlocks = new Dictionary<CatchBlock, Tuple<int, int>>();
             FinallyBlocks = new Dictionary<FinallyBlock, Tuple<int, int>>();
+
+            ReadonlyPatches = new List<Tuple<int, TypeOnStack>>();
         }
 
         /// <summary>
@@ -128,6 +132,7 @@ namespace Sigil
             if (CreatedDelegate != null) return CreatedDelegate;
 
             InjectTailCall();
+            InjectReadOnly();
             PatchBranches();
 
             Validate();
@@ -144,7 +149,7 @@ namespace Sigil
 
         private void InsertInstruction(int index, OpCode instr)
         {
-            IL.Insert(index, OpCodes.Tailcall);
+            IL.Insert(index, instr);
 
             // We need to update our state to account for the new insertion
             foreach (var kv in Branches.Where(w => w.Value.Item2 >= index).ToList())
@@ -192,6 +197,17 @@ namespace Sigil
             {
                 FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
             }
+
+            foreach (var elem in ReadonlyPatches.ToList())
+            {
+                if (elem.Item1 >= index)
+                {
+                    var update = Tuple.Create(elem.Item1 + 1, elem.Item2);
+
+                    ReadonlyPatches.Remove(elem);
+                    ReadonlyPatches.Add(elem);
+                }
+            }
         }
 
         private void UpdateStackAndInstrStream(OpCode instr, TypeOnStack addToStack, int pop)
@@ -203,7 +219,7 @@ namespace Sigil
 
             if (pop > 0)
             {
-                Stack = Stack.Pop(pop);
+                Stack = Stack.Pop(instr, pop);
             }
 
             if (addToStack != null)

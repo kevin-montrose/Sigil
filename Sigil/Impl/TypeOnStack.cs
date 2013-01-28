@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -98,6 +99,42 @@ namespace Sigil.Impl
         public Type ReturnType { get; private set; }
         public Type[] ParameterTypes { get; private set; }
 
+        private List<Tuple<OpCode, int>> UsedBy { get; set; }
+
+        /// <summary>
+        /// Call to indicate that something on the stack was used
+        /// as the #{index}'d (starting at 0) parameter to the {code} 
+        /// opcode.
+        /// </summary>
+        public void Mark(OpCode code, int index)
+        {
+            if (UsedBy == null) return;
+
+            UsedBy.Add(Tuple.Create(code, index));
+        }
+
+        /// <summary>
+        /// Returns the # of times this value was used as the given #{index}'d parameter to the {code} instruction.
+        /// </summary>
+        public int CountMarks(OpCode code, int index)
+        {
+            if (UsedBy == null) throw new Exception(this + " is not markable");
+
+            var val = Tuple.Create(code, index);
+
+            return UsedBy.Count(c => c.Equals(val));
+        }
+
+        /// <summary>
+        /// Returns the total number of times this value was marked.
+        /// </summary>
+        public int CountMarks()
+        {
+            if (UsedBy == null) throw new Exception(this + " is not markable");
+
+            return UsedBy.Count;
+        }
+
         public static TypeOnStack Get<T>()
         {
             return TypeCache<T>.Get();
@@ -113,29 +150,56 @@ namespace Sigil.Impl
             return PointerTypeCache<T>.Get();
         }
 
-        public static TypeOnStack Get(Type type)
+        public static TypeOnStack Get(Type type, bool makeMarkable = false)
         {
+            TypeOnStack ret;
+
             if (type.IsPointer)
             {
                 var nonPointer = type.GetElementType();
 
                 var get = typeof(TypeOnStack).GetMethod("GetPointer").MakeGenericMethod(nonPointer);
 
-                return (TypeOnStack)get.Invoke(null, new object[0]);
+                ret = (TypeOnStack)get.Invoke(null, new object[0]);
             }
-
-            if (type.IsByRef)
+            else
             {
-                var nonRef = type.GetElementType();
 
-                var get = typeof(TypeOnStack).GetMethod("GetReference").MakeGenericMethod(nonRef);
+                if (type.IsByRef)
+                {
+                    var nonRef = type.GetElementType();
 
-                return (TypeOnStack)get.Invoke(null, new object[0]);
+                    var get = typeof(TypeOnStack).GetMethod("GetReference").MakeGenericMethod(nonRef);
+
+                    ret = (TypeOnStack)get.Invoke(null, new object[0]);
+                }
+                else
+                {
+
+                    var getM = typeof(TypeOnStack).GetMethods().Single(w => w.Name == "Get" && w.IsGenericMethod).MakeGenericMethod(type);
+
+                    ret = (TypeOnStack)getM.Invoke(null, new object[0]);
+                }
             }
 
-            var getM = typeof(TypeOnStack).GetMethods().Single(w => w.Name == "Get" && w.IsGenericMethod).MakeGenericMethod(type);
+            if (!makeMarkable)
+            {
+                return ret;
+            }
 
-            return (TypeOnStack)getM.Invoke(null, new object[0]);
+            return
+                new TypeOnStack
+                {
+                    CallingConvention = ret.CallingConvention,
+                    HasAttachedMethodInfo = ret.HasAttachedMethodInfo,
+                    InstanceType = ret.InstanceType,
+                    IsPointer = ret.IsPointer,
+                    IsReference = ret.IsReference,
+                    ParameterTypes = ret.ParameterTypes,
+                    ReturnType = ret.ReturnType,
+                    Type = ret.Type,
+                    UsedBy = new List<Tuple<OpCode,int>>()
+                };
         }
 
         public static TypeOnStack GetKnownFunctionPointer(CallingConventions conv, Type instanceType, Type returnType, Type[] parameterTypes)

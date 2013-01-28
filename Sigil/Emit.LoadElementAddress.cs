@@ -11,6 +11,56 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private void InjectReadOnly()
+        {
+            while(ReadonlyPatches.Count > 0)
+            {
+                var elem = ReadonlyPatches[0];
+                ReadonlyPatches.RemoveAt(0);
+
+                var at = elem.Item1;
+                var value = elem.Item2;
+
+                var asObjToLdfd = value.CountMarks(OpCodes.Ldfld, 0);
+                var asObjToLdfda = value.CountMarks(OpCodes.Ldflda, 0);
+                var asObjToStfd = value.CountMarks(OpCodes.Stfld, 0);
+
+                // Need to detect that the 0th parameter is *actually* a `this` pointer here
+                //var asObjToCall = value.CountMarks(OpCodes.Call, 0);
+
+                var asPtrToLdobj = value.CountMarks(OpCodes.Ldobj, 0);
+                var asPtrToLdind =
+                    value.CountMarks(OpCodes.Ldind_I, 0) +
+                    value.CountMarks(OpCodes.Ldind_I1, 0) +
+                    value.CountMarks(OpCodes.Ldind_I2, 0) +
+                    value.CountMarks(OpCodes.Ldind_I4, 0) +
+                    value.CountMarks(OpCodes.Ldind_I8, 0) +
+                    value.CountMarks(OpCodes.Ldind_R4, 0) +
+                    value.CountMarks(OpCodes.Ldind_R8, 0) +
+                    value.CountMarks(OpCodes.Ldind_Ref, 0) +
+                    value.CountMarks(OpCodes.Ldind_U1, 0) +
+                    value.CountMarks(OpCodes.Ldind_U2, 0) +
+                    value.CountMarks(OpCodes.Ldind_U4, 0);
+
+                var asSourceToCpobj = value.CountMarks(OpCodes.Cpobj, 1);
+
+                var totalAllowedUses =
+                    asObjToLdfd +
+                    asObjToLdfda +
+                    asObjToStfd +
+                    asPtrToLdobj +
+                    asPtrToLdind +
+                    asSourceToCpobj;
+
+                var totalActualUses = value.CountMarks();
+
+                if (totalActualUses == totalAllowedUses)
+                {
+                    InsertInstruction(at, OpCodes.Readonly);
+                }
+            }
+        }
+
         public void LoadElementAddress<ElementType>()
         {
             LoadElementAddress(typeof(ElementType));
@@ -55,7 +105,13 @@ namespace Sigil
                 throw new SigilException("LoadElementAddress found array of type " + array + ", but expected elements of type " + arrElemType, Stack);
             }
 
-            UpdateState(OpCodes.Ldelema, elementType, TypeOnStack.Get(arrElemType.MakeByRefType()), pop: 2);
+            // needs to be markable so we can keep track of what makes use of this value
+            var pushToStack = TypeOnStack.Get(arrElemType.MakeByRefType(), makeMarkable: true);
+
+            // Shove this away, later on we'll figure out if we can insert a readonly here
+            ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
+
+            UpdateState(OpCodes.Ldelema, elementType, pushToStack, pop: 2);
         }
     }
 }

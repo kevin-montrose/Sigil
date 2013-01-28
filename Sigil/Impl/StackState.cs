@@ -45,7 +45,14 @@ namespace Sigil.Impl
             return new StackState(this, val);
         }
 
-        public StackState Pop(int num = 1)
+        public StackState Pop()
+        {
+            if (IsRoot) throw new Exception("Internal state invalid, tried to pop root");
+
+            return Previous;
+        }
+
+        public StackState Pop(OpCode op, int num)
         {
             var ret = this;
 
@@ -54,6 +61,10 @@ namespace Sigil.Impl
                 if (ret.IsRoot) throw new Exception("Internal state invalid, tried to pop root");
 
                 num--;
+
+                // keep track of what ops used what values on the stack
+                ret.Value.Mark(op, num);
+
                 ret = ret.Previous;
             }
 
