@@ -57,6 +57,8 @@ namespace Sigil.Impl
                 ret = ret.Previous;
             }
 
+            if (!ret.IsRoot) ret = ret.Unique();
+
             return ret;
         }
 
