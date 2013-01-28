@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,7 @@ namespace Sigil
     {
         public Local DeclareLocal<LocalType>()
         {
-            return DeclareLocal<LocalType>("_" + Guid.NewGuid().ToString().Replace("-", ""));
+            return DeclareLocal<LocalType>(AutoNamer.Next(this, "_local"));
         }
 
         public Local DeclareLocal<LocalType>(string name)
@@ -20,7 +21,7 @@ namespace Sigil
 
         public Local DeclareLocal(Type type)
         {
-            return DeclareLocal(type, "_" + Guid.NewGuid().ToString().Replace("-", ""));
+            return DeclareLocal(type, AutoNamer.Next(this, "_local"));
         }
 
         public Local DeclareLocal(Type type, string name)

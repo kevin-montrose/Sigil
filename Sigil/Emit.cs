@@ -154,6 +154,8 @@ namespace Sigil
 
             Invalidated = true;
 
+            AutoNamer.Release(this);
+
             return CreatedDelegate;
         }
 
@@ -178,9 +180,7 @@ namespace Sigil
         /// </summary>
         public static Emit<DelegateType> NewDynamicMethod()
         {
-            var name = Guid.NewGuid().ToString().Replace("-", "");
-
-            return NewDynamicMethod(name);
+            return NewDynamicMethod(AutoNamer.Next("_DynamicMethod"));
         }
 
         /// <summary>

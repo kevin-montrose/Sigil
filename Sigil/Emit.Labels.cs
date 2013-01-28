@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -128,7 +129,7 @@ namespace Sigil
 
         public Label DefineLabel()
         {
-            return DefineLabel("_" + Guid.NewGuid().ToString().Replace("-", ""));
+            return DefineLabel(AutoNamer.Next(this, "_label"));
         }
 
         public Label DefineLabel(string name)
