@@ -107,6 +107,7 @@ namespace Sigil
         /// <summary>
         /// Returns the message and stacks on this exception, in string form.
         /// </summary>
+        [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public override string ToString()
         {
             return

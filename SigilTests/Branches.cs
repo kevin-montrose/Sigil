@@ -12,6 +12,70 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
+        public void BinaryInput()
+        {
+            var emit = typeof(Emit<Action>);
+            var branches =
+                new[]
+                {
+                    emit.GetMethod("BranchIfEqual"),
+                    emit.GetMethod("BranchIfGreater"),
+                    emit.GetMethod("BranchIfGreaterOrEqual"),
+                    emit.GetMethod("BranchIfLess"),
+                    emit.GetMethod("BranchIfLessOrEqual"),
+                    emit.GetMethod("UnsignedBranchIfNotEqual"),
+                    emit.GetMethod("UnsignedBranchIfGreater"),
+                    emit.GetMethod("UnsignedBranchIfGreaterOrEqual"),
+                    emit.GetMethod("UnsignedBranchIfLess"),
+                    emit.GetMethod("UnsignedBranchIfLessOrEqual")
+                };
+
+            foreach (var branch in branches)
+            {
+                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var l = e1.DefineLabel();
+                e1.LoadConstant(0);
+                e1.LoadConstant(1);
+                branch.Invoke(e1, new object[] { l });
+                e1.MarkLabel(l);
+                e1.Return();
+
+                var d1 = e1.CreateDelegate();
+                d1();
+            }
+        }
+
+        [TestMethod]
+        public void UnaryInput()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var l = e1.DefineLabel();
+                e1.LoadConstant(0);
+                e1.BranchIfFalse(l);
+                e1.MarkLabel(l);
+                e1.Return();
+
+                var d1 = e1.CreateDelegate();
+
+                d1();
+            }
+
+            {
+                var e2 = Emit<Action>.NewDynamicMethod("E1");
+                var l = e2.DefineLabel();
+                e2.LoadConstant(0);
+                e2.BranchIfTrue(l);
+                e2.MarkLabel(l);
+                e2.Return();
+
+                var d2 = e2.CreateDelegate();
+
+                d2();
+            }
+        }
+
+        [TestMethod]
         public void MultiLabel()
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");

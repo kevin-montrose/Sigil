@@ -3,6 +3,7 @@ using Sigil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +12,150 @@ namespace SigilTests
     [TestClass]
     public class Errors
     {
+        [TestMethod]
+        public void NullBranchLabels()
+        {
+            var emit = typeof(Emit<Action>);
+            var branches =
+                new[]
+                {
+                    emit.GetMethod("Branch"),
+                    emit.GetMethod("BranchIfEqual"),
+                    emit.GetMethod("BranchIfFalse"),
+                    emit.GetMethod("BranchIfGreater"),
+                    emit.GetMethod("BranchIfGreaterOrEqual"),
+                    emit.GetMethod("BranchIfLess"),
+                    emit.GetMethod("BranchIfLessOrEqual"),
+                    emit.GetMethod("BranchIfTrue"),
+                    emit.GetMethod("UnsignedBranchIfNotEqual"),
+                    emit.GetMethod("UnsignedBranchIfGreater"),
+                    emit.GetMethod("UnsignedBranchIfGreaterOrEqual"),
+                    emit.GetMethod("UnsignedBranchIfLess"),
+                    emit.GetMethod("UnsignedBranchIfLessOrEqual")
+                };
+
+            foreach (var branch in branches)
+            {
+                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                try
+                {
+                    branch.Invoke(e1, new object[] { null });
+                    Assert.Fail();
+                }
+                catch (TargetInvocationException e)
+                {
+                    var f = (ArgumentNullException)e.InnerException;
+                    Assert.AreEqual("label", f.ParamName);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void UnownedBranchLabels()
+        {
+            var emit = typeof(Emit<Action>);
+            var branches =
+                new[]
+                {
+                    emit.GetMethod("Branch"),
+                    emit.GetMethod("BranchIfEqual"),
+                    emit.GetMethod("BranchIfFalse"),
+                    emit.GetMethod("BranchIfGreater"),
+                    emit.GetMethod("BranchIfGreaterOrEqual"),
+                    emit.GetMethod("BranchIfLess"),
+                    emit.GetMethod("BranchIfLessOrEqual"),
+                    emit.GetMethod("BranchIfTrue"),
+                    emit.GetMethod("UnsignedBranchIfNotEqual"),
+                    emit.GetMethod("UnsignedBranchIfGreater"),
+                    emit.GetMethod("UnsignedBranchIfGreaterOrEqual"),
+                    emit.GetMethod("UnsignedBranchIfLess"),
+                    emit.GetMethod("UnsignedBranchIfLessOrEqual")
+                };
+
+            foreach (var branch in branches)
+            {
+                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var e2 = Emit<Action>.NewDynamicMethod("E2");
+                var l = e2.DefineLabel("wrong_emit");
+                try
+                {
+                    branch.Invoke(e1, new object[] { l });
+                    Assert.Fail();
+                }
+                catch (TargetInvocationException e)
+                {
+                    var f = (ArgumentException)e.InnerException;
+                    Assert.AreEqual("label is not owned by this Emit, and thus cannot be used", f.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void BranchEmptyStack()
+        {
+            var emit = typeof(Emit<Action>);
+            var branches =
+                new[]
+                {
+                    emit.GetMethod("BranchIfEqual"),
+                    emit.GetMethod("BranchIfGreater"),
+                    emit.GetMethod("BranchIfGreaterOrEqual"),
+                    emit.GetMethod("BranchIfLess"),
+                    emit.GetMethod("BranchIfLessOrEqual"),
+                    emit.GetMethod("UnsignedBranchIfNotEqual"),
+                    emit.GetMethod("UnsignedBranchIfGreater"),
+                    emit.GetMethod("UnsignedBranchIfGreaterOrEqual"),
+                    emit.GetMethod("UnsignedBranchIfLess"),
+                    emit.GetMethod("UnsignedBranchIfLessOrEqual")
+                };
+
+            foreach (var branch in branches)
+            {
+                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var l = e1.DefineLabel();
+                try
+                {
+                    branch.Invoke(e1, new object[] { l });
+                    Assert.Fail();
+                }
+                catch (TargetInvocationException e)
+                {
+                    var f = (SigilException)e.InnerException;
+                    Assert.IsTrue(f.Message.EndsWith(" expects two values to be on the stack"));
+                }
+            }
+
+            {
+                var e2 = Emit<Action>.NewDynamicMethod("E2");
+                var l = e2.DefineLabel();
+                
+                try
+                {
+                    e2.BranchIfFalse(l);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("BranchIfFalse expects one value to be on the stack", e.Message);
+                }
+            }
+
+            {
+                var e3 = Emit<Action>.NewDynamicMethod("E3");
+                var l = e3.DefineLabel();
+
+                try
+                {
+                    e3.BranchIfTrue(l);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("BranchIfTrue expects one value to be on the stack", e.Message);
+                }
+            }
+        }
+
         [TestMethod]
         public void CatchInCatch()
         {

@@ -71,6 +71,7 @@
     <Compile Include="LoadFields.cs" />
     <Compile Include="LoadlLocalAddress.cs" />
     <Compile Include="LoadLocal.cs" />
+    <Compile Include="Local.cs" />
     <Compile Include="Multiply.cs" />
     <Compile Include="Negate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
