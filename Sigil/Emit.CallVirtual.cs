@@ -11,6 +11,15 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Calls the given method virtually.  Pops its arguments in reverse order (left-most deepest in the stack), and pushes the return value if it is non-void.
+        /// 
+        /// The `this` reference should appear before any arguments (deepest in the stack).
+        /// 
+        /// The method invoked at runtime is determined by the type of the `this` reference.
+        /// 
+        /// If the method invoked shouldn't vary (or if the method is static), use Call instead.
+        /// </summary>
         public void CallVirtual(MethodInfo method, Type constrained = null)
         {
             if (method == null)

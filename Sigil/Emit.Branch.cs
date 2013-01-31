@@ -11,6 +11,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Unconditionally branches to the given label.
+        /// </summary>
         public void Branch(Label label)
         {
             if (label == null)
@@ -34,6 +37,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, if both are equal branches to the given label.
+        /// </summary>
         public void BranchIfEqual(Label label)
         {
             if (label == null)
@@ -64,6 +70,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, if they are not equal (when treated as unsigned values) branches to the given label.
+        /// </summary>
         public void UnsignedBranchIfNotEqual(Label label)
         {
             if (label == null)
@@ -94,6 +103,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bne_Un);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is greater than or equal to the first value.
+        /// </summary>
         public void BranchIfGreaterOrEqual(Label label)
         {
             if (label == null)
@@ -124,6 +136,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is greater than or equal to the first value (when treated as unsigned values).
+        /// </summary>
         public void UnsignedBranchIfGreaterOrEqual(Label label)
         {
             if (label == null)
@@ -154,6 +169,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge_Un);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is greater than the first value.
+        /// </summary>
         public void BranchIfGreater(Label label)
         {
             if (label == null)
@@ -184,6 +202,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is greater than the first value (when treated as unsigned values).
+        /// </summary>
         public void UnsignedBranchIfGreater(Label label)
         {
             if (label == null)
@@ -214,6 +235,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt_Un);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is less than or equal to the first value.
+        /// </summary>
         public void BranchIfLessOrEqual(Label label)
         {
             if (label == null)
@@ -244,6 +268,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is less than or equal to the first value (when treated as unsigned values).
+        /// </summary>
         public void UnsignedBranchIfLessOrEqual(Label label)
         {
             if (label == null)
@@ -274,6 +301,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble_Un);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is less than the first value.
+        /// </summary>
         public void BranchIfLess(Label label)
         {
             if (label == null)
@@ -304,6 +334,9 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt);
         }
 
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the given label if the second value is less than the first value (when treated as unsigned values).
+        /// </summary>
         public void UnsignedBranchIfLess(Label label)
         {
             if (label == null)
@@ -334,6 +367,11 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
         }
 
+        /// <summary>
+        /// Pops one argument from the stack, branches to the given label if the value is false.
+        /// 
+        /// A value is false if it is zero or null.
+        /// </summary>
         public void BranchIfFalse(Label label)
         {
             if (label == null)
@@ -364,6 +402,11 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brfalse);
         }
 
+        /// <summary>
+        /// Pops one argument from the stack, branches to the given label if the value is true.
+        /// 
+        /// A value is true if it is non-zero or non-null.
+        /// </summary>
         public void BranchIfTrue(Label label)
         {
             if (label == null)

@@ -11,11 +11,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Cast a reference on the stack to the given reference type.
+        /// 
+        /// If the cast is not legal, a CastClassException will be thrown at runtime.
+        /// </summary>
         public void CastClass<ReferenceType>()
         {
             CastClass(typeof(ReferenceType));
         }
 
+        /// <summary>
+        /// Cast a reference on the stack to the given reference type.
+        /// 
+        /// If the cast is not legal, a CastClassException will be thrown at runtime.
+        /// </summary>
         public void CastClass(Type referenceType)
         {
             if (referenceType == null)

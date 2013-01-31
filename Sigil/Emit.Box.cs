@@ -11,11 +11,17 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Boxes the given value type on the stack, converting it into a reference.
+        /// </summary>
         public void Box<ValueType>()
         {
             Box(typeof(ValueType));
         }
 
+        /// <summary>
+        /// Boxes the given value type on the stack, converting it into a reference.
+        /// </summary>
         public void Box(Type valueType)
         {
             if (valueType == null)

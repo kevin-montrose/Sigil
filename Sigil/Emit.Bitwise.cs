@@ -41,21 +41,33 @@ namespace Sigil
             UpdateState(op, val1, pop: 2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, performs a bitwise and, and pushes the result.
+        /// </summary>
         public void And()
         {
             VerifyAndBinaryBitwise("And", OpCodes.And);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, performs a bitwise or, and pushes the result.
+        /// </summary>
         public void Or()
         {
             VerifyAndBinaryBitwise("Or", OpCodes.Or);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, performs a bitwise xor, and pushes the result.
+        /// </summary>
         public void Xor()
         {
             VerifyAndBinaryBitwise("Xor", OpCodes.Xor);
         }
 
+        /// <summary>
+        /// Pops one argument off the stack, performs a bitwise inversion, and pushes the result.
+        /// </summary>
         public void Not()
         {
             var onStack = Stack.Top();
@@ -100,16 +112,29 @@ namespace Sigil
             UpdateState(op, value, pop: 2);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, shifts the second value left by the first value.
+        /// </summary>
         public void ShiftLeft()
         {
             VerifyAndShift("ShiftLeft", OpCodes.Shl);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, shifts the second value right by the first value.
+        /// 
+        /// Sign extends from the left.
+        /// </summary>
         public void ShiftRight()
         {
             VerifyAndShift("ShiftRight", OpCodes.Shr);
         }
 
+        /// <summary>
+        /// Pops two arguments off the stack, shifts the second value right by the first value.
+        /// 
+        /// Acts as if the value were unsigned, zeros always coming in from the left.
+        /// </summary>
         public void UnsignedShiftRight()
         {
             VerifyAndShift("UnsignedShiftRight", OpCodes.Shr_Un);
