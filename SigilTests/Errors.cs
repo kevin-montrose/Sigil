@@ -13,6 +13,86 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void NullCallMethod()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Call(null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("method", e.ParamName);
+            }
+        }
+
+        [TestMethod]
+        public void CallEmptyStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Call(typeof(object).GetMethod("ToString"));
+                Assert.Fail();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Call to System.String ToString() expected parameters [System.Object] to be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void NullCallVirtualMethod()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.CallVirtual(null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("method", e.ParamName);
+            }
+        }
+
+        [TestMethod]
+        public void CallVirtualEmptyStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.CallVirtual(typeof(object).GetMethod("ToString"));
+                Assert.Fail();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("CallVirtual to System.String ToString() expected parameters [System.Object] to be on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CallVirtualStatic()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.CallVirtual(typeof(string).GetMethod("Intern"));
+                Assert.Fail();
+            }
+            catch (ArgumentException e)
+            {
+                Assert.AreEqual("Only non-static methods can be called using CallVirtual, found System.String Intern(System.String)", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void NullBranchLabels()
         {
             var emit = typeof(Emit<Action>);

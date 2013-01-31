@@ -20,7 +20,7 @@ namespace Sigil
 
             if (method.IsStatic)
             {
-                throw new SigilException("Only non-static methods can be called using CallVirtual, found " + method, Stack);
+                throw new ArgumentException("Only non-static methods can be called using CallVirtual, found " + method);
             }
 
             var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
