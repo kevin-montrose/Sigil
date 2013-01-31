@@ -68,7 +68,7 @@ namespace Sigil
                         }
                     }
 
-                    throw new SigilException("Parameter #" + (i + 1) + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, Stack);
+                    throw new SigilException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, Stack);
                 }
             }
 

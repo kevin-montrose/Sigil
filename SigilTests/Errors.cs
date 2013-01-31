@@ -13,6 +13,38 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void CallBadParam()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            e1.NewObject<object>();
+
+            try
+            {
+                e1.Call(typeof(Errors).GetMethod("CallBadParam"));
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Parameter #0 to Void CallBadParam() should be SigilTests.Errors, but found System.Object", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CallVirtualBadParam()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            e1.NewObject<object>();
+
+            try
+            {
+                e1.CallVirtual(typeof(Errors).GetMethod("CallVirtualBadParam"));
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("Parameter #0 to Void CallVirtualBadParam() should be SigilTests.Errors, but found System.Object", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void NullCallMethod()
         {
             var e1 = Emit<Action>.NewDynamicMethod("E1");
