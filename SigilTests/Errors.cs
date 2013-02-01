@@ -13,7 +13,7 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
-        public void ConvertFloats()
+        public void ConvertIllegal()
         {
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
@@ -64,6 +64,32 @@ namespace SigilTests
                 catch (InvalidOperationException e)
                 {
                     Assert.AreEqual("There is no operation for converting to a double with overflow checking", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.UnsignedConvertOverflow<IntPtr>();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("There is no operation for converting to a pointer with overflow checking", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.UnsignedConvertOverflow<UIntPtr>();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("There is no operation for converting to a pointer with overflow checking", e.Message);
                 }
             }
         }
