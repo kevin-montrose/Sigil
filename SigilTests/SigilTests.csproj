@@ -60,6 +60,7 @@
     <Compile Include="Break.cs" />
     <Compile Include="CallIndirect.cs" />
     <Compile Include="Calls.cs" />
+    <Compile Include="CastClass.cs" />
     <Compile Include="CheckFinite.cs" />
     <Compile Include="Divide.cs" />
     <Compile Include="Errors.cs" />

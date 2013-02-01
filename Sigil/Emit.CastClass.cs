@@ -35,7 +35,7 @@ namespace Sigil
 
             if (referenceType.IsValueType)
             {
-                throw new SigilException("Can only cast to ReferenceTypes, found " + referenceType, Stack);
+                throw new ArgumentException("Can only cast to ReferenceTypes, found " + referenceType);
             }
 
             var top = Stack.Top();
@@ -45,7 +45,7 @@ namespace Sigil
                 throw new SigilException("CastClass expects a value on the stack, but it was empty", Stack);
             }
 
-            UpdateState(OpCodes.Castclass, TypeOnStack.Get(referenceType), pop: 1);
+            UpdateState(OpCodes.Castclass, referenceType, TypeOnStack.Get(referenceType), pop: 1);
         }
     }
 }

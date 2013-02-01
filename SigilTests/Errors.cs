@@ -13,6 +13,54 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void CastClassNull()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.CastClass(null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("referenceType", e.ParamName);
+            }
+        }
+
+        [TestMethod]
+        public void CastClassValueType()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.CastClass<int>();
+                Assert.Fail();
+            }
+            catch (ArgumentException e)
+            {
+                Assert.AreEqual("Can only cast to ReferenceTypes, found System.Int32", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CastClassEmptyStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.CastClass<string>();
+                Assert.Fail();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("CastClass expects a value on the stack, but it was empty", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void CallIndirectNull()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
