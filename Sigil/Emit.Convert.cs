@@ -38,6 +38,12 @@ namespace Sigil
                 throw new ArgumentException("Convert expects a non-character primitive type");
             }
 
+            var top = Stack.Top();
+            if (top == null)
+            {
+                throw new SigilException("Convert expected a value on the stack, but it was empty", Stack);
+            }
+
             if (primitiveType == typeof(byte))
             {
                 ConvertToByte();
@@ -111,15 +117,114 @@ namespace Sigil
             }
         }
 
-        public void ConvertToNativeInt()
+        /// <summary>
+        /// Convert a value on the stack to the given non-character primitive type.
+        /// If the conversion would overflow at runtime, an OverflowException is thrown.
+        /// 
+        /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
+        /// </summary>
+        public void ConvertOverflow<PrimitiveType>()
         {
-            var top = Stack.Top();
+            ConvertOverflow(typeof(PrimitiveType));
+        }
 
-            if (top == null)
+        /// <summary>
+        /// Convert a value on the stack to the given non-character primitive type.
+        /// If the conversion would overflow at runtime, an OverflowException is thrown.
+        /// 
+        /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
+        /// </summary>
+        public void ConvertOverflow(Type primitiveType)
+        {
+            if (primitiveType == null)
             {
-                throw new SigilException("ConvertToNativeInt expects a value to be on the stack", Stack);
+                throw new ArgumentNullException("primitiveType");
             }
 
+            if (!primitiveType.IsPrimitive || primitiveType == typeof(char))
+            {
+                throw new ArgumentException("ConvertOverflow expects a non-character primitive type");
+            }
+
+            if (primitiveType == typeof(float))
+            {
+                throw new InvalidOperationException("There is no operation for converting to a float with overflow checking");
+            }
+
+            if (primitiveType == typeof(double))
+            {
+                throw new InvalidOperationException("There is no operation for converting to a double with overflow checking");
+            }
+
+            var top = Stack.Top();
+            if (top == null)
+            {
+                throw new SigilException("ConvertOverflow expected a value on the stack, but it was empty", Stack);
+            }
+
+            if (primitiveType == typeof(byte))
+            {
+                ConvertToByteOverflow();
+                return;
+            }
+
+            if (primitiveType == typeof(sbyte))
+            {
+                ConvertToSByteOverflow();
+                return;
+            }
+
+            if (primitiveType == typeof(short))
+            {
+                ConvertToInt16Overflow();
+                return;
+            }
+
+            if (primitiveType == typeof(ushort))
+            {
+                ConvertToUInt16Overflow();
+                return;
+            }
+
+            if (primitiveType == typeof(int))
+            {
+                ConvertToInt32Overflow();
+                return;
+            }
+
+            if (primitiveType == typeof(uint))
+            {
+                ConvertToUInt32Overflow();
+                return;
+            }
+
+            if (primitiveType == typeof(long))
+            {
+                ConvertToInt64Overflow();
+                return;
+            }
+
+            if (primitiveType == typeof(ulong))
+            {
+                ConvertToUInt64Overflow();
+                return;
+            }
+
+            if (primitiveType == typeof(IntPtr))
+            {
+                ConvertToNativeIntOverflow();
+                return;
+            }
+
+            if (primitiveType == typeof(UIntPtr))
+            {
+                ConvertToUnsignedNativeIntOverflow();
+                return;
+            }
+        }
+
+        private void ConvertToNativeInt()
+        {
             UpdateState(OpCodes.Conv_I, TypeOnStack.Get<NativeInt>(), pop: 1);
         }
 
@@ -147,15 +252,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_I_Un, TypeOnStack.Get<NativeInt>(), pop: 1);
         }
 
-        public void ConvertToUnsignedNativeInt()
+        private void ConvertToUnsignedNativeInt()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToUnsignedNativeInt expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_U, TypeOnStack.Get<NativeInt>(), pop: 1);
         }
 
@@ -183,15 +281,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_U_Un, TypeOnStack.Get<NativeInt>(), pop: 1);
         }
 
-        public void ConvertToSByte()
+        private void ConvertToSByte()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToSByte expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_I1, TypeOnStack.Get<int>(), pop: 1);
         }
 
@@ -219,15 +310,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_I1_Un, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        public void ConvertToInt16()
+        private void ConvertToInt16()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToInt16 expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_I2, TypeOnStack.Get<int>(), pop: 1);
         }
 
@@ -255,15 +339,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_I2_Un, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        public void ConvertToInt32()
+        private void ConvertToInt32()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToInt32 expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_I4, TypeOnStack.Get<int>(), pop: 1);
         }
 
@@ -291,15 +368,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_I4_Un, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        public void ConvertToInt64()
+        private void ConvertToInt64()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToInt64 expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_I8, TypeOnStack.Get<long>(), pop: 1);
         }
 
@@ -327,15 +397,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_I8_Un, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        public void ConvertToFloat()
+        private void ConvertToFloat()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToFloat expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_R4, TypeOnStack.Get<float>(), pop: 1);
         }
 
@@ -351,27 +414,13 @@ namespace Sigil
             UpdateState(OpCodes.Conv_R_Un, TypeOnStack.Get<float>(), pop: 1);
         }
 
-        public void ConvertToDouble()
+        private void ConvertToDouble()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToDouble expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_R8, TypeOnStack.Get<double>(), pop: 1);
         }
 
-        public void ConvertToByte()
+        private void ConvertToByte()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToByte expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_U1, TypeOnStack.Get<int>(), pop: 1);
         }
 
@@ -399,15 +448,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_U1_Un, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        public void ConvertToUInt16()
+        private void ConvertToUInt16()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToUInt16 expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_U2, TypeOnStack.Get<int>(), pop: 1);
         }
 
@@ -435,15 +477,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_U2_Un, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        public void ConvertToUInt32()
+        private void ConvertToUInt32()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToUInt32 expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_U4, TypeOnStack.Get<int>(), pop: 1);
         }
 
@@ -471,15 +506,8 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_U4_Un, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        public void ConvertToUInt64()
+        private void ConvertToUInt64()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                throw new SigilException("ConvertToUInt64 expects a value to be on the stack", Stack);
-            }
-
             UpdateState(OpCodes.Conv_U4, TypeOnStack.Get<long>(), pop: 1);
         }
 

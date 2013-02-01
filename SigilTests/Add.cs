@@ -87,10 +87,12 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
             e1.LoadConstant(1);
-            e1.ConvertToNativeInt();
+            //e1.ConvertToNativeInt();
+            e1.Convert<IntPtr>();
             e1.LoadConstant(3);
             e1.Add();
-            e1.ConvertToInt32();
+            //e1.ConvertToInt32();
+            e1.Convert<int>();
             e1.Return();
 
             var d1 = e1.CreateDelegate();
@@ -104,9 +106,11 @@ namespace SigilTests
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
             e1.LoadConstant(1);
             e1.LoadConstant(3);
-            e1.ConvertToNativeInt();
+            //e1.ConvertToNativeInt();
+            e1.Convert<IntPtr>();
             e1.Add();
-            e1.ConvertToInt32();
+            //e1.ConvertToInt32();
+            e1.Convert<int>();
             e1.Return();
 
             var d1 = e1.CreateDelegate();
@@ -119,11 +123,14 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
             e1.LoadConstant(1);
-            e1.ConvertToNativeInt();
+            //e1.ConvertToNativeInt();
+            e1.Convert<IntPtr>();
             e1.LoadConstant(3);
-            e1.ConvertToNativeInt();
+            //e1.ConvertToNativeInt();
+            e1.Convert<IntPtr>();
             e1.Add();
-            e1.ConvertToInt32();
+            //e1.ConvertToInt32();
+            e1.Convert<int>();
             e1.Return();
 
             var d1 = e1.CreateDelegate();
@@ -138,7 +145,8 @@ namespace SigilTests
             e1.LoadArgumentAddress(0);
             e1.LoadConstant(2);
             e1.Add();
-            e1.ConvertToInt32();
+            //e1.ConvertToInt32();
+            e1.Convert<int>();
             e1.Return();
 
             var d1 = e1.CreateDelegate();
@@ -162,7 +170,8 @@ namespace SigilTests
             e1.LoadConstant(2);
             e1.LoadArgumentAddress(0);
             e1.Add();
-            e1.ConvertToInt32();
+            //e1.ConvertToInt32();
+            e1.Convert<int>();
             e1.Return();
 
             var d1 = e1.CreateDelegate();
@@ -184,10 +193,12 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int, int>>.NewDynamicMethod("E1");
             e1.LoadConstant(2);
-            e1.ConvertToNativeInt();
+            //e1.ConvertToNativeInt();
+            e1.Convert<IntPtr>();
             e1.LoadArgumentAddress(0);
             e1.Add();
-            e1.ConvertToInt32();
+            //e1.ConvertToInt32();
+            e1.Convert<int>();
             e1.Return();
 
             var d1 = e1.CreateDelegate();

@@ -246,31 +246,6 @@ namespace Sigil
             InnerEmit.UnsignedCompareLessThan();
         }
 
-        public void Conv_I()
-        {
-            InnerEmit.ConvertToNativeInt();
-        }
-
-        public void Conv_I1()
-        {
-            InnerEmit.ConvertToSByte();
-        }
-
-        public void Conv_I2()
-        {
-            InnerEmit.ConvertToInt16();
-        }
-
-        public void Conv_I4()
-        {
-            InnerEmit.ConvertToInt32();
-        }
-
-        public void Conv_I8()
-        {
-            InnerEmit.ConvertToInt64();
-        }
-
         public void Conv_Ovf_I()
         {
             InnerEmit.ConvertToNativeIntOverflow();
@@ -376,39 +351,24 @@ namespace Sigil
             InnerEmit.UnsignedConvertToFloat();
         }
 
-        public void Conv_R4()
+        public void Conv<PrimitiveType>()
         {
-            InnerEmit.ConvertToFloat();
+            Conv(typeof(PrimitiveType));
         }
 
-        public void Conv_R8()
+        public void Conv(Type primitiveType)
         {
-            InnerEmit.ConvertToDouble();
+            InnerEmit.Convert(primitiveType);
         }
 
-        public void Conv_U()
+        public void Conv_Ovf<PrimitType>()
         {
-            InnerEmit.ConvertToUnsignedNativeInt();
+            Conv_Ovf(typeof(PrimitType));
         }
 
-        public void Conv_U1()
+        public void Conv_Ovf(Type primitiveType)
         {
-            InnerEmit.ConvertToByte();
-        }
-
-        public void Conv_U2()
-        {
-            InnerEmit.ConvertToUInt16();
-        }
-
-        public void Conv_U4()
-        {
-            InnerEmit.ConvertToUInt32();
-        }
-
-        public void Conv_U8()
-        {
-            InnerEmit.ConvertToUInt64();
+            InnerEmit.ConvertOverflow(primitiveType);
         }
 
         public void Cpblk(bool isVolatile = false, int? unaligned = null)

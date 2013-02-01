@@ -720,7 +720,8 @@ namespace SigilTests
 
             var e4 = Emit<Action>.NewDynamicMethod("E4");
             e4.LoadConstant(123);
-            e4.ConvertToNativeInt();
+            //e4.ConvertToNativeInt();
+            e4.Convert<IntPtr>();
             e4.LoadConstant("4");
 
             try
