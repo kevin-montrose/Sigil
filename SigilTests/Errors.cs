@@ -13,6 +13,102 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void ChecksStacks()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.CompareEqual();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CompareEqual expects two values on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.CompareGreaterThan();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CompareGreaterThan expects two values on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.CompareLessThan();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CompareLessThan expects two values on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.UnsignedCompareGreaterThan();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("UnsignedCompareGreaterThan expects two values on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.UnsignedCompareLessThan();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("UnsignedCompareLessThan expects two values on the stack", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void CheckFiniteStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.CheckFinite();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("CheckFinite expects a value to be on the stack, but it was empty", e.Message);
+            }
+
+            var e2= Emit<Action>.NewDynamicMethod();
+            e2.NewObject<object>();
+
+            try
+            {
+                e2.CheckFinite();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("CheckFinite expects a floating point value, found System.Object", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void CastClassNull()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
