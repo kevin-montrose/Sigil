@@ -11,6 +11,106 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Convert a value on the stack to the given non-character primitive type.
+        /// 
+        /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
+        /// </summary>
+        public void Convert<PrimitiveType>()
+        {
+            Convert(typeof(PrimitiveType));
+        }
+
+        /// <summary>
+        /// Convert a value on the stack to the given non-character primitive type.
+        /// 
+        /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
+        /// </summary>
+        public void Convert(Type primitiveType)
+        {
+            if (primitiveType == null)
+            {
+                throw new ArgumentNullException("primitiveType");
+            }
+
+            if (!primitiveType.IsPrimitive || primitiveType == typeof(char))
+            {
+                throw new ArgumentException("Convert expects a non-character primitive type");
+            }
+
+            if (primitiveType == typeof(byte))
+            {
+                ConvertToByte();
+                return;
+            }
+
+            if (primitiveType == typeof(sbyte))
+            {
+                ConvertToSByte();
+                return;
+            }
+
+            if (primitiveType == typeof(short))
+            {
+                ConvertToInt16();
+                return;
+            }
+
+            if (primitiveType == typeof(ushort))
+            {
+                ConvertToUInt16();
+                return;
+            }
+
+            if (primitiveType == typeof(int))
+            {
+                ConvertToInt32();
+                return;
+            }
+
+            if (primitiveType == typeof(uint))
+            {
+                ConvertToUInt32();
+                return;
+            }
+
+            if (primitiveType == typeof(long))
+            {
+                ConvertToInt64();
+                return;
+            }
+
+            if (primitiveType == typeof(ulong))
+            {
+                ConvertToUInt64();
+                return;
+            }
+
+            if (primitiveType == typeof(IntPtr))
+            {
+                ConvertToNativeInt();
+                return;
+            }
+
+            if (primitiveType == typeof(UIntPtr))
+            {
+                ConvertToUnsignedNativeInt();
+                return;
+            }
+
+            if (primitiveType == typeof(float))
+            {
+                ConvertToFloat();
+                return;
+            }
+
+            if (primitiveType == typeof(double))
+            {
+                ConvertToDouble();
+                return;
+            }
+        }
+
         public void ConvertToNativeInt()
         {
             var top = Stack.Top();
