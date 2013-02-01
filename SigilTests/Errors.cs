@@ -13,6 +13,153 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void CallIndirectNull()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.CallIndirect(CallingConventions.Any, null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("returnType", e.ParamName);
+            }
+
+            try
+            {
+                e1.CallIndirect(CallingConventions.Any, typeof(void), null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("parameterTypes", e.ParamName);
+            }
+        }
+
+        [TestMethod]
+        public void CallIndirectBadConvention()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.CallIndirect((CallingConventions)254);
+                Assert.Fail();
+            }
+            catch (ArgumentException e)
+            {
+                Assert.AreEqual("callConventions", e.ParamName);
+            }
+        }
+
+        [TestMethod]
+        public void CallIndirectEmptyStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.CallIndirect(CallingConventions.Any);
+                Assert.Fail();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("CallIndirect expected 1 values on the stack", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CallIndirectNoPtr()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            e1.NewObject<object>();
+
+            try
+            {
+                e1.CallIndirect(CallingConventions.Any);
+                Assert.Fail();
+            }
+            catch (SigilException e)
+            {
+                Assert.AreEqual("CallIndirect expects a native int to be on the top of the stack, found System.Object", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CallIndirectKnownBad()
+        {
+            var toString = typeof(object).GetMethod("ToString");
+            var add = typeof(List<>).GetMethod("Add");
+            var addInt = typeof(List<int>).GetMethod("Add");
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadFunctionPointer(toString);
+
+                try
+                {
+                    e1.CallIndirect(CallingConventions.VarArgs);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CallIndirect expects method calling conventions to match, found Standard, HasThis on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.LoadFunctionPointer(add);
+
+                try
+                {
+                    e1.CallIndirect(add.CallingConvention);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CallIndirect expects a 'this' value assignable to System.Collections.Generic.List`1[T], found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.LoadFunctionPointer(toString);
+
+                try
+                {
+                    e1.CallIndirect(toString.CallingConvention, typeof(object));
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CallIndirect expects method return types to match, found System.String on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<List<int>>();
+                e1.LoadConstant(2.0);
+                e1.LoadFunctionPointer(addInt);
+
+                try
+                {
+                    e1.CallIndirect(addInt.CallingConvention, typeof(void), typeof(int));
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CallIndirect expected a value assignable to System.Int32, found System.Double", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void CallBadParam()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

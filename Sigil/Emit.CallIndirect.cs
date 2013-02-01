@@ -248,13 +248,12 @@ namespace Sigil
                 throw new ArgumentNullException("parameterTypes");
             }
 
-            if ((callConventions & CallingConventions.Any) == 0 &&
-                (callConventions & CallingConventions.ExplicitThis) == 0 &&
-                (callConventions & CallingConventions.HasThis) == 0 &&
-                (callConventions & CallingConventions.Standard) == 0 &&
-                (callConventions & CallingConventions.VarArgs) == 0)
+            var known = CallingConventions.Any | CallingConventions.ExplicitThis | CallingConventions.HasThis | CallingConventions.Standard | CallingConventions.VarArgs;
+            known = ~known;
+
+            if ((callConventions & known) != 0)
             {
-                throw new ArgumentException("callConventions");
+                throw new ArgumentException("Unexpected value not in CallingConventions", "callConventions");
             }
 
             var takeExtra = 1;
