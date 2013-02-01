@@ -63,6 +63,7 @@
     <Compile Include="CastClass.cs" />
     <Compile Include="CheckFinite.cs" />
     <Compile Include="Compares.cs" />
+    <Compile Include="Converts.cs" />
     <Compile Include="Divide.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="Init.cs" />

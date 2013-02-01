@@ -8,12 +8,23 @@ namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
-        private static Type AliasInts(Type t)
+        private static Type Alias(Type t)
         {
             if (t == typeof(bool) || t == typeof(sbyte) || t == typeof(byte) || t == typeof(short) || t == typeof(ushort) || t == typeof(uint))
             {
                 // Nothing smaller than In32 exists in CLR land
                 return typeof(int);
+            }
+
+            if (t == typeof(long) || t == typeof(ulong))
+            {
+                // long/ulong are interchangable on the stack
+                return typeof(long);
+            }
+
+            if (t == typeof(IntPtr) || t == typeof(UIntPtr))
+            {
+                return typeof(NativeInt);
             }
 
             return t;
@@ -38,8 +49,8 @@ namespace Sigil.Impl
             var t1 = type1;
             var t2 = type2.Type;
 
-            t1 = AliasInts(t1);
-            t2 = AliasInts(t2);
+            t1 = Alias(t1);
+            t2 = Alias(t2);
 
             return t1.IsAssignableFrom(t2);
         }
@@ -52,8 +63,8 @@ namespace Sigil.Impl
             var t1 = type1.Type;
             var t2 = type2.Type;
 
-            t1 = AliasInts(t1);
-            t2 = AliasInts(t2);
+            t1 = Alias(t1);
+            t2 = Alias(t2);
 
             return t1.IsAssignableFrom(t2);
         }

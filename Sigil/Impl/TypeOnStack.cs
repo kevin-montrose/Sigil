@@ -152,6 +152,11 @@ namespace Sigil.Impl
 
         public static TypeOnStack Get(Type type, bool makeMarkable = false)
         {
+            if (type == typeof(void))
+            {
+                type = typeof(VoidType);
+            }
+
             TypeOnStack ret;
 
             if (type.IsPointer)
@@ -175,7 +180,6 @@ namespace Sigil.Impl
                 }
                 else
                 {
-
                     var getM = typeof(TypeOnStack).GetMethods().Single(w => w.Name == "Get" && w.IsGenericMethod).MakeGenericMethod(type);
 
                     ret = (TypeOnStack)getM.Invoke(null, new object[0]);
@@ -261,4 +265,7 @@ namespace Sigil.Impl
 
     // Stand in for native int type
     internal class NativeInt { }
+
+    // Stand in for void
+    internal class VoidType { }
 }

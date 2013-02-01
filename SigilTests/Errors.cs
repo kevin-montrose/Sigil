@@ -13,6 +13,191 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void ConvertFloats()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.ConvertOverflow<float>();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("There is no operation for converting to a float with overflow checking", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.ConvertOverflow<double>();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("There is no operation for converting to a double with overflow checking", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.UnsignedConvertOverflow<float>();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("There is no operation for converting to a float with overflow checking", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.UnsignedConvertOverflow<double>();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("There is no operation for converting to a double with overflow checking", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ConvertEmptyStack()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.Convert<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Convert expected a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.ConvertOverflow<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("ConvertOverflow expected a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.UnsignedConvertOverflow<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("UnsignedConvertOverflow expected a value on the stack, but it was empty", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ConvertNonPrimitives()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.Convert<object>();
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("Convert expects a non-character primitive type", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.ConvertOverflow<object>();
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("ConvertOverflow expects a non-character primitive type", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.UnsignedConvertOverflow<object>();
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("UnsignedConvertOverflow expects a non-character primitive type", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ConvertNulls()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.Convert(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("primitiveType", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.ConvertOverflow(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("primitiveType", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.UnsignedConvertOverflow(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("primitiveType", e.ParamName);
+                }
+            }
+        }
+
+        [TestMethod]
         public void ChecksStacks()
         {
             {
@@ -21,6 +206,7 @@ namespace SigilTests
                 try
                 {
                     e1.CompareEqual();
+                    Assert.Fail();
                 }
                 catch (SigilException e)
                 {
@@ -34,6 +220,7 @@ namespace SigilTests
                 try
                 {
                     e1.CompareGreaterThan();
+                    Assert.Fail();
                 }
                 catch (SigilException e)
                 {
@@ -47,6 +234,7 @@ namespace SigilTests
                 try
                 {
                     e1.CompareLessThan();
+                    Assert.Fail();
                 }
                 catch (SigilException e)
                 {
@@ -60,6 +248,7 @@ namespace SigilTests
                 try
                 {
                     e1.UnsignedCompareGreaterThan();
+                    Assert.Fail();
                 }
                 catch (SigilException e)
                 {
@@ -73,6 +262,7 @@ namespace SigilTests
                 try
                 {
                     e1.UnsignedCompareLessThan();
+                    Assert.Fail();
                 }
                 catch (SigilException e)
                 {

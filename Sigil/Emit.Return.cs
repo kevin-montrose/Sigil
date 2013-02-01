@@ -13,7 +13,7 @@ namespace Sigil
     {
         public void Return()
         {
-            if (ReturnType == typeof(void))
+            if (ReturnType == TypeOnStack.Get(typeof(void)))
             {
                 if (!Stack.IsRoot)
                 {
@@ -34,7 +34,7 @@ namespace Sigil
 
             if (!ReturnType.IsAssignableFrom(retType[0]))
             {
-                throw new SigilException("Return expects a value assignable to " + ReturnType.FullName + " to be on the stack; found " + retType[0], Stack);
+                throw new SigilException("Return expects a value assignable to " + ReturnType + " to be on the stack; found " + retType[0], Stack);
             }
 
             UpdateState(OpCodes.Ret, pop: 1);

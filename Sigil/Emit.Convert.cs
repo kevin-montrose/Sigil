@@ -249,7 +249,7 @@ namespace Sigil
 
             if (!primitiveType.IsPrimitive || primitiveType == typeof(char))
             {
-                throw new ArgumentException("ConvertOverflow expects a non-character primitive type");
+                throw new ArgumentException("UnsignedConvertOverflow expects a non-character primitive type");
             }
 
             if (primitiveType == typeof(float))
@@ -260,6 +260,12 @@ namespace Sigil
             if (primitiveType == typeof(double))
             {
                 throw new InvalidOperationException("There is no operation for converting to a double with overflow checking");
+            }
+
+            var top = Stack.Top();
+            if (top == null)
+            {
+                throw new SigilException("UnsignedConvertOverflow expected a value on the stack, but it was empty", Stack);
             }
 
             if (primitiveType == typeof(byte))
@@ -601,7 +607,7 @@ namespace Sigil
 
         private void ConvertToUInt64()
         {
-            UpdateState(OpCodes.Conv_U4, TypeOnStack.Get<long>(), pop: 1);
+            UpdateState(OpCodes.Conv_U8, TypeOnStack.Get<long>(), pop: 1);
         }
 
         private void ConvertToUInt64Overflow()

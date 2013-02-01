@@ -28,7 +28,7 @@ namespace Sigil
         private bool Invalidated;
 
         private BufferedILGenerator IL;
-        private Type ReturnType;
+        private TypeOnStack ReturnType;
         private Type[] ParameterTypes;
         private DynamicMethod DynMethod;
 
@@ -61,7 +61,7 @@ namespace Sigil
         {
             DynMethod = dynMethod;
 
-            ReturnType = DynMethod.ReturnType;
+            ReturnType = TypeOnStack.Get(DynMethod.ReturnType);
             ParameterTypes = 
                 DynMethod
                     .GetParameters()
