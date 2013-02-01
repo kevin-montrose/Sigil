@@ -246,104 +246,14 @@ namespace Sigil
             InnerEmit.UnsignedCompareLessThan();
         }
 
-        public void Conv_Ovf_I()
+        public void Conv_Ovf_Un<PrimitiveType>()
         {
-            InnerEmit.ConvertToNativeIntOverflow();
+            Conv_Ovf_Un(typeof(PrimitiveType));
         }
 
-        public void Conv_Ovf_I_Un()
+        public void Conv_Ovf_Un(Type primitiveType)
         {
-            InnerEmit.UnsignedConvertToNativeIntOverflow();
-        }
-
-        public void Conv_Ovf_I1()
-        {
-            InnerEmit.ConvertToSByteOverflow();
-        }
-
-        public void Conv_Ovf_I1_Un()
-        {
-            InnerEmit.UnsignedConvertToSByteOverflow();
-        }
-
-        public void Conf_Ovf_I2()
-        {
-            InnerEmit.ConvertToInt16Overflow();
-        }
-
-        public void Conf_Ovf_I2_Un()
-        {
-            InnerEmit.UnsignedConvertToInt16Overflow();
-        }
-
-        public void Conf_Ovf_I4()
-        {
-            InnerEmit.ConvertToInt32Overflow();
-        }
-
-        public void Conf_Ovf_I4_Un()
-        {
-            InnerEmit.UnsignedConvertToInt32Overflow();
-        }
-
-        public void Conf_Ovf_I8()
-        {
-            InnerEmit.ConvertToInt64Overflow();
-        }
-
-        public void Conf_Ovf_I8_Un()
-        {
-            InnerEmit.UnsignedConvertToInt64Overflow();
-        }
-
-        public void Conf_Ovf_U()
-        {
-            InnerEmit.ConvertToUnsignedNativeIntOverflow();
-        }
-
-        public void Conf_Ovf_U_Un()
-        {
-            InnerEmit.UnsignedConvertToUnsignedNativeIntOverflow();
-        }
-
-        public void Conv_Ovf_U1()
-        {
-            InnerEmit.ConvertToByteOverflow();
-        }
-
-        public void Conv_Ovf_U1_Un()
-        {
-            InnerEmit.UnsignedConvertToByteOverflow();
-        }
-
-        public void Conv_Ovf_U2()
-        {
-            InnerEmit.ConvertToUInt16Overflow();
-        }
-
-        public void Conv_Ovf_U2_Un()
-        {
-            InnerEmit.UnsignedConvertToUInt16Overflow();
-        }
-
-        public void Conv_Ovf_U4()
-        {
-            InnerEmit.ConvertToUInt32Overflow();
-        }
-
-        public void Conv_Ovf_U4_Un()
-        {
-            InnerEmit.UnsignedConvertToUInt32Overflow();
-        }
-
-        public void Conv_Ovf_U8()
-        {
-            InnerEmit.ConvertToUInt64Overflow();
-        }
-
-        public void Conv_Ovf_U8_Un()
-        {
-            InnerEmit.UnsignedConvertToUInt64Overflow();
+            InnerEmit.UnsignedConvertOverflow(primitiveType);
         }
 
         public void Conv_R_Un()
