@@ -13,6 +13,104 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void CopyBlock()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.CopyBlock(unaligned: 3);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned must be null, 1, 2, or 4\r\nParameter name: unaligned", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.CopyBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyBlock expects three values to be on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+                try
+                {
+                    e1.CopyBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyBlock expects the destination value to be a pointer, reference, or native int; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.Convert<IntPtr>();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+                try
+                {
+                    e1.CopyBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyBlock expects the source value to be a pointer, reference, or native int; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.Convert<IntPtr>();
+                e1.Duplicate();
+                e1.NewObject<object>();
+                try
+                {
+                    e1.CopyBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyBlock expects the count value to be an int; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DeclareLocal<double>();
+                e1.LoadConstant(0);
+                e1.Convert<IntPtr>();
+                e1.LoadLocalAddress(l);
+                e1.LoadConstant(0);
+                try
+                {
+                    e1.CopyBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyBlock expects source and destination types to match; found System.Double* and native int", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void ConvertIllegal()
         {
             {
