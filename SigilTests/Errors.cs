@@ -13,6 +13,38 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void IsInstance()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.IsInstance(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("type", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.IsInstance<string>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("IsInstance expected a value to be on the stack, but it was empty", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void InitializeObject()
         {
             {

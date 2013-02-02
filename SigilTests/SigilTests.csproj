@@ -71,6 +71,7 @@
     <Compile Include="Errors.cs" />
     <Compile Include="Init.cs" />
     <Compile Include="InitializeObject.cs" />
+    <Compile Include="IsInstance.cs" />
     <Compile Include="Jump.cs" />
     <Compile Include="LoadArguments.cs" />
     <Compile Include="LoadElement.cs" />
