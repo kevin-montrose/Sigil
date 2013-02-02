@@ -13,6 +13,34 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadArgument()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.LoadArgument(0);
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("Delegate of type System.Action takes no parameters", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int>>.NewDynamicMethod();
+                try
+                {
+                    e1.LoadArgument(-1);
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("index must be between 0 and 0, inclusive", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Leave()
         {
             {

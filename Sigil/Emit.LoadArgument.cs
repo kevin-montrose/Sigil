@@ -11,16 +11,19 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Loads the argument at the given index (starting at 0) for the current method onto the stack.
+        /// </summary>
         public void LoadArgument(int index)
         {
             if (ParameterTypes.Length == 0)
             {
-                throw new InvalidOperationException("Delegate of type " + typeof(DelegateType) + " takes no parameters");
+                throw new ArgumentException("Delegate of type " + typeof(DelegateType) + " takes no parameters");
             }
 
             if (index < 0 || index >= ParameterTypes.Length)
             {
-                throw new ArgumentOutOfRangeException("index must be between 0 and " + (ParameterTypes.Length - 1) + ", inclusive");
+                throw new ArgumentException("index must be between 0 and " + (ParameterTypes.Length - 1) + ", inclusive");
             }
 
             switch (index)
