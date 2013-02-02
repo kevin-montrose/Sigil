@@ -13,6 +13,140 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Jump()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.Jump(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("method", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var toString = typeof(object).GetMethod("ToString");
+                try
+                {
+                    e1.Jump(toString);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("Jump expected a calling convention of Standard, found Standard, HasThis", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var intern = typeof(string).GetMethod("Intern");
+                try
+                {
+                    e1.Jump(intern);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("Jump expected a method with 0 parameters, found 1", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<string>>.NewDynamicMethod();
+                var intern = typeof(string).GetMethod("Intern");
+
+                e1.LoadArgument(0);
+
+                try
+                {
+                    e1.Jump(intern);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Jump expected the stack to be empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int>>.NewDynamicMethod();
+                var intern = typeof(string).GetMethod("Intern");
+
+                try
+                {
+                    e1.Jump(intern);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Jump expected the #0 parameter to be assignable from System.Int32, but found System.String", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<string>>.NewDynamicMethod();
+                var intern = typeof(string).GetMethod("Intern");
+
+                e1.BeginExceptionBlock();
+
+                try
+                {
+                    e1.Jump(intern);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Jump cannot transfer control from an exception block", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<string>>.NewDynamicMethod();
+                var intern = typeof(string).GetMethod("Intern");
+
+                var t = e1.BeginExceptionBlock();
+                e1.BeginCatchAllBlock(t);
+
+                try
+                {
+                    e1.Jump(intern);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Jump cannot transfer control from a catch block", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<string>>.NewDynamicMethod();
+                var intern = typeof(string).GetMethod("Intern");
+
+                var t = e1.BeginExceptionBlock();
+                var c = e1.BeginCatchAllBlock(t);
+                e1.Pop();
+                e1.EndCatchBlock(c);
+                e1.BeginFinallyBlock(t);
+
+                try
+                {
+                    e1.Jump(intern);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Jump cannot transfer control from a finally block", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void IsInstance()
         {
             {

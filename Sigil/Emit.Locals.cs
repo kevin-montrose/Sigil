@@ -9,32 +9,19 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        public Local DeclareLocal<LocalType>()
+        public Local DeclareLocal<Type>(string name = null)
         {
-            return DeclareLocal<LocalType>(AutoNamer.Next(this, "_local"));
+            return DeclareLocal(typeof(Type), name);
         }
 
-        public Local DeclareLocal<LocalType>(string name)
-        {
-            return DeclareLocal(typeof(LocalType), name);
-        }
-
-        public Local DeclareLocal(Type type)
-        {
-            return DeclareLocal(type, AutoNamer.Next(this, "_local"));
-        }
-
-        public Local DeclareLocal(Type type, string name)
+        public Local DeclareLocal(Type type, string name = null)
         {
             if (type == null)
             {
                 throw new ArgumentNullException("type");
             }
 
-            if (name == null)
-            {
-                throw new ArgumentNullException("name");
-            }
+            name = name ?? AutoNamer.Next(this, "_local");
 
             var local = IL.DeclareLocal(type);
 
