@@ -13,6 +13,38 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadArgumentAddress()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadArgumentAddress(0);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("Delegate of type System.Action takes no parameters", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int>>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadArgumentAddress(-1);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("index must be between 0 and 0, inclusive", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LoadArgument()
         {
             {
@@ -20,6 +52,7 @@ namespace SigilTests
                 try
                 {
                     e1.LoadArgument(0);
+                    Assert.Fail();
                 }
                 catch (ArgumentException e)
                 {
@@ -32,6 +65,7 @@ namespace SigilTests
                 try
                 {
                     e1.LoadArgument(-1);
+                    Assert.Fail();
                 }
                 catch (ArgumentException e)
                 {
@@ -49,6 +83,7 @@ namespace SigilTests
                 try
                 {
                     e1.Leave(null);
+                    Assert.Fail();
                 }
                 catch (ArgumentNullException e)
                 {
@@ -64,6 +99,7 @@ namespace SigilTests
                 try
                 {
                     e1.Leave(l);
+                    Assert.Fail();
                 }
                 catch (ArgumentException e)
                 {
@@ -78,6 +114,7 @@ namespace SigilTests
                 try
                 {
                     e1.Leave(l);
+                    Assert.Fail();
                 }
                 catch (InvalidOperationException e)
                 {
