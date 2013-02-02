@@ -91,6 +91,7 @@ namespace Sigil.Impl
 
         public Type Type { get; private set; }
         public bool IsReference { get; private set; }
+
         public bool IsPointer { get; private set; }
 
         public bool HasAttachedMethodInfo { get; private set; }
@@ -152,6 +153,11 @@ namespace Sigil.Impl
 
         public static TypeOnStack Get(Type type, bool makeMarkable = false)
         {
+            if (type.ContainsGenericParameters)
+            {
+                throw new InvalidOperationException("Sigil does not currently support generic types; found " + type);
+            }
+
             if (type == typeof(void))
             {
                 type = typeof(VoidType);

@@ -29,7 +29,7 @@ namespace Sigil
                 throw new ArgumentNullException("valueType");
             }
 
-            if (!valueType.IsValueType || valueType.IsByRef || valueType.IsPointer || valueType == typeof(void))
+            if (!valueType.IsValueType || valueType == typeof(void))
             {
                 throw new ArgumentException("Only ValueTypes can be boxed, found " + valueType, "valueType");
             }

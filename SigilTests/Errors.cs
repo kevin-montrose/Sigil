@@ -13,6 +13,72 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadElement()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElement expects two values on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.LoadElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElement expects an int or native int on the top of the stack, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.LoadElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElement expects an array as the second element on the stack, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int[,], int>>.NewDynamicMethod();
+                e1.LoadArgument(0);
+                e1.LoadArgument(1);
+
+                try
+                {
+                    e1.LoadElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElement expects a 1-dimensional array, found System.Int32[,]", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LoadConstant()
         {
             {
@@ -1169,7 +1235,6 @@ namespace SigilTests
         public void CallIndirectKnownBad()
         {
             var toString = typeof(object).GetMethod("ToString");
-            var add = typeof(List<>).GetMethod("Add");
             var addInt = typeof(List<int>).GetMethod("Add");
 
             {
@@ -1190,16 +1255,16 @@ namespace SigilTests
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
                 e1.NewObject<object>();
-                e1.LoadFunctionPointer(add);
+                e1.LoadFunctionPointer(addInt);
 
                 try
                 {
-                    e1.CallIndirect(add.CallingConvention);
+                    e1.CallIndirect(addInt.CallingConvention);
                     Assert.Fail();
                 }
                 catch (SigilException e)
                 {
-                    Assert.AreEqual("CallIndirect expects a 'this' value assignable to System.Collections.Generic.List`1[T], found System.Object", e.Message);
+                    Assert.AreEqual("CallIndirect expects a 'this' value assignable to System.Collections.Generic.List`1[System.Int32], found System.Object", e.Message);
                 }
             }
 

@@ -174,20 +174,12 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Create a new Emit.
-        /// 
-        /// A name for the inner DynamicMethod is generated automatically.
-        /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod()
-        {
-            return NewDynamicMethod(AutoNamer.Next("_DynamicMethod"));
-        }
-
-        /// <summary>
         /// Creates a new Emit, using the provided name for the inner DynamicMethod.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(string name)
+        public static Emit<DelegateType> NewDynamicMethod(string name = null)
         {
+            name = name ?? AutoNamer.Next("_DynamicMethod");
+
             var delType = typeof(DelegateType);
 
             var baseTypes = new HashSet<Type>();

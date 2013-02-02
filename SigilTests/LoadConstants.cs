@@ -152,6 +152,8 @@ namespace SigilTests
         class FieldClass
         {
             public int Foo;
+
+            public FieldClass() { Foo = 123; }
         }
 
         [TestMethod]

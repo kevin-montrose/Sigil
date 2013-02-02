@@ -11,6 +11,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Expects a reference to an array and an index on the stack.
+        /// 
+        /// Pops both, and pushes the element in the array at the index onto the stack.
+        /// </summary>
         public void LoadElement()
         {
             var top = Stack.Top(2);
@@ -46,52 +51,52 @@ namespace Sigil
                 instr = OpCodes.Ldelem_I;
             }
 
-            if (!elemType.IsValueType)
+            if (!elemType.IsValueType && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_Ref;
             }
 
-            if (elemType == typeof(sbyte))
+            if (elemType == typeof(sbyte) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_I1;
             }
 
-            if (elemType == typeof(byte))
+            if (elemType == typeof(byte) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_U1;
             }
 
-            if (elemType == typeof(short))
+            if (elemType == typeof(short) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_I2;
             }
 
-            if (elemType == typeof(ushort))
+            if (elemType == typeof(ushort) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_U2;
             }
 
-            if (elemType == typeof(int))
+            if (elemType == typeof(int) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_I4;
             }
 
-            if (elemType == typeof(uint))
+            if (elemType == typeof(uint) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_U4;
             }
 
-            if (elemType == typeof(long) || elemType == typeof(ulong))
+            if ((elemType == typeof(long) || elemType == typeof(ulong)) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_I8;
             }
 
-            if (elemType == typeof(float))
+            if (elemType == typeof(float) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_R4;
             }
 
-            if(elemType == typeof(double))
+            if (elemType == typeof(double) && !instr.HasValue)
             {
                 instr = OpCodes.Ldelem_R8;
             }

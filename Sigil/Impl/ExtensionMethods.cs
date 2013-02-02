@@ -32,31 +32,15 @@ namespace Sigil.Impl
 
         public static bool IsAssignableFrom(this Type type1, TypeOnStack type2)
         {
-            if (type1.IsPointer)
-            {
-                if (!type2.IsPointer) return false;
-
-                return type1.IsAssignableFrom(type2.Type.MakePointerType());
-            }
-
-            if (type1.IsByRef)
-            {
-                if (!type2.IsReference) return false;
-
-                return type1.IsAssignableFrom(type2.Type.MakeByRefType());
-            }
-
-            var t1 = type1;
-            var t2 = type2.Type;
-
-            t1 = Alias(t1);
-            t2 = Alias(t2);
-
-            return t1.IsAssignableFrom(t2);
+            return TypeOnStack.Get(type1).IsAssignableFrom(type2);
         }
 
         public static bool IsAssignableFrom(this TypeOnStack type1, TypeOnStack type2)
         {
+            // Native int can be convereted to any pointer type
+            if (type1.IsPointer && type2 == TypeOnStack.Get<NativeInt>()) return true;
+            if (type2.IsPointer && type1 == TypeOnStack.Get<NativeInt>()) return true;
+
             if (type1.IsPointer != type2.IsPointer) return false;
             if (type1.IsReference != type2.IsReference) return false;
 
