@@ -76,6 +76,7 @@
     <Compile Include="Leave.cs" />
     <Compile Include="LoadArgumentAddress.cs" />
     <Compile Include="LoadArguments.cs" />
+    <Compile Include="LoadConstants.cs" />
     <Compile Include="LoadElement.cs" />
     <Compile Include="LoadElementAddress.cs" />
     <Compile Include="LoadFields.cs" />

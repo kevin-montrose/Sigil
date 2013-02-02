@@ -84,9 +84,31 @@ namespace Sigil.Impl
             Buffer.Add((il, log) => { il.Emit(op, i); log.AppendLine(op + " " + i); });
         }
 
+        public void Emit(OpCode op, uint ui)
+        {
+            int asInt;
+            unchecked
+            {
+                asInt = (int)ui;
+            }
+
+            Buffer.Add((il, log) => { il.Emit(op, asInt); log.AppendLine(op + " " + ui); });
+        }
+
         public void Emit(OpCode op, long l)
         {
             Buffer.Add((il, log) => { il.Emit(op, l); log.AppendLine(op + " " + l); });
+        }
+
+        public void Emit(OpCode op, ulong ul)
+        {
+            long asLong;
+            unchecked
+            {
+                asLong = (long)ul; 
+            }
+
+            Buffer.Add((il, log) => { il.Emit(op, asLong); log.AppendLine(op + " " + ul); });
         }
 
         public void Emit(OpCode op, float f)

@@ -11,13 +11,18 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Push a 1 onto the stack if b is true, and 0 if false.
+        /// 
+        /// Pushed values are int32s.
+        /// </summary>
         public void LoadConstant(bool b)
         {
             LoadConstant(b ? 1 : 0);
         }
 
         /// <summary>
-        /// Push a constant integer onto the stack.
+        /// Push a constant int32 onto the stack.
         /// </summary>
         public void LoadConstant(int i)
         {
@@ -35,7 +40,7 @@ namespace Sigil
                 case 8: UpdateState(OpCodes.Ldc_I4_8, TypeOnStack.Get<int>()); return;
             }
 
-            if (i >= byte.MinValue && i <= byte.MaxValue)
+            if (i >= sbyte.MinValue && i <= sbyte.MaxValue)
             {
                 UpdateState(OpCodes.Ldc_I4_S, i, TypeOnStack.Get<int>());
                 return;
@@ -44,6 +49,9 @@ namespace Sigil
             UpdateState(OpCodes.Ldc_I4, i, TypeOnStack.Get<int>());
         }
 
+        /// <summary>
+        /// Push a constant int32 onto the stack.
+        /// </summary>
         public void LoadConstant(uint i)
         {
             switch (i)
@@ -59,7 +67,7 @@ namespace Sigil
                 case 8: UpdateState(OpCodes.Ldc_I4_8, TypeOnStack.Get<int>()); return;
             }
 
-            if (i >= byte.MinValue && i <= byte.MaxValue)
+            if (i <= sbyte.MaxValue)
             {
                 UpdateState(OpCodes.Ldc_I4_S, i, TypeOnStack.Get<int>());
                 return;
@@ -68,31 +76,49 @@ namespace Sigil
             UpdateState(OpCodes.Ldc_I4, i, TypeOnStack.Get<int>());
         }
 
+        /// <summary>
+        /// Push a constant int64 onto the stack.
+        /// </summary>
         public void LoadConstant(long l)
         {
             UpdateState(OpCodes.Ldc_I8, l, TypeOnStack.Get<long>());
         }
 
+        /// <summary>
+        /// Push a constant int64 onto the stack.
+        /// </summary>
         public void LoadConstant(ulong l)
         {
-            UpdateState(OpCodes.Ldc_I8, TypeOnStack.Get<long>());
+            UpdateState(OpCodes.Ldc_I8, l, TypeOnStack.Get<long>());
         }
 
+        /// <summary>
+        /// Push a constant float onto the stack.
+        /// </summary>
         public void LoadConstant(float f)
         {
             UpdateState(OpCodes.Ldc_R4, f, TypeOnStack.Get<float>());
         }
 
+        /// <summary>
+        /// Push a constant double onto the stack.
+        /// </summary>
         public void LoadConstant(double d)
         {
             UpdateState(OpCodes.Ldc_R8, d, TypeOnStack.Get<double>());
         }
 
+        /// <summary>
+        /// Push a constant string onto the stack.
+        /// </summary>
         public void LoadConstant(string str)
         {
             UpdateState(OpCodes.Ldstr, str, TypeOnStack.Get<string>());
         }
 
+        /// <summary>
+        /// Push a constant RuntimeFieldHandle onto the stack.
+        /// </summary>
         public void LoadConstant(FieldInfo field)
         {
             if (field == null)
@@ -103,6 +129,9 @@ namespace Sigil
             UpdateState(OpCodes.Ldtoken, field, TypeOnStack.Get<RuntimeFieldHandle>());
         }
 
+        /// <summary>
+        /// Push a constant RuntimeMethodHandle onto the stack.
+        /// </summary>
         public void LoadConstant(MethodInfo method)
         {
             if (method == null)
@@ -113,11 +142,17 @@ namespace Sigil
             UpdateState(OpCodes.Ldtoken, method, TypeOnStack.Get<RuntimeMethodHandle>());
         }
 
+        /// <summary>
+        /// Push a constant RuntimeTypeHandle onto the stack.
+        /// </summary>
         public void LoadConstant<Type>()
         {
             LoadConstant(typeof(Type));
         }
 
+        /// <summary>
+        /// Push a constant RuntimeTypeHandle onto the stack.
+        /// </summary>
         public void LoadConstant(Type type)
         {
             if (type == null)
@@ -128,6 +163,9 @@ namespace Sigil
             UpdateState(OpCodes.Ldtoken, type, TypeOnStack.Get<RuntimeTypeHandle>());
         }
 
+        /// <summary>
+        /// Loads a null reference onto the stack.
+        /// </summary>
         public void LoadNull()
         {
             UpdateState(OpCodes.Ldnull, TypeOnStack.Get<object>());

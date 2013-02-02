@@ -310,7 +310,21 @@ namespace Sigil
             IL.Emit(instr, param);
         }
 
+        private void UpdateState(OpCode instr, uint param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
+        }
+
         private void UpdateState(OpCode instr, long param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
+        }
+
+        private void UpdateState(OpCode instr, ulong param, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, addToStack, pop);
 
