@@ -9,6 +9,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Leave an exception or catch block, branching to the given label.
+        /// 
+        /// This instruction empties the stack.
+        /// </summary>
         public void Leave(Label label)
         {
             if (label == null)
@@ -23,7 +28,7 @@ namespace Sigil
 
             if (!TryBlocks.Any(t => t.Value.Item2 == -1) && !CatchBlocks.Any(c => c.Value.Item2 == -1))
             {
-                throw new SigilException("Leave can only be used within an exception or catch block", Stack);
+                throw new InvalidOperationException("Leave can only be used within an exception or catch block");
             }
 
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block

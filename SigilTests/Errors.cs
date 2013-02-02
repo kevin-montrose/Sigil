@@ -13,6 +13,52 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Leave()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.Leave(null);
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("label", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var l = e2.DefineLabel();
+
+                try
+                {
+                    e1.Leave(l);
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("label is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DefineLabel();
+
+                try
+                {
+                    e1.Leave(l);
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Leave can only be used within an exception or catch block", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Labels()
         {
             {
