@@ -62,6 +62,7 @@
     <Compile Include="Calls.cs" />
     <Compile Include="CastClass.cs" />
     <Compile Include="CheckFinite.cs" />
+    <Compile Include="InitializeBlock.cs" />
     <Compile Include="Compares.cs" />
     <Compile Include="Converts.cs" />
     <Compile Include="CopyBlock.cs" />
@@ -69,6 +70,7 @@
     <Compile Include="Divide.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="Init.cs" />
+    <Compile Include="InitializeObject.cs" />
     <Compile Include="Jump.cs" />
     <Compile Include="LoadArguments.cs" />
     <Compile Include="LoadElement.cs" />

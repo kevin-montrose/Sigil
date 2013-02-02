@@ -13,6 +13,153 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void InitializeObject()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.InitializeObject(null);
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("valueType", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.InitializeObject<int>();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("InitializeObject expects a value to be on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.InitializeObject<DateTime>();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("InitializeObject expected a reference or pointer to a System.DateTime, or a native int, to be on the stack; found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void InitializeBlock()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.InitializeBlock(unaligned: 3);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned must be null, 1, 2, or 4", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.InitializeBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("InitializeBlock expects three values to be on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.InitializeBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("InitializeBlock expects the start value to be a pointer, reference, or native int; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.Convert<IntPtr>();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.InitializeBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("InitBlock expects the initial value to be an int or native int; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.Convert<IntPtr>();
+                e1.LoadConstant(0);
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.InitializeBlock();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("InitBlock expects the count to be an int; found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void Duplicate()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.Duplicate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Duplicate expects a value on the stack, but it was empty", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void CopyObject()
         {
             {

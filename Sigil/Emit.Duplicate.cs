@@ -9,6 +9,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pushes a copy of the current top value on the stack.
+        /// </summary>
         public void Duplicate()
         {
             var onStack = Stack.Top();

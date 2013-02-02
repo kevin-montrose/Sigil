@@ -11,11 +11,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Expects an instance of the type to be initialized on the stack.
+        /// 
+        /// Initializes all the fields on a value type to null or an appropriate zero value.
+        /// </summary>
         public void InitializeObject<ValueType>()
         {
             InitializeObject(typeof(ValueType));
         }
 
+        /// <summary>
+        /// Expects an instance of the type to be initialized on the stack.
+        /// 
+        /// Initializes all the fields on a value type to null or an appropriate zero value.
+        /// </summary>
         public void InitializeObject(Type valueType)
         {
             if (valueType == null)
@@ -32,9 +42,9 @@ namespace Sigil
 
             var obj = onStack[0];
 
-            if (obj != TypeOnStack.Get(valueType))
+            if (obj != TypeOnStack.Get<NativeInt>() && obj != TypeOnStack.Get(valueType.MakePointerType()) && obj != TypeOnStack.Get(valueType.MakeByRefType()))
             {
-                throw new SigilException("InitializeObject expected " + valueType + " to be on the stack; found " + obj, Stack);
+                throw new SigilException("InitializeObject expected a reference or pointer to a " + valueType + ", or a native int, to be on the stack; found " + obj, Stack);
             }
 
             UpdateState(OpCodes.Initobj, valueType, pop: 1);

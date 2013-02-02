@@ -11,11 +11,16 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Expects a pointer, an initialization value, and a count on the stack.  Pops all three.
+        /// 
+        /// Writes the initialization value to count bytes at the passed pointer.
+        /// </summary>
         public void InitializeBlock(bool isVolatile = false, int? unaligned = null)
         {
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
             {
-                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
             var onStack = Stack.Top(3);
