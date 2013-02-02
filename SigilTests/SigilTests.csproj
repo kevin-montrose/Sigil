@@ -64,6 +64,7 @@
     <Compile Include="CheckFinite.cs" />
     <Compile Include="Compares.cs" />
     <Compile Include="Converts.cs" />
+    <Compile Include="CopyBlock.cs" />
     <Compile Include="Divide.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="Init.cs" />
