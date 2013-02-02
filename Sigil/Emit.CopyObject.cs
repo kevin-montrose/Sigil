@@ -11,11 +11,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Takes a destination pointer, a source pointer as arguments.  Pops both off the stack.
+        /// 
+        /// Copies the given value type from the source to the destination.
+        /// </summary>
         public void CopyObject<ValueType>()
         {
             CopyObject(typeof(ValueType));
         }
 
+        /// <summary>
+        /// Takes a destination pointer, a source pointer as arguments.  Pops both off the stack.
+        /// 
+        /// Copies the given value type from the source to the destination.
+        /// </summary>
         public void CopyObject(Type valueType)
         {
             if (valueType == null)
@@ -25,7 +35,7 @@ namespace Sigil
 
             if (!valueType.IsValueType)
             {
-                throw new SigilException("CopyObject expects a ValueType; found " + valueType, Stack);
+                throw new ArgumentException("CopyObject expects a ValueType; found " + valueType);
             }
 
             var onStack = Stack.Top(2);

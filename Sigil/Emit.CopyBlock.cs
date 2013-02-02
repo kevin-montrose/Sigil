@@ -11,6 +11,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Expects a destination pointer, a source pointer, and a length on the stack.  Pops all three values.
+        /// 
+        /// Copies length bytes from destination to the source.
+        /// </summary>
         public void CopyBlock(bool isVolatile = false, int? unaligned = null)
         {
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))

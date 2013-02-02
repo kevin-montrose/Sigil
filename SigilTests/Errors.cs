@@ -13,6 +13,85 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void CopyObject()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.CopyObject(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("valueType", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.CopyObject(typeof(string));
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("CopyObject expects a ValueType; found System.String", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.CopyObject<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyObject expects two values to be on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.CopyObject<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyObject expects the source value to be a pointer, reference, or native int; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.LoadConstant(0);
+                e1.Convert<IntPtr>();
+
+                try
+                {
+                    e1.CopyObject<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CopyObject expects the destination value to be a pointer, reference, or native int; found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void CopyBlock()
         {
             {
