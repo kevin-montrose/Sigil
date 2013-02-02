@@ -127,13 +127,17 @@ namespace Sigil
             }
         }
 
-        public Label DefineLabel()
+        /// <summary>
+        /// Defines a new label.
+        /// 
+        /// This label can be used for branching, leave, and switch instructions.
+        /// 
+        /// A label must be marked exactly once after being defined, using the MarkLabel() method.        
+        /// </summary>
+        public Label DefineLabel(string name = null)
         {
-            return DefineLabel(AutoNamer.Next(this, "_label"));
-        }
+            name = name ?? AutoNamer.Next(this, "_label");
 
-        public Label DefineLabel(string name)
-        {
             var label = IL.DefineLabel();
 
             var ret = new Label(this, label, name);
@@ -144,6 +148,14 @@ namespace Sigil
             return ret;
         }
 
+
+        /// <summary>
+        /// Marks a label in the instruction stream.
+        /// 
+        /// When branching, leaving, or switching with a label control will be transfered to where it was *marked* not defined.
+        /// 
+        /// Label's can only be marked once, and *must* be marked before creating a delegate.
+        /// </summary>
         public void MarkLabel(Label label)
         {
             if (label == null)
@@ -158,7 +170,7 @@ namespace Sigil
 
             if (!UnmarkedLabels.Contains(label))
             {
-                throw new SigilException("label [" + label.Name + "] has already been marked, and cannot be marked a second time", Stack);
+                throw new InvalidOperationException("label [" + label.Name + "] has already been marked, and cannot be marked a second time");
             }
 
             UnmarkedLabels.Remove(label);

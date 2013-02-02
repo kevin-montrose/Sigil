@@ -13,6 +13,77 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Labels()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DefineLabel();
+                e1.Branch(l);
+                e1.Return();
+
+                try
+                {
+                    var d1 = e1.CreateDelegate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Usage of unmarked label _label0", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void MarkLabel()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.MarkLabel(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("label", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var l = e2.DefineLabel();
+
+                try
+                {
+                    e1.MarkLabel(l);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("label is not owner by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DefineLabel();
+                e1.MarkLabel(l);
+
+                try
+                {
+                    e1.MarkLabel(l);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("label [_label0] has already been marked, and cannot be marked a second time", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Jump()
         {
             {
