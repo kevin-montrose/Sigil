@@ -102,7 +102,9 @@ namespace Sigil.Impl
             while (!cur.IsRoot && !other.IsRoot)
             {
                 if (cur.Value != other.Value)
+                {
                     return false;
+                }
 
                 cur = cur.Previous;
                 other = other.Previous;
