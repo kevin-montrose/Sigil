@@ -13,6 +13,83 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Switch()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                try
+                {
+                    e1.Switch(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("labels", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.Switch(new Label[0]);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("labels must have at least one element", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var l = e2.DefineLabel();
+                try
+                {
+                    e1.Switch(l);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("_label0 is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DefineLabel();
+                try
+                {
+                    e1.Switch(l);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Switch expected a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DefineLabel();
+
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.Switch(l);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Switch expected an int on the stack, found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void StoreObject()
         {
             {

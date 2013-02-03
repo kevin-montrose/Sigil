@@ -11,6 +11,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a value off the stack and branches to the label at the index of that value in the given labels.
+        /// 
+        /// If the value is out of range, execution falls through to the next instruction.
+        /// </summary>
         public void Switch(params Label[] labels)
         {
             if (labels == null)
@@ -29,6 +34,11 @@ namespace Sigil
                 {
                     throw new ArgumentException(label + " is not owned by this Emit, and thus cannot be used");
                 }
+            }
+
+            foreach (var label in labels)
+            {
+                UnusedLabels.Remove(label);
             }
 
             var onStack = Stack.Top();
