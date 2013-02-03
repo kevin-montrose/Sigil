@@ -11,11 +11,17 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a size from the stack, allocates a rank-1 array of the given type, and pushes a reference to the new array onto the stack.
+        /// </summary>
         public void NewArray<ElementType>()
         {
             NewArray(typeof(ElementType));
         }
 
+        /// <summary>
+        /// Pops a size from the stack, allocates a rank-1 array of the given type, and pushes a reference to the new array onto the stack.
+        /// </summary>
         public void NewArray(Type elementType)
         {
             if (elementType == null)

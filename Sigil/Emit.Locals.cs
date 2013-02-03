@@ -9,11 +9,29 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Declare a new local of the given type in the current method.
+        /// 
+        /// Name is optional, and only provided for debugging purposes.  It has no
+        /// effect on emitted IL.
+        /// 
+        /// Be aware that each local takes some space on the stack, inefficient use of locals
+        /// could lead to StackOverflowExceptions at runtime.
+        /// </summary>
         public Local DeclareLocal<Type>(string name = null)
         {
             return DeclareLocal(typeof(Type), name);
         }
 
+        /// <summary>
+        /// Declare a new local of the given type in the current method.
+        /// 
+        /// Name is optional, and only provided for debugging purposes.  It has no
+        /// effect on emitted IL.
+        /// 
+        /// Be aware that each local takes some space on the stack, inefficient use of locals
+        /// could lead to StackOverflowExceptions at runtime.
+        /// </summary>
         public Local DeclareLocal(Type type, string name = null)
         {
             if (type == null)

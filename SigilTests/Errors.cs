@@ -13,6 +13,71 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void NewArray()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewArray(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("elementType", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewArray<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("NewArray expects the size of the array to be on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.NewArray<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("NewArray expecte size to be an int or native int, found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void Locals()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.DeclareLocal(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("type", e.ParamName);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LocalAllocate()
         {
             {
