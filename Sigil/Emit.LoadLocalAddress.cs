@@ -11,6 +11,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pushes a pointer to the given local onto the stack.
+        /// 
+        /// To create a local, use DeclareLocal.
+        /// </summary>
         public void LoadLocalAddress(Local local)
         {
             if (local == null)
