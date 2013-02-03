@@ -13,6 +13,40 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadLocal()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadLocal(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("local", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var l = e2.DeclareLocal<int>();
+
+                try
+                {
+                    e1.LoadLocal(l);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("local is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LoadLength()
         {
             {

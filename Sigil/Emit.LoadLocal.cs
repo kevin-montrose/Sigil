@@ -9,6 +9,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Loads the value in the given local onto the stack.
+        /// 
+        /// To create a local, use DeclareLocal().
+        /// </summary>
         public void LoadLocal(Local local)
         {
             if (local == null)

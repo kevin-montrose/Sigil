@@ -47,5 +47,41 @@ namespace SigilTests
                 Assert.AreEqual("Locals [foo] were declared but never used", e.Message);
             }
         }
+
+        [TestMethod]
+        public void All()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod();
+
+            var locals = new List<Sigil.Local>();
+            int total = 0;
+
+            for (var i = 0; i <= 256; i++)
+            {
+                var l = e1.DeclareLocal<int>();
+                e1.LoadConstant(i);
+                e1.StoreLocal(l);
+
+                locals.Add(l);
+
+                total += i;
+            }
+
+            foreach (var l in locals)
+            {
+                e1.LoadLocal(l);
+            }
+
+            for (var i = 0; i <= 255; i++)
+            {
+                e1.Add();
+            }
+
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual(total, d1());
+        }
     }
 }
