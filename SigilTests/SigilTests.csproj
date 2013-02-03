@@ -99,6 +99,7 @@
     <Compile Include="Shifts.cs" />
     <Compile Include="SizeOf.cs" />
     <Compile Include="StoreElement.cs" />
+    <Compile Include="StoreField.cs" />
     <Compile Include="StoreIndirect.cs" />
     <Compile Include="StoreLocal.cs" />
     <Compile Include="Subtract.cs" />

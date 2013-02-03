@@ -12,6 +12,140 @@ namespace SigilTests
     [TestClass]
     public class Errors
     {
+        class StoreFieldClass
+        {
+            public static int Static;
+            public int Instance;
+        }
+
+        [TestMethod]
+        public void StoreField()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreField(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("field", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(int).GetField("MaxValue");
+
+                try
+                {
+                    e1.StoreField(f, unaligned: 3);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned must be null, 1, 2, or 4", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(int).GetField("MaxValue");
+
+                try
+                {
+                    e1.StoreField(f, unaligned: 4);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned cannot be used with static fields", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(StoreFieldClass).GetField("Instance");
+
+                try
+                {
+                    e1.StoreField(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreField expects two values on the stack for instance fields", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(StoreFieldClass).GetField("Instance");
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreField(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreField expected a type on the stack assignable to SigilTests.Errors+StoreFieldClass, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(StoreFieldClass).GetField("Instance");
+                e1.NewObject<StoreFieldClass>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreField(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreField expected a type on the stack assignable to System.Int32, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(StoreFieldClass).GetField("Static");
+
+                try
+                {
+                    e1.StoreField(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreField expected a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(StoreFieldClass).GetField("Static");
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreField(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreField expected a type on the stack assignable to System.Int32, found System.Object", e.Message);
+                }
+            }
+        }
+
         [TestMethod]
         public void StoreElement()
         {

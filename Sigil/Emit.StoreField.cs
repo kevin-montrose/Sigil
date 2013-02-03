@@ -21,7 +21,7 @@ namespace Sigil
 
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
             {
-                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
             if (unaligned.HasValue && field.IsStatic)
