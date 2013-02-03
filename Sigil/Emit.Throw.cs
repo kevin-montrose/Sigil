@@ -11,6 +11,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a value off the stack and throws it as an exception.
+        /// 
+        /// Throw expects the value to be or extend from a System.Exception.
+        /// </summary>
         public void Throw()
         {
             var onStack = Stack.Top();

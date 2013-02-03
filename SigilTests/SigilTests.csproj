@@ -105,6 +105,7 @@
     <Compile Include="StoreObject.cs" />
     <Compile Include="Subtract.cs" />
     <Compile Include="Switch.cs" />
+    <Compile Include="Throw.cs" />
     <Compile Include="TryCatchFinally.cs" />
   </ItemGroup>
   <ItemGroup>

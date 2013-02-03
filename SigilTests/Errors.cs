@@ -13,6 +13,39 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Throw()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.Throw();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Throw expected a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.Throw();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Throw expected an exception to be on the stack, found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Switch()
         {
             {
