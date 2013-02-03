@@ -11,6 +11,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a value, an index, and a reference to an array off the stack.  Places the given value into the given array at the given index.
+        /// </summary>
         public void StoreElement()
         {
             var onStack = Stack.Top(3);
@@ -48,44 +51,45 @@ namespace Sigil
                 instr = OpCodes.Stelem_I;
             }
 
-            if (!elemType.IsValueType)
+            if (!elemType.IsValueType && !instr.HasValue)
             {
                 instr = OpCodes.Stelem_Ref;
             }
 
-            if (elemType == typeof(sbyte) || elemType == typeof(byte))
+            if ((elemType == typeof(sbyte) || elemType == typeof(byte))  && !instr.HasValue)
             {
                 instr = OpCodes.Stelem_I1;
             }
 
-            if (elemType == typeof(short) || elemType == typeof(ushort))
+            if ((elemType == typeof(short) || elemType == typeof(ushort))  && !instr.HasValue)
             {
                 instr = OpCodes.Stelem_I2;
             }
 
-            if (elemType == typeof(int) || elemType == typeof(uint))
+            if ((elemType == typeof(int) || elemType == typeof(uint))  && !instr.HasValue)
             {
                 instr = OpCodes.Stelem_I4;
             }
 
-            if (elemType == typeof(long) || elemType == typeof(ulong))
+            if ((elemType == typeof(long) || elemType == typeof(ulong))  && !instr.HasValue)
             {
                 instr = OpCodes.Stelem_I8;
             }
 
-            if (elemType == typeof(float))
+            if (elemType == typeof(float) && !instr.HasValue)
             {
                 instr = OpCodes.Stelem_R4;
             }
 
-            if (elemType == typeof(double))
+            if (elemType == typeof(double) && !instr.HasValue)
             {
                 instr = OpCodes.Stelem_R8;
             }
 
             if (!instr.HasValue)
             {
-                throw new Exception("Couldn't infer proper Stelem* opcode from " + elemType);
+                UpdateState(OpCodes.Stelem, elemType, pop:3);
+                return;
             }
 
             UpdateState(instr.Value, pop: 3);

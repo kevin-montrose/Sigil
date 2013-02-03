@@ -13,6 +13,75 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void StoreElement()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreElement expects three parameters to be on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreElement expects a rank one array, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int[], int, int>>.NewDynamicMethod();
+                e1.LoadArgument(0);
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreElement expects an index of type int or native int, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int[], int, int>>.NewDynamicMethod();
+                e1.LoadArgument(0);
+                e1.LoadArgument(1);
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreElement();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreElement expects a value assignable to System.Int32, found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void StoreArgument()
         {
             {
