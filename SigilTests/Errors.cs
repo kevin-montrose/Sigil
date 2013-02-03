@@ -13,6 +13,261 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void EndFinallyBlock()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.EndFinallyBlock(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("forFinally", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var t = e2.BeginExceptionBlock();
+                var f = e2.BeginFinallyBlock(t);
+
+                try
+                {
+                    e1.EndFinallyBlock(f);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("forFinally is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var f = e1.BeginFinallyBlock(t);
+                e1.EndFinallyBlock(f);
+
+                try
+                {
+                    e1.EndFinallyBlock(f);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("EndFinallyBlock expects an unclosed finally block, but Sigil.FinallyBlock is already closed", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var f = e1.BeginFinallyBlock(t);
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.EndFinallyBlock(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Stack should be empty when EndFinallyBlock is called", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void EndCatchBlock()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.EndCatchBlock(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("forCatch", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+
+                var t = e2.BeginExceptionBlock();
+                var c = e2.BeginCatchAllBlock(t);
+
+                try
+                {
+                    e1.EndCatchBlock(c);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("forCatch is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var c = e1.BeginCatchAllBlock(t);
+
+                try
+                {
+                    e1.EndCatchBlock(c);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Stack should be empty when EndCatchBlock is called", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var c = e1.BeginCatchAllBlock(t);
+                e1.Pop();
+                e1.EndCatchBlock(c);
+
+                try
+                {
+                    e1.EndCatchBlock(c);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("CatchBlock  has already been ended", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void EndExceptionBlock()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.EndExceptionBlock(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("forTry", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var t = e2.BeginExceptionBlock();
+
+                try
+                {
+                    e1.EndExceptionBlock(t);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("forTry is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var c = e1.BeginCatchAllBlock(t);
+                e1.Pop();
+                e1.EndCatchBlock(c);
+                e1.EndExceptionBlock(t);
+
+                try
+                {
+                    e1.EndExceptionBlock(t);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("ExceptionBlock has already been ended", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var c = e1.BeginCatchAllBlock(t);
+
+                try
+                {
+                    e1.EndExceptionBlock(t);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Cannot end ExceptionBlock, CatchBlock Sigil.CatchBlock has not been ended", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var f = e1.BeginFinallyBlock(t);
+
+                try
+                {
+                    e1.EndExceptionBlock(t);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Cannot end ExceptionBlock, FinallyBlock Sigil.FinallyBlock has not been ended", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+
+                try
+                {
+                    e1.EndExceptionBlock(t);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Cannot end ExceptionBlock without defining at least one of a catch or finally block", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t1 = e1.BeginExceptionBlock();
+                var t2 = e1.BeginExceptionBlock();
+
+                try
+                {
+                    e1.EndExceptionBlock(t1);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Cannot end outer ExceptionBlock Sigil.ExceptionBlock while inner EmitExceptionBlock Sigil.ExceptionBlock is open", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Throw()
         {
             {

@@ -11,6 +11,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Start a new exception block.  This is roughly analogous to a `try` block in C#, but an exception block contains it's catch and finally blocks.
+        /// </summary>
         public ExceptionBlock BeginExceptionBlock()
         {
             if (!Stack.IsRoot)
@@ -29,7 +32,11 @@ namespace Sigil
 
             return ret;
         }
-
+        /// <summary>
+        /// Ends the given exception block.
+        /// 
+        /// All catch and finally blocks associated with the given exception block must be ended before this method is called.
+        /// </summary>
         public void EndExceptionBlock(ExceptionBlock forTry)
         {
             if (forTry == null)
@@ -47,12 +54,12 @@ namespace Sigil
             // Can't close the same exception block twice
             if (location.Item2 != -1)
             {
-                throw new SigilException("ExceptionBlock has already been ended", Stack);
+                throw new InvalidOperationException("ExceptionBlock has already been ended");
             }
 
             if (CurrentExceptionBlock.Count > 0 && forTry != CurrentExceptionBlock.Peek())
             {
-                throw new SigilException("Cannot end outer ExceptionBlock " + forTry + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is open", Stack);
+                throw new InvalidOperationException("Cannot end outer ExceptionBlock " + forTry + " while inner EmitExceptionBlock " + CurrentExceptionBlock.Peek() + " is open");
             }
 
             // Can't close an exception block while there are outstanding catch blocks
@@ -62,7 +69,7 @@ namespace Sigil
 
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Cannot end ExceptionBlock, CatchBlock " + kv.Key + " has not been ended", Stack);
+                    throw new InvalidOperationException("Cannot end ExceptionBlock, CatchBlock " + kv.Key + " has not been ended");
                 }
             }
 
@@ -72,13 +79,13 @@ namespace Sigil
 
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Cannot end ExceptionBlock, FinallyBlock " + kv.Key + " has not been ended", Stack);
+                    throw new InvalidOperationException("Cannot end ExceptionBlock, FinallyBlock " + kv.Key + " has not been ended");
                 }
             }
 
             if (!CatchBlocks.Any(k => k.Key.ExceptionBlock == forTry) && !FinallyBlocks.Any(k => k.Key.ExceptionBlock == forTry))
             {
-                throw new SigilException("Cannot end ExceptionBlock without defining at least one of a catch or finally block", Stack);
+                throw new InvalidOperationException("Cannot end ExceptionBlock without defining at least one of a catch or finally block");
             }
 
             IL.EndExceptionBlock();
@@ -92,16 +99,33 @@ namespace Sigil
             CurrentExceptionBlock.Pop();
         }
 
+        /// <summary>
+        /// Begins a catch block for the given exception type in the given exception block.
+        /// 
+        /// The given exception block must still be open.
+        /// </summary>
         public CatchBlock BeginCatchBlock<ExceptionType>(ExceptionBlock forTry)
         {
             return BeginCatchBlock(forTry, typeof(ExceptionType));
         }
 
+        /// <summary>
+        /// Begins a catch block for all exceptions in the given exception block
+        ///
+        /// The given exception block must still be open.
+        /// 
+        /// Equivalent to BeginCatchBlock(typeof(Exception), forTry).
+        /// </summary>
         public CatchBlock BeginCatchAllBlock(ExceptionBlock forTry)
         {
             return BeginCatchBlock<Exception>(forTry);
         }
 
+        /// <summary>
+        /// Begins a catch block for the given exception type in the given exception block.
+        /// 
+        /// The given exception block must still be open.
+        /// </summary>
         public CatchBlock BeginCatchBlock(ExceptionBlock forTry, Type exceptionType)
         {
             if (exceptionType == null)
@@ -158,6 +182,9 @@ namespace Sigil
             return ret;
         }
 
+        /// <summary>
+        /// Ends the given catch block.
+        /// </summary>
         public void EndCatchBlock(CatchBlock forCatch)
         {
             if (forCatch == null)
@@ -179,7 +206,7 @@ namespace Sigil
 
             if (location.Item2 != -1)
             {
-                throw new SigilException("CatchBlock  has already been ended", Stack);
+                throw new InvalidOperationException("CatchBlock  has already been ended");
             }
 
             // There's no equivalent to EndCatchBlock in raw ILGenerator, so no call here.
@@ -195,6 +222,13 @@ namespace Sigil
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
         }
 
+        /// <summary>
+        /// Begins a finally block on the given exception block.
+        /// 
+        /// Only one finally block can be defined per exception block, and the block cannot appear within a catch block.
+        /// 
+        /// The given exception block must still be open.
+        /// </summary>
         public FinallyBlock BeginFinallyBlock(ExceptionBlock forTry)
         {
             if (forTry == null)
@@ -238,6 +272,9 @@ namespace Sigil
             return ret;
         }
 
+        /// <summary>
+        /// Ends the given finally block.
+        /// </summary>
         public void EndFinallyBlock(FinallyBlock forFinally)
         {
             if (forFinally == null)
@@ -254,7 +291,7 @@ namespace Sigil
 
             if (finallyBlock.Item2 != -1)
             {
-                throw new SigilException("EndFinallyBlock expects an unclosed finally block, but " + forFinally + " is already closed", Stack);
+                throw new InvalidOperationException("EndFinallyBlock expects an unclosed finally block, but " + forFinally + " is already closed");
             }
 
             if (!Stack.IsRoot)
