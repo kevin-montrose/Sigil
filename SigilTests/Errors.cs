@@ -13,6 +13,67 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void StoreArgument()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreArgument(0);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Delegate of type System.Action takes no parameters", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int>>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreArgument(-1);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("index must be between 0 and 0, inclusive", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int>>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreArgument(0);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreArgument expects a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int>>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreArgument(0);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreArgument expects type on stack to be assignable to System.Int32, found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void SizeOf()
         {
             {

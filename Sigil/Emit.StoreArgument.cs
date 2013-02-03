@@ -11,6 +11,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a value off the stack and stores it into the argument to the current method identified by index.
+        /// </summary>
         public void StoreArgument(int index)
         {
             if (ParameterTypes.Length == 0)
@@ -20,7 +23,7 @@ namespace Sigil
 
             if (index < 0 || index >= ParameterTypes.Length)
             {
-                throw new ArgumentOutOfRangeException("index must be between 0 and " + (ParameterTypes.Length - 1) + ", inclusive");
+                throw new ArgumentException("index must be between 0 and " + (ParameterTypes.Length - 1) + ", inclusive");
             }
 
             var onStack = Stack.Top();
@@ -34,7 +37,7 @@ namespace Sigil
 
             if (!paramType.IsAssignableFrom(onStack[0]))
             {
-                throw new SigilException("StoreArgument expects type on stack to be assignable to argument type, found " + onStack[0] + " and " + paramType, Stack);
+                throw new SigilException("StoreArgument expects type on stack to be assignable to " + paramType + ", found " + onStack[0], Stack);
             }
 
             if (index <= byte.MaxValue)
