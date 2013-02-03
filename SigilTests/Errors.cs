@@ -13,6 +13,70 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Return()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.Return();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Returning from a void method must leave the stack empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Func<int>>.NewDynamicMethod();
+
+                try
+                {
+                    e1.Return();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Return expects a value on the stack, but the stack is empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Func<int>>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.Return();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Return expects a value assignable to System.Int32 to be on the stack; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Func<int>>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.Return();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Return should leave the stack empty", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void ReThrow()
         {
             {

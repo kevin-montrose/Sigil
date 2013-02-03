@@ -11,6 +11,13 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Ends the execution of the current method.
+        /// 
+        /// If the current method does not return void, pops a value from the stack and returns it to the calling method.
+        /// 
+        /// Return should leave the stack empty.
+        /// </summary>
         public void Return()
         {
             if (ReturnType == TypeOnStack.Get(typeof(void)))
