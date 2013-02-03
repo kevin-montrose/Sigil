@@ -12,6 +12,117 @@ namespace SigilTests
     [TestClass]
     public class Errors
     {
+        struct NewObjectStruct
+        {
+            public NewObjectStruct(int i)
+            {
+
+            }
+        }
+
+        [TestMethod]
+        public void NewObject()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewObject(null, null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("type", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewObject(typeof(object), null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("parameterTypes", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewObject(typeof(object), typeof(int), typeof(string));
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Type System.Object must have a constructor that matches parameters [System.Int32, System.String]", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewObject((ConstructorInfo)null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("constructor", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewObject<string, char[]>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Expected 1 parameters to be on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                
+                try
+                {
+                    e1.NewObject<string, char[]>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Parameter #0 to Void .ctor(Char[]) should be System.Char[], but found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.NewObject(typeof(NewObjectStruct), typeof(int));
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Cannot NewObject a ValueType", e.Message);
+                }
+            }
+        }
+
         [TestMethod]
         public void NewArray()
         {

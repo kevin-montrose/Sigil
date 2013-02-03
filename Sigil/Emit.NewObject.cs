@@ -13,102 +13,153 @@ namespace Sigil
     {
         #region Generic NewObject Constructor Finder Helpers
 
+        /// <summary>
+        /// Invokes the parameterless constructor of the given type, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType>()
         {
             NewObject(typeof(ReferenceType));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8), typeof(ParameterType9));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8), typeof(ParameterType9), typeof(ParameterType10));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8), typeof(ParameterType9), typeof(ParameterType10), typeof(ParameterType11));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8), typeof(ParameterType9), typeof(ParameterType10), typeof(ParameterType11), typeof(ParameterType12));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8), typeof(ParameterType9), typeof(ParameterType10), typeof(ParameterType11), typeof(ParameterType12), typeof(ParameterType13));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8), typeof(ParameterType9), typeof(ParameterType10), typeof(ParameterType11), typeof(ParameterType12), typeof(ParameterType13), typeof(ParameterType14));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14, ParameterType15>()
         {
             NewObject(typeof(ReferenceType), typeof(ParameterType1), typeof(ParameterType2), typeof(ParameterType3), typeof(ParameterType4), typeof(ParameterType5), typeof(ParameterType6), typeof(ParameterType7), typeof(ParameterType8), typeof(ParameterType9), typeof(ParameterType10), typeof(ParameterType11), typeof(ParameterType12), typeof(ParameterType13), typeof(ParameterType14), typeof(ParameterType15));
         }
 
+        /// <summary>
+        /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
+        /// </summary>
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
         public void NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14, ParameterType15, ParameterType16>()
         {
@@ -117,6 +168,9 @@ namespace Sigil
 
         #endregion
 
+        /// <summary>
+        /// Pops parameterTypes.Length arguments from the stack, invokes the constructor on the given type that matches parameterTypes, and pushes a reference to the new object onto the stack.
+        /// </summary>
         public void NewObject(Type type, params Type[] parameterTypes)
         {
             if (type == null)
@@ -132,12 +186,15 @@ namespace Sigil
             var cons = type.GetConstructor(parameterTypes);
             if (cons == null)
             {
-                throw new SigilException("Type must have a parameterless constructor", Stack);
+                throw new InvalidOperationException("Type " + type + " must have a constructor that matches parameters [" + string.Join(", ", parameterTypes.AsEnumerable()) + "]");
             }
 
             NewObject(cons);
         }
 
+        /// <summary>
+        /// Pops # of parameters to the given constructor arguments from the stack, invokes the constructor, and pushes a reference to the new object onto the stack.
+        /// </summary>
         public void NewObject(ConstructorInfo constructor)
         {
             if (constructor == null)
@@ -147,7 +204,7 @@ namespace Sigil
 
             if (constructor.DeclaringType.IsValueType)
             {
-                throw new SigilException("Cannot NewObject a ValueType", Stack);
+                throw new InvalidOperationException("Cannot NewObject a ValueType");
             }
 
             var expectedParams = constructor.GetParameters().Select(p => TypeOnStack.Get(p.ParameterType)).ToList();
