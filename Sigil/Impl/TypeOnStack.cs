@@ -10,58 +10,85 @@ namespace Sigil.Impl
 {
     internal class TypeOnStack
     {
-        private class TypeCache<Type>
+        private class TypeCache
         {
-            private static TypeOnStack Value;
+            private static Dictionary<Type, TypeOnStack> Cache = new Dictionary<Type, TypeOnStack>();
 
-            static TypeCache()
+            public static TypeOnStack Get(Type t)
             {
-                Value =
-                    new TypeOnStack
+                lock (Cache)
+                {
+                    TypeOnStack ret;
+                    if (!Cache.TryGetValue(t, out ret))
                     {
-                        Type = typeof(Type),
-                        IsReference = false,
-                        IsPointer = false
-                    };
-            }
+                        ret =
+                            new TypeOnStack
+                            {
+                                Type = t,
+                                IsReference = false,
+                                IsPointer = false
+                            };
 
-            public static TypeOnStack Get() { return Value; }
+                        Cache[t] = ret;
+                    }
+
+                    return ret;
+                }
+            }
         }
 
-        private class ReferenceTypeCache<Type>
+        private class ReferenceTypeCache
         {
-            private static TypeOnStack Value;
+            private static Dictionary<Type, TypeOnStack> Cache = new Dictionary<Type, TypeOnStack>();
 
-            static ReferenceTypeCache()
+            public static TypeOnStack Get(Type t)
             {
-                Value =
-                    new TypeOnStack
+                lock (Cache)
+                {
+                    TypeOnStack ret;
+                    if (!Cache.TryGetValue(t, out ret))
                     {
-                        Type = typeof(Type),
-                        IsReference = true,
-                        IsPointer = false
-                    };
-            }
+                        ret =
+                            new TypeOnStack
+                            {
+                                Type = t,
+                                IsReference = true,
+                                IsPointer = false
+                            };
 
-            public static TypeOnStack Get() { return Value; }
+                        Cache[t] = ret;
+                    }
+
+                    return ret;
+                }
+            }
         }
 
-        private class PointerTypeCache<Type>
+        private class PointerTypeCache
         {
-            private static TypeOnStack Value;
+            private static Dictionary<Type, TypeOnStack> Cache = new Dictionary<Type, TypeOnStack>();
 
-            static PointerTypeCache()
+            public static TypeOnStack Get(Type t)
             {
-                Value =
-                    new TypeOnStack
+                lock (Cache)
+                {
+                    TypeOnStack ret;
+                    if (!Cache.TryGetValue(t, out ret))
                     {
-                        Type = typeof(Type),
-                        IsReference = false,
-                        IsPointer = true
-                    };
-            }
+                        ret =
+                            new TypeOnStack
+                            {
+                                Type = t,
+                                IsReference = false,
+                                IsPointer = true
+                            };
 
-            public static TypeOnStack Get() { return Value; }
+                        Cache[t] = ret;
+                    }
+
+                    return ret;
+                }
+            }
         }
 
         public static bool operator ==(TypeOnStack a, TypeOnStack b)
@@ -136,19 +163,19 @@ namespace Sigil.Impl
             return UsedBy.Count;
         }
 
+        public static TypeOnStack GetReference(Type type)
+        {
+            return ReferenceTypeCache.Get(type);
+        }
+
+        public static TypeOnStack GetPointer(Type type)
+        {
+            return PointerTypeCache.Get(type);
+        }
+
         public static TypeOnStack Get<T>()
         {
-            return TypeCache<T>.Get();
-        }
-
-        public static TypeOnStack GetReference<T>()
-        {
-            return ReferenceTypeCache<T>.Get();
-        }
-
-        public static TypeOnStack GetPointer<T>()
-        {
-            return PointerTypeCache<T>.Get();
+            return Get(typeof(T));
         }
 
         public static TypeOnStack Get(Type type, bool makeMarkable = false)
@@ -169,9 +196,7 @@ namespace Sigil.Impl
             {
                 var nonPointer = type.GetElementType();
 
-                var get = typeof(TypeOnStack).GetMethod("GetPointer").MakeGenericMethod(nonPointer);
-
-                ret = (TypeOnStack)get.Invoke(null, new object[0]);
+                ret = GetPointer(nonPointer);
             }
             else
             {
@@ -180,15 +205,11 @@ namespace Sigil.Impl
                 {
                     var nonRef = type.GetElementType();
 
-                    var get = typeof(TypeOnStack).GetMethod("GetReference").MakeGenericMethod(nonRef);
-
-                    ret = (TypeOnStack)get.Invoke(null, new object[0]);
+                    ret = GetReference(nonRef);
                 }
                 else
                 {
-                    var getM = typeof(TypeOnStack).GetMethods().Single(w => w.Name == "Get" && w.IsGenericMethod).MakeGenericMethod(type);
-
-                    ret = (TypeOnStack)getM.Invoke(null, new object[0]);
+                    ret = TypeCache.Get(type);
                 }
             }
 

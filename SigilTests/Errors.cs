@@ -12,10 +12,110 @@ namespace SigilTests
     [TestClass]
     public class Errors
     {
+        [TestMethod]
+        public void StoreIndirect()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreIndirect(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("type", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreIndirect(typeof(int), unaligned: 3);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned must be null, 1, 2, or 4", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreIndirect(typeof(int));
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreIndirect expected two values on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreIndirect(typeof(int));
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreIndirect expected a System.Int32 on the stack, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.StoreIndirect(typeof(int));
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreIndirect expected a reference, pointer, or native int on the stack; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<DateTime>>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.Convert<IntPtr>();
+                e1.LoadArgument(0);
+
+                try
+                {
+                    e1.StoreIndirect(typeof(DateTime));
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("StoreIndirect cannot be used with System.DateTime, StoreObject may be more appropriate", e.Message);
+                }
+            }
+        }
+
         class StoreFieldClass
         {
             public static int Static;
             public int Instance;
+
+            public StoreFieldClass()
+            {
+                Static = Instance = 2;
+            }
         }
 
         [TestMethod]
