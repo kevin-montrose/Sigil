@@ -13,6 +13,73 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void AdditionalValidation()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DefineLabel();
+                e1.Return();
+
+                try
+                {
+                    var d1 = e1.CreateDelegate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Labels [_label0] were declared but never used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                e1.Return();
+
+                try
+                {
+                    var d1 = e1.CreateDelegate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Unended ExceptionBlock Sigil.ExceptionBlock", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    var d1 = e1.CreateDelegate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Delegates must leave their stack empty when they end", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.Pop();
+
+                try
+                {
+                    var d1 = e1.CreateDelegate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Delegate must end with Return", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void UnboxAny()
         {
             {
