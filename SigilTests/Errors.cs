@@ -12,6 +12,42 @@ namespace SigilTests
     [TestClass]
     public class Errors
     {
+        [TestMethod]
+        public void ReThrow()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.ReThrow();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("ReThrow is only legal in a catch block", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void Pop()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.Pop();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Pop expects a value on the stack, but it was empty", e.Message);
+                }
+            }
+        }
+
         struct NewObjectStruct
         {
             public NewObjectStruct(int i)

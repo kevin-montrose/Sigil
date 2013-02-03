@@ -94,6 +94,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readme.cs" />
     <Compile Include="Remainder.cs" />
+    <Compile Include="ReThrow.cs" />
     <Compile Include="Return.cs" />
     <Compile Include="Shifts.cs" />
     <Compile Include="SizeOf.cs" />

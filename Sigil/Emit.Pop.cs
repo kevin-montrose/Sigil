@@ -9,6 +9,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Removes the top value on the stack.
+        /// </summary>
         public void Pop()
         {
             var onStack = Stack.Top();

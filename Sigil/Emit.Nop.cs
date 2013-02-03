@@ -9,6 +9,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Emits an instruction that does nothing.
+        /// </summary>
         public void Nop()
         {
             UpdateState(OpCodes.Nop);
