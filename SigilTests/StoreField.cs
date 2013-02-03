@@ -15,6 +15,11 @@ namespace SigilTests
         {
             public static int Static;
             public int Instance;
+
+            public StoreFieldClass()
+            {
+                Static = Instance = 314159;
+            }
         }
 
         [TestMethod]

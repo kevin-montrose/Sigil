@@ -13,6 +13,71 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void StoreLocal()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.StoreLocal(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("local", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var l = e2.DeclareLocal<int>();
+
+                try
+                {
+                    e1.StoreLocal(l);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("local is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DeclareLocal<int>();
+
+                try
+                {
+                    e1.StoreLocal(l);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreLocal expects a value on the stack, but it's empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var l = e1.DeclareLocal<int>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.StoreLocal(l);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("StoreLocal expects a value assignable to System.Int32 to be on the stack; found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void StoreIndirect()
         {
             {
