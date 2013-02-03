@@ -12,6 +12,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops an object reference off the stack, and pushes a pointer to the given method's implementation on that object.
+        /// 
+        /// For static or non-virtual functions, use LoadFunctionPointer
+        /// </summary>
         public void LoadVirtualFunctionPointer(MethodInfo method)
         {
             if (method == null)
@@ -19,15 +24,9 @@ namespace Sigil
                 throw new ArgumentNullException("method");
             }
 
-            var parameters = method.GetParameters();
-            if (parameters.Any(p => p.IsOptional))
-            {
-                throw new ArgumentException("Methods with optional parameters are not supported");
-            }
-
             if (method.IsStatic)
             {
-                throw new SigilException("Only non-static methods can be passed to LoadVirtualFunctionPointer, found " + method, Stack);
+                throw new ArgumentException("Only non-static methods can be passed to LoadVirtualFunctionPointer, found " + method);
             }
 
             var thisType =
@@ -35,6 +34,7 @@ namespace Sigil
                     method.DeclaringType :
                     null;
 
+            var parameters = method.GetParameters();
             var paramList = parameters.Select(p => p.ParameterType).ToList();
             paramList.Insert(0, method.DeclaringType);
 

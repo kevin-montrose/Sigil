@@ -13,6 +13,71 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadVirtualFunctionPointer()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadVirtualFunctionPointer(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("method", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(string).GetMethod("Intern");
+
+                try
+                {
+                    e1.LoadVirtualFunctionPointer(f);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("Only non-static methods can be passed to LoadVirtualFunctionPointer, found System.String Intern(System.String)", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(object).GetMethod("ToString");
+
+                try
+                {
+                    e1.LoadVirtualFunctionPointer(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadVirtualFunctionPointer expects a value to be on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(List<int>).GetMethod("Add");
+
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.LoadVirtualFunctionPointer(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Expected a value assignable to System.Collections.Generic.List`1[System.Int32] to be on the stack, found System.Int32", e.Message);
+                }
+            }
+        }
+        
+        [TestMethod]
         public void LoadObject()
         {
             {
