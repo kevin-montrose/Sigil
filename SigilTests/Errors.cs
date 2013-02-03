@@ -12,6 +12,53 @@ namespace SigilTests
     [TestClass]
     public class Errors
     {
+        [TestMethod]
+        public void LoadFieldAddress()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadFieldAddress(null);
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("field", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(LoadFieldClass).GetField("A");
+
+                try
+                {
+                    e1.LoadFieldAddress(f);
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadFieldAddress expected a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(LoadFieldClass).GetField("A");
+
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.LoadFieldAddress(f);
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadFieldAddress expected a SigilTests.Errors+LoadFieldClass, found System.Object", e.Message);
+                }
+            }
+        }
+
         class LoadFieldClass
         {
             public int A;

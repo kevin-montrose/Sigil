@@ -80,6 +80,7 @@
     <Compile Include="LoadConstants.cs" />
     <Compile Include="LoadElement.cs" />
     <Compile Include="LoadElementAddress.cs" />
+    <Compile Include="LoadFieldAddress.cs" />
     <Compile Include="LoadFields.cs" />
     <Compile Include="LoadlLocalAddress.cs" />
     <Compile Include="LoadLocal.cs" />

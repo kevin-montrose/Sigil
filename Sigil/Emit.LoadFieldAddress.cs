@@ -12,6 +12,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Loads the address of the given field onto the stack.
+        /// 
+        /// If the field is an instance field, a `this` reference is expected on the stack and will be popped.
+        /// </summary>
         public void LoadFieldAddress(FieldInfo field)
         {
             if (field == null)
