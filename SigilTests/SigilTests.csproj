@@ -102,6 +102,7 @@
     <Compile Include="StoreField.cs" />
     <Compile Include="StoreIndirect.cs" />
     <Compile Include="StoreLocal.cs" />
+    <Compile Include="StoreObject.cs" />
     <Compile Include="Subtract.cs" />
     <Compile Include="TryCatchFinally.cs" />
   </ItemGroup>

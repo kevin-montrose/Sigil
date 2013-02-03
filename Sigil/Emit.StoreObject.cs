@@ -11,11 +11,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a value type and a pointer off of the stack and copies the given value to the given address.
+        /// 
+        /// For primitive and reference types use StoreIndirect.
+        /// </summary>
         public void StoreObject<ValueType>(bool isVolatile = false, int? unaligned = null)
         {
             StoreObject(typeof(ValueType), isVolatile, unaligned);
         }
 
+        /// <summary>
+        /// Pops a value type and a pointer off of the stack and copies the given value to the given address.
+        /// 
+        /// For primitive and reference types use StoreIndirect.
+        /// </summary>
         public void StoreObject(Type valueType, bool isVolatile = false, int? unaligned = null)
         {
             if (valueType == null)
@@ -30,7 +40,7 @@ namespace Sigil
 
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
             {
-                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
             var onStack = Stack.Top(2);
@@ -63,7 +73,7 @@ namespace Sigil
                 UpdateState(OpCodes.Unaligned, unaligned.Value);
             }
 
-            UpdateState(OpCodes.Stobj, pop: 2);
+            UpdateState(OpCodes.Stobj, valueType, pop: 2);
         }
     }
 }
