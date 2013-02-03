@@ -13,6 +13,39 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadLength()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadLength();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadLength expects a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.LoadLength();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadLength expects a rank 1 array, found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LoadIndirect()
         {
             {

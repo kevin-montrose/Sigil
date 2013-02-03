@@ -11,6 +11,9 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a reference to a rank 1 array off the stack, and pushes it's length onto the stack.
+        /// </summary>
         public void LoadLength()
         {
             var onStack = Stack.Top();
