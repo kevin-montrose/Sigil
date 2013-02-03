@@ -13,6 +13,38 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void SizeOf()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.SizeOf(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("valueType", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.SizeOf(typeof(string));
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("valueType must be a ValueType", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Return()
         {
             {

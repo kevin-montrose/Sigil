@@ -11,11 +11,17 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pushes the size of the given value type onto the stack.
+        /// </summary>
         public void SizeOf<ValueType>()
         {
             SizeOf(typeof(ValueType));
         }
 
+        /// <summary>
+        /// Pushes the size of the given value type onto the stack.
+        /// </summary>
         public void SizeOf(Type valueType)
         {
             if (valueType == null)
