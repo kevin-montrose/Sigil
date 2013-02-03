@@ -12,6 +12,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Loads a field onto the stack.
+        /// 
+        /// Instance fields expect a reference on the stack, which is popped.
+        /// </summary>
         public void LoadField(FieldInfo field, bool isVolatile = false, int? unaligned = null)
         {
             if (field == null)
@@ -21,7 +26,7 @@ namespace Sigil
 
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
             {
-                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
             if (unaligned.HasValue && field.IsStatic)

@@ -12,6 +12,91 @@ namespace SigilTests
     [TestClass]
     public class Errors
     {
+        class LoadFieldClass
+        {
+            public int A;
+        }
+
+        [TestMethod]
+        public void LoadField()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadField(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("field", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(int).GetField("MaxValue");
+
+                try
+                {
+                    e1.LoadField(f, unaligned: 1);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned cannot be used with static fields", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(int).GetField("MaxValue");
+
+                try
+                {
+                    e1.LoadField(f, unaligned: 3);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned must be null, 1, 2, or 4", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(LoadFieldClass).GetField("A");
+
+                try
+                {
+                    e1.LoadField(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadField expects a value on the stack for instance fields", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var f = typeof(LoadFieldClass).GetField("A");
+
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.LoadField(f);
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadField expected a type on the stack assignable to SigilTests.Errors+LoadFieldClass, found System.Object", e.Message);
+                }
+            }
+        }
+
         [TestMethod]
         public void LoadElementAddress()
         {
