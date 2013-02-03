@@ -11,16 +11,23 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a size from the stack, allocates size bytes on the local dynamic memory pool, and pushes a pointer to the allocated block.
+        /// 
+        /// LocalAllocate can only be called if the stack is empty aside from the size value.
+        /// 
+        /// Memory allocated with LocalAllocate is released when the current method ends execution.
+        /// </summary>
         public void LocalAllocate()
         {
             if (CatchBlocks.Any(c => c.Value.Item2 == -1))
             {
-                throw new SigilException("LocalAllocate cannot be used in a catch block", Stack);
+                throw new InvalidOperationException("LocalAllocate cannot be used in a catch block");
             }
 
             if (FinallyBlocks.Any(f => f.Value.Item2 == -1))
             {
-                throw new SigilException("LocalAllocate cannot be used in a finally block", Stack);
+                throw new InvalidOperationException("LocalAllocate cannot be used in a finally block");
             }
 
             var top = Stack.Top();
@@ -28,6 +35,11 @@ namespace Sigil
             if (top == null)
             {
                 throw new SigilException("LocalAllocate expects a value on the stack, but it was empty", Stack);
+            }
+
+            if (Stack.Count() > 1)
+            {
+                throw new SigilException("LocalAllocate requires the stack only contain the size value", Stack);
             }
 
             var numBytes = top[0];

@@ -49,11 +49,6 @@ namespace Sigil
                 throw new SigilException("CopyBlock expects the count value to be an int; found " + count, Stack);
             }
 
-            if (source != dest)
-            {
-                throw new SigilException("CopyBlock expects source and destination types to match; found " + source + " and " + dest, Stack);
-            }
-
             if (isVolatile)
             {
                 UpdateState(OpCodes.Volatile);

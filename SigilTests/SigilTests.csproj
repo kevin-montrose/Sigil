@@ -87,6 +87,7 @@
     <Compile Include="LoadLocal.cs" />
     <Compile Include="LoadObject.cs" />
     <Compile Include="Local.cs" />
+    <Compile Include="LocalAllocate.cs" />
     <Compile Include="Multiply.cs" />
     <Compile Include="Negate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

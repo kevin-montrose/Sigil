@@ -13,6 +13,88 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LocalAllocate()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var c = e1.BeginCatchAllBlock(t);
+                try
+                {
+                    e1.LocalAllocate();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e) 
+                {
+                    Assert.AreEqual("LocalAllocate cannot be used in a catch block", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var t = e1.BeginExceptionBlock();
+                var c = e1.BeginCatchAllBlock(t);
+                e1.Pop();
+                e1.EndCatchBlock(c);
+                var f = e1.BeginFinallyBlock(t);
+                try
+                {
+                    e1.LocalAllocate();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("LocalAllocate cannot be used in a finally block", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LocalAllocate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LocalAllocate expects a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.LocalAllocate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LocalAllocate expected an int or native int, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.LocalAllocate();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LocalAllocate requires the stack only contain the size value", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LoadVirtualFunctionPointer()
         {
             {
@@ -1360,24 +1442,6 @@ namespace SigilTests
                 catch (SigilException e)
                 {
                     Assert.AreEqual("CopyBlock expects the count value to be an int; found System.Object", e.Message);
-                }
-            }
-
-            {
-                var e1 = Emit<Action>.NewDynamicMethod();
-                var l = e1.DeclareLocal<double>();
-                e1.LoadConstant(0);
-                e1.Convert<IntPtr>();
-                e1.LoadLocalAddress(l);
-                e1.LoadConstant(0);
-                try
-                {
-                    e1.CopyBlock();
-                    Assert.Fail();
-                }
-                catch (SigilException e)
-                {
-                    Assert.AreEqual("CopyBlock expects source and destination types to match; found System.Double* and native int", e.Message);
                 }
             }
         }

@@ -41,8 +41,8 @@ namespace Sigil.Impl
             if (type1.IsPointer && type2 == TypeOnStack.Get<NativeInt>()) return true;
             if (type2.IsPointer && type1 == TypeOnStack.Get<NativeInt>()) return true;
 
-            if (type1.IsPointer != type2.IsPointer) return false;
-            if (type1.IsReference != type2.IsReference) return false;
+            if ((type1.IsPointer || type1.IsReference) && !(type2.IsPointer || type2.IsReference)) return false;
+            if ((type2.IsPointer || type2.IsReference) && !(type1.IsPointer || type1.IsReference)) return false;
 
             var t1 = type1.Type;
             var t2 = type2.Type;
