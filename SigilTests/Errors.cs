@@ -13,6 +13,115 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadIndirect()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadIndirect(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("type", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadIndirect<int>(unaligned: 3);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("unaligned must be null, 1, 2, or 4", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadIndirect<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadIndirect expects a value on the stack, but it was empty", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.LoadIndirect<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadIndirect expects a pointer, reference, or native int on the stack, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<double>>.NewDynamicMethod();
+                e1.LoadArgumentAddress(0);
+
+                try
+                {
+                    e1.LoadIndirect<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadIndirect expected a pointer or reference to type System.Int32, but found System.Double*", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<DateTime>>.NewDynamicMethod();
+                e1.LoadArgumentAddress(0);
+
+                try
+                {
+                    e1.LoadIndirect<DateTime>();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("LoadIndirect cannot be used with System.DateTime, LoadObject may be more appropriate", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void LoadFunctionPointer()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadFunctionPointer(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("method", e.ParamName);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LoadFieldAddress()
         {
             {
@@ -21,6 +130,7 @@ namespace SigilTests
                 try
                 {
                     e1.LoadFieldAddress(null);
+                    Assert.Fail();
                 }
                 catch (ArgumentNullException e)
                 {
@@ -35,6 +145,7 @@ namespace SigilTests
                 try
                 {
                     e1.LoadFieldAddress(f);
+                    Assert.Fail();
                 }
                 catch (SigilException e)
                 {
@@ -51,6 +162,7 @@ namespace SigilTests
                 try
                 {
                     e1.LoadFieldAddress(f);
+                    Assert.Fail();
                 }
                 catch (SigilException e)
                 {
@@ -62,6 +174,11 @@ namespace SigilTests
         class LoadFieldClass
         {
             public int A;
+
+            public LoadFieldClass()
+            {
+                A = 123;
+            }
         }
 
         [TestMethod]

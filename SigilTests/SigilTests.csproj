@@ -82,6 +82,7 @@
     <Compile Include="LoadElementAddress.cs" />
     <Compile Include="LoadFieldAddress.cs" />
     <Compile Include="LoadFields.cs" />
+    <Compile Include="LoadIndirect.cs" />
     <Compile Include="LoadlLocalAddress.cs" />
     <Compile Include="LoadLocal.cs" />
     <Compile Include="Local.cs" />

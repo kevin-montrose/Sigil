@@ -11,11 +11,17 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pops a pointer from the stack and pushes the value (of the given type) at that address onto the stack.
+        /// </summary>
         public void LoadIndirect<Type>(bool isVolatile = false, int? unaligned = null)
         {
             LoadIndirect(typeof(Type), isVolatile, unaligned);
         }
 
+        /// <summary>
+        /// Pops a pointer from the stack and pushes the value (of the given type) at that address onto the stack.
+        /// </summary>
         public void LoadIndirect(Type type, bool isVolatile = false, int? unaligned = null)
         {
             if (type == null)
@@ -25,7 +31,7 @@ namespace Sigil
 
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
             {
-                throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
+                throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
             var onStack = Stack.Top();
@@ -44,7 +50,7 @@ namespace Sigil
 
             if (ptr.IsPointer || ptr.IsReference)
             {
-                if (type != ptr.Type)
+                if (!type.IsAssignableFrom(TypeOnStack.Get(ptr.Type)))
                 {
                     throw new SigilException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, Stack);
                 }
@@ -57,59 +63,59 @@ namespace Sigil
                 instr = OpCodes.Ldind_I;
             }
 
-            if (!type.IsValueType)
+            if (!type.IsValueType && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_Ref;
             }
 
-            if (type == typeof(sbyte))
+            if (type == typeof(sbyte) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_I1;
             }
 
-            if (type == typeof(byte))
+            if (type == typeof(byte) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_U1;
             }
 
-            if (type == typeof(short))
+            if (type == typeof(short) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_I2;
             }
 
-            if (type == typeof(ushort))
+            if (type == typeof(ushort) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_U2;
             }
 
-            if (type == typeof(int))
+            if (type == typeof(int) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_I4;
             }
 
-            if (type == typeof(uint))
+            if (type == typeof(uint) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_U4;
             }
 
-            if (type == typeof(long) || type == typeof(ulong))
+            if ((type == typeof(long) || type == typeof(ulong)) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_I8;
             }
 
-            if (type == typeof(float))
+            if (type == typeof(float) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_R4;
             }
 
-            if (type == typeof(double))
+            if (type == typeof(double) && !instr.HasValue)
             {
                 instr = OpCodes.Ldind_R8;
             }
 
             if (!instr.HasValue)
             {
-                throw new Exception("Couldn't infer proper Ldind* opcode from " + type);
+                throw new InvalidOperationException("LoadIndirect cannot be used with " + type + ", LoadObject may be more appropriate");
             }
 
             if (isVolatile)

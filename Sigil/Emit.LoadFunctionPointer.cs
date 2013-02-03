@@ -12,6 +12,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pushes a pointer to the given function onto the stack, as a native int.
+        /// 
+        /// To resolve a method at runtime using an object, use LoadVirtualFunctionPointer instead.
+        /// </summary>
         public void LoadFunctionPointer(MethodInfo method)
         {
             if (method == null)
@@ -20,10 +25,6 @@ namespace Sigil
             }
 
             var parameters = method.GetParameters();
-            if(parameters.Any(p => p.IsOptional))
-            {
-                throw new ArgumentException("Methods with optional parameters are not supported");
-            }
 
             var paramList = parameters.Select(p => p.ParameterType).ToList();
 
