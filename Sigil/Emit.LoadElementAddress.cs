@@ -61,11 +61,21 @@ namespace Sigil
             }
         }
 
+        /// <summary>
+        /// Expects a reference to an array of the given element type and an index on the stack.
+        /// 
+        /// Pops both, and pushes the address of the element at the given index.
+        /// </summary>
         public void LoadElementAddress<ElementType>()
         {
             LoadElementAddress(typeof(ElementType));
         }
 
+        /// <summary>
+        /// Expects a reference to an array of the given element type and an index on the stack.
+        /// 
+        /// Pops both, and pushes the address of the element at the given index.
+        /// </summary>
         public void LoadElementAddress(Type elementType)
         {
             if (elementType == null)
@@ -102,7 +112,7 @@ namespace Sigil
 
             if (!arrElemType.IsAssignableFrom(elementType))
             {
-                throw new SigilException("LoadElementAddress found array of type " + array + ", but expected elements of type " + arrElemType, Stack);
+                throw new SigilException("LoadElementAddress found array of type " + array + ", but expected elements of type " + elementType, Stack);
             }
 
             // needs to be markable so we can keep track of what makes use of this value

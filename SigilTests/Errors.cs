@@ -13,6 +13,102 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LoadElementAddress()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadElementAddress(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("elementType", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.LoadElementAddress<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElementAddress expects two values on the stack", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.LoadElementAddress<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElementAddress expects an int or native int on the top of the stack, found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.LoadElementAddress<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElementAddress expects an array as the second element on the stack, found System.Int32", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int[,]>>.NewDynamicMethod();
+                e1.LoadArgument(0);
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.LoadElementAddress<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElementAddress expects a 1-dimensional array, found System.Int32[,]", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<int[]>>.NewDynamicMethod();
+                e1.LoadArgument(0);
+                e1.LoadConstant(0);
+
+                try
+                {
+                    e1.LoadElementAddress<double>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("LoadElementAddress found array of type System.Int32[], but expected elements of type System.Double", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LoadElement()
         {
             {
