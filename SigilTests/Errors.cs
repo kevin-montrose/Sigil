@@ -13,6 +13,42 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Compare()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(0);
+                e1.LoadConstant(1.0f);
+
+                try
+                {
+                    e1.CompareLessThan();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CompareLessThan expected two comparable values of the same type, instead found System.Single and System.Int32", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.CompareLessThan();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("CompareLessThan expected primitive types, instead found System.Object", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void AdditionalValidation()
         {
             {
