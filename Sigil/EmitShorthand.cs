@@ -27,10 +27,26 @@ namespace Sigil
             return DeclareLocal(typeof(Type), name);
         }
 
+        /// <summary cref="M:Sigil.Emit`1.DeclareLocal``1(System.String)" />
+        public EmitShorthand<DelegateType> DeclareLocal<Type>(out Local local, string name = null)
+        {
+            local = DeclareLocal<Type>(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.DeclareLocal(System.Type, System.String)" />
         public Local DeclareLocal(Type type, string name = null)
         {
             return InnerEmit.DeclareLocal(type, name);
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.DeclareLocal(System.Type, System.String)" />
+        public EmitShorthand<DelegateType> DeclareLocal(Type type, out Local local, string name = null)
+        {
+            local = DeclareLocal(type, name);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.DefineLabel(System.String)" />
@@ -39,10 +55,20 @@ namespace Sigil
             return InnerEmit.DefineLabel(name);
         }
 
+        /// <summary cref="M:Sigil.Emit`1.DefineLabel(System.String)" />
+        public EmitShorthand<DelegateType> DefineLabel(out Label label, string name = null)
+        {
+            label = DefineLabel(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.MarkLabel(Sigil.Label)" />
-        public void MarkLabel(Label label)
+        public EmitShorthand<DelegateType> MarkLabel(Label label)
         {
             InnerEmit.MarkLabel(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BeginExceptionBlock" />
@@ -51,10 +77,26 @@ namespace Sigil
             return InnerEmit.BeginExceptionBlock();
         }
 
+        /// <summary cref="M:Sigil.Emit`1.BeginExceptionBlock" />
+        public EmitShorthand<DelegateType> BeginExceptionBlock(out ExceptionBlock forTry)
+        {
+            forTry = BeginExceptionBlock();
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.BeginCatchBlock``1(Sigil.ExceptionBlock)" />
         public CatchBlock BeginCatchBlock<ExceptionType>(ExceptionBlock forTry)
         {
             return BeginCatchBlock(forTry, typeof(ExceptionType));
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.BeginCatchBlock``1(Sigil.ExceptionBlock)" />
+        public EmitShorthand<DelegateType> BeginCatchBlock<ExceptionType>(ExceptionBlock forTry, out CatchBlock tryCatch)
+        {
+            tryCatch = BeginCatchBlock<ExceptionType>(forTry);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BeginCatchBlock(System.Type, Sigil.ExceptionBlock)" />
@@ -63,10 +105,20 @@ namespace Sigil
             return InnerEmit.BeginCatchBlock(forTry, exceptionType);
         }
 
+        /// <summary cref="M:Sigil.Emit`1.BeginCatchBlock(System.Type, Sigil.ExceptionBlock)" />
+        public EmitShorthand<DelegateType> BeginCatchBlock(ExceptionBlock forTry, Type exceptionType, out CatchBlock forCatch)
+        {
+            forCatch = BeginCatchBlock(forTry, exceptionType);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.EndCatchBlock(Sigil.CatchBlock)" />
-        public void EndCatchBlock(CatchBlock forCatch)
+        public EmitShorthand<DelegateType> EndCatchBlock(CatchBlock forCatch)
         {
             InnerEmit.EndCatchBlock(forCatch);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BeginFinallyBlock(Sigil.ExceptionBlock)" />
@@ -75,16 +127,27 @@ namespace Sigil
             return InnerEmit.BeginFinallyBlock(forTry);
         }
 
+        /// <summary cref="M:Sigil.Emit`1.BeginFinallyBlock(Sigil.ExceptionBlock)" />
+        public EmitShorthand<DelegateType> BeginFinallyBlock(ExceptionBlock forTry, out FinallyBlock forFinally)
+        {
+            forFinally = BeginFinallyBlock(forTry);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.EndFinallyBlock(Sigil.FinallyBlock)" />
-        public void EndFinallyBlock(FinallyBlock forFinally)
+        public EmitShorthand<DelegateType> EndFinallyBlock(FinallyBlock forFinally)
         {
             InnerEmit.EndFinallyBlock(forFinally);
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.EndExceptionBlock(Sigil.ExceptionBlock)" />
-        public void EndExceptionBlock(ExceptionBlock forTry)
+        public EmitShorthand<DelegateType> EndExceptionBlock(ExceptionBlock forTry)
         {
             InnerEmit.EndExceptionBlock(forTry);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CreateDelegate" />
@@ -94,717 +157,945 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.Add" />
-        public void Add()
+        public EmitShorthand<DelegateType> Add()
         {
             InnerEmit.Add();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.AddOverflow" />
-        public void Add_Ovf()
+        public EmitShorthand<DelegateType> Add_Ovf()
         {
             InnerEmit.AddOverflow();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedAddOverflow" />
-        public void Add_Ovf_Un()
+        public EmitShorthand<DelegateType> Add_Ovf_Un()
         {
             InnerEmit.UnsignedAddOverflow();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.And" />
-        public void And()
+        public EmitShorthand<DelegateType> And()
         {
             InnerEmit.And();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BranchIfEqual(Sigil.Label)" />
-        public void Beq(Label label)
+        public EmitShorthand<DelegateType> Beq(Label label)
         {
             InnerEmit.BranchIfEqual(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BranchIfGreaterOrEqual(Sigil.Label)" />
-        public void Bge(Label label)
+        public EmitShorthand<DelegateType> Bge(Label label)
         {
             InnerEmit.BranchIfGreaterOrEqual(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfGreaterOrEqual(Sigil.Label)" />
-        public void Bge_Un(Label label)
+        public EmitShorthand<DelegateType> Bge_Un(Label label)
         {
             InnerEmit.UnsignedBranchIfGreaterOrEqual(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BranchIfGreater(Sigil.Label)" />
-        public void Bgt(Label label)
+        public EmitShorthand<DelegateType> Bgt(Label label)
         {
             InnerEmit.BranchIfGreater(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfGreater(Sigil.Label)" />
-        public void Bgt_Un(Label label)
+        public EmitShorthand<DelegateType> Bgt_Un(Label label)
         {
             InnerEmit.UnsignedBranchIfGreater(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BranchIfLessOrEqual(Sigil.Label)" />
-        public void Ble(Label label)
+        public EmitShorthand<DelegateType> Ble(Label label)
         {
             InnerEmit.BranchIfLessOrEqual(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfLessOrEqual(Sigil.Label)" />
-        public void Ble_Un(Label label)
+        public EmitShorthand<DelegateType> Ble_Un(Label label)
         {
             InnerEmit.UnsignedBranchIfLessOrEqual(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BranchIfLess(Sigil.Label)" />
-        public void Blt(Label label)
+        public EmitShorthand<DelegateType> Blt(Label label)
         {
             InnerEmit.BranchIfLess(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfLess(Sigil.Label)" />
-        public void Blt_Un(Label label)
+        public EmitShorthand<DelegateType> Blt_Un(Label label)
         {
             InnerEmit.UnsignedBranchIfLess(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfNotEqual(Sigil.Label)" />
-        public void Bne_Un(Label label)
+        public EmitShorthand<DelegateType> Bne_Un(Label label)
         {
             InnerEmit.UnsignedBranchIfNotEqual(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Box``1()" />
-        public void Box<ValueType>()
+        public EmitShorthand<DelegateType> Box<ValueType>()
         {
             Box(typeof(ValueType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Box(System.Type)" />
-        public void Box(Type valueType)
+        public EmitShorthand<DelegateType> Box(Type valueType)
         {
             InnerEmit.Box(valueType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Branch(Sigil.Label)" />
-        public void Br(Label label)
+        public EmitShorthand<DelegateType> Br(Label label)
         {
             InnerEmit.Branch(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Break" />
-        public void Break()
+        public EmitShorthand<DelegateType> Break()
         {
             InnerEmit.Break();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BranchIfFalse(Sigil.Label)" />
-        public void Brfalse(Label label)
+        public EmitShorthand<DelegateType> Brfalse(Label label)
         {
             InnerEmit.BranchIfFalse(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.BranchIfTrue(Sigil.Label)" />
-        public void Brtrue(Label label)
+        public EmitShorthand<DelegateType> Brtrue(Label label)
         {
             InnerEmit.BranchIfTrue(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Call(System.Reflection.MethodInfo)" />
-        public void Call(MethodInfo method)
+        public EmitShorthand<DelegateType> Call(MethodInfo method)
         {
             InnerEmit.Call(method);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CallIndirect(System.Reflection.CallingConventions,System.Type,System.Type[])" />
-        public void Calli(CallingConventions callingConvention, Type returnType, params Type[] parameterTypes)
+        public EmitShorthand<DelegateType> Calli(CallingConventions callingConvention, Type returnType, params Type[] parameterTypes)
         {
             InnerEmit.CallIndirect(callingConvention, returnType, parameterTypes);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CallVirtual(System.Reflection.MethodInfo, System.Type)" />
-        public void Callvirt(MethodInfo method, Type constrained = null)
+        public EmitShorthand<DelegateType> Callvirt(MethodInfo method, Type constrained = null)
         {
             InnerEmit.CallVirtual(method, constrained);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CastClass``1" />
-        public void Castclass<ReferenceType>()
+        public EmitShorthand<DelegateType> Castclass<ReferenceType>()
         {
             Castclass(typeof(ReferenceType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CastClass(System.Type)" />
-        public void Castclass(Type referenceType)
+        public EmitShorthand<DelegateType> Castclass(Type referenceType)
         {
             InnerEmit.CastClass(referenceType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CompareEqual" />
-        public void Ceq()
+        public EmitShorthand<DelegateType> Ceq()
         {
             InnerEmit.CompareEqual();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CompareGreaterThan" />
-        public void Cgt()
+        public EmitShorthand<DelegateType> Cgt()
         {
             InnerEmit.CompareGreaterThan();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedCompareGreaterThan" />
-        public void Cgt_Un()
+        public EmitShorthand<DelegateType> Cgt_Un()
         {
             InnerEmit.UnsignedCompareGreaterThan();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CheckFinite" />
-        public void Ckfinite()
+        public EmitShorthand<DelegateType> Ckfinite()
         {
             InnerEmit.CheckFinite();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CompareLessThan" />
-        public void Clt()
+        public EmitShorthand<DelegateType> Clt()
         {
             InnerEmit.CompareLessThan();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedCompareLessThan" />
-        public void Clt_Un()
+        public EmitShorthand<DelegateType> Clt_Un()
         {
             InnerEmit.UnsignedCompareLessThan();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedConvertOverflow(System.Type)" />
-        public void Conv_Ovf_Un<PrimitiveType>()
+        public EmitShorthand<DelegateType> Conv_Ovf_Un<PrimitiveType>()
         {
             Conv_Ovf_Un(typeof(PrimitiveType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedConvertOverflow(System.Type)" />
-        public void Conv_Ovf_Un(Type primitiveType)
+        public EmitShorthand<DelegateType> Conv_Ovf_Un(Type primitiveType)
         {
             InnerEmit.UnsignedConvertOverflow(primitiveType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedConvertToFloat" />
-        public void Conv_R_Un()
+        public EmitShorthand<DelegateType> Conv_R_Un()
         {
             InnerEmit.UnsignedConvertToFloat();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Convert(System.Type)" />
-        public void Conv<PrimitiveType>()
+        public EmitShorthand<DelegateType> Conv<PrimitiveType>()
         {
             Conv(typeof(PrimitiveType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Convert(System.Type)" />
-        public void Conv(Type primitiveType)
+        public EmitShorthand<DelegateType> Conv(Type primitiveType)
         {
             InnerEmit.Convert(primitiveType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.ConvertOverflow(System.Type)" />
-        public void Conv_Ovf<PrimitType>()
+        public EmitShorthand<DelegateType> Conv_Ovf<PrimitType>()
         {
             Conv_Ovf(typeof(PrimitType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.ConvertOverflow(System.Type)" />
-        public void Conv_Ovf(Type primitiveType)
+        public EmitShorthand<DelegateType> Conv_Ovf(Type primitiveType)
         {
             InnerEmit.ConvertOverflow(primitiveType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CopyBlock(System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Cpblk(bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Cpblk(bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.CopyBlock(isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CopyObject(System.Type)" />
-        public void Cpobj<ValueType>()
+        public EmitShorthand<DelegateType> Cpobj<ValueType>()
         {
             Cpobj(typeof(ValueType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.CopyObject(System.Type)" />
-        public void Cpobj(Type valueType)
+        public EmitShorthand<DelegateType> Cpobj(Type valueType)
         {
             InnerEmit.CopyObject(valueType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Divide" />
-        public void Div()
+        public EmitShorthand<DelegateType> Div()
         {
             InnerEmit.Divide();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedDivide" />
-        public void Div_Un()
+        public EmitShorthand<DelegateType> Div_Un()
         {
             InnerEmit.UnsignedDivide();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Duplicate" />
-        public void Dup()
+        public EmitShorthand<DelegateType> Dup()
         {
             InnerEmit.Duplicate();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.InitializeBlock(System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Initblk(bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Initblk(bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.InitializeBlock(isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.InitializeObject(System.Type)" />
-        public void Initobj<ValueType>()
+        public EmitShorthand<DelegateType> Initobj<ValueType>()
         {
             Initobj(typeof(ValueType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.InitializeObject(System.Type)" />
-        public void Initobj(Type valueType)
+        public EmitShorthand<DelegateType> Initobj(Type valueType)
         {
             InnerEmit.InitializeObject(valueType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.IsInstance(System.Type)" />
-        public void Isinst<Type>()
+        public EmitShorthand<DelegateType> Isinst<Type>()
         {
             Isinst(typeof(Type));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.IsInstance(System.Type)" />
-        public void Isinst(Type type)
+        public EmitShorthand<DelegateType> Isinst(Type type)
         {
             InnerEmit.IsInstance(type);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Jump(System.Reflection.MethodInfo)" />
-        public void Jmp(MethodInfo method)
+        public EmitShorthand<DelegateType> Jmp(MethodInfo method)
         {
             InnerEmit.Jump(method);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadArgument(System.Int32)" />
-        public void Ldarg(int index)
+        public EmitShorthand<DelegateType> Ldarg(int index)
         {
             InnerEmit.LoadArgument(index);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadArgumentAddress(System.Int32)" />
-        public void Ldarga(int index)
+        public EmitShorthand<DelegateType> Ldarga(int index)
         {
             InnerEmit.LoadArgumentAddress(index);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Boolean)" />
-        public void Ldc(bool b)
+        public EmitShorthand<DelegateType> Ldc(bool b)
         {
             InnerEmit.LoadConstant(b);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Single)" />
-        public void Ldc(float f)
+        public EmitShorthand<DelegateType> Ldc(float f)
         {
             InnerEmit.LoadConstant(f);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Double)" />
-        public void Ldc(double d)
+        public EmitShorthand<DelegateType> Ldc(double d)
         {
             InnerEmit.LoadConstant(d);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.UInt32)" />
-        public void Ldc(uint u)
+        public EmitShorthand<DelegateType> Ldc(uint u)
         {
             InnerEmit.LoadConstant(u);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Int32)" />
-        public void Ldc(int i)
+        public EmitShorthand<DelegateType> Ldc(int i)
         {
             InnerEmit.LoadConstant(i);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Int64)" />
-        public void Ldc(long l)
+        public EmitShorthand<DelegateType> Ldc(long l)
         {
             InnerEmit.LoadConstant(l);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.UInt64)" />
-        public void Ldc(ulong u)
+        public EmitShorthand<DelegateType> Ldc(ulong u)
         {
             InnerEmit.LoadConstant(u);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadElement" />
-        public void Ldelem()
+        public EmitShorthand<DelegateType> Ldelem()
         {
             InnerEmit.LoadElement();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadElementAddress(System.Type)" />
-        public void Ldelema<ElementType>()
+        public EmitShorthand<DelegateType> Ldelema<ElementType>()
         {
             Ldelema(typeof(ElementType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadElementAddress(System.Type)" />
-        public void Ldelema(Type elementType)
+        public EmitShorthand<DelegateType> Ldelema(Type elementType)
         {
             InnerEmit.LoadElementAddress(elementType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadField(System.Reflection.FieldInfo, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Ldfld(FieldInfo field, bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Ldfld(FieldInfo field, bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.LoadField(field, isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadFieldAddress(System.Reflection.FieldInfo)" />
-        public void Ldflda(FieldInfo field)
+        public EmitShorthand<DelegateType> Ldflda(FieldInfo field)
         {
             InnerEmit.LoadFieldAddress(field);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadFunctionPointer(System.Reflection.MethodInfo)" />
-        public void Ldftn(MethodInfo method)
+        public EmitShorthand<DelegateType> Ldftn(MethodInfo method)
         {
             InnerEmit.LoadFunctionPointer(method);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadIndirect(System.Type, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Ldind<Type>(bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Ldind<Type>(bool isVolatile = false, int? unaligned = null)
         {
             Ldind(typeof(Type), isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadIndirect(System.Type, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Ldind(Type type, bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Ldind(Type type, bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.LoadIndirect(type, isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadLength" />
-        public void Ldlen()
+        public EmitShorthand<DelegateType> Ldlen()
         {
             InnerEmit.LoadLength();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadLocal(Sigil.Local)" />
-        public void Ldloc(Local local)
+        public EmitShorthand<DelegateType> Ldloc(Local local)
         {
             InnerEmit.LoadLocal(local);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadLocalAddress(Sigil.Local)" />
-        public void Ldloca(Local local)
+        public EmitShorthand<DelegateType> Ldloca(Local local)
         {
             InnerEmit.LoadLocalAddress(local);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadNull" />
-        public void Ldnull()
+        public EmitShorthand<DelegateType> Ldnull()
         {
             InnerEmit.LoadNull();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadObject(System.Type, System.Boolen, System.Nullable&lt;int&gt;)" />
-        public void Ldobj<ValueType>(bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Ldobj<ValueType>(bool isVolatile = false, int? unaligned = null)
         {
             Ldobj(typeof(ValueType), isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadObject(System.Type, System.Boolen, System.Nullable&lt;int&gt;)" />
-        public void Ldobj(Type valueType, bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Ldobj(Type valueType, bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.LoadObject(valueType, isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.String)" />
-        public void Ldstr(string str)
+        public EmitShorthand<DelegateType> Ldstr(string str)
         {
             InnerEmit.LoadConstant(str);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Reflection.FieldInfo)" />
-        public void Ldtoken(FieldInfo field)
+        public EmitShorthand<DelegateType> Ldtoken(FieldInfo field)
         {
             InnerEmit.LoadConstant(field);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Reflection.MethodInfo)" />
-        public void Ldtoken(MethodInfo method)
+        public EmitShorthand<DelegateType> Ldtoken(MethodInfo method)
         {
             InnerEmit.LoadConstant(method);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Type)" />
-        public void Ldtoken<Type>()
+        public EmitShorthand<DelegateType> Ldtoken<Type>()
         {
             Ldtoken(typeof(Type));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadConstant(System.Type)" />
-        public void Ldtoken(Type type)
+        public EmitShorthand<DelegateType> Ldtoken(Type type)
         {
             InnerEmit.LoadConstant(type);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadVirtualFunctionPointer(System.Reflection.MethodInfo)" />
-        public void Ldvirtftn(MethodInfo method)
+        public EmitShorthand<DelegateType> Ldvirtftn(MethodInfo method)
         {
             InnerEmit.LoadVirtualFunctionPointer(method);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Leave(Sigil.Label)" />
-        public void Leave(Label label)
+        public EmitShorthand<DelegateType> Leave(Label label)
         {
             InnerEmit.Leave(label);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.LocalAllocate" />
-        public void Localloc()
+        public EmitShorthand<DelegateType> Localloc()
         {
             InnerEmit.LocalAllocate();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Multiply" />
-        public void Mul()
+        public EmitShorthand<DelegateType> Mul()
         {
             InnerEmit.Multiply();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.MultiplyOverflow" />
-        public void Mul_Ovf()
+        public EmitShorthand<DelegateType> Mul_Ovf()
         {
             InnerEmit.MultiplyOverflow();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedMultiplyOverflow" />
-        public void Mul_Ovf_Un()
+        public EmitShorthand<DelegateType> Mul_Ovf_Un()
         {
             InnerEmit.UnsignedMultiplyOverflow();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Negate" />
-        public void Neg()
+        public EmitShorthand<DelegateType> Neg()
         {
             InnerEmit.Negate();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.NewArray(System.Type)" />
-        public void Newarr<ElementType>()
+        public EmitShorthand<DelegateType> Newarr<ElementType>()
         {
             Newarr(typeof(ElementType));
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.NewArray(System.Type)" />
-        public void Newarr(Type elementType)
+        public EmitShorthand<DelegateType> Newarr(Type elementType)
         {
             InnerEmit.NewArray(elementType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.NewObject(System.Reflection.ConstructorInfo)" />
-        public void Newobj(ConstructorInfo constructor)
+        public EmitShorthand<DelegateType> Newobj(ConstructorInfo constructor)
         {
             InnerEmit.NewObject(constructor);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Nop" />
-        public void Nop()
+        public EmitShorthand<DelegateType> Nop()
         {
             InnerEmit.Nop();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Not" />
-        public void Not()
+        public EmitShorthand<DelegateType> Not()
         {
             InnerEmit.Not();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Or" />
-        public void Or()
+        public EmitShorthand<DelegateType> Or()
         {
             InnerEmit.Or();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Pop" />
-        public void Pop()
+        public EmitShorthand<DelegateType> Pop()
         {
             InnerEmit.Pop();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Remainder" />
-        public void Rem()
+        public EmitShorthand<DelegateType> Rem()
         {
             InnerEmit.Remainder();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedRemainder" />
-        public void Rem_Un()
+        public EmitShorthand<DelegateType> Rem_Un()
         {
             InnerEmit.UnsignedRemainder();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Return" />
-        public void Ret()
+        public EmitShorthand<DelegateType> Ret()
         {
             InnerEmit.Return();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.ReThrow" />
-        public void Rethrow()
+        public EmitShorthand<DelegateType> Rethrow()
         {
             InnerEmit.ReThrow();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.ShiftLeft" />
-        public void Shl()
+        public EmitShorthand<DelegateType> Shl()
         {
             InnerEmit.ShiftLeft();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.ShiftRight" />
-        public void Shr()
+        public EmitShorthand<DelegateType> Shr()
         {
             InnerEmit.ShiftRight();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedShiftRight" />
-        public void Shr_Un()
+        public EmitShorthand<DelegateType> Shr_Un()
         {
             InnerEmit.UnsignedShiftRight();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.SizeOf(System.Type)" />
-        public void Sizeof<ValueType>()
+        public EmitShorthand<DelegateType> Sizeof<ValueType>()
         {
-            Sizeof(typeof(ValueType));
+            return Sizeof(typeof(ValueType));
         }
 
         /// <summary cref="M:Sigil.Emit`1.SizeOf(System.Type)" />
-        public void Sizeof(Type valueType)
+        public EmitShorthand<DelegateType> Sizeof(Type valueType)
         {
             InnerEmit.SizeOf(valueType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreArgument(System.Int32)" />
-        public void Starg(int index)
+        public EmitShorthand<DelegateType> Starg(int index)
         {
             InnerEmit.StoreArgument(index);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreElement" />
-        public void Stelem()
+        public EmitShorthand<DelegateType> Stelem()
         {
             InnerEmit.StoreElement();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreField(System.Reflection.FieldInfo, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Stfld(FieldInfo field, bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Stfld(FieldInfo field, bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.StoreField(field, isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreIndirect(System.Type, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Stind<Type>(bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Stind<Type>(bool isVolatile = false, int? unaligned = null)
         {
-            Stind(typeof(Type), isVolatile, unaligned);
+            return Stind(typeof(Type), isVolatile, unaligned);
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreIndirect(System.Type, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Stind(Type type, bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Stind(Type type, bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.StoreIndirect(type, isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreLocal(Sigil.Local)" />
-        public void Stloc(Local local)
+        public EmitShorthand<DelegateType> Stloc(Local local)
         {
             InnerEmit.StoreLocal(local);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreObject(System.Type, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Stobj<ValueType>(bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Stobj<ValueType>(bool isVolatile = false, int? unaligned = null)
         {
-            Stobj(typeof(ValueType), isVolatile, unaligned);
+            return Stobj(typeof(ValueType), isVolatile, unaligned);
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreObject(System.Type, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public void Stobj(Type valueType, bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Stobj(Type valueType, bool isVolatile = false, int? unaligned = null)
         {
             InnerEmit.StoreObject(valueType, isVolatile, unaligned);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Subtract" />
-        public void Sub()
+        public EmitShorthand<DelegateType> Sub()
         {
             InnerEmit.Subtract();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.SubtractOverflow" />
-        public void Sub_Ovf()
+        public EmitShorthand<DelegateType> Sub_Ovf()
         {
             InnerEmit.SubtractOverflow();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnsignedSubtractOverflow" />
-        public void Sub_Ovf_Un()
+        public EmitShorthand<DelegateType> Sub_Ovf_Un()
         {
             InnerEmit.UnsignedSubtractOverflow();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Switch(Sigil.Label[])" />
-        public void Switch(params Label[] labels)
+        public EmitShorthand<DelegateType> Switch(params Label[] labels)
         {
             InnerEmit.Switch(labels);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Throw" />
-        public void Throw()
+        public EmitShorthand<DelegateType> Throw()
         {
             InnerEmit.Throw();
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Unbox(System.Type)" />
-        public void Unbox<ValueType>()
+        public EmitShorthand<DelegateType> Unbox<ValueType>()
         {
-            Unbox(typeof(ValueType));
+            return Unbox(typeof(ValueType));
         }
 
         /// <summary cref="M:Sigil.Emit`1.Unbox(System.Type)" />
-        public void Unbox(Type valueType)
+        public EmitShorthand<DelegateType> Unbox(Type valueType)
         {
             InnerEmit.Unbox(valueType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnboxAny(System.Type)" />
-        public void Unbox_Any<ValueType>()
+        public EmitShorthand<DelegateType> Unbox_Any<ValueType>()
         {
-            Unbox_Any(typeof(ValueType));
+            return Unbox_Any(typeof(ValueType));
         }
 
         /// <summary cref="M:Sigil.Emit`1.UnboxAny(System.Type)" />
-        public void Unbox_Any(Type valueType)
+        public EmitShorthand<DelegateType> Unbox_Any(Type valueType)
         {
             InnerEmit.UnboxAny(valueType);
+
+            return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.Xor" />
-        public void Xor()
+        public EmitShorthand<DelegateType> Xor()
         {
             InnerEmit.Xor();
+
+            return this;
         }
     }
 }

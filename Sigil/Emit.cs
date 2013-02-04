@@ -57,6 +57,8 @@ namespace Sigil
 
         private DelegateType CreatedDelegate;
 
+        private EmitShorthand<DelegateType> Shorthand;
+
         private Emit(DynamicMethod dynMethod)
         {
             DynMethod = dynMethod;
@@ -106,6 +108,8 @@ namespace Sigil
             FinallyBlocks = new Dictionary<FinallyBlock, Tuple<int, int>>();
 
             ReadonlyPatches = new List<Tuple<int, TypeOnStack>>();
+
+            Shorthand = new EmitShorthand<DelegateType>(this);
         }
 
         /// <summary>
@@ -116,7 +120,7 @@ namespace Sigil
         /// </summary>
         public EmitShorthand<DelegateType> AsShorthand()
         {
-            return new EmitShorthand<DelegateType>(this);
+            return Shorthand;
         }
 
         /// <summary>
