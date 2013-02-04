@@ -11,6 +11,17 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private void CheckConvertible(string method, TypeOnStack item)
+        {
+            if (item != TypeOnStack.Get<int>() && item != TypeOnStack.Get<NativeInt>() &&
+                item != TypeOnStack.Get<long>() && item != TypeOnStack.Get<float>() &&
+                item != TypeOnStack.Get<double>() && !item.IsPointer
+               )
+            {
+                throw new SigilException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item);
+            }
+        }
+
         /// <summary>
         /// Convert a value on the stack to the given non-character primitive type.
         /// 
@@ -43,6 +54,8 @@ namespace Sigil
             {
                 throw new SigilException("Convert expected a value on the stack, but it was empty", Stack);
             }
+
+            CheckConvertible("Convert", top.Single());
 
             if (primitiveType == typeof(byte))
             {
@@ -164,6 +177,8 @@ namespace Sigil
                 throw new SigilException("ConvertOverflow expected a value on the stack, but it was empty", Stack);
             }
 
+            CheckConvertible("ConvertOverflow", top.Single());
+
             if (primitiveType == typeof(byte))
             {
                 ConvertToByteOverflow();
@@ -276,6 +291,8 @@ namespace Sigil
             {
                 throw new SigilException("UnsignedConvertOverflow expected a value on the stack, but it was empty", Stack);
             }
+
+            CheckConvertible("UnsignedConvertOverflow", top.Single());
 
             if (primitiveType == typeof(byte))
             {

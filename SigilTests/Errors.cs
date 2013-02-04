@@ -2937,6 +2937,51 @@ namespace SigilTests
                     Assert.AreEqual("There is no operation for converting to a pointer with overflow checking", e.Message);
                 }
             }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.Convert<UIntPtr>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("Convert expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.ConvertOverflow<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("ConvertOverflow expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+
+                try
+                {
+                    e1.UnsignedConvertOverflow<int>();
+                    Assert.Fail();
+                }
+                catch (SigilException e)
+                {
+                    Assert.AreEqual("UnsignedConvertOverflow expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
+                }
+            }
         }
 
         [TestMethod]
