@@ -14,6 +14,8 @@ namespace SigilTests
         [TestMethod]
         public void Name()
         {
+            Emit<Action>.NewDynamicMethod().AsShorthand().DeclareLocal<int>();
+
             var e1 = Emit<Action>.NewDynamicMethod();
             var local = e1.DeclareLocal<int>("local");
 
