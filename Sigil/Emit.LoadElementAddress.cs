@@ -66,9 +66,9 @@ namespace Sigil
         /// 
         /// Pops both, and pushes the address of the element at the given index.
         /// </summary>
-        public void LoadElementAddress<ElementType>()
+        public Emit<DelegateType> LoadElementAddress<ElementType>()
         {
-            LoadElementAddress(typeof(ElementType));
+            return LoadElementAddress(typeof(ElementType));
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Sigil
         /// 
         /// Pops both, and pushes the address of the element at the given index.
         /// </summary>
-        public void LoadElementAddress(Type elementType)
+        public Emit<DelegateType> LoadElementAddress(Type elementType)
         {
             if (elementType == null)
             {
@@ -122,6 +122,8 @@ namespace Sigil
             ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
 
             UpdateState(OpCodes.Ldelema, elementType, pushToStack, pop: 2);
+
+            return this;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// Pops both, and pushes the element in the array at the index onto the stack.
         /// </summary>
-        public void LoadElement()
+        public Emit<DelegateType> LoadElement()
         {
             var top = Stack.Top(2);
 
@@ -104,10 +104,12 @@ namespace Sigil
             if (!instr.HasValue)
             {
                 UpdateState(OpCodes.Ldelem, elemType, TypeOnStack.Get(elemType), pop: 2);
-                return;
+                return this;
             }
 
             UpdateState(instr.Value, TypeOnStack.Get(elemType), pop: 2);
+
+            return this;
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Sigil
         /// <summary>
         /// Pops a value off the stack and stores it into the argument to the current method identified by index.
         /// </summary>
-        public void StoreArgument(int index)
+        public Emit<DelegateType> StoreArgument(int index)
         {
             if (ParameterTypes.Length == 0)
             {
@@ -43,10 +43,12 @@ namespace Sigil
             if (index <= byte.MaxValue)
             {
                 UpdateState(OpCodes.Starg_S, index, pop: 1);
-                return;
+                return this;
             }
 
             UpdateState(OpCodes.Starg, index, pop: 1);
+
+            return this;
         }
     }
 }

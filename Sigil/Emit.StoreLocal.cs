@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// To create a local, use DeclareLocal().
         /// </summary>
-        public void StoreLocal(Local local)
+        public Emit<DelegateType> StoreLocal(Local local)
         {
             if (local == null)
             {
@@ -44,19 +44,21 @@ namespace Sigil
 
             switch (local.Index)
             {
-                case 0: UpdateState(OpCodes.Stloc_0, pop: 1); return;
-                case 1: UpdateState(OpCodes.Stloc_1, pop: 1); return;
-                case 2: UpdateState(OpCodes.Stloc_2, pop: 1); return;
-                case 3: UpdateState(OpCodes.Stloc_3, pop: 1); return;
+                case 0: UpdateState(OpCodes.Stloc_0, pop: 1); return this;
+                case 1: UpdateState(OpCodes.Stloc_1, pop: 1); return this;
+                case 2: UpdateState(OpCodes.Stloc_2, pop: 1); return this;
+                case 3: UpdateState(OpCodes.Stloc_3, pop: 1); return this;
             }
 
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)
             {
                 UpdateState(OpCodes.Stloc_S, local.Index, pop: 1);
-                return;
+                return this;
             }
 
             UpdateState(OpCodes.Stloc, local.LocalDel, pop: 1);
+
+            return this;
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Sigil
         /// 
         /// To call overrides of instance methods, use CallVirtual.
         /// </summary>
-        public void Call(MethodInfo method)
+        public Emit<DelegateType> Call(MethodInfo method)
         {
             if (method == null)
             {
@@ -88,6 +88,8 @@ namespace Sigil
                 method.CallingConvention.HasFlag(CallingConventions.ExplicitThis);
             
             UpdateState(OpCodes.Call, method, resultType, pop: expectedParams.Count, firstParamIsThis: firstParamIsThis);
+
+            return this;
         }
     }
 }

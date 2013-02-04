@@ -44,31 +44,37 @@ namespace Sigil
         /// <summary>
         /// Pops two arguments off the stack, performs a bitwise and, and pushes the result.
         /// </summary>
-        public void And()
+        public Emit<DelegateType> And()
         {
             VerifyAndBinaryBitwise("And", OpCodes.And);
+
+            return this;
         }
 
         /// <summary>
         /// Pops two arguments off the stack, performs a bitwise or, and pushes the result.
         /// </summary>
-        public void Or()
+        public Emit<DelegateType> Or()
         {
             VerifyAndBinaryBitwise("Or", OpCodes.Or);
+
+            return this;
         }
 
         /// <summary>
         /// Pops two arguments off the stack, performs a bitwise xor, and pushes the result.
         /// </summary>
-        public void Xor()
+        public Emit<DelegateType> Xor()
         {
             VerifyAndBinaryBitwise("Xor", OpCodes.Xor);
+
+            return this;
         }
 
         /// <summary>
         /// Pops one argument off the stack, performs a bitwise inversion, and pushes the result.
         /// </summary>
-        public void Not()
+        public Emit<DelegateType> Not()
         {
             var onStack = Stack.Top();
 
@@ -85,6 +91,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Not, val, pop: 1);
+
+            return this;
         }
 
         private void VerifyAndShift(string name, OpCode op)
@@ -115,9 +123,11 @@ namespace Sigil
         /// <summary>
         /// Pops two arguments off the stack, shifts the second value left by the first value.
         /// </summary>
-        public void ShiftLeft()
+        public Emit<DelegateType> ShiftLeft()
         {
             VerifyAndShift("ShiftLeft", OpCodes.Shl);
+
+            return this;
         }
 
         /// <summary>
@@ -125,9 +135,11 @@ namespace Sigil
         /// 
         /// Sign extends from the left.
         /// </summary>
-        public void ShiftRight()
+        public Emit<DelegateType> ShiftRight()
         {
             VerifyAndShift("ShiftRight", OpCodes.Shr);
+
+            return this;
         }
 
         /// <summary>
@@ -135,9 +147,11 @@ namespace Sigil
         /// 
         /// Acts as if the value were unsigned, zeros always coming in from the left.
         /// </summary>
-        public void UnsignedShiftRight()
+        public Emit<DelegateType> UnsignedShiftRight()
         {
             VerifyAndShift("UnsignedShiftRight", OpCodes.Shr_Un);
+
+            return this;
         }
     }
 }

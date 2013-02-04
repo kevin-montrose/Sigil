@@ -19,7 +19,7 @@ namespace Sigil
         /// 
         /// Like the branching instructions, Jump cannot leave exception blocks.
         /// </summary>
-        public void Jump(MethodInfo method)
+        public Emit<DelegateType> Jump(MethodInfo method)
         {
             if (method == null)
             {
@@ -70,6 +70,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Jmp, method);
+
+            return this;
         }
     }
 }

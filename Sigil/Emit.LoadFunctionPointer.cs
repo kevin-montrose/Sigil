@@ -17,7 +17,7 @@ namespace Sigil
         /// 
         /// To resolve a method at runtime using an object, use LoadVirtualFunctionPointer instead.
         /// </summary>
-        public void LoadFunctionPointer(MethodInfo method)
+        public Emit<DelegateType> LoadFunctionPointer(MethodInfo method)
         {
             if (method == null)
             {
@@ -42,6 +42,8 @@ namespace Sigil
                 );
 
             UpdateState(OpCodes.Ldftn, method, type);
+
+            return this;
         }
     }
 }

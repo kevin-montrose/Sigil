@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// If the value is out of range, execution falls through to the next instruction.
         /// </summary>
-        public void Switch(params Label[] labels)
+        public Emit<DelegateType> Switch(params Label[] labels)
         {
             if (labels == null)
             {
@@ -63,6 +63,8 @@ namespace Sigil
                 Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
                 BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Switch);
             }
+
+            return this;
         }
     }
 }

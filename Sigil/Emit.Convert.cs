@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
         /// </summary>
-        public void Convert<PrimitiveType>()
+        public Emit<DelegateType> Convert<PrimitiveType>()
         {
-            Convert(typeof(PrimitiveType));
+            return Convert(typeof(PrimitiveType));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
         /// </summary>
-        public void Convert(Type primitiveType)
+        public Emit<DelegateType> Convert(Type primitiveType)
         {
             if (primitiveType == null)
             {
@@ -47,74 +47,76 @@ namespace Sigil
             if (primitiveType == typeof(byte))
             {
                 ConvertToByte();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(sbyte))
             {
                 ConvertToSByte();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(short))
             {
                 ConvertToInt16();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(ushort))
             {
                 ConvertToUInt16();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(int))
             {
                 ConvertToInt32();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(uint))
             {
                 ConvertToUInt32();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(long))
             {
                 ConvertToInt64();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(ulong))
             {
                 ConvertToUInt64();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(IntPtr))
             {
                 ConvertToNativeInt();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(UIntPtr))
             {
                 ConvertToUnsignedNativeInt();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(float))
             {
                 ConvertToFloat();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(double))
             {
                 ConvertToDouble();
-                return;
+                return this;
             }
+
+            throw new Exception("Shouldn't be possible");
         }
 
         /// <summary>
@@ -123,9 +125,9 @@ namespace Sigil
         /// 
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
         /// </summary>
-        public void ConvertOverflow<PrimitiveType>()
+        public Emit<DelegateType> ConvertOverflow<PrimitiveType>()
         {
-            ConvertOverflow(typeof(PrimitiveType));
+            return ConvertOverflow(typeof(PrimitiveType));
         }
 
         /// <summary>
@@ -134,7 +136,7 @@ namespace Sigil
         /// 
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
         /// </summary>
-        public void ConvertOverflow(Type primitiveType)
+        public Emit<DelegateType> ConvertOverflow(Type primitiveType)
         {
             if (primitiveType == null)
             {
@@ -165,62 +167,64 @@ namespace Sigil
             if (primitiveType == typeof(byte))
             {
                 ConvertToByteOverflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(sbyte))
             {
                 ConvertToSByteOverflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(short))
             {
                 ConvertToInt16Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(ushort))
             {
                 ConvertToUInt16Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(int))
             {
                 ConvertToInt32Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(uint))
             {
                 ConvertToUInt32Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(long))
             {
                 ConvertToInt64Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(ulong))
             {
                 ConvertToUInt64Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(IntPtr))
             {
                 ConvertToNativeIntOverflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(UIntPtr))
             {
                 ConvertToUnsignedNativeIntOverflow();
-                return;
+                return this;
             }
+
+            throw new Exception("Shouldn't be possible");
         }
 
         /// <summary>
@@ -229,9 +233,9 @@ namespace Sigil
         /// 
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
         /// </summary>
-        public void UnsignedConvertOverflow<PrimitiveType>()
+        public Emit<DelegateType> UnsignedConvertOverflow<PrimitiveType>()
         {
-            UnsignedConvertOverflow(typeof(PrimitiveType));
+            return UnsignedConvertOverflow(typeof(PrimitiveType));
         }
 
         /// <summary>
@@ -240,7 +244,7 @@ namespace Sigil
         /// 
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
         /// </summary>
-        public void UnsignedConvertOverflow(Type primitiveType)
+        public Emit<DelegateType> UnsignedConvertOverflow(Type primitiveType)
         {
             if (primitiveType == null)
             {
@@ -276,50 +280,52 @@ namespace Sigil
             if (primitiveType == typeof(byte))
             {
                 UnsignedConvertToByteOverflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(sbyte))
             {
                 UnsignedConvertToSByteOverflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(short))
             {
                 UnsignedConvertToInt16Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(ushort))
             {
                 UnsignedConvertToUInt16Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(int))
             {
                 UnsignedConvertToInt32Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(uint))
             {
                 UnsignedConvertToUInt32Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(long))
             {
                 UnsignedConvertToInt64Overflow();
-                return;
+                return this;
             }
 
             if (primitiveType == typeof(ulong))
             {
                 UnsignedConvertToUInt64Overflow();
-                return;
+                return this;
             }
+
+            throw new Exception("Shouldn't be possible");
         }
 
         /// <summary>
@@ -327,9 +333,11 @@ namespace Sigil
         /// 
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr).
         /// </summary>
-        public void UnsignedConvertToFloat()
+        public Emit<DelegateType> UnsignedConvertToFloat()
         {
             UpdateState(OpCodes.Conv_R_Un, TypeOnStack.Get<float>(), pop: 1);
+
+            return this;
         }
 
         private void ConvertToNativeInt()

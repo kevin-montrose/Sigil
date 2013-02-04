@@ -14,7 +14,7 @@ namespace Sigil
         /// <summary>
         /// Pops a value, an index, and a reference to an array off the stack.  Places the given value into the given array at the given index.
         /// </summary>
-        public void StoreElement()
+        public Emit<DelegateType> StoreElement()
         {
             var onStack = Stack.Top(3);
 
@@ -89,10 +89,12 @@ namespace Sigil
             if (!instr.HasValue)
             {
                 UpdateState(OpCodes.Stelem, elemType, pop:3);
-                return;
+                return this;
             }
 
             UpdateState(instr.Value, pop: 3);
+
+            return this;
         }
     }
 }

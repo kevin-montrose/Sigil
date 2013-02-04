@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// To load the value directly onto the stack, use UnboxAny().
         /// </summary>
-        public void Unbox<ValueType>()
+        public Emit<DelegateType> Unbox<ValueType>()
         {
-            Unbox(typeof(ValueType));
+            return Unbox(typeof(ValueType));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// To load the value directly onto the stack, use UnboxAny().
         /// </summary>
-        public void Unbox(Type valueType)
+        public Emit<DelegateType> Unbox(Type valueType)
         {
             if (valueType == null)
             {
@@ -58,6 +58,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Unbox, valueType, TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
+
+            return this;
         }
 
         /// <summary>
@@ -65,9 +67,9 @@ namespace Sigil
         /// 
         /// To get an address for the unboxed value instead, use Unbox().
         /// </summary>
-        public void UnboxAny<ValueType>()
+        public Emit<DelegateType> UnboxAny<ValueType>()
         {
-            UnboxAny(typeof(ValueType));
+            return UnboxAny(typeof(ValueType));
         }
 
         /// <summary>
@@ -75,7 +77,7 @@ namespace Sigil
         /// 
         /// To get an address for the unboxed value instead, use Unbox().
         /// </summary>
-        public void UnboxAny(Type valueType)
+        public Emit<DelegateType> UnboxAny(Type valueType)
         {
             if (valueType == null)
             {
@@ -107,6 +109,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Unbox_Any, valueType, TypeOnStack.Get(valueType), pop: 1);
+
+            return this;
         }
     }
 }

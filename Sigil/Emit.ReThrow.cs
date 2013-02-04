@@ -12,7 +12,7 @@ namespace Sigil
         /// <summary>
         /// From within a catch block, rethrows the exception that caused the catch block to be entered.
         /// </summary>
-        public void ReThrow()
+        public Emit<DelegateType> ReThrow()
         {
             if(!CatchBlocks.Any(c => c.Value.Item2 == -1))
             {
@@ -20,6 +20,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Rethrow);
+
+            return this;
         }
     }
 }

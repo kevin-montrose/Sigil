@@ -17,7 +17,7 @@ namespace Sigil
         /// 
         /// For static or non-virtual functions, use LoadFunctionPointer
         /// </summary>
-        public void LoadVirtualFunctionPointer(MethodInfo method)
+        public Emit<DelegateType> LoadVirtualFunctionPointer(MethodInfo method)
         {
             if (method == null)
             {
@@ -61,6 +61,8 @@ namespace Sigil
                 );
 
             UpdateState(OpCodes.Ldvirtftn, method, type, pop: 1);
+
+            return this;
         }
     }
 }

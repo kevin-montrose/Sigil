@@ -17,7 +17,7 @@ namespace Sigil
         /// 
         /// If the field is an instance field, a `this` reference is expected on the stack and will be popped.
         /// </summary>
-        public void LoadFieldAddress(FieldInfo field)
+        public Emit<DelegateType> LoadFieldAddress(FieldInfo field)
         {
             if (field == null)
             {
@@ -46,6 +46,8 @@ namespace Sigil
             {
                 UpdateState(OpCodes.Ldsflda, field, TypeOnStack.Get(field.FieldType.MakeByRefType()));
             }
+
+            return this;
         }
     }
 }

@@ -18,7 +18,7 @@ namespace Sigil
         /// 
         /// Return should leave the stack empty.
         /// </summary>
-        public void Return()
+        public Emit<DelegateType> Return()
         {
             if (ReturnType == TypeOnStack.Get(typeof(void)))
             {
@@ -29,7 +29,7 @@ namespace Sigil
 
                 UpdateState(OpCodes.Ret);
 
-                return;
+                return this;
             }
 
             var retType = Stack.Top();
@@ -50,6 +50,8 @@ namespace Sigil
             {
                 throw new SigilException("Return should leave the stack empty", Stack);
             }
+
+            return this;
         }
     }
 }

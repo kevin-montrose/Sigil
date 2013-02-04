@@ -14,15 +14,15 @@ namespace Sigil
         /// <summary>
         /// Pops a value of the given type and a pointer off the stack, and stores the value at the address in the pointer.
         /// </summary>
-        public void StoreIndirect<Type>(bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> StoreIndirect<Type>(bool isVolatile = false, int? unaligned = null)
         {
-            StoreIndirect(typeof(Type), isVolatile, unaligned);
+            return StoreIndirect(typeof(Type), isVolatile, unaligned);
         }
 
         /// <summary>
         /// Pops a value of the given type and a pointer off the stack, and stores the value at the address in the pointer.
         /// </summary>
-        public void StoreIndirect(Type type, bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> StoreIndirect(Type type, bool isVolatile = false, int? unaligned = null)
         {
             if (type == null)
             {
@@ -67,49 +67,49 @@ namespace Sigil
             if (type.IsPointer)
             {
                 UpdateState(OpCodes.Stind_I, pop: 2);
-                return;
+                return this;
             }
 
             if (!type.IsValueType)
             {
                 UpdateState(OpCodes.Stind_Ref, pop: 2);
-                return;
+                return this;
             }
 
             if (type == typeof(sbyte) || type == typeof(byte))
             {
                 UpdateState(OpCodes.Stind_I1, pop:2);
-                return;
+                return this;
             }
 
             if (type == typeof(short) || type == typeof(ushort))
             {
                 UpdateState(OpCodes.Stind_I2, pop: 2);
-                return;
+                return this;
             }
 
             if (type == typeof(int) || type == typeof(uint))
             {
                 UpdateState(OpCodes.Stind_I4, pop: 2);
-                return;
+                return this;
             }
 
             if (type == typeof(long) || type == typeof(ulong))
             {
                 UpdateState(OpCodes.Stind_I8, pop: 2);
-                return;
+                return this;
             }
 
             if (type == typeof(float))
             {
                 UpdateState(OpCodes.Stind_R4, pop: 2);
-                return;
+                return this;
             }
 
             if (type == typeof(double))
             {
                 UpdateState(OpCodes.Stind_R8, pop: 2);
-                return;
+                return this;
             }
 
             throw new InvalidOperationException("StoreIndirect cannot be used with " + type + ", StoreObject may be more appropriate");

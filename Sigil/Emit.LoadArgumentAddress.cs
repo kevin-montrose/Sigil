@@ -14,7 +14,7 @@ namespace Sigil
         /// <summary>
         /// Loads a pointer to the argument at index (starting at zero) onto the stack.
         /// </summary>
-        public void LoadArgumentAddress(int index)
+        public Emit<DelegateType> LoadArgumentAddress(int index)
         {
             if (ParameterTypes.Length == 0)
             {
@@ -30,10 +30,12 @@ namespace Sigil
             {
                 UpdateState(OpCodes.Ldarga_S, index, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
 
-                return;
+                return this;
             }
 
             UpdateState(OpCodes.Ldarga, index, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
+
+            return this;
         }
     }
 }

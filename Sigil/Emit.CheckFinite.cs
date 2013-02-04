@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// This leaves the value checked on the stack, rather than popping it as might be expected.
         /// </summary>
-        public void CheckFinite()
+        public Emit<DelegateType> CheckFinite()
         {
             var onStack = Stack.Top();
 
@@ -34,6 +34,8 @@ namespace Sigil
 
             // ckfinite leaves the value on the stack, oddly enough
             UpdateState(OpCodes.Ckfinite);
+
+            return this;
         }
     }
 }

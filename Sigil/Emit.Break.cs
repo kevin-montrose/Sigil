@@ -12,9 +12,11 @@ namespace Sigil
         /// <summary>
         /// Emits a break instruction for use with a debugger.
         /// </summary>
-        public void Break()
+        public Emit<DelegateType> Break()
         {
             UpdateState(OpCodes.Break);
+
+            return this;
         }
     }
 }

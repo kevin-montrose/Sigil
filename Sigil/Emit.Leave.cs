@@ -14,7 +14,7 @@ namespace Sigil
         /// 
         /// This instruction empties the stack.
         /// </summary>
-        public void Leave(Label label)
+        public Emit<DelegateType> Leave(Label label)
         {
             if (label == null)
             {
@@ -38,6 +38,8 @@ namespace Sigil
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Leave);
+
+            return this;
         }
     }
 }

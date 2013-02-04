@@ -148,6 +148,20 @@ namespace Sigil
             return ret;
         }
 
+        /// <summary>
+        /// Defines a new label.
+        /// 
+        /// This label can be used for branching, leave, and switch instructions.
+        /// 
+        /// A label must be marked exactly once after being defined, using the MarkLabel() method.        
+        /// </summary>
+        public Emit<DelegateType> DefineLabel(out Label label, string name = null)
+        {
+            label = DefineLabel(name);
+
+            return this;
+        }
+
 
         /// <summary>
         /// Marks a label in the instruction stream.
@@ -156,7 +170,7 @@ namespace Sigil
         /// 
         /// Label's can only be marked once, and *must* be marked before creating a delegate.
         /// </summary>
-        public void MarkLabel(Label label)
+        public Emit<DelegateType> MarkLabel(Label label)
         {
             if (label == null)
             {
@@ -178,6 +192,8 @@ namespace Sigil
             IL.MarkLabel(label.LabelDel);
 
             Marks[label] = Tuple.Create(Stack, IL.Index);
+
+            return this;
         }
     }
 }

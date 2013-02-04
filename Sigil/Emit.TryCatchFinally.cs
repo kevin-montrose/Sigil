@@ -32,12 +32,23 @@ namespace Sigil
 
             return ret;
         }
+
+        /// <summary>
+        /// Start a new exception block.  This is roughly analogous to a `try` block in C#, but an exception block contains it's catch and finally blocks.
+        /// </summary>
+        public Emit<DelegateType> BeginExceptionBlock(out ExceptionBlock forTry)
+        {
+            forTry = BeginExceptionBlock();
+
+            return this;
+        }
+
         /// <summary>
         /// Ends the given exception block.
         /// 
         /// All catch and finally blocks associated with the given exception block must be ended before this method is called.
         /// </summary>
-        public void EndExceptionBlock(ExceptionBlock forTry)
+        public Emit<DelegateType> EndExceptionBlock(ExceptionBlock forTry)
         {
             if (forTry == null)
             {
@@ -97,6 +108,8 @@ namespace Sigil
             Marks[forTry.Label] = Tuple.Create(Stack, IL.Index);
 
             CurrentExceptionBlock.Pop();
+
+            return this;
         }
 
         /// <summary>
@@ -110,6 +123,18 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Begins a catch block for the given exception type in the given exception block.
+        /// 
+        /// The given exception block must still be open.
+        /// </summary>
+        public Emit<DelegateType> BeginCatchBlock<ExceptionType>(ExceptionBlock forTry, out CatchBlock forCatch)
+        {
+            forCatch = BeginCatchBlock<ExceptionType>(forTry);
+
+            return this;
+        }
+
+        /// <summary>
         /// Begins a catch block for all exceptions in the given exception block
         ///
         /// The given exception block must still be open.
@@ -119,6 +144,20 @@ namespace Sigil
         public CatchBlock BeginCatchAllBlock(ExceptionBlock forTry)
         {
             return BeginCatchBlock<Exception>(forTry);
+        }
+
+        /// <summary>
+        /// Begins a catch block for all exceptions in the given exception block
+        ///
+        /// The given exception block must still be open.
+        /// 
+        /// Equivalent to BeginCatchBlock(typeof(Exception), forTry).
+        /// </summary>
+        public Emit<DelegateType> BeginCatchAllBlock(ExceptionBlock forTry, out CatchBlock forCatch)
+        {
+            forCatch = BeginCatchAllBlock(forTry);
+
+            return this;
         }
 
         /// <summary>
@@ -183,9 +222,21 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Begins a catch block for the given exception type in the given exception block.
+        /// 
+        /// The given exception block must still be open.
+        /// </summary>
+        public Emit<DelegateType> BeginCatchBlock(ExceptionBlock forTry, Type exceptionType, out CatchBlock forCatch)
+        {
+            forCatch = BeginCatchBlock(forTry, exceptionType);
+
+            return this;
+        }
+
+        /// <summary>
         /// Ends the given catch block.
         /// </summary>
-        public void EndCatchBlock(CatchBlock forCatch)
+        public Emit<DelegateType> EndCatchBlock(CatchBlock forCatch)
         {
             if (forCatch == null)
             {
@@ -220,6 +271,22 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(forCatch.ExceptionBlock.Label, update, OpCodes.Leave);
 
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
+
+            return this;
+        }
+
+        /// <summary>
+        /// Begins a finally block on the given exception block.
+        /// 
+        /// Only one finally block can be defined per exception block, and the block cannot appear within a catch block.
+        /// 
+        /// The given exception block must still be open.
+        /// </summary>
+        public Emit<DelegateType> BeginFinallyBlock(ExceptionBlock forTry, out FinallyBlock forFinally)
+        {
+            forFinally = BeginFinallyBlock(forTry);
+
+            return this;
         }
 
         /// <summary>
@@ -275,7 +342,7 @@ namespace Sigil
         /// <summary>
         /// Ends the given finally block.
         /// </summary>
-        public void EndFinallyBlock(FinallyBlock forFinally)
+        public Emit<DelegateType> EndFinallyBlock(FinallyBlock forFinally)
         {
             if (forFinally == null)
             {
@@ -305,6 +372,8 @@ namespace Sigil
             UpdateState(OpCodes.Endfinally);
 
             FinallyBlocks[forFinally] = Tuple.Create(finallyBlock.Item1, IL.Index);
+
+            return this;
         }
     }
 }

@@ -14,15 +14,15 @@ namespace Sigil
         /// <summary>
         /// Boxes the given value type on the stack, converting it into a reference.
         /// </summary>
-        public void Box<ValueType>()
+        public Emit<DelegateType> Box<ValueType>()
         {
-            Box(typeof(ValueType));
+            return Box(typeof(ValueType));
         }
 
         /// <summary>
         /// Boxes the given value type on the stack, converting it into a reference.
         /// </summary>
-        public void Box(Type valueType)
+        public Emit<DelegateType> Box(Type valueType)
         {
             if (valueType == null)
             {
@@ -61,6 +61,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Box, valueType, TypeOnStack.Get(typeof(object)), pop: 1);
+
+            return this;
         }
     }
 }

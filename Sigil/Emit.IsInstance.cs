@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// This is analogous to C#'s `as` operator.
         /// </summary>
-        public void IsInstance<Type>()
+        public Emit<DelegateType> IsInstance<Type>()
         {
-            IsInstance(typeof(Type));
+            return IsInstance(typeof(Type));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// This is analogous to C#'s `as` operator.
         /// </summary>
-        public void IsInstance(Type type)
+        public Emit<DelegateType> IsInstance(Type type)
         {
             if (type == null)
             {
@@ -41,6 +41,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Isinst, type, TypeOnStack.Get(type), pop: 1);
+
+            return this;
         }
     }
 }

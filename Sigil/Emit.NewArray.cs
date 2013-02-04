@@ -14,15 +14,15 @@ namespace Sigil
         /// <summary>
         /// Pops a size from the stack, allocates a rank-1 array of the given type, and pushes a reference to the new array onto the stack.
         /// </summary>
-        public void NewArray<ElementType>()
+        public Emit<DelegateType> NewArray<ElementType>()
         {
-            NewArray(typeof(ElementType));
+            return NewArray(typeof(ElementType));
         }
 
         /// <summary>
         /// Pops a size from the stack, allocates a rank-1 array of the given type, and pushes a reference to the new array onto the stack.
         /// </summary>
-        public void NewArray(Type elementType)
+        public Emit<DelegateType> NewArray(Type elementType)
         {
             if (elementType == null)
             {
@@ -44,6 +44,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Newarr, elementType, TypeOnStack.Get(elementType.MakeArrayType()), pop: 1);
+
+            return this;
         }
     }
 }

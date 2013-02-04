@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// To create a local, use DeclareLocal.
         /// </summary>
-        public void LoadLocalAddress(Local local)
+        public Emit<DelegateType> LoadLocalAddress(Local local)
         {
             if (local == null)
             {
@@ -39,10 +39,12 @@ namespace Sigil
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)
             {
                 UpdateState(OpCodes.Ldloca_S, local.Index, TypeOnStack.Get(ptrType));
-                return;
+                return this;
             }
 
             UpdateState(OpCodes.Ldloca, local.Index, TypeOnStack.Get(ptrType));
+
+            return this;
         }
     }
 }

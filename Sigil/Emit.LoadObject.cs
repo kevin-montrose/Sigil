@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// For primitive and reference types, use LoadIndirect().
         /// </summary>
-        public void LoadObject<ValueType>(bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> LoadObject<ValueType>(bool isVolatile = false, int? unaligned = null)
         {
-            LoadObject(typeof(ValueType), isVolatile, unaligned);
+            return LoadObject(typeof(ValueType), isVolatile, unaligned);
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// For primitive and reference types, use LoadIndirect().
         /// </summary>
-        public void LoadObject(Type valueType, bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> LoadObject(Type valueType, bool isVolatile = false, int? unaligned = null)
         {
             if (valueType == null)
             {
@@ -67,6 +67,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Ldobj, valueType, TypeOnStack.Get(valueType), pop: 1);
+
+            return this;
         }
     }
 }

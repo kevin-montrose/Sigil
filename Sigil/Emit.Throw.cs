@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// Throw expects the value to be or extend from a System.Exception.
         /// </summary>
-        public void Throw()
+        public Emit<DelegateType> Throw()
         {
             var onStack = Stack.Top();
 
@@ -33,6 +33,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Throw, pop: 1);
+
+            return this;
         }
     }
 }

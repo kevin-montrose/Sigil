@@ -12,7 +12,7 @@ namespace Sigil
         /// <summary>
         /// Removes the top value on the stack.
         /// </summary>
-        public void Pop()
+        public Emit<DelegateType> Pop()
         {
             var onStack = Stack.Top();
 
@@ -22,6 +22,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Pop, pop: 1);
+
+            return this;
         }
     }
 }

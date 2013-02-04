@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// For primitive and reference types use StoreIndirect.
         /// </summary>
-        public void StoreObject<ValueType>(bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> StoreObject<ValueType>(bool isVolatile = false, int? unaligned = null)
         {
-            StoreObject(typeof(ValueType), isVolatile, unaligned);
+            return StoreObject(typeof(ValueType), isVolatile, unaligned);
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// For primitive and reference types use StoreIndirect.
         /// </summary>
-        public void StoreObject(Type valueType, bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> StoreObject(Type valueType, bool isVolatile = false, int? unaligned = null)
         {
             if (valueType == null)
             {
@@ -74,6 +74,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Stobj, valueType, pop: 2);
+
+            return this;
         }
     }
 }

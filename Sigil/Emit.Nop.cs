@@ -12,9 +12,11 @@ namespace Sigil
         /// <summary>
         /// Emits an instruction that does nothing.
         /// </summary>
-        public void Nop()
+        public Emit<DelegateType> Nop()
         {
             UpdateState(OpCodes.Nop);
+
+            return this;
         }
     }
 }

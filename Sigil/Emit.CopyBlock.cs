@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// Copies length bytes from destination to the source.
         /// </summary>
-        public void CopyBlock(bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> CopyBlock(bool isVolatile = false, int? unaligned = null)
         {
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
             {
@@ -60,6 +60,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Cpblk, pop: 3);
+
+            return this;
         }
     }
 }

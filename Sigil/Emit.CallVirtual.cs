@@ -20,7 +20,7 @@ namespace Sigil
         /// 
         /// If the method invoked shouldn't vary (or if the method is static), use Call instead.
         /// </summary>
-        public void CallVirtual(MethodInfo method, Type constrained = null)
+        public Emit<DelegateType> CallVirtual(MethodInfo method, Type constrained = null)
         {
             if (method == null)
             {
@@ -67,6 +67,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Callvirt, method, resultType, pop: expectedParams.Count);
+
+            return this;
         }
     }
 }

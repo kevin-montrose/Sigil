@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// Writes the initialization value to count bytes at the passed pointer.
         /// </summary>
-        public void InitializeBlock(bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> InitializeBlock(bool isVolatile = false, int? unaligned = null)
         {
             if (unaligned.HasValue && (unaligned != 1 && unaligned != 2 && unaligned != 4))
             {
@@ -60,6 +60,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Initblk, pop: 3);
+
+            return this;
         }
     }
 }

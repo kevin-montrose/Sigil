@@ -14,7 +14,7 @@ namespace Sigil
         /// <summary>
         /// Pops a reference to a rank 1 array off the stack, and pushes it's length onto the stack.
         /// </summary>
-        public void LoadLength()
+        public Emit<DelegateType> LoadLength()
         {
             var onStack = Stack.Top();
 
@@ -31,6 +31,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Ldlen, TypeOnStack.Get<int>(), pop: 1);
+
+            return this;
         }
     }
 }

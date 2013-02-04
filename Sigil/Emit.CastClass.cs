@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// If the cast is not legal, a CastClassException will be thrown at runtime.
         /// </summary>
-        public void CastClass<ReferenceType>()
+        public Emit<DelegateType> CastClass<ReferenceType>()
         {
-            CastClass(typeof(ReferenceType));
+            return CastClass(typeof(ReferenceType));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// If the cast is not legal, a CastClassException will be thrown at runtime.
         /// </summary>
-        public void CastClass(Type referenceType)
+        public Emit<DelegateType> CastClass(Type referenceType)
         {
             if (referenceType == null)
             {
@@ -46,6 +46,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Castclass, referenceType, TypeOnStack.Get(referenceType), pop: 1);
+
+            return this;
         }
     }
 }

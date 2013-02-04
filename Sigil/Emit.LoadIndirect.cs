@@ -14,15 +14,15 @@ namespace Sigil
         /// <summary>
         /// Pops a pointer from the stack and pushes the value (of the given type) at that address onto the stack.
         /// </summary>
-        public void LoadIndirect<Type>(bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> LoadIndirect<Type>(bool isVolatile = false, int? unaligned = null)
         {
-            LoadIndirect(typeof(Type), isVolatile, unaligned);
+            return LoadIndirect(typeof(Type), isVolatile, unaligned);
         }
 
         /// <summary>
         /// Pops a pointer from the stack and pushes the value (of the given type) at that address onto the stack.
         /// </summary>
-        public void LoadIndirect(Type type, bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> LoadIndirect(Type type, bool isVolatile = false, int? unaligned = null)
         {
             if (type == null)
             {
@@ -129,6 +129,8 @@ namespace Sigil
             }
 
             UpdateState(instr.Value, TypeOnStack.Get(type), pop: 1);
+
+            return this;
         }
     }
 }

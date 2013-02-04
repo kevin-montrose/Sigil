@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// Initializes all the fields on a value type to null or an appropriate zero value.
         /// </summary>
-        public void InitializeObject<ValueType>()
+        public Emit<DelegateType> InitializeObject<ValueType>()
         {
-            InitializeObject(typeof(ValueType));
+            return InitializeObject(typeof(ValueType));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// Initializes all the fields on a value type to null or an appropriate zero value.
         /// </summary>
-        public void InitializeObject(Type valueType)
+        public Emit<DelegateType> InitializeObject(Type valueType)
         {
             if (valueType == null)
             {
@@ -48,6 +48,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Initobj, valueType, pop: 1);
+
+            return this;
         }
     }
 }

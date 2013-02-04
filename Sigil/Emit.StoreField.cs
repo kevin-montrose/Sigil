@@ -17,7 +17,7 @@ namespace Sigil
         /// 
         /// If the field is an instance member, both a value and a reference to the instance are popped from the stack.
         /// </summary>
-        public void StoreField(FieldInfo field, bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> StoreField(FieldInfo field, bool isVolatile = false, int? unaligned = null)
         {
             if (field == null)
             {
@@ -91,6 +91,8 @@ namespace Sigil
 
                 UpdateState(OpCodes.Stsfld, field, pop: 1);
             }
+
+            return this;
         }
     }
 }

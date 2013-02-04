@@ -16,9 +16,9 @@ namespace Sigil
         /// 
         /// Copies the given value type from the source to the destination.
         /// </summary>
-        public void CopyObject<ValueType>()
+        public Emit<DelegateType> CopyObject<ValueType>()
         {
-            CopyObject(typeof(ValueType));
+            return CopyObject(typeof(ValueType));
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Sigil
         /// 
         /// Copies the given value type from the source to the destination.
         /// </summary>
-        public void CopyObject(Type valueType)
+        public Emit<DelegateType> CopyObject(Type valueType)
         {
             if (valueType == null)
             {
@@ -64,6 +64,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Cpobj, valueType, pop: 2);
+
+            return this;
         }
     }
 }

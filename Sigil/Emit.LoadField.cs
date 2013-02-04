@@ -17,7 +17,7 @@ namespace Sigil
         /// 
         /// Instance fields expect a reference on the stack, which is popped.
         /// </summary>
-        public void LoadField(FieldInfo field, bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> LoadField(FieldInfo field, bool isVolatile = false, int? unaligned = null)
         {
             if (field == null)
             {
@@ -70,6 +70,8 @@ namespace Sigil
 
                 UpdateState(OpCodes.Ldsfld, field, TypeOnStack.Get(field.FieldType));
             }
+
+            return this;
         }
     }
 }

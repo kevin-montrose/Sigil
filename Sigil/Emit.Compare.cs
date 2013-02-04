@@ -16,7 +16,7 @@ namespace Sigil
         /// 
         /// New value on the stack is an Int32.
         /// </summary>
-        public void CompareEqual()
+        public Emit<DelegateType> CompareEqual()
         {
             var top = Stack.Top(2);
 
@@ -26,6 +26,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Ceq, TypeOnStack.Get<int>(), pop: 2);
+
+            return this;
         }
 
         /// <summary>
@@ -33,7 +35,7 @@ namespace Sigil
         /// 
         /// New value on the stack is an Int32.
         /// </summary>
-        public void CompareGreaterThan()
+        public Emit<DelegateType> CompareGreaterThan()
         {
             var top = Stack.Top(2);
 
@@ -43,6 +45,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Cgt, TypeOnStack.Get<int>(), pop: 2);
+
+            return this;
         }
 
         /// <summary>
@@ -50,7 +54,7 @@ namespace Sigil
         /// 
         /// New value on the stack is an Int32.
         /// </summary>
-        public void UnsignedCompareGreaterThan()
+        public Emit<DelegateType> UnsignedCompareGreaterThan()
         {
             var top = Stack.Top(2);
 
@@ -60,6 +64,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Cgt_Un, TypeOnStack.Get<int>(), pop: 2);
+
+            return this;
         }
 
         /// <summary>
@@ -67,7 +73,7 @@ namespace Sigil
         /// 
         /// New value on the stack is an Int32.
         /// </summary>
-        public void CompareLessThan()
+        public Emit<DelegateType> CompareLessThan()
         {
             var top = Stack.Top(2);
 
@@ -77,6 +83,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Clt, TypeOnStack.Get<int>(), pop: 2);
+
+            return this;
         }
 
         /// <summary>
@@ -84,7 +92,7 @@ namespace Sigil
         /// 
         /// New value on the stack is an Int32.
         /// </summary>
-        public void UnsignedCompareLessThan()
+        public Emit<DelegateType> UnsignedCompareLessThan()
         {
             var top = Stack.Top(2);
 
@@ -94,6 +102,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Clt_Un, TypeOnStack.Get<int>(), pop: 2);
+
+            return this;
         }
     }
 }

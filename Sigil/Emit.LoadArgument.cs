@@ -14,7 +14,7 @@ namespace Sigil
         /// <summary>
         /// Loads the argument at the given index (starting at 0) for the current method onto the stack.
         /// </summary>
-        public void LoadArgument(int index)
+        public Emit<DelegateType> LoadArgument(int index)
         {
             if (ParameterTypes.Length == 0)
             {
@@ -28,19 +28,21 @@ namespace Sigil
 
             switch (index)
             {
-                case 0: UpdateState(OpCodes.Ldarg_0, TypeOnStack.Get(ParameterTypes[index])); return;
-                case 1: UpdateState(OpCodes.Ldarg_1, TypeOnStack.Get(ParameterTypes[index])); return;
-                case 2: UpdateState(OpCodes.Ldarg_2, TypeOnStack.Get(ParameterTypes[index])); return;
-                case 3: UpdateState(OpCodes.Ldarg_3, TypeOnStack.Get(ParameterTypes[index])); return;
+                case 0: UpdateState(OpCodes.Ldarg_0, TypeOnStack.Get(ParameterTypes[index])); return this;
+                case 1: UpdateState(OpCodes.Ldarg_1, TypeOnStack.Get(ParameterTypes[index])); return this;
+                case 2: UpdateState(OpCodes.Ldarg_2, TypeOnStack.Get(ParameterTypes[index])); return this;
+                case 3: UpdateState(OpCodes.Ldarg_3, TypeOnStack.Get(ParameterTypes[index])); return this;
             }
 
             if (index <= byte.MaxValue)
             {
                 UpdateState(OpCodes.Ldarg_S, index, TypeOnStack.Get(ParameterTypes[index]));
-                return;
+                return this;
             }
 
             UpdateState(OpCodes.Ldarg, index, TypeOnStack.Get(ParameterTypes[index]));
+
+            return this;
         }
     }
 }

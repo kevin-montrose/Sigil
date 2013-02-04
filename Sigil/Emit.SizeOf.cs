@@ -14,15 +14,15 @@ namespace Sigil
         /// <summary>
         /// Pushes the size of the given value type onto the stack.
         /// </summary>
-        public void SizeOf<ValueType>()
+        public Emit<DelegateType> SizeOf<ValueType>()
         {
-            SizeOf(typeof(ValueType));
+            return SizeOf(typeof(ValueType));
         }
 
         /// <summary>
         /// Pushes the size of the given value type onto the stack.
         /// </summary>
-        public void SizeOf(Type valueType)
+        public Emit<DelegateType> SizeOf(Type valueType)
         {
             if (valueType == null)
             {
@@ -35,6 +35,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Sizeof, valueType, TypeOnStack.Get<int>());
+
+            return this;
         }
     }
 }

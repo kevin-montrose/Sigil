@@ -18,7 +18,7 @@ namespace Sigil
         /// 
         /// Memory allocated with LocalAllocate is released when the current method ends execution.
         /// </summary>
-        public void LocalAllocate()
+        public Emit<DelegateType> LocalAllocate()
         {
             if (CatchBlocks.Any(c => c.Value.Item2 == -1))
             {
@@ -50,6 +50,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Localloc, TypeOnStack.Get<NativeInt>(), pop: 1);
+
+            return this;
         }
     }
 }

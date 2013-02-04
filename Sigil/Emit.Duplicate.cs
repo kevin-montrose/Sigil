@@ -12,7 +12,7 @@ namespace Sigil
         /// <summary>
         /// Pushes a copy of the current top value on the stack.
         /// </summary>
-        public void Duplicate()
+        public Emit<DelegateType> Duplicate()
         {
             var onStack = Stack.Top();
 
@@ -22,6 +22,8 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Dup, onStack[0]);
+
+            return this;
         }
     }
 }
