@@ -10,12 +10,29 @@ Unlike ILGenerator, Sigil will fail as soon as an error is detected in the emitt
 
 ###Creating an Emit
 
-Sigil currently only supports creating DynamicMethods.
+Sigil is oriented mostly towards DynamicMethod, but does support creating methods with TypeBuilder.
 
 To create an `Emit<DelegateType>`:
 ```
 var emiter = Emit<Func<int>>.NewDynamicMethod("MyMethod");
 ```
+
+To build a static method with Sigil:
+```
+TypeBuilder myBuilder = ...;
+var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Static", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard);
+```
+
+To build an instance method with Sigil:  
+```
+TypeBuilder myBuilder = ...;
+var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Instance", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+// Technically this is a Func<myBuilder, int string>; but because myBuilder isn't complete
+//   the generic parameters skip the `this` reference.  myBuilder will still be available as the
+//   first argument to the method
+```
+
+Call `CreateDelegate()` and `CreateMethod()` to finish building with DynamicMethod and TypeBuilder respectively.
 
 ###Instructions and Validation
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,9 +16,33 @@ namespace SigilTests
         [TestMethod]
         public void Block1()
         {
-            var emiter = Emit<Func<int>>.NewDynamicMethod("MyMethod");
+            {
+                var emiter = Emit<Func<int>>.NewDynamicMethod("MyMethod");
+                Assert.IsNotNull(emiter);
+            }
 
-            Assert.IsNotNull(emiter);
+            {
+                var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                var mod = asm.DefineDynamicModule("Bar");
+
+                TypeBuilder myBuilder = mod.DefineType("T");
+                var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Static", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard);
+
+                Assert.IsNotNull(emiter);
+            }
+
+            {
+                var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                var mod = asm.DefineDynamicModule("Bar");
+
+                TypeBuilder myBuilder = mod.DefineType("T");
+                var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Instance", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+                // Technically this is a Func<myBuilder, int string>; but because myBuilder isn't complete
+                //   the generic parameters skip the `this` reference.  myBuilder will still be available as the
+                //   first argument to the method
+
+                Assert.IsNotNull(emiter);
+            }
         }
 
         [TestMethod]
