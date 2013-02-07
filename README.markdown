@@ -154,6 +154,29 @@ Similarly, `LoadIndirect<Type>()` chooses the correct version of `Ldind_*` based
 
 The `tailcall` and `readonly` prefixes are also inserted automatically, but not the `volatile` or `unaligned` prefixes.
 
+###Better Names, And Call Chaining
+
+Don't know all the IL instructions offhand?  The interface on `Emit<DelegateType>` has longer, more descriptive, names for all supported OpCodes.
+
+Already really familiar with `ILGenerator` and `OpCodes`?  `Emit<DelegateType>.AsShorthand()` gives you a proxy to the same functions 
+as `Emit<DelegateType>` but with shorter, more familiar names.
+
+Loading a constant with `Emit<DelegateType>`:
+```
+Emit<DelegateType> emit = ...;
+emit.LoadConstant(123);
+```
+
+Loading a constant with `Emit<DelegateType>.AsShorthand()`:
+```
+Emit<DelegateType> emit = ...;
+var e = emit.AsShorthand();
+e.Ldc(123);
+```
+
+Furthermore, most Sigil methods return `this` to allow for call chaining.  Those methods (like `DeclareLocal<T>()`) that would normally return
+a value also have an override which places results in out parameters.
+
 #Sigil is a WORK IN PROGRESS
 
 Use at your own risk, there are almost certainly serious bugs at the moment.
