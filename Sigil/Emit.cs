@@ -31,8 +31,7 @@ namespace Sigil
         private TypeOnStack ReturnType;
         private Type[] ParameterTypes;
         private CallingConventions CallingConventions;
-        private DynamicMethod DynMethod;
-
+        
         private StackState Stack;
 
         private List<Tuple<OpCode, StackState>> InstructionStream;
@@ -56,9 +55,15 @@ namespace Sigil
 
         private List<Tuple<int, TypeOnStack>> ReadonlyPatches;
 
-        private DelegateType CreatedDelegate;
-
         private EmitShorthand<DelegateType> Shorthand;
+
+        // These can only ever be set if we're building a DynamicMethod
+        private DelegateType CreatedDelegate;
+        private DynamicMethod DynMethod;
+
+        // These can only ever be set if we're building a MethodBuilder
+        private MethodBuilder MtdBuilder;
+        private bool MethodBuilt;
 
         /// <summary>
         /// Returns true if this Emit can make use of unverifiable instructions.
@@ -129,6 +134,17 @@ namespace Sigil
             return Shorthand;
         }
 
+        private void Seal()
+        {
+            InjectTailCall();
+            InjectReadOnly();
+            PatchBranches();
+
+            Validate();
+
+            Invalidated = true;
+        }
+
         /// <summary>
         /// Converts the CIL stream into a delegate.
         /// 
@@ -140,7 +156,7 @@ namespace Sigil
         /// `instructions` will be set to a representation of the instructions making up the returned delegate.
         /// Note that this string is typically *not* enough to regenerate the delegate, it is available for
         /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
-        /// a future failure in the returned delegate fails validation (indicative of a bug in Sigil) or
+        /// the returned delegate fails validation (indicative of a bug in Sigil) or
         /// behaves unexpectedly (indicative of a logic bug in the consumer code).
         /// </summary>
         public DelegateType CreateDelegate(out string instructions)
@@ -156,18 +172,12 @@ namespace Sigil
                 return CreatedDelegate;
             }
 
-            InjectTailCall();
-            InjectReadOnly();
-            PatchBranches();
-
-            Validate();
+            Seal();
 
             var il = DynMethod.GetILGenerator();
             instructions = IL.UnBuffer(il);
 
             CreatedDelegate = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
-
-            Invalidated = true;
 
             AutoNamer.Release(this);
 
@@ -186,6 +196,55 @@ namespace Sigil
         {
             string ignored;
             return CreateDelegate(out ignored);
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the MethodBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// `instructions` will be set to a representation of the instructions making up the returned delegate.
+        /// Note that this string is typically *not* enough to regenerate the delegate, it is available for
+        /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
+        /// the returned delegate fails validation (indicative of a bug in Sigil) or
+        /// behaves unexpectedly (indicative of a logic bug in the consumer code).
+        /// </summary>
+        public void CreateMethod(out string instructions)
+        {
+            if (MtdBuilder == null)
+            {
+                throw new InvalidOperationException("Emit was not created to build a method, thus CreateMethod cannot be called");
+            }
+
+            if (MethodBuilt)
+            {
+                instructions = null;
+                return;
+            }
+
+            MethodBuilt = true;
+
+            var il = MtdBuilder.GetILGenerator();
+            instructions = IL.UnBuffer(il);
+
+            AutoNamer.Release(this);
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the MethodBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// </summary>
+        public void CreateMethod()
+        {
+            string ignored;
+            CreateMethod(out ignored);
         }
 
         private static void CheckIsDelegate<CheckDelegateType>()
@@ -255,6 +314,62 @@ namespace Sigil
 
             var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module));
             ret.DynMethod = dynMethod;
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Creates a new Emit, suitable for building a method on the given MethodBuilder.
+        /// 
+        /// The DelegateType and MethodBuilder must agree on return types, parameter types (including `this`), and parameter counts.
+        /// 
+        /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
+        /// </summary>
+        public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+
+            if ((attributes & ~(MethodAttributes.Abstract | MethodAttributes.Assembly | MethodAttributes.CheckAccessOnOverride | MethodAttributes.FamANDAssem | MethodAttributes.Family | MethodAttributes.FamORAssem | MethodAttributes.Final | MethodAttributes.HasSecurity | MethodAttributes.HideBySig | MethodAttributes.MemberAccessMask | MethodAttributes.NewSlot | MethodAttributes.PinvokeImpl | MethodAttributes.Private | MethodAttributes.PrivateScope | MethodAttributes.Public | MethodAttributes.RequireSecObject | MethodAttributes.ReuseSlot | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName | MethodAttributes.Static | MethodAttributes.UnmanagedExport | MethodAttributes.Virtual | MethodAttributes.VtableLayoutMask)) != 0)
+            {
+                throw new ArgumentException("Unrecognized flag in attributes");
+            }
+
+            if ((callingConvention & ~(CallingConventions.Any | CallingConventions.ExplicitThis | CallingConventions.HasThis | CallingConventions.Standard | CallingConventions.VarArgs)) != 0)
+            {
+                throw new ArgumentException("Unrecognized flag in callingConvention");
+            }
+
+            if (attributes.HasFlag(MethodAttributes.Static) && callingConvention.HasFlag(CallingConventions.HasThis))
+            {
+                throw new ArgumentException("Static methods cannot have a this reference");
+            }
+
+            CheckIsDelegate<DelegateType>();
+
+            var delType = typeof(DelegateType);
+
+            var invoke = delType.GetMethod("Invoke");
+            var returnType = invoke.ReturnType;
+            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+
+            var methodBuilder = type.DefineMethod(name, attributes, callingConvention, returnType, parameterTypes);
+
+            if (callingConvention.HasFlag(CallingConventions.HasThis))
+            {
+                // Shove `this` in front, can't require it because it doesn't exist yet!
+                parameterTypes = new Type[] { type }.Union(parameterTypes).ToArray();
+            }
+
+            var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode);
+            ret.MtdBuilder = methodBuilder;
 
             return ret;
         }

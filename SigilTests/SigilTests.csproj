@@ -88,6 +88,7 @@
     <Compile Include="LoadObject.cs" />
     <Compile Include="Local.cs" />
     <Compile Include="LocalAllocate.cs" />
+    <Compile Include="Methods.cs" />
     <Compile Include="Multiply.cs" />
     <Compile Include="Negate.cs" />
     <Compile Include="NewArray.cs" />
