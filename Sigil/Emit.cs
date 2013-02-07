@@ -30,6 +30,7 @@ namespace Sigil
         private BufferedILGenerator IL;
         private TypeOnStack ReturnType;
         private Type[] ParameterTypes;
+        private CallingConventions CallingConventions;
         private DynamicMethod DynMethod;
 
         private StackState Stack;
@@ -59,23 +60,24 @@ namespace Sigil
 
         private EmitShorthand<DelegateType> Shorthand;
 
+        /// <summary>
+        /// Returns true if this Emit can make use of unverifiable instructions.
+        /// </summary>
         public bool AllowsUnverifiableCIL { get; private set; }
 
-        private Emit(DynamicMethod dynMethod, bool allowUnverifiable)
+        //private Emit(DynamicMethod dynMethod, bool allowUnverifiable)
+        private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
-            DynMethod = dynMethod;
+            CallingConventions = callConvention;
 
             AllowsUnverifiableCIL = allowUnverifiable;
 
-            ReturnType = TypeOnStack.Get(DynMethod.ReturnType);
+            ReturnType = TypeOnStack.Get(returnType);
             ParameterTypes = 
-                DynMethod
-                    .GetParameters()
+                parameterTypes
                     .Select(
-                        p =>
+                        type =>
                         {
-                            var type = p.ParameterType;
-
                             // All 32-bit ints on the stack
                             if(type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort) || type == typeof(uint))
                             {
@@ -143,6 +145,11 @@ namespace Sigil
         /// </summary>
         public DelegateType CreateDelegate(out string instructions)
         {
+            if (DynMethod == null)
+            {
+                throw new InvalidOperationException("Emit was not created to build a DynamicMethod, thus CreateDelegate cannot be called");
+            }
+
             if (CreatedDelegate != null)
             {
                 instructions = null;
@@ -181,9 +188,9 @@ namespace Sigil
             return CreateDelegate(out ignored);
         }
 
-        private static void CheckIsDelegate<DelegateType>()
+        private static void CheckIsDelegate<CheckDelegateType>()
         {
-            var delType = typeof(DelegateType);
+            var delType = typeof(CheckDelegateType);
 
             var baseTypes = new HashSet<Type>();
             baseTypes.Add(delType);
@@ -246,7 +253,10 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
-            return new Emit<DelegateType>(dynMethod, AllowsUnverifiableCode(module));
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module));
+            ret.DynMethod = dynMethod;
+
+            return ret;
         }
 
         private void InsertInstruction(int index, OpCode instr)

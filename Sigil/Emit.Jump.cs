@@ -26,9 +26,9 @@ namespace Sigil
                 throw new ArgumentNullException("method");
             }
 
-            if (method.CallingConvention != DynMethod.CallingConvention)
+            if (method.CallingConvention != CallingConventions)
             {
-                throw new ArgumentException("Jump expected a calling convention of " + DynMethod.CallingConvention + ", found " + method.CallingConvention);
+                throw new ArgumentException("Jump expected a calling convention of " + CallingConventions + ", found " + method.CallingConvention);
             }
 
             var paras = method.GetParameters();
