@@ -59,13 +59,13 @@ namespace Sigil
 
         private EmitShorthand<DelegateType> Shorthand;
 
-        private bool AllowUnverifiableCIL;
+        public bool AllowsUnverifiableCIL { get; private set; }
 
         private Emit(DynamicMethod dynMethod, bool allowUnverifiable)
         {
             DynMethod = dynMethod;
 
-            AllowUnverifiableCIL = allowUnverifiable;
+            AllowsUnverifiableCIL = allowUnverifiable;
 
             ReturnType = TypeOnStack.Get(DynMethod.ReturnType);
             ParameterTypes = 
@@ -181,19 +181,8 @@ namespace Sigil
             return CreateDelegate(out ignored);
         }
 
-        /// <summary>
-        /// Creates a new Emit, optionally using the provided name and module for the inner DynamicMethod.
-        /// 
-        /// If name is not defined, a sane default is generated.
-        /// 
-        /// If module is not defined, a module with the same trust as the executing assembly is used instead.
-        /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(string name = null, Module module = null)
+        private static void CheckIsDelegate<DelegateType>()
         {
-            module = module ?? Module;
-
-            name = name ?? AutoNamer.Next("_DynamicMethod");
-
             var delType = typeof(DelegateType);
 
             var baseTypes = new HashSet<Type>();
@@ -209,6 +198,47 @@ namespace Sigil
             {
                 throw new ArgumentException("DelegateType must be a delegate, found " + delType.FullName);
             }
+        }
+
+        private static bool AllowsUnverifiableCode(ModuleBuilder m)
+        {
+            var canaryMethod = new DynamicMethod("__Canary" + Guid.NewGuid(), typeof(void), Type.EmptyTypes, m);
+            var il = canaryMethod.GetILGenerator();
+            il.Emit(OpCodes.Ldc_I4, 1024);
+            il.Emit(OpCodes.Localloc);
+            il.Emit(OpCodes.Pop);
+            il.Emit(OpCodes.Ret);
+
+            var d1 = (Action)canaryMethod.CreateDelegate(typeof(Action));
+
+            try
+            {
+                d1();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Creates a new Emit, optionally using the provided name and module for the inner DynamicMethod.
+        /// 
+        /// If name is not defined, a sane default is generated.
+        /// 
+        /// If module is not defined, a module with the same trust as the executing assembly is used instead.
+        /// </summary>
+        public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null)
+        {
+            module = module ?? Module;
+
+            name = name ?? AutoNamer.Next("_DynamicMethod");
+
+            CheckIsDelegate<DelegateType>();
+
+            var delType = typeof(DelegateType);
 
             var invoke = delType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
@@ -216,7 +246,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
-            return new Emit<DelegateType>(dynMethod, module.Assembly.IsFullyTrusted);
+            return new Emit<DelegateType>(dynMethod, AllowsUnverifiableCode(module));
         }
 
         private void InsertInstruction(int index, OpCode instr)

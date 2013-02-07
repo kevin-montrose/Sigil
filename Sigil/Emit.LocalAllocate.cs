@@ -30,7 +30,7 @@ namespace Sigil
                 throw new InvalidOperationException("LocalAllocate cannot be used in a finally block");
             }
 
-            if (!AllowUnverifiableCIL)
+            if (!AllowsUnverifiableCIL)
             {
                 throw new InvalidOperationException("LocalAllocate isn't verifiable");
             }
