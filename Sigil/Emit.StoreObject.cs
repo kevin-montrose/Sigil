@@ -17,6 +17,7 @@ namespace Sigil
         /// For primitive and reference types use StoreIndirect.
         /// </summary>
         public Emit<DelegateType> StoreObject<ValueType>(bool isVolatile = false, int? unaligned = null)
+            where ValueType : struct
         {
             return StoreObject(typeof(ValueType), isVolatile, unaligned);
         }

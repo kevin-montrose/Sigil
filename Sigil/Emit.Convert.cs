@@ -28,6 +28,7 @@ namespace Sigil
         /// Primitives are int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, native int (IntPtr), and unsigned native int (UIntPtr). 
         /// </summary>
         public Emit<DelegateType> Convert<PrimitiveType>()
+            where PrimitiveType : struct
         {
             return Convert(typeof(PrimitiveType));
         }

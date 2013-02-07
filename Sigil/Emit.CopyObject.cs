@@ -17,6 +17,7 @@ namespace Sigil
         /// Copies the given value type from the source to the destination.
         /// </summary>
         public Emit<DelegateType> CopyObject<ValueType>()
+            where ValueType : struct
         {
             return CopyObject(typeof(ValueType));
         }

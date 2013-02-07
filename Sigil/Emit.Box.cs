@@ -15,6 +15,7 @@ namespace Sigil
         /// Boxes the given value type on the stack, converting it into a reference.
         /// </summary>
         public Emit<DelegateType> Box<ValueType>()
+            where ValueType : struct
         {
             return Box(typeof(ValueType));
         }

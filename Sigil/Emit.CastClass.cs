@@ -17,6 +17,7 @@ namespace Sigil
         /// If the cast is not legal, a CastClassException will be thrown at runtime.
         /// </summary>
         public Emit<DelegateType> CastClass<ReferenceType>()
+            where ReferenceType : class
         {
             return CastClass(typeof(ReferenceType));
         }

@@ -15,6 +15,7 @@ namespace Sigil
         /// Pushes the size of the given value type onto the stack.
         /// </summary>
         public Emit<DelegateType> SizeOf<ValueType>()
+            where ValueType : struct
         {
             return SizeOf(typeof(ValueType));
         }

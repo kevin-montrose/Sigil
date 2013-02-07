@@ -3070,7 +3070,7 @@ namespace SigilTests
                 var e1 = Emit<Action>.NewDynamicMethod();
                 try
                 {
-                    e1.Convert<object>();
+                    e1.Convert(typeof(object));
                     Assert.Fail();
                 }
                 catch (ArgumentException e)
@@ -3273,7 +3273,7 @@ namespace SigilTests
 
             try
             {
-                e1.CastClass<int>();
+                e1.CastClass(typeof(int));
                 Assert.Fail();
             }
             catch (ArgumentException e)
@@ -4490,7 +4490,7 @@ namespace SigilTests
 
             try
             {
-                e2.Box<string>();
+                e2.Box(typeof(string));
             }
             catch (ArgumentException e)
             {

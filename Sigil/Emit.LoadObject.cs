@@ -17,6 +17,7 @@ namespace Sigil
         /// For primitive and reference types, use LoadIndirect().
         /// </summary>
         public Emit<DelegateType> LoadObject<ValueType>(bool isVolatile = false, int? unaligned = null)
+            where ValueType : struct
         {
             return LoadObject(typeof(ValueType), isVolatile, unaligned);
         }
