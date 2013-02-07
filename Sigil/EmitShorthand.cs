@@ -21,6 +21,14 @@ namespace Sigil
             InnerEmit = inner;
         }
 
+        /// <summary>
+        /// Returns the original Emit instance that AsShorthand() was called on.
+        /// </summary>
+        public Emit<DelegateType> AsLonghand()
+        {
+            return InnerEmit;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.DeclareLocal``1(System.String)" />
         public Local DeclareLocal<Type>(string name = null)
         {

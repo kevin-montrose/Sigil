@@ -23,6 +23,11 @@ namespace Sigil
                 throw new ArgumentException("unaligned must be null, 1, 2, or 4", "unaligned");
             }
 
+            if (!AllowUnverifiableCIL)
+            {
+                throw new InvalidOperationException("CopyBlock isn't verifiable");
+            }
+
             var onStack = Stack.Top(3);
 
             if (onStack == null)

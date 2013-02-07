@@ -30,6 +30,11 @@ namespace Sigil
                 throw new InvalidOperationException("LocalAllocate cannot be used in a finally block");
             }
 
+            if (!AllowUnverifiableCIL)
+            {
+                throw new InvalidOperationException("LocalAllocate isn't verifiable");
+            }
+
             var top = Stack.Top();
 
             if (top == null)

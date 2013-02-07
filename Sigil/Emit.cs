@@ -59,9 +59,13 @@ namespace Sigil
 
         private EmitShorthand<DelegateType> Shorthand;
 
-        private Emit(DynamicMethod dynMethod)
+        private bool AllowUnverifiableCIL;
+
+        private Emit(DynamicMethod dynMethod, bool allowUnverifiable)
         {
             DynMethod = dynMethod;
+
+            AllowUnverifiableCIL = allowUnverifiable;
 
             ReturnType = TypeOnStack.Get(DynMethod.ReturnType);
             ParameterTypes = 
@@ -178,10 +182,16 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Creates a new Emit, using the provided name for the inner DynamicMethod.
+        /// Creates a new Emit, optionally using the provided name and module for the inner DynamicMethod.
+        /// 
+        /// If name is not defined, a sane default is generated.
+        /// 
+        /// If module is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(string name = null)
+        public static Emit<DelegateType> NewDynamicMethod(string name = null, Module module = null)
         {
+            module = module ?? Module;
+
             name = name ?? AutoNamer.Next("_DynamicMethod");
 
             var delType = typeof(DelegateType);
@@ -204,9 +214,9 @@ namespace Sigil
             var returnType = invoke.ReturnType;
             var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
 
-            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, Module, skipVisibility: true);
+            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
-            return new Emit<DelegateType>(dynMethod);
+            return new Emit<DelegateType>(dynMethod, module.Assembly.IsFullyTrusted);
         }
 
         private void InsertInstruction(int index, OpCode instr)

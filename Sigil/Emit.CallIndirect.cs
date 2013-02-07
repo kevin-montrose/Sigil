@@ -256,6 +256,11 @@ namespace Sigil
                 throw new ArgumentException("Unexpected value not in CallingConventions", "callConventions");
             }
 
+            if (!AllowUnverifiableCIL)
+            {
+                throw new InvalidOperationException("CallIndirect isn't verifiable");
+            }
+
             var takeExtra = 1;
 
             if (callConventions.HasFlag(CallingConventions.HasThis))

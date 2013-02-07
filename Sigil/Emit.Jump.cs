@@ -38,6 +38,11 @@ namespace Sigil
                 throw new ArgumentException("Jump expected a method with " + ParameterTypes.Length + " parameters, found " + paras.Length);
             }
 
+            if (!AllowUnverifiableCIL)
+            {
+                throw new InvalidOperationException("Jump isn't verifiable");
+            }
+
             if (CatchBlocks.Any(t => t.Value.Item2 == -1))
             {
                 throw new InvalidOperationException("Jump cannot transfer control from a catch block");
