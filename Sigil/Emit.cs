@@ -206,13 +206,15 @@ namespace Sigil
         /// 
         /// Once this method is called the Emit may no longer be modified.
         /// 
+        /// Returns a MethodBuilder, which can be used to define overrides or for further inspection.
+        /// 
         /// `instructions` will be set to a representation of the instructions making up the returned delegate.
         /// Note that this string is typically *not* enough to regenerate the delegate, it is available for
         /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
         /// the returned delegate fails validation (indicative of a bug in Sigil) or
         /// behaves unexpectedly (indicative of a logic bug in the consumer code).
         /// </summary>
-        public void CreateMethod(out string instructions)
+        public MethodBuilder CreateMethod(out string instructions)
         {
             if (MtdBuilder == null)
             {
@@ -222,7 +224,7 @@ namespace Sigil
             if (MethodBuilt)
             {
                 instructions = null;
-                return;
+                return MtdBuilder;
             }
 
             MethodBuilt = true;
@@ -231,6 +233,8 @@ namespace Sigil
             instructions = IL.UnBuffer(il);
 
             AutoNamer.Release(this);
+
+            return MtdBuilder;
         }
 
         /// <summary>
@@ -240,11 +244,13 @@ namespace Sigil
         /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
         /// 
         /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a MethodBuilder, which can be used to define overrides or for further inspection.
         /// </summary>
-        public void CreateMethod()
+        public MethodBuilder CreateMethod()
         {
             string ignored;
-            CreateMethod(out ignored);
+            return CreateMethod(out ignored);
         }
 
         private static void CheckIsDelegate<CheckDelegateType>()
