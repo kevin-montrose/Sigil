@@ -35,6 +35,11 @@ namespace Sigil
                 throw new ArgumentException("Only ValueTypes can be boxed, found " + valueType, "valueType");
             }
 
+            if (!AllowsUnverifiableCIL && valueType.IsByRef)
+            {
+                throw new InvalidOperationException("Box with by-ref types is not verifiable");
+            }
+
             var top = Stack.Top();
 
             if (top == null)

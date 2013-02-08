@@ -356,5 +356,64 @@ namespace SigilTests
                 d1();
             }
         }
+
+        public class LdfldaClass
+        {
+            public readonly int Field;
+        }
+
+        [TestMethod]
+        public void LdfldaInitOnly()
+        {
+            var fld = typeof(LdfldaClass).GetField("Field");
+
+            try
+            {
+                var dyn = new DynamicMethod("E1", typeof(void), new[] { typeof(LdfldaClass) });
+                var il = dyn.GetILGenerator();
+                il.Emit(OpCodes.Ldarg_0);
+                il.Emit(OpCodes.Ldflda, fld);
+                il.Emit(OpCodes.Pop);
+                il.Emit(OpCodes.Ret);
+
+                var d1 = (Action<LdfldaClass>)dyn.CreateDelegate(typeof(Action<LdfldaClass>));
+                d1(new LdfldaClass());
+
+                Assert.Fail();
+            }
+            catch (VerificationException) { }
+
+            {
+                var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                var mod = asm.DefineDynamicModule("Bar");
+                var t = mod.DefineType("T");
+
+                var e1 = Emit<Action<LdfldaClass>>.BuildMethod(t, "E1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard);
+                e1.LoadArgument(0);
+
+                try
+                {
+
+                    e1.LoadFieldAddress(fld);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("LoadFieldAddress on InitOnly fields is not verifiable", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action<LdfldaClass>>.NewDynamicMethod("E1");
+                var d1 =
+                    e1.LoadArgument(0)
+                    .LoadFieldAddress(fld)
+                    .Pop()
+                    .Return()
+                    .CreateDelegate();
+
+                d1(new LdfldaClass());
+            }
+        }
     }
 }

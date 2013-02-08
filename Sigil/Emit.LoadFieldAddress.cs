@@ -24,6 +24,11 @@ namespace Sigil
                 throw new ArgumentNullException("field");
             }
 
+            if (!AllowsUnverifiableCIL && field.IsInitOnly)
+            {
+                throw new InvalidOperationException("LoadFieldAddress on InitOnly fields is not verifiable");
+            }
+
             if (!field.IsStatic)
             {
                 var onStack = Stack.Top();
