@@ -29,6 +29,16 @@ namespace Sigil
             return InnerEmit;
         }
 
+        /// <summary>
+        /// Returns a string representation of the CIL opcodes written to this Emit to date.
+        /// 
+        /// This method is meant for debugging purposes only.
+        /// </summary>
+        public string Instructions()
+        {
+            return InnerEmit.Instructions();
+        }
+
         /// <summary cref="M:Sigil.Emit`1.DeclareLocal``1(System.String)" />
         public Local DeclareLocal<Type>(string name = null)
         {

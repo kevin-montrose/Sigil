@@ -37,7 +37,7 @@ namespace Sigil.Impl
             return log.ToString();
         }
 
-        private int LengthTo(int end)
+        private int LengthTo(int end, out string instructions)
         {
             var invoke = DelegateType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
@@ -46,20 +46,31 @@ namespace Sigil.Impl
             var dynMethod = new DynamicMethod(Guid.NewGuid().ToString(), returnType, parameterTypes);
             var il = dynMethod.GetILGenerator();
 
-            var ignored = new StringBuilder();
+            var instrs = new StringBuilder();
 
             foreach (var x in Buffer.Take(end))
             {
-                x(il, ignored);
+                x(il, instrs);
             }
+
+            instructions = instrs.ToString();
 
             return il.ILOffset;
         }
 
+        internal string Instructions()
+        {
+            string instrs;
+            LengthTo(Buffer.Count, out instrs);
+
+            return instrs;
+        }
+
         public int ByteDistance(int start, int stop)
         {
-            var toStart = LengthTo(start);
-            var toStop = LengthTo(stop);
+            string ignored;
+            var toStart = LengthTo(start, out ignored);
+            var toStop = LengthTo(stop, out ignored);
 
             return toStop - toStart;
         }
@@ -71,17 +82,59 @@ namespace Sigil.Impl
                 throw new ArgumentOutOfRangeException("ix", "Expected value between 0 and " + Buffer.Count);
             }
 
-            Buffer.Insert(ix, (il, log) => { il.Emit(op); log.AppendLine(op.ToString()); });
+            Buffer.Insert(
+                ix, 
+                (il, log) => 
+                { 
+                    il.Emit(op);
+                    if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
+                    {
+                        log.Append(op.ToString());
+                    }
+                    else
+                    {
+                        log.AppendLine(op.ToString());
+                    }
+                }
+            );
         }
 
         public void Emit(OpCode op)
         {
-            Buffer.Add((il, log) => { il.Emit(op); log.AppendLine(op.ToString()); });
+            Buffer.Add(
+                (il, log) => 
+                { 
+                    il.Emit(op);
+
+                    if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
+                    {
+                        log.Append(op.ToString());
+                    }
+                    else
+                    {
+                        log.AppendLine(op.ToString()); 
+                    }
+                }
+            );
         }
 
         public void Emit(OpCode op, int i)
         {
-            Buffer.Add((il, log) => { il.Emit(op, i); log.AppendLine(op + " " + i); });
+            Buffer.Add(
+                (il, log) => 
+                { 
+                    il.Emit(op, i);
+
+                    if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
+                    {
+                        log.Append(op + "" + i + ".");
+                    }
+                    else
+                    {
+                        log.AppendLine(op + " " + i);
+                    }
+                }
+            );
         }
 
         public void Emit(OpCode op, uint ui)
@@ -143,7 +196,7 @@ namespace Sigil.Impl
 
         public void Emit(OpCode op, string str)
         {
-            Buffer.Add((il, log) => { il.Emit(op, str); log.AppendLine(op + " '" + str + "'"); });
+            Buffer.Add((il, log) => { il.Emit(op, str); log.AppendLine(op + " '" + str.Replace("'", @"\'") + "'"); });
         }
 
         public void Emit(OpCode op, DefineLabelDelegate label, out UpdateOpCodeDelegate update)

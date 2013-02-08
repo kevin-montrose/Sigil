@@ -2095,22 +2095,6 @@ namespace SigilTests
                     Assert.AreEqual("LoadElementAddress expects a 1-dimensional array, found System.Int32[,]", e.Message);
                 }
             }
-
-            {
-                var e1 = Emit<Action<int[]>>.NewDynamicMethod();
-                e1.LoadArgument(0);
-                e1.LoadConstant(0);
-
-                try
-                {
-                    e1.LoadElementAddress();
-                    Assert.Fail();
-                }
-                catch (SigilException e)
-                {
-                    Assert.AreEqual("LoadElementAddress found array of type System.Int32[], but expected elements of type System.Double", e.Message);
-                }
-            }
         }
 
         [TestMethod]

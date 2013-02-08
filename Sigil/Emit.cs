@@ -134,6 +134,16 @@ namespace Sigil
             return Shorthand;
         }
 
+        /// <summary>
+        /// Returns a string representation of the CIL opcodes written to this Emit to date.
+        /// 
+        /// This method is meant for debugging purposes only.
+        /// </summary>
+        public string Instructions()
+        {
+            return IL.Instructions();
+        }
+
         private void Seal()
         {
             InjectTailCall();
