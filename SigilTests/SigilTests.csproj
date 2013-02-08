@@ -110,6 +110,7 @@
     <Compile Include="Throw.cs" />
     <Compile Include="TryCatchFinally.cs" />
     <Compile Include="Unbox.cs" />
+    <Compile Include="Verifiability.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sigil\Sigil.csproj">
