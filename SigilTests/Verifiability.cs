@@ -308,5 +308,53 @@ namespace SigilTests
                 Marshal.FreeHGlobal(blk);
             }
         }
+
+        [TestMethod]
+        public void Jmp()
+        {
+            var writeLine = typeof(Console).GetMethod("WriteLine", Type.EmptyTypes);
+
+            try
+            {
+                var dyn = new DynamicMethod("E1", typeof(void), Type.EmptyTypes);
+                var il = dyn.GetILGenerator();
+                il.Emit(OpCodes.Jmp, writeLine);
+                il.Emit(OpCodes.Ret);
+
+                var d1 = (Action)dyn.CreateDelegate(typeof(Action));
+                d1();
+
+                Assert.Fail();
+            }
+            catch (VerificationException) { }
+
+            {
+                var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                var mod = asm.DefineDynamicModule("Bar");
+                var t = mod.DefineType("T");
+
+                var e1 = Emit<Action>.BuildMethod(t, "E1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard);
+
+                try
+                {
+                    e1.Jump(writeLine);
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("Jump isn't verifiable", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var d1 =
+                    e1.Jump(writeLine)
+                    .Return()
+                    .CreateDelegate();
+
+                d1();
+            }
+        }
     }
 }
