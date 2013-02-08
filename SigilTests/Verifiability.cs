@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -40,7 +41,7 @@ namespace SigilTests
                 d1(new int[] { 123 });
                 Assert.Fail();
             }
-            catch (VerificationException e) { }
+            catch (VerificationException) { }
 
             {
                 var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
@@ -94,7 +95,7 @@ namespace SigilTests
                 d1();
                 Assert.Fail();
             }
-            catch (VerificationException e) { }
+            catch (VerificationException) { }
 
             {
                 var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
@@ -124,6 +125,187 @@ namespace SigilTests
                     .CreateDelegate();
 
                 d1();
+            }
+        }
+
+        [TestMethod]
+        public void Localloc()
+        {
+            try
+            {
+                var dyn = new DynamicMethod("E1", typeof(void), Type.EmptyTypes);
+                var il = dyn.GetILGenerator();
+                il.Emit(OpCodes.Ldc_I4_8);
+                il.Emit(OpCodes.Localloc);
+                il.Emit(OpCodes.Pop);
+                il.Emit(OpCodes.Ret);
+
+                var d1 = (Action)dyn.CreateDelegate(typeof(Action));
+                d1();
+
+                Assert.Fail();
+            }
+            catch (VerificationException) { }
+
+            {
+                var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                var mod = asm.DefineDynamicModule("Bar");
+                var t = mod.DefineType("T");
+
+                var e1 = Emit<Action>.BuildMethod(t, "E1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard);
+                e1.LoadConstant(8);
+
+                try
+                {
+                    e1.LocalAllocate();
+                    Assert.Fail();
+                }
+                catch (InvalidOperationException e)
+                {
+                    Assert.AreEqual("LocalAllocate isn't verifiable", e.Message);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var d1 =
+                    e1.LoadConstant(8)
+                    .LocalAllocate()
+                    .Pop()
+                    .Return()
+                    .CreateDelegate();
+
+                d1();
+            }
+        }
+
+        [TestMethod]
+        public void Cpblk()
+        {
+            var src = Marshal.AllocHGlobal(8);
+            var dest = Marshal.AllocHGlobal(8);
+
+            try
+            {
+                try
+                {
+                    var dyn = new DynamicMethod("E1", typeof(void), new[] { typeof(IntPtr), typeof(IntPtr) });
+                    var il = dyn.GetILGenerator();
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Ldarg_1);
+                    il.Emit(OpCodes.Ldc_I4_8);
+                    il.Emit(OpCodes.Cpblk);
+                    il.Emit(OpCodes.Ret);
+
+                    var d1 = (Action<IntPtr, IntPtr>)dyn.CreateDelegate(typeof(Action<IntPtr, IntPtr>));
+                    d1(dest, src);
+
+                    Assert.Fail();
+                }
+                catch (VerificationException) { }
+
+                {
+                    var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                    var mod = asm.DefineDynamicModule("Bar");
+                    var t = mod.DefineType("T");
+
+                    var e1 = Emit<Action<IntPtr, IntPtr>>.BuildMethod(t, "E1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard);
+                    e1.LoadArgument(0);
+                    e1.LoadArgument(1);
+                    e1.LoadConstant(8);
+
+                    try
+                    {
+                        e1.CopyBlock();
+                        Assert.Fail();
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        Assert.AreEqual("CopyBlock isn't verifiable", e.Message);
+                    }
+                }
+
+                {
+                    var e1 = Emit<Action<IntPtr, IntPtr>>.NewDynamicMethod("E1");
+                    var d1 =
+                        e1.LoadArgument(0)
+                        .LoadArgument(1)
+                        .LoadConstant(8)
+                        .CopyBlock()
+                        .Return()
+                        .CreateDelegate();
+
+                    d1(dest, src);
+                }
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(src);
+                Marshal.FreeHGlobal(dest);
+            }
+        }
+
+        [TestMethod]
+        public void Initblk()
+        {
+            var blk = Marshal.AllocHGlobal(8);
+
+            try
+            {
+                try
+                {
+                    var dyn = new DynamicMethod("E1", typeof(void), new[] { typeof(IntPtr) });
+                    var il = dyn.GetILGenerator();
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Ldc_I4_1);
+                    il.Emit(OpCodes.Ldc_I4_8);
+                    il.Emit(OpCodes.Initblk);
+                    il.Emit(OpCodes.Ret);
+
+                    var d1 = (Action<IntPtr>)dyn.CreateDelegate(typeof(Action<IntPtr>));
+                    d1(blk);
+
+                    Assert.Fail();
+                }
+                catch (VerificationException) { }
+
+                {
+                    var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                    var mod = asm.DefineDynamicModule("Bar");
+                    var t = mod.DefineType("T");
+
+                    var e1 = Emit<Action<IntPtr>>.BuildMethod(t, "E1", MethodAttributes.Public | MethodAttributes.Static, CallingConventions.Standard);
+                    e1.LoadArgument(0);
+                    e1.LoadConstant(1);
+                    e1.LoadConstant(8);
+
+                    try
+                    {
+                        e1.InitializeBlock();
+                        Assert.Fail();
+                    }
+                    catch (InvalidOperationException e)
+                    {
+                        Assert.AreEqual("InitializeBlock isn't verifiable", e.Message);
+                    }
+                }
+
+                {
+                    var e1 = Emit<Action<IntPtr>>.NewDynamicMethod("E1");
+                    var d1 =
+                        e1.LoadArgument(0)
+                        .LoadConstant(1)
+                        .LoadConstant(8)
+                        .InitializeBlock()
+                        .Return()
+                        .CreateDelegate();
+
+                    d1(blk);
+                }
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(blk);
             }
         }
     }
