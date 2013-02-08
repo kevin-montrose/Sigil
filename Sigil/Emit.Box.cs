@@ -44,7 +44,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("Box expects a value on the stack, but found none", Stack);
+                throw new SigilVerificationException("Box expects a value on the stack, but found none", IL, Stack);
             }
 
             var onStack = top.Single();
@@ -55,14 +55,14 @@ namespace Sigil
             {
                 if (onStack != TypeOnStack.Get<int>())
                 {
-                    throw new SigilException(onStack + " cannot be boxed as an " + valueType, Stack);
+                    throw new SigilVerificationException(onStack + " cannot be boxed as an " + valueType, IL, Stack);
                 }
             }
             else
             {
                 if (onStack != TypeOnStack.Get(valueType))
                 {
-                    throw new SigilException("Expected " + valueType + " to be on the stack, found " + onStack, Stack);
+                    throw new SigilVerificationException("Expected " + valueType + " to be on the stack, found " + onStack, IL, Stack);
                 }
             }
 

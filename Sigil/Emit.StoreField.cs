@@ -40,7 +40,7 @@ namespace Sigil
 
                 if (onStack == null)
                 {
-                    throw new SigilException("StoreField expects two values on the stack for instance fields", Stack);
+                    throw new SigilVerificationException("StoreField expects two values on the stack for instance fields", IL, Stack);
                 }
 
                 var type = onStack[1];
@@ -48,12 +48,12 @@ namespace Sigil
 
                 if (!field.DeclaringType.IsAssignableFrom(type))
                 {
-                    throw new SigilException("StoreField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, Stack);
+                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL, Stack);
                 }
 
                 if (!field.FieldType.IsAssignableFrom(val))
                 {
-                    throw new SigilException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, Stack);
+                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL, Stack);
                 }
 
                 if (isVolatile)
@@ -74,14 +74,14 @@ namespace Sigil
 
                 if (onStack == null)
                 {
-                    throw new SigilException("StoreField expected a value on the stack, but it was empty", Stack);
+                    throw new SigilVerificationException("StoreField expected a value on the stack, but it was empty", IL, Stack);
                 }
 
                 var val = onStack[0];
 
                 if (!field.FieldType.IsAssignableFrom(val))
                 {
-                    throw new SigilException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, Stack);
+                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL, Stack);
                 }
 
                 if (isVolatile)

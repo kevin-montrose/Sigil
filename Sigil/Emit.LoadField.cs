@@ -40,13 +40,13 @@ namespace Sigil
 
                 if (onStack == null)
                 {
-                    throw new SigilException("LoadField expects a value on the stack for instance fields", Stack);
+                    throw new SigilVerificationException("LoadField expects a value on the stack for instance fields", IL, Stack);
                 }
                 var type = onStack[0];
 
                 if (!field.DeclaringType.IsAssignableFrom(type))
                 {
-                    throw new SigilException("LoadField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, Stack);
+                    throw new SigilVerificationException("LoadField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL, Stack);
                 }
 
                 if (isVolatile)

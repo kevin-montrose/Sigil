@@ -35,14 +35,14 @@ namespace Sigil
 
                 if (onStack == null)
                 {
-                    throw new SigilException("LoadFieldAddress expected a value on the stack, but it was empty", Stack);
+                    throw new SigilVerificationException("LoadFieldAddress expected a value on the stack, but it was empty", IL, Stack);
                 }
 
                 var val = onStack[0];
 
                 if (!field.DeclaringType.IsAssignableFrom(val))
                 {
-                    throw new SigilException("LoadFieldAddress expected a " + field.DeclaringType + ", found " + val, Stack);
+                    throw new SigilVerificationException("LoadFieldAddress expected a " + field.DeclaringType + ", found " + val, IL, Stack);
                 }
 
                 UpdateState(OpCodes.Ldflda, field, TypeOnStack.Get(field.FieldType.MakeByRefType()), pop: 1);

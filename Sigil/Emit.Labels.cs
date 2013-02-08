@@ -23,7 +23,7 @@ namespace Sigil
 
                 if (!Marks.ContainsKey(label))
                 {
-                    throw new SigilException("Usage of unmarked label " + label);
+                    throw new SigilVerificationException("Usage of unmarked label " + label, IL);
                 }
 
                 var stop = Marks[label].Item2;
@@ -189,7 +189,7 @@ namespace Sigil
 
             UnmarkedLabels.Remove(label);
 
-            IL.MarkLabel(label.LabelDel);
+            IL.MarkLabel(label);
 
             Marks[label] = Tuple.Create(Stack, IL.Index);
 

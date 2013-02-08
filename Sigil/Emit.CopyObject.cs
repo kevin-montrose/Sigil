@@ -43,7 +43,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("CopyObject expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("CopyObject expects two values to be on the stack", IL, Stack);
             }
 
             var dest = onStack[1];
@@ -51,17 +51,17 @@ namespace Sigil
 
             if (!source.IsPointer && !source.IsReference && source != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("CopyObject expects the source value to be a pointer, reference, or native int; found " + source, Stack);
+                throw new SigilVerificationException("CopyObject expects the source value to be a pointer, reference, or native int; found " + source, IL, Stack);
             }
 
             if (!dest.IsPointer && !dest.IsReference && dest != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("CopyObject expects the destination value to be a pointer, reference, or native int; found " + dest, Stack);
+                throw new SigilVerificationException("CopyObject expects the destination value to be a pointer, reference, or native int; found " + dest, IL, Stack);
             }
 
             if (source != dest)
             {
-                throw new SigilException("CopyObject expects the source and destination types to match; found " + source + " and " + dest, Stack);
+                throw new SigilVerificationException("CopyObject expects the source and destination types to match; found " + source + " and " + dest, IL, Stack);
             }
 
             UpdateState(OpCodes.Cpobj, valueType, pop: 2);

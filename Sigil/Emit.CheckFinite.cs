@@ -22,14 +22,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("CheckFinite expects a value to be on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("CheckFinite expects a value to be on the stack, but it was empty", IL, Stack);
             }
 
             var val = onStack[0];
 
             if (val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>())
             {
-                throw new SigilException("CheckFinite expects a floating point value, found " + val, Stack);
+                throw new SigilVerificationException("CheckFinite expects a floating point value, found " + val, IL, Stack);
             }
 
             // ckfinite leaves the value on the stack, oddly enough

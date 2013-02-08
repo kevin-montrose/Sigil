@@ -42,10 +42,10 @@ namespace Sigil
                 }
                 else
                 {
-                    throw new SigilException(name + " with an int32 expects an int32 or native int as a second value; found " + val2, Stack);
+                    throw new SigilVerificationException(name + " with an int32 expects an int32 or native int as a second value; found " + val2, IL, Stack);
                 }
 
-                throw new SigilException(name + " with an int32 expects an int32, native int, reference, or pointer as a second value; found " + val2, Stack);
+                throw new SigilVerificationException(name + " with an int32 expects an int32, native int, reference, or pointer as a second value; found " + val2, IL, Stack);
             }
 
             if (val1 == TypeOnStack.Get<long>())
@@ -57,7 +57,7 @@ namespace Sigil
                     return;
                 }
 
-                throw new SigilException(name + " with to an int64 expects an in64 as second value; found " + val2, Stack);
+                throw new SigilVerificationException(name + " with to an int64 expects an in64 as second value; found " + val2, IL, Stack);
             }
 
             if (val1 == TypeOnStack.Get<float>())
@@ -69,7 +69,7 @@ namespace Sigil
                     return;
                 }
 
-                throw new SigilException(name + " with a float expects a float as second value; found " + val2, Stack);
+                throw new SigilVerificationException(name + " with a float expects a float as second value; found " + val2, IL, Stack);
             }
 
             if (val1 == TypeOnStack.Get<double>())
@@ -81,7 +81,7 @@ namespace Sigil
                     return;
                 }
 
-                throw new SigilException(name + " with a double expects a double as second value; found " + val2, Stack);
+                throw new SigilVerificationException(name + " with a double expects a double as second value; found " + val2, IL, Stack);
             }
 
             if (allowReference)
@@ -109,7 +109,7 @@ namespace Sigil
                         return;
                     }
 
-                    throw new SigilException(name + " with a native int expects an int32, native int, reference, or pointer as a second value; found " + val2, Stack);
+                    throw new SigilVerificationException(name + " with a native int expects an int32, native int, reference, or pointer as a second value; found " + val2, IL, Stack);
                 }
 
                 if (val1.IsReference || val1.IsPointer)
@@ -121,15 +121,15 @@ namespace Sigil
                         return;
                     }
 
-                    throw new SigilException(name + " with a reference or pointer expects an int32, or a native int as second value; found " + val2, Stack);
+                    throw new SigilVerificationException(name + " with a reference or pointer expects an int32, or a native int as second value; found " + val2, IL, Stack);
                 }
             }
             else
             {
-                throw new SigilException(name + " expects an int32, int64, native int, or float as a first value; found " + val1, Stack);
+                throw new SigilVerificationException(name + " expects an int32, int64, native int, or float as a first value; found " + val1, IL, Stack);
             }
 
-            throw new SigilException(name + " expects an int32, int64, native int, float, reference, or pointer as first value; found " + val1, Stack);
+            throw new SigilVerificationException(name + " expects an int32, int64, native int, float, reference, or pointer as first value; found " + val1, IL, Stack);
         }
 
         /// <summary>
@@ -141,7 +141,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Add requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("Add requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -163,7 +163,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("AddOverflow requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("AddOverflow requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -185,7 +185,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("UnsignedAddOverflow requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedAddOverflow requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -205,7 +205,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Divide requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("Divide requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -225,7 +225,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("UnsignedDivide requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedDivide requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -245,7 +245,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Multiply requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("Multiply requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -267,7 +267,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("MultiplyOverflow requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("MultiplyOverflow requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -289,7 +289,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("UnsignedMultiplyOverflow requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedMultiplyOverflow requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -309,7 +309,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Remainder requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("Remainder requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -329,7 +329,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("UnsignedRemainder requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedRemainder requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -349,7 +349,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("Subtract requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("Subtract requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -371,7 +371,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("SubtractOverflow requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("SubtractOverflow requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -393,7 +393,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilException("UnsignedSubtractOverflow requires 2 arguments be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedSubtractOverflow requires 2 arguments be on the stack", IL, Stack);
             }
 
             var val2 = args[0];
@@ -413,14 +413,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("Negate expected a value to be on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("Negate expected a value to be on the stack, but it was empty", IL, Stack);
             }
 
             var val = onStack[0];
 
             if (val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>() && val != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("Negate expects an int, long, float, double, or native int; found " + val, Stack);
+                throw new SigilVerificationException("Negate expects an int, long, float, double, or native int; found " + val, IL, Stack);
             }
 
             UpdateState(OpCodes.Neg, val, pop: 1);

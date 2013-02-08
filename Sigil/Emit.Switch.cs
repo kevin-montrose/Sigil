@@ -45,18 +45,18 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("Switch expected a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("Switch expected a value on the stack, but it was empty", IL, Stack);
             }
 
             var val = onStack[0];
 
             if (val != TypeOnStack.Get<int>())
             {
-                throw new SigilException("Switch expected an int on the stack, found " + val, Stack);
+                throw new SigilVerificationException("Switch expected an int on the stack, found " + val, IL, Stack);
             }
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Switch, labels.Select(l => l.LabelDel).ToArray(), out update, pop: 1);
+            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), out update, pop: 1);
 
             foreach (var label in labels)
             {

@@ -69,12 +69,12 @@ namespace SigilTests
                 var emiter = Emit<Func<int, string, int>>.NewDynamicMethod("MyMethod");
                 emiter.LoadArgument(0);
                 emiter.LoadArgument(1);
-                emiter.Add();   // Throws a SigilException, indicating that Add() isn't defined for [int, string]
+                emiter.Add();   // Throws a SigilVerificationException, indicating that Add() isn't defined for [int, string]
                 emiter.Return();
 
                 Assert.Fail("An exception should have been thrown");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
             }

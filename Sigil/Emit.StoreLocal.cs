@@ -32,12 +32,12 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("StoreLocal expects a value on the stack, but it's empty", Stack);
+                throw new SigilVerificationException("StoreLocal expects a value on the stack, but it's empty", IL, Stack);
             }
 
             if (!local.LocalType.IsAssignableFrom(top[0]))
             {
-                throw new SigilException("StoreLocal expects a value assignable to " + local.LocalType.FullName + " to be on the stack; found " + top[0], Stack);
+                throw new SigilVerificationException("StoreLocal expects a value assignable to " + local.LocalType.FullName + " to be on the stack; found " + top[0], IL, Stack);
             }
 
             UnusedLocals.Remove(local);
@@ -56,7 +56,7 @@ namespace Sigil
                 return this;
             }
 
-            UpdateState(OpCodes.Stloc, local.LocalDel, pop: 1);
+            UpdateState(OpCodes.Stloc, local, pop: 1);
 
             return this;
         }

@@ -30,7 +30,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Br, label.LabelDel, out update);
+            UpdateState(OpCodes.Br, label, out update);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -58,14 +58,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfEqual expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfEqual expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Beq, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Beq, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -93,14 +93,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfNotEqual expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfNotEqual expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bne_Un, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Bne_Un, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -128,14 +128,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfGreaterOrEqual expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfGreaterOrEqual expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bge, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Bge, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -163,14 +163,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("UnsignedBranchIfGreaterOrEqual expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedBranchIfGreaterOrEqual expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bge_Un, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Bge_Un, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -198,14 +198,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfGreater expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfGreater expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bgt, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Bgt, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -233,14 +233,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("UnsignedBranchIfGreater expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedBranchIfGreater expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bgt_Un, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Bgt_Un, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -268,14 +268,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfLessOrEqual expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfLessOrEqual expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Ble, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Ble, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -303,14 +303,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("UnsignedBranchIfLessOrEqual expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedBranchIfLessOrEqual expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Ble_Un, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Ble_Un, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -338,14 +338,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfLess expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfLess expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Blt, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Blt, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -373,14 +373,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("UnsignedBranchIfLess expects two values to be on the stack", Stack);
+                throw new SigilVerificationException("UnsignedBranchIfLess expects two values to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Blt_Un, label.LabelDel, out update, pop: 2);
+            UpdateState(OpCodes.Blt_Un, label, out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -410,14 +410,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfFalse expects one value to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfFalse expects one value to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Brfalse, label.LabelDel, out update, pop: 1);
+            UpdateState(OpCodes.Brfalse, label, out update, pop: 1);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -447,14 +447,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("BranchIfTrue expects one value to be on the stack", Stack);
+                throw new SigilVerificationException("BranchIfTrue expects one value to be on the stack", IL, Stack);
             }
 
             UnusedLabels.Remove(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Brtrue, label.LabelDel, out update, pop: 1);
+            UpdateState(OpCodes.Brtrue, label, out update, pop: 1);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 

@@ -41,7 +41,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("CallVirtual to " + method + " expected parameters [" + string.Join(", ", expectedParams) + "] to be on the stack", Stack);
+                throw new SigilVerificationException("CallVirtual to " + method + " expected parameters [" + string.Join(", ", expectedParams) + "] to be on the stack", IL, Stack);
             }
 
             // Things come off the stack in "Reverse" order
@@ -54,7 +54,7 @@ namespace Sigil
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {
-                    throw new SigilException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, Stack);
+                    throw new SigilVerificationException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, IL, Stack);
                 }
             }
 

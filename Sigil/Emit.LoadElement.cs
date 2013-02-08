@@ -22,7 +22,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("LoadElement expects two values on the stack", Stack);
+                throw new SigilVerificationException("LoadElement expects two values on the stack", IL, Stack);
             }
 
             var index = top[0];
@@ -30,17 +30,17 @@ namespace Sigil
 
             if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("LoadElement expects an int or native int on the top of the stack, found " + index, Stack);
+                throw new SigilVerificationException("LoadElement expects an int or native int on the top of the stack, found " + index, IL, Stack);
             }
 
             if (array.IsReference || array.IsPointer || !array.Type.IsArray)
             {
-                throw new SigilException("LoadElement expects an array as the second element on the stack, found " + array, Stack);
+                throw new SigilVerificationException("LoadElement expects an array as the second element on the stack, found " + array, IL, Stack);
             }
 
             if (array.Type.GetArrayRank() != 1)
             {
-                throw new SigilException("LoadElement expects a 1-dimensional array, found " + array, Stack);
+                throw new SigilVerificationException("LoadElement expects a 1-dimensional array, found " + array, IL, Stack);
             }
 
             OpCode? instr = null;

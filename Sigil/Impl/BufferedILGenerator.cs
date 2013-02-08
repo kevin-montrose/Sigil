@@ -199,7 +199,7 @@ namespace Sigil.Impl
             Buffer.Add((il, log) => { il.Emit(op, str); log.AppendLine(op + " '" + str.Replace("'", @"\'") + "'"); });
         }
 
-        public void Emit(OpCode op, DefineLabelDelegate label, out UpdateOpCodeDelegate update)
+        public void Emit(OpCode op, Sigil.Label label, out UpdateOpCodeDelegate update)
         {
             var localOp = op;
 
@@ -212,15 +212,15 @@ namespace Sigil.Impl
             Buffer.Add(
                 (il, log) => 
                 {
-                    var l = label(il);
+                    var l = label.LabelDel(il);
                     il.Emit(localOp, l);
-                        
-                    log.AppendLine(op + " " + l);
+
+                    log.AppendLine(op + " " + label);
                 }
             );
         }
 
-        public void Emit(OpCode op, DefineLabelDelegate[] labels, out UpdateOpCodeDelegate update)
+        public void Emit(OpCode op, Sigil.Label[] labels, out UpdateOpCodeDelegate update)
         {
             var localOp = op;
 
@@ -233,20 +233,20 @@ namespace Sigil.Impl
             Buffer.Add(
                 (il, log) =>
                 {
-                    var ls = labels.Select(l => l(il)).ToArray();
+                    var ls = labels.Select(l => l.LabelDel(il)).ToArray();
                     il.Emit(localOp, ls);
 
-                    log.AppendLine(op + " " + string.Join(", ", ls));
+                    log.AppendLine(op + " " + string.Join(", ", labels.AsEnumerable()));
                 }
             );
         }
 
-        public void Emit(OpCode op, DeclareLocallDelegate local)
+        public void Emit(OpCode op, Sigil.Local local)
         {
             Buffer.Add(
                 (il, log) => 
                     {
-                        var l = local(il);
+                        var l = local.LocalDel(il);
                         il.Emit(op, l);
 
                         log.AppendLine(op + " " + l);
@@ -366,15 +366,16 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public void MarkLabel(DefineLabelDelegate label)
+        public void MarkLabel(Sigil.Label label)
         {
             Buffer.Add(
                 (il, log) =>
                 {
-                    var l = label(il);
+                    var l = label.LabelDel(il);
                     il.MarkLabel(l);
 
-                    log.AppendLine("--MarkLabel(" + l + ")--");
+                    log.AppendLine();
+                    log.AppendLine(label + ":");
                 }
             );
         }

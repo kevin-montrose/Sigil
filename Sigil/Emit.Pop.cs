@@ -18,7 +18,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("Pop expects a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("Pop expects a value on the stack, but it was empty", IL, Stack);
             }
 
             UpdateState(OpCodes.Pop, pop: 1);

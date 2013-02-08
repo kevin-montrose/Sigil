@@ -39,19 +39,19 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("LocalAllocate expects a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("LocalAllocate expects a value on the stack, but it was empty", IL, Stack);
             }
 
             if (Stack.Count() > 1)
             {
-                throw new SigilException("LocalAllocate requires the stack only contain the size value", Stack);
+                throw new SigilVerificationException("LocalAllocate requires the stack only contain the size value", IL, Stack);
             }
 
             var numBytes = top[0];
 
             if (numBytes != TypeOnStack.Get<int>() && numBytes != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("LocalAllocate expected an int or native int, found " + numBytes, Stack);
+                throw new SigilVerificationException("LocalAllocate expected an int or native int, found " + numBytes, IL, Stack);
             }
 
             UpdateState(OpCodes.Localloc, TypeOnStack.Get<NativeInt>(), pop: 1);

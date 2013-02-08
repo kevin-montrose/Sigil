@@ -37,14 +37,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("InitializeObject expects a value to be on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("InitializeObject expects a value to be on the stack, but it was empty", IL, Stack);
             }
 
             var obj = onStack[0];
 
             if (obj != TypeOnStack.Get<NativeInt>() && obj != TypeOnStack.Get(valueType.MakePointerType()) && obj != TypeOnStack.Get(valueType.MakeByRefType()))
             {
-                throw new SigilException("InitializeObject expected a reference or pointer to a " + valueType + ", or a native int, to be on the stack; found " + obj, Stack);
+                throw new SigilVerificationException("InitializeObject expected a reference or pointer to a " + valueType + ", or a native int, to be on the stack; found " + obj, IL, Stack);
             }
 
             UpdateState(OpCodes.Initobj, valueType, pop: 1);

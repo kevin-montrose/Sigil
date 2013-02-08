@@ -53,7 +53,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("Call to " + method + " expected parameters [" + string.Join(", ", expectedParams) + "] to be on the stack", Stack);
+                throw new SigilVerificationException("Call to " + method + " expected parameters [" + string.Join(", ", expectedParams) + "] to be on the stack", IL, Stack);
             }
 
             // Things come off the stack in "Reverse" order
@@ -77,7 +77,7 @@ namespace Sigil
                         }
                     }
 
-                    throw new SigilException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, Stack);
+                    throw new SigilVerificationException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, IL, Stack);
                 }
             }
 

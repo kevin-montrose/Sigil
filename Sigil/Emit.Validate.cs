@@ -13,12 +13,22 @@ namespace Sigil
         {
             if (UnusedLocals.Count != 0)
             {
-                throw new SigilException("Locals [" + string.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used", Stack);
+                throw 
+                    new SigilVerificationException(
+                        "Locals [" + string.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used", 
+                        IL,
+                        Stack
+                    );
             }
 
             if (UnusedLabels.Count != 0)
             {
-                throw new SigilException("Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used", Stack);
+                throw 
+                    new SigilVerificationException(
+                        "Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used", 
+                        IL,
+                        Stack
+                    );
             }
         }
 
@@ -30,7 +40,13 @@ namespace Sigil
 
                 if (!kv.Key.AreEquivalent(mark))
                 {
-                    throw new SigilException("Branch to " + kv.Value.Item1 + " has a stack that doesn't match the destination", kv.Key, mark);
+                    throw 
+                        new SigilVerificationException(
+                            "Branch to " + kv.Value.Item1 + " has a stack that doesn't match the destination", 
+                            IL,
+                            kv.Key, 
+                            mark
+                        );
                 }
             }
         }
@@ -41,7 +57,12 @@ namespace Sigil
             {
                 if (kv.Value.Item2 == -1)
                 {
-                    throw new SigilException("Unended ExceptionBlock " + kv.Key, Stack);
+                    throw 
+                        new SigilVerificationException(
+                            "Unended ExceptionBlock " + kv.Key, 
+                            IL,
+                            Stack
+                        );
                 }
             }
 
@@ -99,25 +120,41 @@ namespace Sigil
                 {
                     if (instr.Item3 != OpCodes.Leave)
                     {
-                        throw new SigilException("Cannot branch from inside " + fromCatchBlock + " to outside, exit the ExceptionBlock first");
+                        throw 
+                            new SigilVerificationException(
+                                "Cannot branch from inside " + fromCatchBlock + " to outside, exit the ExceptionBlock first",
+                                IL
+                            );
                     }
                 }
 
                 if (fromFinallyBlock != null && toFinallyBlock != fromFinallyBlock)
                 {
-                    throw new SigilException("Cannot branch from inside " + fromFinallyBlock + " to outside, exit the ExceptionBlock first");
+                    throw 
+                        new SigilVerificationException(
+                            "Cannot branch from inside " + fromFinallyBlock + " to outside, exit the ExceptionBlock first",
+                            IL
+                        );
                 }
 
                 if (toFinallyBlock != null && fromFinallyBlock != toFinallyBlock)
                 {
-                    throw new SigilException("Cannot branch into a FinallyBlock");
+                    throw 
+                        new SigilVerificationException(
+                            "Cannot branch into a FinallyBlock",
+                            IL
+                        );
                 }
 
                 if (fromTryBlock != null && toTryBlock != fromTryBlock)
                 {
                     if (instr.Item3 != OpCodes.Leave)
                     {
-                        throw new SigilException("Cannot branch from inside " + fromTryBlock + " to outside, exit the ExceptionBlock first");
+                        throw 
+                            new SigilVerificationException(
+                                "Cannot branch from inside " + fromTryBlock + " to outside, exit the ExceptionBlock first",
+                                IL
+                            );
                     }
                 }
             }
@@ -132,14 +169,14 @@ namespace Sigil
         {
             if (!Stack.IsRoot)
             {
-                throw new SigilException("Delegates must leave their stack empty when they end", Stack);
+                throw new SigilVerificationException("Delegates must leave their stack empty when they end", IL, Stack);
             }
 
             var lastInstr = InstructionStream.LastOrDefault();
 
             if (lastInstr == null || lastInstr.Item1 != OpCodes.Ret)
             {
-                throw new SigilException("Delegate must end with Return", Stack);
+                throw new SigilVerificationException("Delegate must end with Return", IL, Stack);
             }
 
             ValidateLabels();

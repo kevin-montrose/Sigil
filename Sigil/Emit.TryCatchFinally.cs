@@ -18,7 +18,7 @@ namespace Sigil
         {
             if (!Stack.IsRoot)
             {
-                throw new SigilException("Stack should be empty when BeginExceptionBlock is called", Stack);
+                throw new SigilVerificationException("Stack should be empty when BeginExceptionBlock is called", IL, Stack);
             }
 
             var labelDel = IL.BeginExceptionBlock();
@@ -200,14 +200,14 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilException("Stack should be empty when BeginCatchBlock is called", Stack);
+                throw new SigilVerificationException("Stack should be empty when BeginCatchBlock is called", IL, Stack);
             }
 
             var tryBlock = TryBlocks[forTry];
 
             if (tryBlock.Item2 != -1)
             {
-                throw new SigilException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", Stack);
+                throw new SigilVerificationException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", IL, Stack);
             }
 
             IL.BeginCatchBlock(exceptionType);
@@ -250,7 +250,7 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilException("Stack should be empty when EndCatchBlock is called", Stack);
+                throw new SigilVerificationException("Stack should be empty when EndCatchBlock is called", IL, Stack);
             }
 
             var location = CatchBlocks[forCatch];
@@ -264,7 +264,7 @@ namespace Sigil
             //   But that's kind of weird from a just-in-time validation standpoint.
 
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label.LabelDel, out update);
+            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label, out update);
 
             Branches[Stack.Unique()] = Tuple.Create(forCatch.ExceptionBlock.Label, IL.Index);
 
@@ -327,7 +327,7 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilException("Stack should be empty when BeginFinallyBlock is called", Stack);
+                throw new SigilVerificationException("Stack should be empty when BeginFinallyBlock is called", IL, Stack);
             }
 
             var ret = new FinallyBlock(this, forTry);
@@ -363,7 +363,7 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilException("Stack should be empty when EndFinallyBlock is called", Stack);
+                throw new SigilVerificationException("Stack should be empty when EndFinallyBlock is called", IL, Stack);
             }
 
             // There's no equivalent to EndFinallyBlock in raw ILGenerator, so no call here.

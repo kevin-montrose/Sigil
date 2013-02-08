@@ -42,14 +42,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("LoadVirtualFunctionPointer expects a value to be on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("LoadVirtualFunctionPointer expects a value to be on the stack, but it was empty", IL, Stack);
             }
 
             var objPtr = top[0];
 
             if (!method.DeclaringType.IsAssignableFrom(objPtr))
             {
-                throw new SigilException("Expected a value assignable to " + method.DeclaringType + " to be on the stack, found " + objPtr, Stack);
+                throw new SigilVerificationException("Expected a value assignable to " + method.DeclaringType + " to be on the stack, found " + objPtr, IL, Stack);
             }
 
             var type =

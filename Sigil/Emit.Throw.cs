@@ -22,14 +22,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("Throw expected a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("Throw expected a value on the stack, but it was empty", IL, Stack);
             }
 
             var val = onStack[0];
 
             if (!typeof(Exception).IsAssignableFrom(val))
             {
-                throw new SigilException("Throw expected an exception to be on the stack, found " + val, Stack);
+                throw new SigilVerificationException("Throw expected an exception to be on the stack, found " + val, IL, Stack);
             }
 
             UpdateState(OpCodes.Throw, pop: 1);

@@ -37,7 +37,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("IsInstance expected a value to be on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("IsInstance expected a value to be on the stack, but it was empty", IL, Stack);
             }
 
             UpdateState(OpCodes.Isinst, type, TypeOnStack.Get(type), pop: 1);

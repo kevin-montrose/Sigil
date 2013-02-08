@@ -33,14 +33,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("NewArray expects the size of the array to be on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("NewArray expects the size of the array to be on the stack, but it was empty", IL, Stack);
             }
 
             var size = onStack[0];
 
             if (size != TypeOnStack.Get<int>() && size != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("NewArray expecte size to be an int or native int, found " + size, Stack);
+                throw new SigilVerificationException("NewArray expecte size to be an int or native int, found " + size, IL, Stack);
             }
 
             UpdateState(OpCodes.Newarr, elementType, TypeOnStack.Get(elementType.MakeArrayType()), pop: 1);

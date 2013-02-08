@@ -30,14 +30,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("StoreArgument expects a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("StoreArgument expects a value on the stack, but it was empty", IL, Stack);
             }
 
             var paramType = ParameterTypes[index];
 
             if (!paramType.IsAssignableFrom(onStack[0]))
             {
-                throw new SigilException("StoreArgument expects type on stack to be assignable to " + paramType + ", found " + onStack[0], Stack);
+                throw new SigilVerificationException("StoreArgument expects type on stack to be assignable to " + paramType + ", found " + onStack[0], IL, Stack);
             }
 
             if (index <= byte.MaxValue)

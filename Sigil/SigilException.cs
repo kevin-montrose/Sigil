@@ -9,29 +9,33 @@ using System.Threading.Tasks;
 namespace Sigil
 {
     /// <summary>
-    /// A SigilException is thrown whenever a CIL stream becomes invalid.
+    /// A SigilVerificationException is thrown whenever a CIL stream becomes invalid.
     /// 
     /// There are many possible causes of this including: operator type mismatches, underflowing the stack, and branching from one stack state to another.
     /// 
     /// Invalid arguments, non-sensical parameters, and other non-correctness related errors will throw more specific exceptions.
     /// 
-    /// SigilExceptions will typically include the state of the stack (or stacks) at the instruction in error.
+    /// SigilVerificationException will typically include the state of the stack (or stacks) at the instruction in error.
     /// </summary>
     [Serializable]
-    public class SigilException : Exception, ISerializable
+    public class SigilVerificationException : Exception, ISerializable
     {
         private StackState Stack;
         private StackState SecondStack;
-        
-        internal SigilException(string message) : base(message) { }
+        private string Instructions;
 
-        internal SigilException(string message, StackState stack) : base(message)
+        internal SigilVerificationException(string message, BufferedILGenerator il) : base(message)
+        {
+            Instructions = il.Instructions();
+        }
+
+        internal SigilVerificationException(string message,BufferedILGenerator il, StackState stack) : this(message, il)
         {
             Stack = stack;
         }
 
-        internal SigilException(string message, StackState atBranch, StackState atLabel)
-            : base(message)
+        internal SigilVerificationException(string message, BufferedILGenerator il, StackState atBranch, StackState atLabel)
+            : this(message, il)
         {
             Stack = atBranch;
             SecondStack = atLabel;
@@ -42,7 +46,7 @@ namespace Sigil
         /// 
         /// This is meant for debugging purposes, and should not be called during normal operation.
         /// </summary>
-        public string PrintStacks()
+        public string GetDebugInfo()
         {
             var sb = new StringBuilder();
 
@@ -71,6 +75,14 @@ namespace Sigil
                 sb.AppendLine("---------------------");
 
                 EmitStack(sb, SecondStack);
+            }
+
+            if (!string.IsNullOrEmpty(Instructions))
+            {
+                sb.AppendLine();
+                sb.AppendLine("Instruction stream");
+                sb.AppendLine("------------------");
+                sb.AppendLine(Instructions);
             }
 
             return sb.ToString();
@@ -111,7 +123,7 @@ namespace Sigil
         public override string ToString()
         {
             return
-                Message + "\r\n\r\n" + PrintStacks();
+                Message + Environment.NewLine + Environment.NewLine + GetDebugInfo();
         }
     }
 }

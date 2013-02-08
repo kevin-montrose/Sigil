@@ -17,7 +17,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException(name+" expects two values on the stack", Stack);
+                throw new SigilVerificationException(name+" expects two values on the stack", IL, Stack);
             }
 
             var val2 = onStack[0];
@@ -25,17 +25,17 @@ namespace Sigil
 
             if (val1 != TypeOnStack.Get<int>() && val1 != TypeOnStack.Get<long>() && val1 != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException(name+" expects integral types, but the first value type was " + val1, Stack);
+                throw new SigilVerificationException(name+" expects integral types, but the first value type was " + val1, IL, Stack);
             }
 
             if (val2 != TypeOnStack.Get<int>() && val2 != TypeOnStack.Get<long>() && val2 != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException(name+" expects integral types, but the second value type was " + val2, Stack);
+                throw new SigilVerificationException(name+" expects integral types, but the second value type was " + val2, IL, Stack);
             }
 
             if (val1 != val2)
             {
-                throw new SigilException(name+" expects the same types for values, found " + val1 + " and " + val2, Stack);
+                throw new SigilVerificationException(name+" expects the same types for values, found " + val1 + " and " + val2, IL, Stack);
             }
 
             UpdateState(op, val1, pop: 2);
@@ -80,14 +80,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("Not expects a value to be on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("Not expects a value to be on the stack, but it was empty", IL, Stack);
             }
 
             var val = onStack[0];
 
             if (val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("Not expects integral types, but found " + val, Stack);
+                throw new SigilVerificationException("Not expects integral types, but found " + val, IL, Stack);
             }
 
             UpdateState(OpCodes.Not, val, pop: 1);
@@ -101,7 +101,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException(name + " expects two values on the stack", Stack);
+                throw new SigilVerificationException(name + " expects two values on the stack", IL, Stack);
             }
 
             var shift = onStack[0];
@@ -109,12 +109,12 @@ namespace Sigil
 
             if (value != TypeOnStack.Get<int>() && value != TypeOnStack.Get<long>() && value != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException(name + " expects the value to be shifted to be an int, long, or native int; found " + value, Stack);
+                throw new SigilVerificationException(name + " expects the value to be shifted to be an int, long, or native int; found " + value, IL, Stack);
             }
 
             if (shift != TypeOnStack.Get<int>() && shift != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException(name + " expects the shift to be an int or native int; found " + shift, Stack);
+                throw new SigilVerificationException(name + " expects the shift to be an int or native int; found " + shift, IL, Stack);
             }
 
             UpdateState(op, value, pop: 2);

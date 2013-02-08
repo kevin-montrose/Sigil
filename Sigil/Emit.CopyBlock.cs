@@ -32,7 +32,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("CopyBlock expects three values to be on the stack", Stack);
+                throw new SigilVerificationException("CopyBlock expects three values to be on the stack", IL, Stack);
             }
 
             var dest = onStack[2];
@@ -41,17 +41,17 @@ namespace Sigil
 
             if (!(dest.IsPointer || dest.IsReference || dest == TypeOnStack.Get<NativeInt>()))
             {
-                throw new SigilException("CopyBlock expects the destination value to be a pointer, reference, or native int; found " + dest, Stack);
+                throw new SigilVerificationException("CopyBlock expects the destination value to be a pointer, reference, or native int; found " + dest, IL, Stack);
             }
 
             if (!(source.IsPointer || source.IsReference || source == TypeOnStack.Get<NativeInt>()))
             {
-                throw new SigilException("CopyBlock expects the source value to be a pointer, reference, or native int; found " + source, Stack);
+                throw new SigilVerificationException("CopyBlock expects the source value to be a pointer, reference, or native int; found " + source, IL, Stack);
             }
 
             if (count != TypeOnStack.Get<int>())
             {
-                throw new SigilException("CopyBlock expects the count value to be an int; found " + count, Stack);
+                throw new SigilVerificationException("CopyBlock expects the count value to be an int; found " + count, IL, Stack);
             }
 
             if (isVolatile)

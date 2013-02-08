@@ -38,21 +38,21 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("LoadIndirect expects a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("LoadIndirect expects a value on the stack, but it was empty", IL, Stack);
             }
 
             var ptr = onStack[0];
 
             if (!ptr.IsPointer && !ptr.IsReference && ptr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("LoadIndirect expects a pointer, reference, or native int on the stack, found " + ptr, Stack);
+                throw new SigilVerificationException("LoadIndirect expects a pointer, reference, or native int on the stack, found " + ptr, IL, Stack);
             }
 
             if (ptr.IsPointer || ptr.IsReference)
             {
                 if (!type.IsAssignableFrom(TypeOnStack.Get(ptr.Type)))
                 {
-                    throw new SigilException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, Stack);
+                    throw new SigilVerificationException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, IL, Stack);
                 }
             }
 

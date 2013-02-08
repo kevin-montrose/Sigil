@@ -20,7 +20,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("StoreElement expects three parameters to be on the stack", Stack);
+                throw new SigilVerificationException("StoreElement expects three parameters to be on the stack", IL, Stack);
             }
 
             var value = onStack[0];
@@ -29,19 +29,19 @@ namespace Sigil
 
             if (arr.IsPointer || arr.IsReference || !arr.Type.IsArray || arr.Type.GetArrayRank() != 1)
             {
-                throw new SigilException("StoreElement expects a rank one array, found " + arr, Stack);
+                throw new SigilVerificationException("StoreElement expects a rank one array, found " + arr, IL, Stack);
             }
 
             if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("StoreElement expects an index of type int or native int, found " + index, Stack);
+                throw new SigilVerificationException("StoreElement expects an index of type int or native int, found " + index, IL, Stack);
             }
 
             var elemType = arr.Type.GetElementType();
 
             if (!elemType.IsAssignableFrom(value))
             {
-                throw new SigilException("StoreElement expects a value assignable to " + elemType + ", found " + value, Stack);
+                throw new SigilVerificationException("StoreElement expects a value assignable to " + elemType + ", found " + value, IL, Stack);
             }
 
             OpCode? instr = null;

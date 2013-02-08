@@ -42,7 +42,7 @@ namespace SigilTests
                 var del = e1.CreateDelegate();
                 Assert.Fail("Shouldn't be able to create a delegate with unused locals");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Locals [foo] were declared but never used", e.Message);
             }

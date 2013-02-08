@@ -47,14 +47,14 @@ namespace Sigil
             var onStack = Stack.Top();
             if (onStack == null)
             {
-                throw new SigilException("LoadObject expected a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("LoadObject expected a value on the stack, but it was empty", IL, Stack);
             }
 
             var ptr = onStack[0];
 
             if (!ptr.IsReference && !ptr.IsPointer && ptr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("LoadObject expected a reference, pointer, or native int; found " + ptr, Stack);
+                throw new SigilVerificationException("LoadObject expected a reference, pointer, or native int; found " + ptr, IL, Stack);
             }
 
             if (isVolatile)

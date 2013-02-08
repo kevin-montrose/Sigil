@@ -47,14 +47,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("Unbox expects a value on the stack, but it is empty", Stack);
+                throw new SigilVerificationException("Unbox expects a value on the stack, but it is empty", IL, Stack);
             }
 
             var onStack = top.Single();
 
             if (onStack != TypeOnStack.Get<object>())
             {
-                throw new SigilException("Unbox expects an object on the stack, but found " + onStack, Stack);
+                throw new SigilVerificationException("Unbox expects an object on the stack, but found " + onStack, IL, Stack);
             }
 
             UpdateState(OpCodes.Unbox, valueType, TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
@@ -98,14 +98,14 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("UnboxAny expects a value on the stack, but it is empty", Stack);
+                throw new SigilVerificationException("UnboxAny expects a value on the stack, but it is empty", IL, Stack);
             }
 
             var onStack = top.Single();
 
             if (onStack != TypeOnStack.Get<object>())
             {
-                throw new SigilException("UnboxAny expects an object on the stack, but found " + onStack, Stack);
+                throw new SigilVerificationException("UnboxAny expects an object on the stack, but found " + onStack, IL, Stack);
             }
 
             UpdateState(OpCodes.Unbox_Any, valueType, TypeOnStack.Get(valueType), pop: 1);

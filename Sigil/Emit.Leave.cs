@@ -33,7 +33,7 @@ namespace Sigil
 
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, label.LabelDel, out update, pop: Stack.Count());
+            UpdateState(OpCodes.Leave, label, out update, pop: Stack.Count());
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 

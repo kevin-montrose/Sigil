@@ -20,14 +20,14 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("LoadLength expects a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("LoadLength expects a value on the stack, but it was empty", IL, Stack);
             }
 
             var arr = onStack[0];
 
             if (arr.IsReference || arr.IsPointer || !arr.Type.IsArray || arr.Type.GetArrayRank() != 1)
             {
-                throw new SigilException("LoadLength expects a rank 1 array, found " + arr, Stack);
+                throw new SigilVerificationException("LoadLength expects a rank 1 array, found " + arr, IL, Stack);
             }
 
             UpdateState(OpCodes.Ldlen, TypeOnStack.Get<int>(), pop: 1);

@@ -53,23 +53,23 @@ var del = emiter.CreateDelegate();
 Console.WriteLine(del(314, 159));
 ```
 
-Sigil validates the CIL stream as each instruction is added, and throws a `SigilException` as soon as an illegal program is detected.
+Sigil validates the CIL stream as each instruction is added, and throws a `SigilVerificationException` as soon as an illegal program is detected.
 
 ```
 var emiter = Emit<Func<int, string, int>>.NewDynamicMethod("MyMethod");
 emiter.LoadArgument(0);
 emiter.LoadArgument(1);
-emiter.Add();   // Throws a SigilException, indicating that Add() isn't defined for [int, string]
+emiter.Add();   // Throws a SigilVerificationException, indicating that Add() isn't defined for [int, string]
 emiter.Return();
 ```
 
-SigilExceptions include the types on the stack when thrown, to aid in debugging.
+SigilVerificationExceptions include the types on the stack when thrown, to aid in debugging.
 
 ###Locals
 
 Sigil exposes `DeclareLocal<Type>()` for creating new locals, and a number of OpCodes take locals as operands.
 
-If a local is unused in a method body, a SigilException will be thrown when `CreateDelegate()` is called.
+If a local is unused in a method body, a SigilVerificationException will be thrown when `CreateDelegate()` is called.
 
 ###Labels, Try, Catch, and Finally
 

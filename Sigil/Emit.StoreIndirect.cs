@@ -38,7 +38,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("StoreIndirect expected two values on the stack", Stack);
+                throw new SigilVerificationException("StoreIndirect expected two values on the stack", IL, Stack);
             }
 
             var val = onStack[0];
@@ -46,12 +46,12 @@ namespace Sigil
 
             if (!type.IsAssignableFrom(val))
             {
-                throw new SigilException("StoreIndirect expected a " + type + " on the stack, found " + val, Stack);
+                throw new SigilVerificationException("StoreIndirect expected a " + type + " on the stack, found " + val, IL, Stack);
             }
 
             if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("StoreIndirect expected a reference, pointer, or native int on the stack; found " + addr, Stack);
+                throw new SigilVerificationException("StoreIndirect expected a reference, pointer, or native int on the stack; found " + addr, IL, Stack);
             }
 
             if (isVolatile)

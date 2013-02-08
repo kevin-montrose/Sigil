@@ -42,7 +42,7 @@ namespace Sigil
                 return this;
             }
 
-            UpdateState(OpCodes.Ldloc, local.LocalDel, local.StackType);
+            UpdateState(OpCodes.Ldloc, local, local.StackType);
 
             return this;
         }

@@ -18,7 +18,7 @@ namespace Sigil
                 item != TypeOnStack.Get<double>() && !item.IsPointer
                )
             {
-                throw new SigilException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item);
+                throw new SigilVerificationException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item, IL);
             }
         }
 
@@ -53,7 +53,7 @@ namespace Sigil
             var top = Stack.Top();
             if (top == null)
             {
-                throw new SigilException("Convert expected a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("Convert expected a value on the stack, but it was empty", IL, Stack);
             }
 
             CheckConvertible("Convert", top.Single());
@@ -175,7 +175,7 @@ namespace Sigil
             var top = Stack.Top();
             if (top == null)
             {
-                throw new SigilException("ConvertOverflow expected a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("ConvertOverflow expected a value on the stack, but it was empty", IL, Stack);
             }
 
             CheckConvertible("ConvertOverflow", top.Single());
@@ -290,7 +290,7 @@ namespace Sigil
             var top = Stack.Top();
             if (top == null)
             {
-                throw new SigilException("UnsignedConvertOverflow expected a value on the stack, but it was empty", Stack);
+                throw new SigilVerificationException("UnsignedConvertOverflow expected a value on the stack, but it was empty", IL, Stack);
             }
 
             CheckConvertible("UnsignedConvertOverflow", top.Single());

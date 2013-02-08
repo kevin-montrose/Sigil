@@ -25,7 +25,7 @@ namespace SigilTests
                     e1.CompareLessThan();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CompareLessThan expected two comparable values of the same type, instead found System.Single and System.Int32", e.Message);
                 }
@@ -41,7 +41,7 @@ namespace SigilTests
                     e1.CompareLessThan();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CompareLessThan expected primitive types, instead found System.Object", e.Message);
                 }
@@ -61,7 +61,7 @@ namespace SigilTests
                     var d1 = e1.CreateDelegate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Labels [_label0] were declared but never used", e.Message);
                 }
@@ -77,7 +77,7 @@ namespace SigilTests
                     var d1 = e1.CreateDelegate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Unended ExceptionBlock Sigil.ExceptionBlock", e.Message);
                 }
@@ -92,7 +92,7 @@ namespace SigilTests
                     var d1 = e1.CreateDelegate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Delegates must leave their stack empty when they end", e.Message);
                 }
@@ -108,7 +108,7 @@ namespace SigilTests
                     var d1 = e1.CreateDelegate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Delegate must end with Return", e.Message);
                 }
@@ -168,7 +168,7 @@ namespace SigilTests
                     e1.UnboxAny<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("UnboxAny expects a value on the stack, but it is empty", e.Message);
                 }
@@ -183,7 +183,7 @@ namespace SigilTests
                     e1.UnboxAny<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("UnboxAny expects an object on the stack, but found System.String", e.Message);
                 }
@@ -243,7 +243,7 @@ namespace SigilTests
                     e1.Unbox<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Unbox expects a value on the stack, but it is empty", e.Message);
                 }
@@ -258,7 +258,7 @@ namespace SigilTests
                     e1.Unbox<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Unbox expects an object on the stack, but found System.String", e.Message);
                 }
@@ -327,7 +327,7 @@ namespace SigilTests
                     e1.EndFinallyBlock(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Stack should be empty when EndFinallyBlock is called", e.Message);
                 }
@@ -379,7 +379,7 @@ namespace SigilTests
                     e1.EndCatchBlock(c);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Stack should be empty when EndCatchBlock is called", e.Message);
                 }
@@ -531,7 +531,7 @@ namespace SigilTests
                     e1.Throw();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Throw expected a value on the stack, but it was empty", e.Message);
                 }
@@ -546,7 +546,7 @@ namespace SigilTests
                     e1.Throw();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Throw expected an exception to be on the stack, found System.Object", e.Message);
                 }
@@ -606,7 +606,7 @@ namespace SigilTests
                     e1.Switch(l);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Switch expected a value on the stack, but it was empty", e.Message);
                 }
@@ -623,7 +623,7 @@ namespace SigilTests
                     e1.Switch(l);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Switch expected an int on the stack, found System.Object", e.Message);
                 }
@@ -683,7 +683,7 @@ namespace SigilTests
                     e1.StoreObject(typeof(int));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreObject expects two values on the stack", e.Message);
                 }
@@ -699,7 +699,7 @@ namespace SigilTests
                     e1.StoreObject(typeof(int));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreObject expected a System.Int32 to be on the stack, found System.Object", e.Message);
                 }
@@ -715,7 +715,7 @@ namespace SigilTests
                     e1.StoreObject(typeof(int));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreObject expected a reference, pointer, or native int; found System.Object", e.Message);
                 }
@@ -764,7 +764,7 @@ namespace SigilTests
                     e1.StoreLocal(l);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreLocal expects a value on the stack, but it's empty", e.Message);
                 }
@@ -780,7 +780,7 @@ namespace SigilTests
                     e1.StoreLocal(l);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreLocal expects a value assignable to System.Int32 to be on the stack; found System.Object", e.Message);
                 }
@@ -826,7 +826,7 @@ namespace SigilTests
                     e1.StoreIndirect(typeof(int));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreIndirect expected two values on the stack", e.Message);
                 }
@@ -842,7 +842,7 @@ namespace SigilTests
                     e1.StoreIndirect(typeof(int));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreIndirect expected a System.Int32 on the stack, found System.Object", e.Message);
                 }
@@ -858,7 +858,7 @@ namespace SigilTests
                     e1.StoreIndirect(typeof(int));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreIndirect expected a reference, pointer, or native int on the stack; found System.Object", e.Message);
                 }
@@ -949,7 +949,7 @@ namespace SigilTests
                     e1.StoreField(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreField expects two values on the stack for instance fields", e.Message);
                 }
@@ -966,7 +966,7 @@ namespace SigilTests
                     e1.StoreField(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreField expected a type on the stack assignable to SigilTests.Errors+StoreFieldClass, found System.Object", e.Message);
                 }
@@ -983,7 +983,7 @@ namespace SigilTests
                     e1.StoreField(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreField expected a type on the stack assignable to System.Int32, found System.Object", e.Message);
                 }
@@ -998,7 +998,7 @@ namespace SigilTests
                     e1.StoreField(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreField expected a value on the stack, but it was empty", e.Message);
                 }
@@ -1014,7 +1014,7 @@ namespace SigilTests
                     e1.StoreField(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreField expected a type on the stack assignable to System.Int32, found System.Object", e.Message);
                 }
@@ -1032,7 +1032,7 @@ namespace SigilTests
                     e1.StoreElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreElement expects three parameters to be on the stack", e.Message);
                 }
@@ -1049,7 +1049,7 @@ namespace SigilTests
                     e1.StoreElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreElement expects a rank one array, found System.Object", e.Message);
                 }
@@ -1066,7 +1066,7 @@ namespace SigilTests
                     e1.StoreElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreElement expects an index of type int or native int, found System.Object", e.Message);
                 }
@@ -1083,7 +1083,7 @@ namespace SigilTests
                     e1.StoreElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreElement expects a value assignable to System.Int32, found System.Object", e.Message);
                 }
@@ -1129,7 +1129,7 @@ namespace SigilTests
                     e1.StoreArgument(0);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreArgument expects a value on the stack, but it was empty", e.Message);
                 }
@@ -1144,7 +1144,7 @@ namespace SigilTests
                     e1.StoreArgument(0);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("StoreArgument expects type on stack to be assignable to System.Int32, found System.Object", e.Message);
                 }
@@ -1195,7 +1195,7 @@ namespace SigilTests
                     e1.Return();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Returning from a void method must leave the stack empty", e.Message);
                 }
@@ -1209,7 +1209,7 @@ namespace SigilTests
                     e1.Return();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Return expects a value on the stack, but the stack is empty", e.Message);
                 }
@@ -1224,7 +1224,7 @@ namespace SigilTests
                     e1.Return();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Return expects a value assignable to System.Int32 to be on the stack; found System.Object", e.Message);
                 }
@@ -1240,7 +1240,7 @@ namespace SigilTests
                     e1.Return();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Return should leave the stack empty", e.Message);
                 }
@@ -1276,7 +1276,7 @@ namespace SigilTests
                     e1.Pop();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Pop expects a value on the stack, but it was empty", e.Message);
                 }
@@ -1358,7 +1358,7 @@ namespace SigilTests
                     e1.NewObject<string, char[]>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Expected 1 parameters to be on the stack", e.Message);
                 }
@@ -1373,7 +1373,7 @@ namespace SigilTests
                     e1.NewObject<string, char[]>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Parameter #0 to Void .ctor(Char[]) should be System.Char[], but found System.Object", e.Message);
                 }
@@ -1419,7 +1419,7 @@ namespace SigilTests
                     e1.NewArray<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("NewArray expects the size of the array to be on the stack, but it was empty", e.Message);
                 }
@@ -1434,7 +1434,7 @@ namespace SigilTests
                     e1.NewArray<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("NewArray expecte size to be an int or native int, found System.Object", e.Message);
                 }
@@ -1503,7 +1503,7 @@ namespace SigilTests
                     e1.LocalAllocate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LocalAllocate expects a value on the stack, but it was empty", e.Message);
                 }
@@ -1518,7 +1518,7 @@ namespace SigilTests
                     e1.LocalAllocate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LocalAllocate expected an int or native int, found System.Object", e.Message);
                 }
@@ -1534,7 +1534,7 @@ namespace SigilTests
                     e1.LocalAllocate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LocalAllocate requires the stack only contain the size value", e.Message);
                 }
@@ -1582,7 +1582,7 @@ namespace SigilTests
                     e1.LoadVirtualFunctionPointer(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadVirtualFunctionPointer expects a value to be on the stack, but it was empty", e.Message);
                 }
@@ -1599,7 +1599,7 @@ namespace SigilTests
                     e1.LoadVirtualFunctionPointer(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Expected a value assignable to System.Collections.Generic.List`1[System.Int32] to be on the stack, found System.Int32", e.Message);
                 }
@@ -1659,7 +1659,7 @@ namespace SigilTests
                     e1.LoadObject<DateTime>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadObject expected a value on the stack, but it was empty", e.Message);
                 }
@@ -1674,7 +1674,7 @@ namespace SigilTests
                     e1.LoadObject<DateTime>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadObject expected a reference, pointer, or native int; found System.Object", e.Message);
                 }
@@ -1760,7 +1760,7 @@ namespace SigilTests
                     e1.LoadLength();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadLength expects a value on the stack, but it was empty", e.Message);
                 }
@@ -1775,7 +1775,7 @@ namespace SigilTests
                     e1.LoadLength();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadLength expects a rank 1 array, found System.Object", e.Message);
                 }
@@ -1821,7 +1821,7 @@ namespace SigilTests
                     e1.LoadIndirect<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadIndirect expects a value on the stack, but it was empty", e.Message);
                 }
@@ -1836,7 +1836,7 @@ namespace SigilTests
                     e1.LoadIndirect<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadIndirect expects a pointer, reference, or native int on the stack, found System.Object", e.Message);
                 }
@@ -1851,7 +1851,7 @@ namespace SigilTests
                     e1.LoadIndirect<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadIndirect expected a pointer or reference to type System.Int32, but found System.Double*", e.Message);
                 }
@@ -1917,7 +1917,7 @@ namespace SigilTests
                     e1.LoadFieldAddress(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadFieldAddress expected a value on the stack, but it was empty", e.Message);
                 }
@@ -1934,7 +1934,7 @@ namespace SigilTests
                     e1.LoadFieldAddress(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadFieldAddress expected a SigilTests.Errors+LoadFieldClass, found System.Object", e.Message);
                 }
@@ -2007,7 +2007,7 @@ namespace SigilTests
                     e1.LoadField(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadField expects a value on the stack for instance fields", e.Message);
                 }
@@ -2024,7 +2024,7 @@ namespace SigilTests
                     e1.LoadField(f);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadField expected a type on the stack assignable to SigilTests.Errors+LoadFieldClass, found System.Object", e.Message);
                 }
@@ -2042,7 +2042,7 @@ namespace SigilTests
                     e1.LoadElementAddress();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElementAddress expects two values on the stack", e.Message);
                 }
@@ -2058,7 +2058,7 @@ namespace SigilTests
                     e1.LoadElementAddress();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElementAddress expects an int or native int on the top of the stack, found System.Object", e.Message);
                 }
@@ -2074,7 +2074,7 @@ namespace SigilTests
                     e1.LoadElementAddress();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElementAddress expects an array as the second element on the stack, found System.Int32", e.Message);
                 }
@@ -2090,7 +2090,7 @@ namespace SigilTests
                     e1.LoadElementAddress();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElementAddress expects a 1-dimensional array, found System.Int32[,]", e.Message);
                 }
@@ -2108,7 +2108,7 @@ namespace SigilTests
                     e1.LoadElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElement expects two values on the stack", e.Message);
                 }
@@ -2124,7 +2124,7 @@ namespace SigilTests
                     e1.LoadElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElement expects an int or native int on the top of the stack, found System.Object", e.Message);
                 }
@@ -2140,7 +2140,7 @@ namespace SigilTests
                     e1.LoadElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElement expects an array as the second element on the stack, found System.Object", e.Message);
                 }
@@ -2156,7 +2156,7 @@ namespace SigilTests
                     e1.LoadElement();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("LoadElement expects a 1-dimensional array, found System.Int32[,]", e.Message);
                 }
@@ -2334,7 +2334,7 @@ namespace SigilTests
                     var d1 = e1.CreateDelegate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Usage of unmarked label _label0", e.Message);
                 }
@@ -2447,7 +2447,7 @@ namespace SigilTests
                     e1.Jump(intern);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Jump expected the stack to be empty", e.Message);
                 }
@@ -2462,7 +2462,7 @@ namespace SigilTests
                     e1.Jump(intern);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Jump expected the #0 parameter to be assignable from System.Int32, but found System.String", e.Message);
                 }
@@ -2550,7 +2550,7 @@ namespace SigilTests
                     e1.IsInstance<string>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("IsInstance expected a value to be on the stack, but it was empty", e.Message);
                 }
@@ -2580,7 +2580,7 @@ namespace SigilTests
                 {
                     e1.InitializeObject<int>();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("InitializeObject expects a value to be on the stack, but it was empty", e.Message);
                 }
@@ -2594,7 +2594,7 @@ namespace SigilTests
                 {
                     e1.InitializeObject<DateTime>();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("InitializeObject expected a reference or pointer to a System.DateTime, or a native int, to be on the stack; found System.Object", e.Message);
                 }
@@ -2626,7 +2626,7 @@ namespace SigilTests
                     e1.InitializeBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("InitializeBlock expects three values to be on the stack", e.Message);
                 }
@@ -2643,7 +2643,7 @@ namespace SigilTests
                     e1.InitializeBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("InitializeBlock expects the start value to be a pointer, reference, or native int; found System.Object", e.Message);
                 }
@@ -2661,7 +2661,7 @@ namespace SigilTests
                     e1.InitializeBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("InitBlock expects the initial value to be an int or native int; found System.Object", e.Message);
                 }
@@ -2679,7 +2679,7 @@ namespace SigilTests
                     e1.InitializeBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("InitBlock expects the count to be an int; found System.Object", e.Message);
                 }
@@ -2697,7 +2697,7 @@ namespace SigilTests
                     e1.Duplicate();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Duplicate expects a value on the stack, but it was empty", e.Message);
                 }
@@ -2743,7 +2743,7 @@ namespace SigilTests
                     e1.CopyObject<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CopyObject expects two values to be on the stack", e.Message);
                 }
@@ -2759,7 +2759,7 @@ namespace SigilTests
                     e1.CopyObject<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CopyObject expects the source value to be a pointer, reference, or native int; found System.Object", e.Message);
                 }
@@ -2776,7 +2776,7 @@ namespace SigilTests
                     e1.CopyObject<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CopyObject expects the destination value to be a pointer, reference, or native int; found System.Object", e.Message);
                 }
@@ -2806,7 +2806,7 @@ namespace SigilTests
                     e1.CopyBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CopyBlock expects three values to be on the stack", e.Message);
                 }
@@ -2822,7 +2822,7 @@ namespace SigilTests
                     e1.CopyBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CopyBlock expects the destination value to be a pointer, reference, or native int; found System.Object", e.Message);
                 }
@@ -2839,7 +2839,7 @@ namespace SigilTests
                     e1.CopyBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CopyBlock expects the source value to be a pointer, reference, or native int; found System.Object", e.Message);
                 }
@@ -2856,7 +2856,7 @@ namespace SigilTests
                     e1.CopyBlock();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CopyBlock expects the count value to be an int; found System.Object", e.Message);
                 }
@@ -2953,7 +2953,7 @@ namespace SigilTests
                     e1.Convert<UIntPtr>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Convert expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
                 }
@@ -2968,7 +2968,7 @@ namespace SigilTests
                     e1.ConvertOverflow<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("ConvertOverflow expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
                 }
@@ -2983,7 +2983,7 @@ namespace SigilTests
                     e1.UnsignedConvertOverflow<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("UnsignedConvertOverflow expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
                 }
@@ -3000,7 +3000,7 @@ namespace SigilTests
                     e1.Convert<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("Convert expected a value on the stack, but it was empty", e.Message);
                 }
@@ -3013,7 +3013,7 @@ namespace SigilTests
                     e1.ConvertOverflow<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("ConvertOverflow expected a value on the stack, but it was empty", e.Message);
                 }
@@ -3026,7 +3026,7 @@ namespace SigilTests
                     e1.UnsignedConvertOverflow<int>();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("UnsignedConvertOverflow expected a value on the stack, but it was empty", e.Message);
                 }
@@ -3130,7 +3130,7 @@ namespace SigilTests
                     e1.CompareEqual();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CompareEqual expects two values on the stack", e.Message);
                 }
@@ -3144,7 +3144,7 @@ namespace SigilTests
                     e1.CompareGreaterThan();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CompareGreaterThan expects two values on the stack", e.Message);
                 }
@@ -3158,7 +3158,7 @@ namespace SigilTests
                     e1.CompareLessThan();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CompareLessThan expects two values on the stack", e.Message);
                 }
@@ -3172,7 +3172,7 @@ namespace SigilTests
                     e1.UnsignedCompareGreaterThan();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("UnsignedCompareGreaterThan expects two values on the stack", e.Message);
                 }
@@ -3186,7 +3186,7 @@ namespace SigilTests
                     e1.UnsignedCompareLessThan();
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("UnsignedCompareLessThan expects two values on the stack", e.Message);
                 }
@@ -3202,7 +3202,7 @@ namespace SigilTests
             {
                 e1.CheckFinite();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("CheckFinite expects a value to be on the stack, but it was empty", e.Message);
             }
@@ -3214,7 +3214,7 @@ namespace SigilTests
             {
                 e2.CheckFinite();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("CheckFinite expects a floating point value, found System.Object", e.Message);
             }
@@ -3262,7 +3262,7 @@ namespace SigilTests
                 e1.CastClass<string>();
                 Assert.Fail();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("CastClass expects a value on the stack, but it was empty", e.Message);
             }
@@ -3320,7 +3320,7 @@ namespace SigilTests
                 e1.CallIndirect(CallingConventions.Any);
                 Assert.Fail();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("CallIndirect expected 1 values on the stack", e.Message);
             }
@@ -3337,7 +3337,7 @@ namespace SigilTests
                 e1.CallIndirect(CallingConventions.Any);
                 Assert.Fail();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("CallIndirect expects a native int to be on the top of the stack, found System.Object", e.Message);
             }
@@ -3358,7 +3358,7 @@ namespace SigilTests
                     e1.CallIndirect(CallingConventions.VarArgs);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CallIndirect expects method calling conventions to match, found Standard, HasThis on the stack", e.Message);
                 }
@@ -3374,7 +3374,7 @@ namespace SigilTests
                     e1.CallIndirect(addInt.CallingConvention);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CallIndirect expects a 'this' value assignable to System.Collections.Generic.List`1[System.Int32], found System.Object", e.Message);
                 }
@@ -3390,7 +3390,7 @@ namespace SigilTests
                     e1.CallIndirect(toString.CallingConvention, typeof(object));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CallIndirect expects method return types to match, found System.String on the stack", e.Message);
                 }
@@ -3407,7 +3407,7 @@ namespace SigilTests
                     e1.CallIndirect(addInt.CallingConvention, typeof(void), typeof(int));
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("CallIndirect expected a value assignable to System.Int32, found System.Double", e.Message);
                 }
@@ -3424,7 +3424,7 @@ namespace SigilTests
             {
                 e1.Call(typeof(Errors).GetMethod("CallBadParam"));
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Parameter #0 to Void CallBadParam() should be SigilTests.Errors, but found System.Object", e.Message);
             }
@@ -3440,7 +3440,7 @@ namespace SigilTests
             {
                 e1.CallVirtual(typeof(Errors).GetMethod("CallVirtualBadParam"));
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Parameter #0 to Void CallVirtualBadParam() should be SigilTests.Errors, but found System.Object", e.Message);
             }
@@ -3472,7 +3472,7 @@ namespace SigilTests
                 e1.Call(typeof(object).GetMethod("ToString"));
                 Assert.Fail();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Call to System.String ToString() expected parameters [System.Object] to be on the stack", e.Message);
             }
@@ -3504,7 +3504,7 @@ namespace SigilTests
                 e1.CallVirtual(typeof(object).GetMethod("ToString"));
                 Assert.Fail();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("CallVirtual to System.String ToString() expected parameters [System.Object] to be on the stack", e.Message);
             }
@@ -3634,7 +3634,7 @@ namespace SigilTests
                 }
                 catch (TargetInvocationException e)
                 {
-                    var f = (SigilException)e.InnerException;
+                    var f = (SigilVerificationException)e.InnerException;
                     Assert.IsTrue(f.Message.EndsWith(" expects two values to be on the stack"));
                 }
             }
@@ -3648,7 +3648,7 @@ namespace SigilTests
                     e2.BranchIfFalse(l);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("BranchIfFalse expects one value to be on the stack", e.Message);
                 }
@@ -3663,7 +3663,7 @@ namespace SigilTests
                     e3.BranchIfTrue(l);
                     Assert.Fail();
                 }
-                catch (SigilException e)
+                catch (SigilVerificationException e)
                 {
                     Assert.AreEqual("BranchIfTrue expects one value to be on the stack", e.Message);
                 }
@@ -3733,7 +3733,7 @@ namespace SigilTests
                 var c = e1.BeginCatchAllBlock(t);
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Stack should be empty when BeginCatchBlock is called", e.Message);
             }
@@ -3754,7 +3754,7 @@ namespace SigilTests
                 var c2 = e1.BeginCatchAllBlock(t);
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.IsTrue(e.Message.StartsWith("BeginCatchBlock expects an unclosed exception block, "));
             }
@@ -3826,7 +3826,7 @@ namespace SigilTests
                 e1.BeginExceptionBlock();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException s)
+            catch (SigilVerificationException s)
             {
                 Assert.AreEqual("Stack should be empty when BeginExceptionBlock is called", s.Message);
             }
@@ -3842,7 +3842,7 @@ namespace SigilTests
                 e1.ShiftLeft();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("ShiftLeft expects two values on the stack", e.Message);
             }
@@ -3860,7 +3860,7 @@ namespace SigilTests
                 e1.ShiftLeft();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("ShiftLeft expects the value to be shifted to be an int, long, or native int; found System.String", e.Message);
             }
@@ -3874,7 +3874,7 @@ namespace SigilTests
                 e2.ShiftLeft();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("ShiftLeft expects the shift to be an int or native int; found System.String", e.Message);
             }
@@ -3892,7 +3892,7 @@ namespace SigilTests
                 e1.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add expects an int32, int64, native int, float, reference, or pointer as first value; found System.String", e.Message);
             }
@@ -3906,7 +3906,7 @@ namespace SigilTests
                 e2.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
             }
@@ -3920,7 +3920,7 @@ namespace SigilTests
                 e3.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with to an int64 expects an in64 as second value; found System.String", e.Message);
             }
@@ -3936,7 +3936,7 @@ namespace SigilTests
                 e4.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with a native int expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
             }
@@ -3950,7 +3950,7 @@ namespace SigilTests
                 e5.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with a float expects a float as second value; found System.String", e.Message);
             }
@@ -3964,7 +3964,7 @@ namespace SigilTests
                 e6.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with a double expects a double as second value; found System.String", e.Message);
             }
@@ -3978,7 +3978,7 @@ namespace SigilTests
                 e7.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with a reference or pointer expects an int32, or a native int as second value; found System.String", e.Message);
             }
@@ -3990,7 +3990,7 @@ namespace SigilTests
                 e8.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add requires 2 arguments be on the stack", e.Message);
             }
@@ -4008,7 +4008,7 @@ namespace SigilTests
                 e1.Multiply();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Multiply expects an int32, int64, native int, or float as a first value; found System.Int32*", e.Message);
             }
@@ -4022,7 +4022,7 @@ namespace SigilTests
                 e2.Multiply();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Multiply with an int32 expects an int32 or native int as a second value; found System.Int32*", e.Message);
             }
@@ -4034,7 +4034,7 @@ namespace SigilTests
                 e3.Multiply();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Multiply requires 2 arguments be on the stack", e.Message);
             }
@@ -4050,7 +4050,7 @@ namespace SigilTests
                 e1.AddOverflow();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("AddOverflow requires 2 arguments be on the stack", e.Message);
             }
@@ -4066,7 +4066,7 @@ namespace SigilTests
                 e1.UnsignedAddOverflow();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("UnsignedAddOverflow requires 2 arguments be on the stack", e.Message);
             }
@@ -4082,7 +4082,7 @@ namespace SigilTests
                 e1.MultiplyOverflow();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("MultiplyOverflow requires 2 arguments be on the stack", e.Message);
             }
@@ -4098,7 +4098,7 @@ namespace SigilTests
                 e1.UnsignedMultiplyOverflow();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("UnsignedMultiplyOverflow requires 2 arguments be on the stack", e.Message);
             }
@@ -4114,7 +4114,7 @@ namespace SigilTests
                 e1.Divide();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Divide requires 2 arguments be on the stack", e.Message);
             }
@@ -4130,7 +4130,7 @@ namespace SigilTests
                 e1.UnsignedDivide();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("UnsignedDivide requires 2 arguments be on the stack", e.Message);
             }
@@ -4146,7 +4146,7 @@ namespace SigilTests
                 e1.Remainder();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Remainder requires 2 arguments be on the stack", e.Message);
             }
@@ -4162,7 +4162,7 @@ namespace SigilTests
                 e1.UnsignedRemainder();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("UnsignedRemainder requires 2 arguments be on the stack", e.Message);
             }
@@ -4178,7 +4178,7 @@ namespace SigilTests
                 e1.Subtract();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Subtract requires 2 arguments be on the stack", e.Message);
             }
@@ -4194,7 +4194,7 @@ namespace SigilTests
                 e1.SubtractOverflow();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("SubtractOverflow requires 2 arguments be on the stack", e.Message);
             }
@@ -4210,7 +4210,7 @@ namespace SigilTests
                 e1.UnsignedSubtractOverflow();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("UnsignedSubtractOverflow requires 2 arguments be on the stack", e.Message);
             }
@@ -4226,7 +4226,7 @@ namespace SigilTests
                 e1.Negate();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Negate expected a value to be on the stack, but it was empty", e.Message);
             }
@@ -4239,7 +4239,7 @@ namespace SigilTests
                 e2.Negate();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Negate expects an int, long, float, double, or native int; found System.String", e.Message);
             }
@@ -4266,7 +4266,7 @@ namespace SigilTests
                 var d1 = e1.CreateDelegate();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Cannot branch from inside Sigil.ExceptionBlock to outside, exit the ExceptionBlock first", e.Message);
             }
@@ -4293,7 +4293,7 @@ namespace SigilTests
                 var d1 = e1.CreateDelegate();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Cannot branch from inside Sigil.CatchBlock to outside, exit the ExceptionBlock first", e.Message);
             }
@@ -4319,7 +4319,7 @@ namespace SigilTests
                 var d1 = e1.CreateDelegate();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Cannot branch from inside Sigil.FinallyBlock to outside, exit the ExceptionBlock first", e.Message);
             }
@@ -4346,7 +4346,7 @@ namespace SigilTests
                 var d1 = e1.CreateDelegate();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Cannot branch into a FinallyBlock", e.Message);
             }
@@ -4421,7 +4421,7 @@ namespace SigilTests
                 e6.BeginFinallyBlock(t6);
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Stack should be empty when BeginFinallyBlock is called", e.Message);
             }
@@ -4473,7 +4473,7 @@ namespace SigilTests
             {
                 e3.Box<int>();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Box expects a value on the stack, but found none", e.Message);
             }
@@ -4485,7 +4485,7 @@ namespace SigilTests
             {
                 e4.Box<byte>();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("System.String cannot be boxed as an System.Byte", e.Message);
             }
@@ -4497,7 +4497,7 @@ namespace SigilTests
             {
                 e5.Box<Guid>();
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Expected System.Guid to be on the stack, found System.Int32", e.Message);
             }
@@ -4523,10 +4523,10 @@ namespace SigilTests
                 var d1 = e1.CreateDelegate();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Branch to l has a stack that doesn't match the destination", e.Message);
-                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n", e.PrintStacks());
+                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr l\r\npop\r\nret\r\n\r\nl:\r\nret\r\n\r\n", e.GetDebugInfo());
             }
         }
 
@@ -4542,10 +4542,10 @@ namespace SigilTests
                 e1.Add();
                 Assert.Fail("Shouldn't be possible");
             }
-            catch (SigilException e)
+            catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
-                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String\r\nSystem.Int32\r\n", e.PrintStacks());
+                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String\r\nSystem.Int32\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n\r\n", e.GetDebugInfo());
             }
         }
     }

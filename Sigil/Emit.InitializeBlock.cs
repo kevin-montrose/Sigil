@@ -32,7 +32,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("InitializeBlock expects three values to be on the stack", Stack);
+                throw new SigilVerificationException("InitializeBlock expects three values to be on the stack", IL, Stack);
             }
 
             var start = onStack[2];
@@ -41,17 +41,17 @@ namespace Sigil
 
             if (!start.IsPointer && !start.IsReference && start != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("InitializeBlock expects the start value to be a pointer, reference, or native int; found " + start, Stack);
+                throw new SigilVerificationException("InitializeBlock expects the start value to be a pointer, reference, or native int; found " + start, IL, Stack);
             }
 
             if (init != TypeOnStack.Get<int>() && init != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("InitBlock expects the initial value to be an int or native int; found " + init, Stack);
+                throw new SigilVerificationException("InitBlock expects the initial value to be an int or native int; found " + init, IL, Stack);
             }
 
             if (count != TypeOnStack.Get<int>())
             {
-                throw new SigilException("InitBlock expects the count to be an int; found " + count, Stack);
+                throw new SigilVerificationException("InitBlock expects the count to be an int; found " + count, IL, Stack);
             }
 
             if(isVolatile)

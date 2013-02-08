@@ -213,7 +213,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("Expected " + expectedParams.Count + " parameters to be on the stack", Stack);
+                throw new SigilVerificationException("Expected " + expectedParams.Count + " parameters to be on the stack", IL, Stack);
             }
 
             // Parameters come off the Stack in reverse order
@@ -226,7 +226,7 @@ namespace Sigil
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {
-                    throw new SigilException("Parameter #" + i + " to " + constructor + " should be " + shouldBe + ", but found " + actuallyIs, Stack);
+                    throw new SigilVerificationException("Parameter #" + i + " to " + constructor + " should be " + shouldBe + ", but found " + actuallyIs, IL, Stack);
                 }
             }
 

@@ -48,7 +48,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilException("StoreObject expects two values on the stack", Stack);
+                throw new SigilVerificationException("StoreObject expects two values on the stack", IL, Stack);
             }
 
             var val = onStack[0];
@@ -56,12 +56,12 @@ namespace Sigil
 
             if (TypeOnStack.Get(valueType) != val)
             {
-                throw new SigilException("StoreObject expected a " + valueType + " to be on the stack, found " + val, Stack);
+                throw new SigilVerificationException("StoreObject expected a " + valueType + " to be on the stack, found " + val, IL, Stack);
             }
 
             if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilException("StoreObject expected a reference, pointer, or native int; found " + addr, Stack);
+                throw new SigilVerificationException("StoreObject expected a reference, pointer, or native int; found " + addr, IL, Stack);
             }
 
             if (isVolatile)

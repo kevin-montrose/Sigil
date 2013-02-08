@@ -15,12 +15,12 @@ namespace Sigil
         {
             if (t1 != t2)
             {
-                throw new SigilException(method + " expected two comparable values of the same type, instead found " + t1 + " and " + t2, Stack);
+                throw new SigilVerificationException(method + " expected two comparable values of the same type, instead found " + t1 + " and " + t2, IL, Stack);
             }
 
             if (!t1.Type.IsPrimitive)
             {
-                throw new SigilException(method + " expected primitive types, instead found " + t1, Stack);
+                throw new SigilVerificationException(method + " expected primitive types, instead found " + t1, IL, Stack);
             }
         }
 
@@ -35,7 +35,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("CompareEqual expects two values on the stack", Stack);
+                throw new SigilVerificationException("CompareEqual expects two values on the stack", IL, Stack);
             }
 
             UpdateState(OpCodes.Ceq, TypeOnStack.Get<int>(), pop: 2);
@@ -54,7 +54,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("CompareGreaterThan expects two values on the stack", Stack);
+                throw new SigilVerificationException("CompareGreaterThan expects two values on the stack", IL, Stack);
             }
 
             ValidateComparable("CompareGreaterThan", top.First(), top.Last());
@@ -75,7 +75,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("UnsignedCompareGreaterThan expects two values on the stack", Stack);
+                throw new SigilVerificationException("UnsignedCompareGreaterThan expects two values on the stack", IL, Stack);
             }
 
             ValidateComparable("UnsignedCompareGreaterThan", top.First(), top.Last());
@@ -96,7 +96,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("CompareLessThan expects two values on the stack", Stack);
+                throw new SigilVerificationException("CompareLessThan expects two values on the stack", IL, Stack);
             }
 
             ValidateComparable("CompareLessThan", top.First(), top.Last());
@@ -117,7 +117,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilException("UnsignedCompareLessThan expects two values on the stack", Stack);
+                throw new SigilVerificationException("UnsignedCompareLessThan expects two values on the stack", IL, Stack);
             }
 
             ValidateComparable("UnsignedCompareLessThan", top.First(), top.Last());
