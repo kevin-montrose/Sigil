@@ -66,7 +66,7 @@ namespace Sigil
         /// 
         /// Pops both, and pushes the address of the element at the given index.
         /// </summary>
-        public Emit<DelegateType> LoadElementAddress()
+        public Emit<DelegateType> LoadElementAddress(Type elemType = null)
         {
             var top = Stack.Top(2);
 
@@ -101,7 +101,9 @@ namespace Sigil
             // Shove this away, later on we'll figure out if we can insert a readonly here
             ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
 
-            UpdateState(OpCodes.Ldelema, arrElemType, pushToStack, pop: 2);
+            elemType = elemType ?? arrElemType;
+
+            UpdateState(OpCodes.Ldelema, elemType, pushToStack, pop: 2);
 
             return this;
         }

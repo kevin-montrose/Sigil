@@ -1367,7 +1367,7 @@ namespace SigilTests
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
                 e1.NewObject<object>();
-                
+
                 try
                 {
                     e1.NewObject<string, char[]>();
@@ -1471,7 +1471,7 @@ namespace SigilTests
                     e1.LocalAllocate();
                     Assert.Fail();
                 }
-                catch (InvalidOperationException e) 
+                catch (InvalidOperationException e)
                 {
                     Assert.AreEqual("LocalAllocate cannot be used in a catch block", e.Message);
                 }
@@ -1605,7 +1605,7 @@ namespace SigilTests
                 }
             }
         }
-        
+
         [TestMethod]
         public void LoadObject()
         {
@@ -3207,7 +3207,7 @@ namespace SigilTests
                 Assert.AreEqual("CheckFinite expects a value to be on the stack, but it was empty", e.Message);
             }
 
-            var e2= Emit<Action>.NewDynamicMethod();
+            var e2 = Emit<Action>.NewDynamicMethod();
             e2.NewObject<object>();
 
             try
@@ -3642,7 +3642,7 @@ namespace SigilTests
             {
                 var e2 = Emit<Action>.NewDynamicMethod("E2");
                 var l = e2.DefineLabel();
-                
+
                 try
                 {
                     e2.BranchIfFalse(l);
@@ -3865,7 +3865,7 @@ namespace SigilTests
                 Assert.AreEqual("ShiftLeft expects the value to be shifted to be an int, long, or native int; found System.String", e.Message);
             }
 
-            var e2= Emit<Action>.NewDynamicMethod("E2");
+            var e2 = Emit<Action>.NewDynamicMethod("E2");
             e2.LoadConstant(123);
             e2.LoadConstant("4");
 
@@ -4511,7 +4511,7 @@ namespace SigilTests
 
             e1.LoadConstant(1);
             e1.Branch(l);
-            
+
             e1.Pop();
             e1.Return();
 

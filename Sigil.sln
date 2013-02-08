@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.markdown = README.markdown
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "TestRunner\TestRunner.csproj", "{1FE8362E-A099-4739-9B1F-12ADCF10BA02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{53266E21-FEBB-4155-9937-75B909134D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53266E21-FEBB-4155-9937-75B909134D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53266E21-FEBB-4155-9937-75B909134D5E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

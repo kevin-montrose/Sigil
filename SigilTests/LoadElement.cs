@@ -216,7 +216,7 @@ namespace SigilTests
 
                 var now = DateTime.UtcNow;
 
-                Assert.AreEqual(now, d1(new [] { now }, 0));
+                Assert.AreEqual(now, d1(new[] { now }, 0));
             }
         }
     }
