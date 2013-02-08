@@ -145,16 +145,7 @@ Func<string, bool> del =
    };
 ```
 
-###Automated OpCode Choice
-
-Many methods in Sigil map to multiple OpCodes, the ideal one is chosen automatically.
-
-For example, `Br_S` is chosen when `Branch(Label)` is called if the offset needed is small enough for `Br_S` to be used instead of `Br`.
-Similarly, `LoadIndirect<Type>()` chooses the correct version of `Ldind_*` based on it's generic parameter.
-
-The `tailcall` and `readonly` prefixes are also inserted automatically, but not the `volatile` or `unaligned` prefixes.
-
-###Better Names, And Call Chaining
+###Better Names And Call Chaining
 
 Don't know all the IL instructions offhand?  The interface on `Emit<DelegateType>` has longer, more descriptive, names for all supported OpCodes.
 
@@ -176,6 +167,38 @@ e.Ldc(123);
 
 Furthermore, most Sigil methods return `this` to allow for call chaining.  Those methods (like `DeclareLocal<T>()`) that would normally return
 a value also have an override which places results in out parameters.
+
+###Automated OpCode Choice
+
+Many methods in Sigil map to multiple OpCodes, the ideal one is chosen automatically.
+
+For example, `Br_S` is chosen when `Branch(Label)` is called if the offset needed is small enough for `Br_S` to be used instead of `Br`.
+Similarly, `LoadIndirect<Type>()` chooses the correct version of `Ldind_*` based on it's generic parameter.
+
+The `tailcall` and `readonly` prefixes are also inserted automatically, but not the `volatile` or `unaligned` prefixes.
+
+While generally 1-to-1, Sigil does provide single methods for "families" of opcodes, all methods that map to multiple opcodes are listed below:
+
+ - `Branch(Label)`, `BranchIfGreater(Label)`, etc -&gt; the _S variants are used if possible  
+ - `Convert(...)` -&gt; Conv_* opcodes depending on the type  
+ - `ConvertOverflow(...)` -&gt; Conv_Ovf_* opcodes depending on the type  
+ - `UnsignedConvertOverflow(...)` -&gt; Conv_Ovf_*_Un opcodes depending on the type  
+   - note that `UnsignedConvertToFloat()` is separate from the three above, as their is no overflow checking for `Conv_R_Un`  
+ - `Leave(Label)` -&gt; Leave_S is used if possible  
+ - `LoadArgument(int)` -&gt; Ldarg_0 through Ldarg_3, and Ldarg_S are used if possible  
+ - `LoadArgumentAddress(int)` -&gt; Ldarga_S is used if possible  
+ - `LoadConstant(...)` -&gt; Ldc_I4_M1 through Ldc_I4_8 are used if possible; Ldstr, Ldc_R4, Ldc_R8, and Ldtoken are used depending on the override  
+ - `LoadElement(...)` -&gt; Ldelem_*, depending on the array on the stack  
+ - `LoadField(FieldInfo)` -&gt; Ldfld or Ldsfld depending on the FieldInfo  
+ - `LoadFieldAddress(FieldInfo)` -&gt; Ldflda or Ldsflda depending on the FieldIfno  
+ - `LoadIndirect(...)` -&gt; Ldind_* depending on the passed type  
+ - `LoadLocal(Local)` -&gt; Ldloc_0 through Ldloc_3, and Ldloc_S are used if possible  
+ - `LoadLocalAddress(...)` -&gt; Ldloca_S is used if possible  
+ - `StoreArgument(...)` -&gt; Starg_S is used if possible  
+ - `StoreElement()` -&gt; Stelem or Stelem_* depending on the array on the stack  
+ - `StoreField(FieldInfo)` -&gt; Stfld or Stsfld depending on the FieldInfo  
+ - `StoreIndirect(...)` -&gt; Stind_* depending on the type  
+ - `StoreLocal(Local)` -&gt; Stloc_0 through Stloc_3, and Stloc_S are used if possible  
 
 #Sigil is a WORK IN PROGRESS
 

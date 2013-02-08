@@ -66,23 +66,8 @@ namespace Sigil
         /// 
         /// Pops both, and pushes the address of the element at the given index.
         /// </summary>
-        public Emit<DelegateType> LoadElementAddress<ElementType>()
+        public Emit<DelegateType> LoadElementAddress()
         {
-            return LoadElementAddress(typeof(ElementType));
-        }
-
-        /// <summary>
-        /// Expects a reference to an array of the given element type and an index on the stack.
-        /// 
-        /// Pops both, and pushes the address of the element at the given index.
-        /// </summary>
-        public Emit<DelegateType> LoadElementAddress(Type elementType)
-        {
-            if (elementType == null)
-            {
-                throw new ArgumentNullException("elementType");
-            }
-
             var top = Stack.Top(2);
 
             if (top == null)
@@ -109,19 +94,14 @@ namespace Sigil
             }
 
             var arrElemType = array.Type.GetElementType();
-
-            if (!arrElemType.IsAssignableFrom(elementType))
-            {
-                throw new SigilException("LoadElementAddress found array of type " + array + ", but expected elements of type " + elementType, Stack);
-            }
-
+            
             // needs to be markable so we can keep track of what makes use of this value
             var pushToStack = TypeOnStack.Get(arrElemType.MakeByRefType(), makeMarkable: true);
 
             // Shove this away, later on we'll figure out if we can insert a readonly here
             ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
 
-            UpdateState(OpCodes.Ldelema, elementType, pushToStack, pop: 2);
+            UpdateState(OpCodes.Ldelema, arrElemType, pushToStack, pop: 2);
 
             return this;
         }

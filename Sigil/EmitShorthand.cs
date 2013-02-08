@@ -644,18 +644,10 @@ namespace Sigil
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.LoadElementAddress(System.Type)" />
-        public EmitShorthand<DelegateType> Ldelema<ElementType>()
+        /// <summary cref="M:Sigil.Emit`1.LoadElementAddress" />
+        public EmitShorthand<DelegateType> Ldelema()
         {
-            Ldelema(typeof(ElementType));
-
-            return this;
-        }
-
-        /// <summary cref="M:Sigil.Emit`1.LoadElementAddress(System.Type)" />
-        public EmitShorthand<DelegateType> Ldelema(Type elementType)
-        {
-            InnerEmit.LoadElementAddress(elementType);
+            InnerEmit.LoadElementAddress();
 
             return this;
         }

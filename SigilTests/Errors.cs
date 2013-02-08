@@ -2039,21 +2039,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress(null);
-                    Assert.Fail();
-                }
-                catch (ArgumentNullException e)
-                {
-                    Assert.AreEqual("elementType", e.ParamName);
-                }
-            }
-
-            {
-                var e1 = Emit<Action>.NewDynamicMethod();
-
-                try
-                {
-                    e1.LoadElementAddress<int>();
+                    e1.LoadElementAddress();
                     Assert.Fail();
                 }
                 catch (SigilException e)
@@ -2069,7 +2055,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress<int>();
+                    e1.LoadElementAddress();
                     Assert.Fail();
                 }
                 catch (SigilException e)
@@ -2085,7 +2071,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress<int>();
+                    e1.LoadElementAddress();
                     Assert.Fail();
                 }
                 catch (SigilException e)
@@ -2101,7 +2087,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress<int>();
+                    e1.LoadElementAddress();
                     Assert.Fail();
                 }
                 catch (SigilException e)
@@ -2117,7 +2103,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress<double>();
+                    e1.LoadElementAddress();
                     Assert.Fail();
                 }
                 catch (SigilException e)
