@@ -141,7 +141,14 @@ namespace Sigil
         /// </summary>
         public string Instructions()
         {
-            return IL.Instructions();
+            var ret = new StringBuilder();
+
+            foreach (var line in IL.Instructions())
+            {
+                ret.AppendLine(line);
+            }
+
+            return ret.ToString().Trim();
         }
 
         private void Seal()

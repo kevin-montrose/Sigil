@@ -58,12 +58,27 @@ namespace Sigil.Impl
             return il.ILOffset;
         }
 
-        internal string Instructions()
+        internal string[] Instructions()
         {
-            string instrs;
-            LengthTo(Buffer.Count, out instrs);
+            var ret = new List<string>();
 
-            return instrs;
+            var invoke = DelegateType.GetMethod("Invoke");
+            var returnType = invoke.ReturnType;
+            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+
+            var dynMethod = new DynamicMethod(Guid.NewGuid().ToString(), returnType, parameterTypes);
+            var il = dynMethod.GetILGenerator();
+
+            var instrs = new StringBuilder();
+
+            foreach (var x in Buffer)
+            {
+                x(il, instrs);
+                ret.Add(instrs.ToString().TrimEnd());
+                instrs.Clear();
+            }
+
+            return ret.ToArray();
         }
 
         public int ByteDistance(int start, int stop)

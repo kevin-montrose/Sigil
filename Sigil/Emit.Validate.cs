@@ -56,14 +56,19 @@ namespace Sigil
             {
                 var mark = Marks[kv.Value.Item1].Item1;
 
+                var branchLoc = kv.Value.Item2;
+                var markLoc = Marks[kv.Value.Item1].Item2;
+
                 if (!kv.Key.AreEquivalent(mark))
                 {
                     throw 
                         new SigilVerificationException(
                             "Branch to " + kv.Value.Item1 + " has a stack that doesn't match the destination", 
                             IL,
-                            kv.Key, 
-                            mark
+                            kv.Key,
+                            branchLoc,
+                            mark,
+                            markLoc
                         );
                 }
             }

@@ -32,7 +32,7 @@ namespace SigilTests
 
             Assert.AreEqual(((2 + 2) * 2).ToString(), d1(2));
 
-            Assert.AreEqual("ldarg.0\r\nldarg.0\r\nadd\r\nldarg.0\r\nmul\r\nbox System.Int32\r\ncallvirt System.String ToString()\r\nret\r\n", unoptimized);
+            Assert.AreEqual("ldarg.0\r\nldarg.0\r\nadd\r\nldarg.0\r\nmul\r\nbox System.Int32\r\ncallvirt System.String ToString()\r\nret", unoptimized);
             Assert.AreEqual("ldarg.0\r\nldarg.0\r\nadd\r\nldarg.0\r\nmul\r\nbox System.Int32\r\ntail.callvirt System.String ToString()\r\nret\r\n", optimized);
         }
     }

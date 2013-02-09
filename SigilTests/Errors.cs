@@ -4525,7 +4525,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Branch to l has a stack that doesn't match the destination", e.Message);
-                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr l\r\npop\r\nret\r\n\r\nl:\r\nret\r\n\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr l // Failure branch\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
             }
         }
 
@@ -4544,7 +4544,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
-                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String\r\nSystem.Int32\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String\r\nSystem.Int32\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n", e.GetDebugInfo());
             }
         }
     }

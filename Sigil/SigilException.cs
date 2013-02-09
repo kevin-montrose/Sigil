@@ -22,7 +22,10 @@ namespace Sigil
     {
         private StackState Stack;
         private StackState SecondStack;
-        private string Instructions;
+        private string[] Instructions;
+
+        private int? BranchLoc;
+        private int? LabelLoc;
 
         internal SigilVerificationException(string message, BufferedILGenerator il) : base(message)
         {
@@ -34,11 +37,13 @@ namespace Sigil
             Stack = stack;
         }
 
-        internal SigilVerificationException(string message, BufferedILGenerator il, StackState atBranch, StackState atLabel)
-            : this(message, il)
+        internal SigilVerificationException(string message, BufferedILGenerator il, StackState atBranch, int branchLoc, StackState atLabel, int labelLoc)
+            : this(message, il, atBranch)
         {
-            Stack = atBranch;
             SecondStack = atLabel;
+
+            BranchLoc = branchLoc;
+            LabelLoc = labelLoc;
         }
 
         /// <summary>
@@ -77,15 +82,43 @@ namespace Sigil
                 EmitStack(sb, SecondStack);
             }
 
-            if (!string.IsNullOrEmpty(Instructions))
+            if (Instructions.Length > 0)
             {
                 sb.AppendLine();
                 sb.AppendLine("Instruction stream");
                 sb.AppendLine("------------------");
-                sb.AppendLine(Instructions);
+
+                if (BranchLoc.HasValue && LabelLoc.HasValue)
+                {
+                    sb.AppendLine(AddBranchAndLabelMarkers());
+                }
+                else
+                {
+                    foreach (var line in Instructions)
+                    {
+                        sb.AppendLine(line);
+                    }
+                }
             }
 
             return sb.ToString();
+        }
+
+        private string AddBranchAndLabelMarkers()
+        {
+            var ret = new StringBuilder();
+
+            for (var i = 0; i < Instructions.Length; i++)
+            {
+                var line = Instructions[i];
+
+                if (i == LabelLoc - 1) line = line + " // Failure label";
+                if (i == BranchLoc - 1) line = line + " // Failure branch";
+
+                ret.AppendLine(line);
+            }
+
+            return ret.ToString().Trim();
         }
 
         private static void EmitStack(StringBuilder sb, StackState stack)
