@@ -18,7 +18,14 @@ namespace Sigil
         {
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Stack should be empty when BeginExceptionBlock is called", IL, Stack);
+                var stackSize = Stack.Count();
+                var mark = new List<int>();
+                for (var i = 0; i < stackSize; i++)
+                {
+                    mark.Add(i);
+                }
+
+                throw new SigilVerificationException("Stack should be empty when BeginExceptionBlock is called", IL, Stack, mark.ToArray());
             }
 
             var labelDel = IL.BeginExceptionBlock();
@@ -200,7 +207,14 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Stack should be empty when BeginCatchBlock is called", IL, Stack);
+                var stackSize = Stack.Count();
+                var mark = new List<int>();
+                for (var i = 0; i < stackSize; i++)
+                {
+                    mark.Add(i);
+                }
+
+                throw new SigilVerificationException("Stack should be empty when BeginCatchBlock is called", IL, Stack, mark.ToArray());
             }
 
             var tryBlock = TryBlocks[forTry];
@@ -250,7 +264,14 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Stack should be empty when EndCatchBlock is called", IL, Stack);
+                var stackSize = Stack.Count();
+                var mark = new List<int>();
+                for (var i = 0; i < stackSize; i++)
+                {
+                    mark.Add(i);
+                }
+
+                throw new SigilVerificationException("Stack should be empty when EndCatchBlock is called", IL, Stack, mark.ToArray());
             }
 
             var location = CatchBlocks[forCatch];
@@ -327,7 +348,14 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Stack should be empty when BeginFinallyBlock is called", IL, Stack);
+                var stackSize = Stack.Count();
+                var mark = new List<int>();
+                for (var i = 0; i < stackSize; i++)
+                {
+                    mark.Add(i);
+                }
+
+                throw new SigilVerificationException("Stack should be empty when BeginFinallyBlock is called", IL, Stack, mark.ToArray());
             }
 
             var ret = new FinallyBlock(forTry);
@@ -363,7 +391,14 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Stack should be empty when EndFinallyBlock is called", IL, Stack);
+                var stackSize = Stack.Count();
+                var mark = new List<int>();
+                for (var i = 0; i < stackSize; i++)
+                {
+                    mark.Add(i);
+                }
+
+                throw new SigilVerificationException("Stack should be empty when EndFinallyBlock is called", IL, Stack, mark.ToArray());
             }
 
             // There's no equivalent to EndFinallyBlock in raw ILGenerator, so no call here.

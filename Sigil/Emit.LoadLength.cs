@@ -27,7 +27,7 @@ namespace Sigil
 
             if (arr.IsReference || arr.IsPointer || !arr.Type.IsArray || arr.Type.GetArrayRank() != 1)
             {
-                throw new SigilVerificationException("LoadLength expects a rank 1 array, found " + arr, IL, Stack);
+                throw new SigilVerificationException("LoadLength expects a rank 1 array, found " + arr, IL, Stack, 0);
             }
 
             UpdateState(OpCodes.Ldlen, TypeOnStack.Get<int>(), pop: 1);

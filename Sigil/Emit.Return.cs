@@ -24,7 +24,14 @@ namespace Sigil
             {
                 if (!Stack.IsRoot)
                 {
-                    throw new SigilVerificationException("Returning from a void method must leave the stack empty", IL, Stack);
+                    var stackSize = Stack.Count();
+                    var mark = new List<int>();
+                    for (var i = 0; i < stackSize; i++)
+                    {
+                        mark.Add(i);
+                    }
+
+                    throw new SigilVerificationException("Returning from a void method must leave the stack empty", IL, Stack, mark.ToArray());
                 }
 
                 UpdateState(OpCodes.Ret);
@@ -41,14 +48,21 @@ namespace Sigil
 
             if (!ReturnType.IsAssignableFrom(retType[0]))
             {
-                throw new SigilVerificationException("Return expects a value assignable to " + ReturnType + " to be on the stack; found " + retType[0], IL, Stack);
+                throw new SigilVerificationException("Return expects a value assignable to " + ReturnType + " to be on the stack; found " + retType[0], IL, Stack, 0);
             }
 
             UpdateState(OpCodes.Ret, pop: 1);
 
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Return should leave the stack empty", IL, Stack);
+                var stackSize = Stack.Count();
+                var mark = new List<int>();
+                for (var i = 0; i < stackSize; i++)
+                {
+                    mark.Add(i);
+                }
+
+                throw new SigilVerificationException("Return should leave the stack empty", IL, Stack, mark.ToArray());
             }
 
             return this;

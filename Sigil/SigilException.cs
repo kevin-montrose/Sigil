@@ -24,6 +24,8 @@ namespace Sigil
         private StackState SecondStack;
         private string[] Instructions;
 
+        private int[] BadValueLocation;
+
         private int? BranchLoc;
         private int? LabelLoc;
 
@@ -32,14 +34,16 @@ namespace Sigil
             Instructions = il.Instructions();
         }
 
-        internal SigilVerificationException(string message,BufferedILGenerator il, StackState stack) : this(message, il)
+        internal SigilVerificationException(string message, BufferedILGenerator il, StackState stack, params int[] locsOnStack) : this(message, il)
         {
+            BadValueLocation = locsOnStack;
             Stack = stack;
         }
 
         internal SigilVerificationException(string message, BufferedILGenerator il, StackState atBranch, int branchLoc, StackState atLabel, int labelLoc)
-            : this(message, il, atBranch)
+            : this(message, il)
         {
+            Stack = atBranch;
             SecondStack = atLabel;
 
             BranchLoc = branchLoc;
@@ -71,7 +75,7 @@ namespace Sigil
                 sb.AppendLine("----------------------");
             }
 
-            EmitStack(sb, Stack);
+            EmitStack(sb, Stack, BadValueLocation);
 
             if (SecondStack != null)
             {
@@ -79,7 +83,7 @@ namespace Sigil
                 sb.AppendLine("Top of stack at label");
                 sb.AppendLine("---------------------");
 
-                EmitStack(sb, SecondStack);
+                EmitStack(sb, SecondStack, new int[0]);
             }
 
             if (Instructions.Length > 0)
@@ -121,17 +125,28 @@ namespace Sigil
             return ret.ToString().Trim();
         }
 
-        private static void EmitStack(StringBuilder sb, StackState stack)
+        private static void EmitStack(StringBuilder sb, StackState stack, int[] highlightLocation)
         {
             if (stack.IsRoot)
             {
                 sb.AppendLine("!!EMPTY!!");
             }
 
+            int i = 0;
+
             while (!stack.IsRoot)
             {
-                sb.AppendLine(stack.Value.ToString());
+                var val = stack.Value.ToString();
+
+                if (highlightLocation != null && highlightLocation.Any(l => l == i))
+                {
+                    val += " // Bad value";
+                }
+
+                sb.AppendLine(val);
                 stack = stack.Pop();
+
+                i++;
             }
         }
 

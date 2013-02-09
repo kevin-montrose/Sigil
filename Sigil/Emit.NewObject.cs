@@ -234,7 +234,7 @@ namespace Sigil
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {
-                    throw new SigilVerificationException("Parameter #" + i + " to " + constructor + " should be " + shouldBe + ", but found " + actuallyIs, IL, Stack);
+                    throw new SigilVerificationException("Parameter #" + i + " to " + constructor + " should be " + shouldBe + ", but found " + actuallyIs, IL, Stack, onStack.Length - 1 - i);
                 }
             }
 

@@ -51,17 +51,17 @@ namespace Sigil
 
             if (!source.IsPointer && !source.IsReference && source != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("CopyObject expects the source value to be a pointer, reference, or native int; found " + source, IL, Stack);
+                throw new SigilVerificationException("CopyObject expects the source value to be a pointer, reference, or native int; found " + source, IL, Stack, 0);
             }
 
             if (!dest.IsPointer && !dest.IsReference && dest != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("CopyObject expects the destination value to be a pointer, reference, or native int; found " + dest, IL, Stack);
+                throw new SigilVerificationException("CopyObject expects the destination value to be a pointer, reference, or native int; found " + dest, IL, Stack, 1);
             }
 
             if (source != dest)
             {
-                throw new SigilVerificationException("CopyObject expects the source and destination types to match; found " + source + " and " + dest, IL, Stack);
+                throw new SigilVerificationException("CopyObject expects the source and destination types to match; found " + source + " and " + dest, IL, Stack, 0, 1);
             }
 
             UpdateState(OpCodes.Cpobj, valueType, pop: 2);

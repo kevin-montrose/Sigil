@@ -54,7 +54,7 @@ namespace Sigil
 
             if (!ptr.IsReference && !ptr.IsPointer && ptr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("LoadObject expected a reference, pointer, or native int; found " + ptr, IL, Stack);
+                throw new SigilVerificationException("LoadObject expected a reference, pointer, or native int; found " + ptr, IL, Stack, 0);
             }
 
             if (isVolatile)

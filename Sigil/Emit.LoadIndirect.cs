@@ -45,14 +45,14 @@ namespace Sigil
 
             if (!ptr.IsPointer && !ptr.IsReference && ptr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("LoadIndirect expects a pointer, reference, or native int on the stack, found " + ptr, IL, Stack);
+                throw new SigilVerificationException("LoadIndirect expects a pointer, reference, or native int on the stack, found " + ptr, IL, Stack, 0);
             }
 
             if (ptr.IsPointer || ptr.IsReference)
             {
                 if (!type.IsAssignableFrom(TypeOnStack.Get(ptr.Type)))
                 {
-                    throw new SigilVerificationException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, IL, Stack);
+                    throw new SigilVerificationException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, IL, Stack, 0);
                 }
             }
 

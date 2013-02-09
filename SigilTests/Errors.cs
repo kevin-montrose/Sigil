@@ -1034,7 +1034,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreElement expects three parameters to be on the stack", e.Message);
+                    Assert.AreEqual("StoreElement expects 3 values on the stack", e.Message);
                 }
             }
 
@@ -4544,7 +4544,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
-                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String\r\nSystem.Int32\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String // Bad value\r\nSystem.Int32\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n", e.GetDebugInfo());
             }
         }
     }

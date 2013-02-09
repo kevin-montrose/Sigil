@@ -55,14 +55,14 @@ namespace Sigil
             {
                 if (onStack != TypeOnStack.Get<int>())
                 {
-                    throw new SigilVerificationException(onStack + " cannot be boxed as an " + valueType, IL, Stack);
+                    throw new SigilVerificationException(onStack + " cannot be boxed as an " + valueType, IL, Stack, 0);
                 }
             }
             else
             {
                 if (onStack != TypeOnStack.Get(valueType))
                 {
-                    throw new SigilVerificationException("Expected " + valueType + " to be on the stack, found " + onStack, IL, Stack);
+                    throw new SigilVerificationException("Expected " + valueType + " to be on the stack, found " + onStack, IL, Stack, 0);
                 }
             }
 

@@ -29,7 +29,7 @@ namespace Sigil
 
             if (!typeof(Exception).IsAssignableFrom(val))
             {
-                throw new SigilVerificationException("Throw expected an exception to be on the stack, found " + val, IL, Stack);
+                throw new SigilVerificationException("Throw expected an exception to be on the stack, found " + val, IL, Stack, 0);
             }
 
             UpdateState(OpCodes.Throw, pop: 1);

@@ -48,12 +48,12 @@ namespace Sigil
 
                 if (!field.DeclaringType.IsAssignableFrom(type))
                 {
-                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL, Stack);
+                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL, Stack, 1);
                 }
 
                 if (!field.FieldType.IsAssignableFrom(val))
                 {
-                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL, Stack);
+                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL, Stack, 0);
                 }
 
                 if (isVolatile)
@@ -81,7 +81,7 @@ namespace Sigil
 
                 if (!field.FieldType.IsAssignableFrom(val))
                 {
-                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL, Stack);
+                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL, Stack, 0);
                 }
 
                 if (isVolatile)

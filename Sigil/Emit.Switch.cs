@@ -52,7 +52,7 @@ namespace Sigil
 
             if (val != TypeOnStack.Get<int>())
             {
-                throw new SigilVerificationException("Switch expected an int on the stack, found " + val, IL, Stack);
+                throw new SigilVerificationException("Switch expected an int on the stack, found " + val, IL, Stack, 0);
             }
 
             BufferedILGenerator.UpdateOpCodeDelegate update;

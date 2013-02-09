@@ -15,12 +15,12 @@ namespace Sigil
         {
             if (t1 != t2)
             {
-                throw new SigilVerificationException(method + " expected two comparable values of the same type, instead found " + t1 + " and " + t2, IL, Stack);
+                throw new SigilVerificationException(method + " expected two comparable values of the same type, instead found " + t1 + " and " + t2, IL, Stack, 0, 1);
             }
 
             if (!t1.Type.IsPrimitive)
             {
-                throw new SigilVerificationException(method + " expected primitive types, instead found " + t1, IL, Stack);
+                throw new SigilVerificationException(method + " expected primitive types, instead found " + t1, IL, Stack, 0);
             }
         }
 

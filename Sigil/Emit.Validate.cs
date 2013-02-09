@@ -192,7 +192,14 @@ namespace Sigil
         {
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Delegates must leave their stack empty when they end", IL, Stack);
+                var stackSize = Stack.Count();
+                var mark = new List<int>();
+                for (var i = 0; i < stackSize; i++)
+                {
+                    mark.Add(i);
+                }
+
+                throw new SigilVerificationException("Delegates must leave their stack empty when they end", IL, Stack, mark.ToArray());
             }
 
             var lastInstr = InstructionStream.LastOrDefault();

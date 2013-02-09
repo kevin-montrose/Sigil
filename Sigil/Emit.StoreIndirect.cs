@@ -46,12 +46,12 @@ namespace Sigil
 
             if (!type.IsAssignableFrom(val))
             {
-                throw new SigilVerificationException("StoreIndirect expected a " + type + " on the stack, found " + val, IL, Stack);
+                throw new SigilVerificationException("StoreIndirect expected a " + type + " on the stack, found " + val, IL, Stack, 0);
             }
 
             if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("StoreIndirect expected a reference, pointer, or native int on the stack; found " + addr, IL, Stack);
+                throw new SigilVerificationException("StoreIndirect expected a reference, pointer, or native int on the stack; found " + addr, IL, Stack, 1);
             }
 
             if (isVolatile)

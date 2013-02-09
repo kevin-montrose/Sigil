@@ -42,10 +42,10 @@ namespace Sigil
                 }
                 else
                 {
-                    throw new SigilVerificationException(name + " with an int32 expects an int32 or native int as a second value; found " + val2, IL, Stack);
+                    throw new SigilVerificationException(name + " with an int32 expects an int32 or native int as a second value; found " + val2, IL, Stack, 0);
                 }
 
-                throw new SigilVerificationException(name + " with an int32 expects an int32, native int, reference, or pointer as a second value; found " + val2, IL, Stack);
+                throw new SigilVerificationException(name + " with an int32 expects an int32, native int, reference, or pointer as a second value; found " + val2, IL, Stack, 0);
             }
 
             if (val1 == TypeOnStack.Get<long>())
@@ -57,7 +57,7 @@ namespace Sigil
                     return;
                 }
 
-                throw new SigilVerificationException(name + " with to an int64 expects an in64 as second value; found " + val2, IL, Stack);
+                throw new SigilVerificationException(name + " with to an int64 expects an in64 as second value; found " + val2, IL, Stack, 0);
             }
 
             if (val1 == TypeOnStack.Get<float>())
@@ -69,7 +69,7 @@ namespace Sigil
                     return;
                 }
 
-                throw new SigilVerificationException(name + " with a float expects a float as second value; found " + val2, IL, Stack);
+                throw new SigilVerificationException(name + " with a float expects a float as second value; found " + val2, IL, Stack, 0);
             }
 
             if (val1 == TypeOnStack.Get<double>())
@@ -81,7 +81,7 @@ namespace Sigil
                     return;
                 }
 
-                throw new SigilVerificationException(name + " with a double expects a double as second value; found " + val2, IL, Stack);
+                throw new SigilVerificationException(name + " with a double expects a double as second value; found " + val2, IL, Stack, 0);
             }
 
             if (allowReference)
@@ -109,7 +109,7 @@ namespace Sigil
                         return;
                     }
 
-                    throw new SigilVerificationException(name + " with a native int expects an int32, native int, reference, or pointer as a second value; found " + val2, IL, Stack);
+                    throw new SigilVerificationException(name + " with a native int expects an int32, native int, reference, or pointer as a second value; found " + val2, IL, Stack, 0);
                 }
 
                 if (val1.IsReference || val1.IsPointer)
@@ -121,15 +121,15 @@ namespace Sigil
                         return;
                     }
 
-                    throw new SigilVerificationException(name + " with a reference or pointer expects an int32, or a native int as second value; found " + val2, IL, Stack);
+                    throw new SigilVerificationException(name + " with a reference or pointer expects an int32, or a native int as second value; found " + val2, IL, Stack, 0);
                 }
             }
             else
             {
-                throw new SigilVerificationException(name + " expects an int32, int64, native int, or float as a first value; found " + val1, IL, Stack);
+                throw new SigilVerificationException(name + " expects an int32, int64, native int, or float as a first value; found " + val1, IL, Stack, 1);
             }
 
-            throw new SigilVerificationException(name + " expects an int32, int64, native int, float, reference, or pointer as first value; found " + val1, IL, Stack);
+            throw new SigilVerificationException(name + " expects an int32, int64, native int, float, reference, or pointer as first value; found " + val1, IL, Stack, 1);
         }
 
         /// <summary>
@@ -420,7 +420,7 @@ namespace Sigil
 
             if (val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>() && val != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("Negate expects an int, long, float, double, or native int; found " + val, IL, Stack);
+                throw new SigilVerificationException("Negate expects an int, long, float, double, or native int; found " + val, IL, Stack, 0);
             }
 
             UpdateState(OpCodes.Neg, val, pop: 1);
