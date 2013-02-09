@@ -183,7 +183,15 @@ namespace Sigil
                 throw new ArgumentNullException("parameterTypes");
             }
 
-            var cons = type.GetConstructor(parameterTypes);
+            var allCons = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance);
+            var cons =
+                allCons
+                    .Where(
+                        c =>
+                            c.GetParameters().Length == parameterTypes.Length &&
+                            c.GetParameters().Select((p, i) => p.ParameterType == parameterTypes[i]).Aggregate(true, (a, b) => a && b)
+                    ).SingleOrDefault();
+
             if (cons == null)
             {
                 throw new InvalidOperationException("Type " + type + " must have a constructor that matches parameters [" + string.Join(", ", parameterTypes.AsEnumerable()) + "]");

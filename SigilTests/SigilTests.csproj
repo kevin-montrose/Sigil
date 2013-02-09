@@ -93,6 +93,7 @@
     <Compile Include="Multiply.cs" />
     <Compile Include="Negate.cs" />
     <Compile Include="NewArray.cs" />
+    <Compile Include="NewObject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Readme.cs" />
     <Compile Include="Remainder.cs" />
