@@ -36,7 +36,7 @@ namespace Sigil
 
             if(retType == null)
             {
-                throw new SigilVerificationException("Return expects a value on the stack, but the stack is empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             if (!ReturnType.IsAssignableFrom(retType[0]))

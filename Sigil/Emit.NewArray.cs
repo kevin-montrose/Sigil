@@ -33,7 +33,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("NewArray expects the size of the array to be on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var size = onStack[0];

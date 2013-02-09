@@ -47,7 +47,7 @@ namespace Sigil
             var onStack = Stack.Top();
             if (onStack == null)
             {
-                throw new SigilVerificationException("LoadObject expected a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var ptr = onStack[0];

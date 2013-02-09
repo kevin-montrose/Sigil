@@ -45,7 +45,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("Switch expected a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var val = onStack[0];

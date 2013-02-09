@@ -42,7 +42,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("LoadVirtualFunctionPointer expects a value to be on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var objPtr = top[0];

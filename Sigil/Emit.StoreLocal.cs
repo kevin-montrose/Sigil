@@ -32,7 +32,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("StoreLocal expects a value on the stack, but it's empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             if (!local.LocalType.IsAssignableFrom(top[0]))

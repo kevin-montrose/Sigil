@@ -44,7 +44,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("Box expects a value on the stack, but found none", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var onStack = top.Single();

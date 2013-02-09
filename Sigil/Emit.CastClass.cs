@@ -43,7 +43,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("CastClass expects a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             UpdateState(OpCodes.Castclass, referenceType, TypeOnStack.Get(referenceType), pop: 1);

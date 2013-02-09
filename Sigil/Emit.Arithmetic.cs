@@ -141,7 +141,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("Add requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -163,7 +163,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("AddOverflow requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -185,7 +185,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("UnsignedAddOverflow requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -205,7 +205,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("Divide requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -225,7 +225,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("UnsignedDivide requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -245,7 +245,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("Multiply requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -267,7 +267,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("MultiplyOverflow requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -289,7 +289,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("UnsignedMultiplyOverflow requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -309,7 +309,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("Remainder requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -329,7 +329,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("UnsignedRemainder requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -349,7 +349,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("Subtract requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -371,7 +371,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("SubtractOverflow requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -393,7 +393,7 @@ namespace Sigil
 
             if (args == null)
             {
-                throw new SigilVerificationException("UnsignedSubtractOverflow requires 2 arguments be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val2 = args[0];
@@ -413,7 +413,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("Negate expected a value to be on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var val = onStack[0];

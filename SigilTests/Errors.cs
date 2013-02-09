@@ -170,7 +170,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("UnboxAny expects a value on the stack, but it is empty", e.Message);
+                    Assert.AreEqual("UnboxAny expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -245,7 +245,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Unbox expects a value on the stack, but it is empty", e.Message);
+                    Assert.AreEqual("Unbox expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -533,7 +533,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Throw expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("Throw expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -608,7 +608,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Switch expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("Switch expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -685,7 +685,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreObject expects two values on the stack", e.Message);
+                    Assert.AreEqual("StoreObject expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -766,7 +766,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreLocal expects a value on the stack, but it's empty", e.Message);
+                    Assert.AreEqual("StoreLocal expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -828,7 +828,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreIndirect expected two values on the stack", e.Message);
+                    Assert.AreEqual("StoreIndirect expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -951,7 +951,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreField expects two values on the stack for instance fields", e.Message);
+                    Assert.AreEqual("StoreField expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -1000,7 +1000,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreField expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("StoreField expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -1211,7 +1211,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Return expects a value on the stack, but the stack is empty", e.Message);
+                    Assert.AreEqual("Return expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -1360,7 +1360,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Expected 1 parameters to be on the stack", e.Message);
+                    Assert.AreEqual("NewObject expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -1421,7 +1421,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("NewArray expects the size of the array to be on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("NewArray expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -1584,7 +1584,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadVirtualFunctionPointer expects a value to be on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("LoadVirtualFunctionPointer expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -1661,7 +1661,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadObject expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("LoadObject expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -1919,7 +1919,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadFieldAddress expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("LoadFieldAddress expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -2009,7 +2009,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadField expects a value on the stack for instance fields", e.Message);
+                    Assert.AreEqual("LoadField expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -2044,7 +2044,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadElementAddress expects two values on the stack", e.Message);
+                    Assert.AreEqual("LoadElementAddress expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -2110,7 +2110,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadElement expects two values on the stack", e.Message);
+                    Assert.AreEqual("LoadElement expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -2552,7 +2552,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("IsInstance expected a value to be on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("IsInstance expects a value on the stack, but it was empty", e.Message);
                 }
             }
         }
@@ -2582,7 +2582,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("InitializeObject expects a value to be on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("InitializeObject expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -2628,7 +2628,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("InitializeBlock expects three values to be on the stack", e.Message);
+                    Assert.AreEqual("InitializeBlock expects 3 values on the stack", e.Message);
                 }
             }
 
@@ -2745,7 +2745,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CopyObject expects two values to be on the stack", e.Message);
+                    Assert.AreEqual("CopyObject expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -2808,7 +2808,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CopyBlock expects three values to be on the stack", e.Message);
+                    Assert.AreEqual("CopyBlock expects 3 values on the stack", e.Message);
                 }
             }
 
@@ -3002,7 +3002,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Convert expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("Convert expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -3015,7 +3015,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("ConvertOverflow expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("ConvertOverflow expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -3028,7 +3028,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("UnsignedConvertOverflow expected a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("UnsignedConvertOverflow expects a value on the stack, but it was empty", e.Message);
                 }
             }
         }
@@ -3132,7 +3132,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CompareEqual expects two values on the stack", e.Message);
+                    Assert.AreEqual("CompareEqual expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -3146,7 +3146,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CompareGreaterThan expects two values on the stack", e.Message);
+                    Assert.AreEqual("CompareGreaterThan expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -3160,7 +3160,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CompareLessThan expects two values on the stack", e.Message);
+                    Assert.AreEqual("CompareLessThan expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -3174,7 +3174,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("UnsignedCompareGreaterThan expects two values on the stack", e.Message);
+                    Assert.AreEqual("UnsignedCompareGreaterThan expects 2 values on the stack", e.Message);
                 }
             }
 
@@ -3188,7 +3188,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("UnsignedCompareLessThan expects two values on the stack", e.Message);
+                    Assert.AreEqual("UnsignedCompareLessThan expects 2 values on the stack", e.Message);
                 }
             }
         }
@@ -3204,7 +3204,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("CheckFinite expects a value to be on the stack, but it was empty", e.Message);
+                Assert.AreEqual("CheckFinite expects a value on the stack, but it was empty", e.Message);
             }
 
             var e2 = Emit<Action>.NewDynamicMethod();
@@ -3322,7 +3322,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("CallIndirect expected 1 values on the stack", e.Message);
+                Assert.AreEqual("CallIndirect expects a value on the stack, but it was empty", e.Message);
             }
         }
 
@@ -3474,7 +3474,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Call to System.String ToString() expected parameters [System.Object] to be on the stack", e.Message);
+                Assert.AreEqual("Call expects a value on the stack, but it was empty", e.Message);
             }
         }
 
@@ -3506,7 +3506,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("CallVirtual to System.String ToString() expected parameters [System.Object] to be on the stack", e.Message);
+                Assert.AreEqual("CallVirtual expects a value on the stack, but it was empty", e.Message);
             }
         }
 
@@ -3635,7 +3635,7 @@ namespace SigilTests
                 catch (TargetInvocationException e)
                 {
                     var f = (SigilVerificationException)e.InnerException;
-                    Assert.IsTrue(f.Message.EndsWith(" expects two values to be on the stack"));
+                    Assert.IsTrue(f.Message.EndsWith(" expects 2 values on the stack"));
                 }
             }
 
@@ -3650,7 +3650,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("BranchIfFalse expects one value to be on the stack", e.Message);
+                    Assert.AreEqual("BranchIfFalse expects a value on the stack, but it was empty", e.Message);
                 }
             }
 
@@ -3665,7 +3665,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("BranchIfTrue expects one value to be on the stack", e.Message);
+                    Assert.AreEqual("BranchIfTrue expects a value on the stack, but it was empty", e.Message);
                 }
             }
         }
@@ -3844,7 +3844,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("ShiftLeft expects two values on the stack", e.Message);
+                Assert.AreEqual("ShiftLeft expects 2 values on the stack", e.Message);
             }
         }
 
@@ -3927,7 +3927,6 @@ namespace SigilTests
 
             var e4 = Emit<Action>.NewDynamicMethod("E4");
             e4.LoadConstant(123);
-            //e4.ConvertToNativeInt();
             e4.Convert<IntPtr>();
             e4.LoadConstant("4");
 
@@ -3992,7 +3991,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("Add expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4036,7 +4035,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Multiply requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("Multiply expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4052,7 +4051,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("AddOverflow requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("AddOverflow expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4068,7 +4067,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("UnsignedAddOverflow requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("UnsignedAddOverflow expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4084,7 +4083,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("MultiplyOverflow requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("MultiplyOverflow expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4100,7 +4099,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("UnsignedMultiplyOverflow requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("UnsignedMultiplyOverflow expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4116,7 +4115,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Divide requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("Divide expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4132,7 +4131,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("UnsignedDivide requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("UnsignedDivide expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4148,7 +4147,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Remainder requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("Remainder expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4164,7 +4163,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("UnsignedRemainder requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("UnsignedRemainder expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4180,7 +4179,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Subtract requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("Subtract expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4196,7 +4195,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("SubtractOverflow requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("SubtractOverflow expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4212,7 +4211,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("UnsignedSubtractOverflow requires 2 arguments be on the stack", e.Message);
+                Assert.AreEqual("UnsignedSubtractOverflow expects 2 values on the stack", e.Message);
             }
         }
 
@@ -4228,7 +4227,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Negate expected a value to be on the stack, but it was empty", e.Message);
+                Assert.AreEqual("Negate expects a value on the stack, but it was empty", e.Message);
             }
 
             var e2 = Emit<Action>.NewDynamicMethod("E2");
@@ -4475,7 +4474,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Box expects a value on the stack, but found none", e.Message);
+                Assert.AreEqual("Box expects a value on the stack, but it was empty", e.Message);
             }
 
             var e4 = Emit<Action>.NewDynamicMethod("E4");

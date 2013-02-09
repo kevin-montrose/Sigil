@@ -41,7 +41,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("CallVirtual to " + method + " expected parameters [" + string.Join(", ", expectedParams) + "] to be on the stack", IL, Stack);
+                FailStackUnderflow(expectedParams.Count);
             }
 
             // Things come off the stack in "Reverse" order

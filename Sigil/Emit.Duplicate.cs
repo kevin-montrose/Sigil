@@ -18,7 +18,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("Duplicate expects a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             UpdateState(OpCodes.Dup, onStack[0]);

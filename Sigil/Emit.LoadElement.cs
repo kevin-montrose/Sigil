@@ -22,7 +22,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("LoadElement expects two values on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var index = top[0];

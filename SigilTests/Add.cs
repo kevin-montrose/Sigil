@@ -64,7 +64,7 @@ namespace SigilTests
                 }
                 catch (Exception e)
                 {
-                    Assert.AreEqual("Add requires 2 arguments be on the stack", e.Message);
+                    Assert.AreEqual("Add expects 2 values on the stack", e.Message);
                 }
             }
         }

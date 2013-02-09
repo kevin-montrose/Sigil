@@ -53,7 +53,7 @@ namespace Sigil
             var top = Stack.Top();
             if (top == null)
             {
-                throw new SigilVerificationException("Convert expected a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             CheckConvertible("Convert", top.Single());
@@ -175,7 +175,7 @@ namespace Sigil
             var top = Stack.Top();
             if (top == null)
             {
-                throw new SigilVerificationException("ConvertOverflow expected a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             CheckConvertible("ConvertOverflow", top.Single());
@@ -290,7 +290,7 @@ namespace Sigil
             var top = Stack.Top();
             if (top == null)
             {
-                throw new SigilVerificationException("UnsignedConvertOverflow expected a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             CheckConvertible("UnsignedConvertOverflow", top.Single());
@@ -353,6 +353,15 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedConvertToFloat()
         {
+            var top = Stack.Top();
+
+            if (top == null)
+            {
+                FailStackUnderflow(1);
+            }
+
+            CheckConvertible("UnsignedConvertToFloat", top.Single());
+
             UpdateState(OpCodes.Conv_R_Un, TypeOnStack.Get<float>(), pop: 1);
 
             return this;

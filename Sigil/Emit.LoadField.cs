@@ -40,7 +40,7 @@ namespace Sigil
 
                 if (onStack == null)
                 {
-                    throw new SigilVerificationException("LoadField expects a value on the stack for instance fields", IL, Stack);
+                    FailStackUnderflow(1);
                 }
                 var type = onStack[0];
 

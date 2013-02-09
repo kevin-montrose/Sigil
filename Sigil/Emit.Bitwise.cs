@@ -17,7 +17,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException(name+" expects two values on the stack", IL, Stack);
+                FailStackUnderflow(2, method: name);
             }
 
             var val2 = onStack[0];
@@ -80,7 +80,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("Not expects a value to be on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var val = onStack[0];
@@ -101,7 +101,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException(name + " expects two values on the stack", IL, Stack);
+                FailStackUnderflow(2, method: name);
             }
 
             var shift = onStack[0];

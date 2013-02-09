@@ -40,7 +40,7 @@ namespace Sigil
 
                 if (onStack == null)
                 {
-                    throw new SigilVerificationException("StoreField expects two values on the stack for instance fields", IL, Stack);
+                    FailStackUnderflow(2);
                 }
 
                 var type = onStack[1];
@@ -74,7 +74,7 @@ namespace Sigil
 
                 if (onStack == null)
                 {
-                    throw new SigilVerificationException("StoreField expected a value on the stack, but it was empty", IL, Stack);
+                    FailStackUnderflow(1);
                 }
 
                 var val = onStack[0];

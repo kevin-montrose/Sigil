@@ -43,7 +43,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("CopyObject expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var dest = onStack[1];

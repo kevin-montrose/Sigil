@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,6 +10,16 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private void FailStackUnderflow(int expected, [CallerMemberName]string method = null)
+        {
+            if (expected == 1)
+            {
+                throw new SigilVerificationException(method + " expects a value on the stack, but it was empty", IL, Stack);
+            }
+
+            throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL, Stack);
+        }
+
         private void ValidateLabels()
         {
             if (UnusedLocals.Count != 0)

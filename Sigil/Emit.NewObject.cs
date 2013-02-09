@@ -213,7 +213,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("Expected " + expectedParams.Count + " parameters to be on the stack", IL, Stack);
+                FailStackUnderflow(expectedParams.Count);
             }
 
             // Parameters come off the Stack in reverse order

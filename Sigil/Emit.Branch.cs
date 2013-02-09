@@ -58,7 +58,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfEqual expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -93,7 +93,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfNotEqual expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -128,7 +128,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfGreaterOrEqual expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -163,7 +163,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("UnsignedBranchIfGreaterOrEqual expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -198,7 +198,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfGreater expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -233,7 +233,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("UnsignedBranchIfGreater expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -268,7 +268,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfLessOrEqual expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -303,7 +303,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("UnsignedBranchIfLessOrEqual expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -338,7 +338,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfLess expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -373,7 +373,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("UnsignedBranchIfLess expects two values to be on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             UnusedLabels.Remove(label);
@@ -410,7 +410,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfFalse expects one value to be on the stack", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             UnusedLabels.Remove(label);
@@ -447,7 +447,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("BranchIfTrue expects one value to be on the stack", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             UnusedLabels.Remove(label);

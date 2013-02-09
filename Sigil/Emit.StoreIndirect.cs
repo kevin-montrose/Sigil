@@ -38,7 +38,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("StoreIndirect expected two values on the stack", IL, Stack);
+                FailStackUnderflow(2);
             }
 
             var val = onStack[0];

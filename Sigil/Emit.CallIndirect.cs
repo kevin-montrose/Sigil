@@ -272,7 +272,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("CallIndirect expected " + (parameterTypes.Length + takeExtra) + " values on the stack", IL, Stack);
+                FailStackUnderflow(parameterTypes.Length + takeExtra);
             }
 
             var reversed = onStack.Reverse().ToList();

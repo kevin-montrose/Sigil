@@ -47,7 +47,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("Unbox expects a value on the stack, but it is empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var onStack = top.Single();
@@ -98,7 +98,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("UnboxAny expects a value on the stack, but it is empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var onStack = top.Single();

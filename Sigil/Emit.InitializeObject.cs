@@ -37,7 +37,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("InitializeObject expects a value to be on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             var obj = onStack[0];

@@ -39,7 +39,7 @@ namespace Sigil
 
             if (top == null)
             {
-                throw new SigilVerificationException("LocalAllocate expects a value on the stack, but it was empty", IL, Stack);
+                FailStackUnderflow(1);
             }
 
             if (Stack.Count() > 1)

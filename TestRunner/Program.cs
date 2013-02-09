@@ -19,6 +19,8 @@ namespace TestRunner
 
             foreach (var clazz in classes.OrderBy(o => o.Name))
             {
+                if (clazz.Name.Equals("Break")) continue;
+
                 var inst = clazz.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
 
                 foreach (var test in clazz.GetMethods().Where(m => m.GetCustomAttribute<TestMethodAttribute>() != null).OrderBy(o => o.Name))

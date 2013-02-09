@@ -32,7 +32,7 @@ namespace Sigil
 
             if (onStack == null)
             {
-                throw new SigilVerificationException("InitializeBlock expects three values to be on the stack", IL, Stack);
+                FailStackUnderflow(3);
             }
 
             var start = onStack[2];
