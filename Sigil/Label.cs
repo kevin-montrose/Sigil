@@ -15,7 +15,7 @@ namespace Sigil
     /// 
     /// Before creating a delegate, all Labels must be marked.  To mark a label, call MarkLabel().
     /// </summary>
-    public class Label
+    public class Label : IOwned
     {
         /// <summary>
         /// The name of this Label.
@@ -28,11 +28,12 @@ namespace Sigil
 
         internal BufferedILGenerator.DefineLabelDelegate LabelDel { get; private set; }
 
-        internal object Owner { get; private set; }
+        private object _Owner;
+        object IOwned.Owner { get { return _Owner; } }
 
         internal Label(object owner, BufferedILGenerator.DefineLabelDelegate label, string name)
         {
-            Owner = owner;
+            _Owner = owner;
             Name = name;
             LabelDel = label;
         }

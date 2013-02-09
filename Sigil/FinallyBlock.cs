@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,19 +12,18 @@ namespace Sigil
     /// 
     /// This is roughly analogous to `finally` in C#.
     /// </summary>
-    public class FinallyBlock
+    public class FinallyBlock : IOwned
     {
         /// <summary>
         /// The ExceptionBlock this FinallyBlock appears as part of.
         /// </summary>
         public ExceptionBlock ExceptionBlock { get; private set; }
 
-        internal object Owner { get; private set; }
+        object IOwned.Owner { get { return ((IOwned)ExceptionBlock).Owner; } }
 
-        internal FinallyBlock(object owner, ExceptionBlock forTry)
+        internal FinallyBlock(ExceptionBlock forTry)
         {
             ExceptionBlock = forTry;
-            Owner = owner;
         }
     }
 }

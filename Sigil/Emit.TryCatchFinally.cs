@@ -55,9 +55,9 @@ namespace Sigil
                 throw new ArgumentNullException("forTry");
             }
 
-            if (forTry.Owner != this)
+            if (((IOwned)forTry).Owner != this)
             {
-                throw new ArgumentException("forTry is not owned by this Emit, and thus cannot be used");
+                FailOwnership(forTry);
             }
 
             var location = TryBlocks[forTry];
@@ -177,9 +177,9 @@ namespace Sigil
                 throw new ArgumentNullException("forTry");
             }
 
-            if (forTry.Owner != this)
+            if (((IOwned)forTry).Owner != this)
             {
-                throw new ArgumentException(forTry + " is not owned by this Emit, and thus cannot be used");
+                FailOwnership(forTry);
             }
 
             if (CurrentExceptionBlock.Count > 0 && forTry != CurrentExceptionBlock.Peek())
@@ -214,7 +214,7 @@ namespace Sigil
             Stack = new StackState();
             Stack = Stack.Push(TypeOnStack.Get(exceptionType));
 
-            var ret = new CatchBlock(this, exceptionType, forTry);
+            var ret = new CatchBlock(exceptionType, forTry);
 
             CatchBlocks[ret] = Tuple.Create(IL.Index, -1);
 
@@ -243,9 +243,9 @@ namespace Sigil
                 throw new ArgumentNullException("forCatch");
             }
 
-            if (forCatch.Owner != this)
+            if (((IOwned)forCatch).Owner != this)
             {
-                throw new ArgumentException("forCatch is not owned by this Emit, and thus cannot be used");
+                FailOwnership(forCatch);
             }
 
             if (!Stack.IsRoot)
@@ -303,9 +303,9 @@ namespace Sigil
                 throw new ArgumentNullException("forTry");
             }
 
-            if (forTry.Owner != this)
+            if (((IOwned)forTry).Owner != this)
             {
-                throw new ArgumentException("forTry is not owned by this Emit, and thus cannot be used");
+                FailOwnership(forTry);
             }
 
             var tryBlock = TryBlocks[forTry];
@@ -330,7 +330,7 @@ namespace Sigil
                 throw new SigilVerificationException("Stack should be empty when BeginFinallyBlock is called", IL, Stack);
             }
 
-            var ret = new FinallyBlock(this, forTry);
+            var ret = new FinallyBlock(forTry);
 
             IL.BeginFinallyBlock();
 
@@ -349,9 +349,9 @@ namespace Sigil
                 throw new ArgumentNullException("forFinally");
             }
 
-            if (forFinally.Owner != this)
+            if (((IOwned)forFinally).Owner != this)
             {
-                throw new ArgumentException("forFinally is not owned by this Emit, and thus cannot be used");
+                FailOwnership(forFinally);
             }
 
             var finallyBlock = FinallyBlocks[forFinally];

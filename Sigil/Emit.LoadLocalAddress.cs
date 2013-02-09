@@ -23,9 +23,9 @@ namespace Sigil
                 throw new ArgumentNullException("local");
             }
 
-            if (local.Owner != this)
+            if (((IOwned)local).Owner != this)
             {
-                throw new ArgumentException("local is not owned by this Emit, and thus cannot be used");
+                FailOwnership(local);
             }
 
             UnusedLocals.Remove(local);

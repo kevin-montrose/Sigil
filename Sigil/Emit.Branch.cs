@@ -21,9 +21,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             UnusedLabels.Remove(label);
@@ -49,9 +49,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -84,9 +84,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -119,9 +119,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -154,9 +154,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -189,9 +189,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -224,9 +224,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -259,9 +259,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -294,9 +294,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -329,9 +329,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -364,9 +364,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(2);
@@ -401,9 +401,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(1);
@@ -438,9 +438,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             var top = Stack.Top(1);

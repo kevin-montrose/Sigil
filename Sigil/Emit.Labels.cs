@@ -177,9 +177,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owner by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             if (!UnmarkedLabels.Contains(label))

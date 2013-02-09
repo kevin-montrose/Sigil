@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -18,6 +19,12 @@ namespace Sigil
             }
 
             throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL, Stack);
+        }
+
+        private void FailOwnership<UnownedObject>(UnownedObject obj)
+            where UnownedObject : IOwned
+        {
+            throw new ArgumentException(obj + " is not owned by this Emit, and thus cannot be used");
         }
 
         private void ValidateLabels()

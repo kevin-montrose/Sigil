@@ -13,7 +13,7 @@ namespace Sigil
     /// 
     /// To create a Local, call DeclareLocal().
     /// </summary>
-    public class Local
+    public class Local : IOwned
     {
         /// <summary>
         /// The name of this local.
@@ -33,11 +33,13 @@ namespace Sigil
         internal int Index { get; private set; }
 
         internal BufferedILGenerator.DeclareLocallDelegate LocalDel { get; private set; }
-        internal object Owner { get; private set; }
+
+        private object _Owner;
+        object IOwned.Owner { get { return _Owner; } }
 
         internal Local(object owner, int index, Type localType, BufferedILGenerator.DeclareLocallDelegate local, string name)
         {
-            Owner = owner;
+            _Owner = owner;
             LocalDel = local;
             Name = name;
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +12,9 @@ namespace Sigil
     /// 
     /// To create an ExceptionBlock call BeginExceptionBlock().
     /// </summary>
-    public class ExceptionBlock
+    public class ExceptionBlock : IOwned
     {
-        internal object Owner { get { return Label.Owner; } }
+        object IOwned.Owner { get { return ((IOwned)Label).Owner; } }
 
         /// <summary>
         /// A label which marks the end of the ExceptionBlock.

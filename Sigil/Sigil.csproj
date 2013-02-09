@@ -209,6 +209,7 @@
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Impl\AutoNamer.cs" />
+    <Compile Include="Impl\IOwned.cs" />
     <Compile Include="Label.cs" />
     <Compile Include="Local.cs" />
     <Compile Include="Impl\BufferedILGenerator.cs" />

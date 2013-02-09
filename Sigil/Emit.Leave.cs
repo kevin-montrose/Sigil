@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -21,9 +22,9 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (label.Owner != this)
+            if (((IOwned)label).Owner != this)
             {
-                throw new ArgumentException("label is not owned by this Emit, and thus cannot be used");
+                FailOwnership(label);
             }
 
             if (!TryBlocks.Any(t => t.Value.Item2 == -1) && !CatchBlocks.Any(c => c.Value.Item2 == -1))

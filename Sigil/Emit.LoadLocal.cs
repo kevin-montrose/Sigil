@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
@@ -21,9 +22,9 @@ namespace Sigil
                 throw new ArgumentNullException("local");
             }
 
-            if (local.Owner != this)
+            if (((IOwned)local).Owner != this)
             {
-                throw new ArgumentException("local is not owned by this Emit, and thus cannot be used");
+                FailOwnership(local);
             }
 
             UnusedLocals.Remove(local);

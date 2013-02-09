@@ -295,7 +295,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("forFinally is not owned by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("Sigil.FinallyBlock is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
 
@@ -365,7 +365,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("forCatch is not owned by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("Sigil.CatchBlock is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
 
@@ -433,7 +433,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("forTry is not owned by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("Sigil.ExceptionBlock is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
 
@@ -751,7 +751,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("local is not owned by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("System.Int32 _local0 is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
 
@@ -1710,7 +1710,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("local is not owned by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("System.Int32 _local0 is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
         }
@@ -1744,7 +1744,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("local is not owned by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("System.Int32 _local0 is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
         }
@@ -2300,7 +2300,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("label is not owned by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("_label0 is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
 
@@ -2370,7 +2370,7 @@ namespace SigilTests
                 }
                 catch (ArgumentException e)
                 {
-                    Assert.AreEqual("label is not owner by this Emit, and thus cannot be used", e.Message);
+                    Assert.AreEqual("_label0 is not owned by this Emit, and thus cannot be used", e.Message);
                 }
             }
 
@@ -3599,7 +3599,7 @@ namespace SigilTests
                 catch (TargetInvocationException e)
                 {
                     var f = (ArgumentException)e.InnerException;
-                    Assert.AreEqual("label is not owned by this Emit, and thus cannot be used", f.Message);
+                    Assert.AreEqual("wrong_emit is not owned by this Emit, and thus cannot be used", f.Message);
                 }
             }
         }
@@ -4377,7 +4377,7 @@ namespace SigilTests
             }
             catch (ArgumentException e)
             {
-                Assert.AreEqual("forTry is not owned by this Emit, and thus cannot be used", e.Message);
+                Assert.AreEqual("Sigil.ExceptionBlock is not owned by this Emit, and thus cannot be used", e.Message);
             }
 
             var e4 = Emit<Action>.NewDynamicMethod("E4");

@@ -13,7 +13,7 @@ namespace Sigil
     /// 
     /// To create a CatchBlock, call BeginCatchBlock(Type) or BeginCatchAllBlock().
     /// </summary>
-    public class CatchBlock
+    public class CatchBlock : IOwned
     {
         /// <summary>
         /// The ExceptionBlock this CatchBlock appears in.
@@ -35,11 +35,10 @@ namespace Sigil
         /// </summary>
         public Type ExceptionType { get; private set; }
 
-        internal object Owner { get; private set; }
+        object IOwned.Owner { get { return ((IOwned)ExceptionBlock).Owner; } }
 
-        internal CatchBlock(object owner, Type exceptionType, ExceptionBlock forTry)
+        internal CatchBlock(Type exceptionType, ExceptionBlock forTry)
         {
-            Owner = owner;
             ExceptionType = exceptionType;
             ExceptionBlock = forTry;
         }
