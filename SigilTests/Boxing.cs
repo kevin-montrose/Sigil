@@ -12,6 +12,20 @@ namespace SigilTests
     public class Boxing
     {
         [TestMethod]
+        public void Boolean()
+        {
+            var e1 = Emit<Func<bool, object>>.NewDynamicMethod("E1");
+            e1.LoadArgument(0);
+            e1.Box<bool>();
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual((object)true, d1(true));
+            Assert.AreEqual((object)false, d1(false));
+        }
+
+        [TestMethod]
         public void Simple()
         {
             var e1 = Emit<Func<object>>.NewDynamicMethod("E1");

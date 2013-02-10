@@ -49,11 +49,11 @@ namespace Sigil
 
             var onStack = top.Single();
 
-            var actually32bit = new [] { typeof(Boolean), typeof(Byte), typeof(SByte), typeof(Int16), typeof(UInt16), typeof(Int32), typeof(UInt32) };
+            var actually32Bit = valueType.IsAssignableFrom(TypeOnStack.Get<int>());
 
-            if (actually32bit.Contains(valueType))
+            if (actually32Bit)
             {
-                if (onStack != TypeOnStack.Get<int>())
+                if (!TypeOnStack.Get<int>().IsAssignableFrom(onStack))
                 {
                     throw new SigilVerificationException(onStack + " cannot be boxed as an " + valueType, IL, Stack, 0);
                 }
