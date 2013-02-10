@@ -12,6 +12,20 @@ namespace SigilTests
     public class Boxing
     {
         [TestMethod]
+        public void NullableInt()
+        {
+            var e1 = Emit<Func<int?, object>>.NewDynamicMethod("E1");
+            e1.LoadArgument(0);
+            e1.Box(typeof(int?));
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual((object)((int?)123), d1(123));
+            Assert.AreEqual((object)((int?)null), d1(null));
+        }
+
+        [TestMethod]
         public void Boolean()
         {
             var e1 = Emit<Func<bool, object>>.NewDynamicMethod("E1");

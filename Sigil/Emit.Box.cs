@@ -49,7 +49,7 @@ namespace Sigil
 
             var onStack = top.Single();
 
-            var actually32Bit = valueType.IsAssignableFrom(TypeOnStack.Get<int>());
+            var actually32Bit = valueType.IsPrimitive && valueType.IsAssignableFrom(TypeOnStack.Get<int>());
 
             if (actually32Bit)
             {
