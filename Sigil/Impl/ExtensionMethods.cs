@@ -82,8 +82,8 @@ namespace Sigil.Impl
         {
             if (t1 == t2) return true;
 
-            var t1IsPartial = t1 is TypeBuilder;
-            var t2IsPartial = t2 is TypeBuilder;
+            // quick and dirty base case
+            if (t1 == typeof(object) && !t2.IsValueType) return true;
 
             var t1Bases = GetBases(t1);
             var t2Bases = GetBases(t2);

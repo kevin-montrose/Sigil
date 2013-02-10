@@ -14,7 +14,47 @@ namespace SigilTests
     public class Calls
     {
         [TestMethod]
-        public void PartialTypeMapping()
+        public void PartialTypeMapping2()
+        {
+            {
+                var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                var mod = asm.DefineDynamicModule("Bar");
+                var t = mod.DefineType("T");
+                var dictOfT = typeof(IDictionary<,>).MakeGenericType(t, t);
+
+                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+                e1.LoadArgument(1);
+                e1.CastClass(dictOfT);
+                e1.LoadArgument(2);
+                e1.CallVirtual(typeof(object).GetMethod("Equals", new Type[] { typeof(object) }));
+                e1.Return();
+
+                e1.CreateMethod();
+
+                var type = t.CreateType();
+
+                var inst = type.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
+                var e1Mtd = type.GetMethod("E1");
+
+                Func<object, object, bool> d1 = (a, b) => (bool)e1Mtd.Invoke(inst, new object[] { a, b });
+
+                dictOfT = typeof(Dictionary<,>).MakeGenericType(type, type);
+                var cons = dictOfT.GetConstructor(Type.EmptyTypes);
+
+                var dictInst = cons.Invoke(new object[0]);
+                var listAdd = dictOfT.GetMethod("Add", new[] { type, type });
+                listAdd.Invoke(dictInst, new object[] { inst, inst });
+
+                var x = dictInst;
+                var y = "hello world";
+
+                Assert.IsTrue(d1(x, x));
+                Assert.IsFalse(d1(x, new List<int> { 1, 2, 3 }));
+            }
+        }
+
+        [TestMethod]
+        public void PartialTypeMapping1()
         {
             {
                 var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
