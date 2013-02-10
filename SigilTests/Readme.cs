@@ -36,7 +36,7 @@ namespace SigilTests
                 var mod = asm.DefineDynamicModule("Bar");
 
                 TypeBuilder myBuilder = mod.DefineType("T");
-                var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Instance", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+                var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Instance", MethodAttributes.Public, CallingConventions.HasThis);
                 // Technically this is a Func<myBuilder, int string>; but because myBuilder isn't complete
                 //   the generic parameters skip the `this` reference.  myBuilder will still be available as the
                 //   first argument to the method

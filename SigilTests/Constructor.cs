@@ -22,7 +22,7 @@ namespace SigilTests
 
             var foo = t.DefineField("Foo", typeof(int), FieldAttributes.Public);
 
-            var c = Emit<Action>.BuildConstructor(t, MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+            var c = Emit<Action>.BuildConstructor(t, MethodAttributes.Public, CallingConventions.HasThis);
             c.LoadArgument(0);
             c.LoadConstant(123);
             c.StoreField(foo);
@@ -48,7 +48,7 @@ namespace SigilTests
 
             var foo = t.DefineField("Foo", typeof(double), FieldAttributes.Public);
 
-            var c = Emit<Action<double, double>>.BuildConstructor(t, MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+            var c = Emit<Action<double, double>>.BuildConstructor(t, MethodAttributes.Public, CallingConventions.HasThis);
             c.LoadArgument(0);
             c.LoadArgument(1);
             c.LoadArgument(2);

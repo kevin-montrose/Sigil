@@ -22,7 +22,7 @@ namespace SigilTests
                 var t = mod.DefineType("T");
                 var dictOfT = typeof(IDictionary<,>).MakeGenericType(t, t);
 
-                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.HasThis);
                 e1.LoadArgument(1);
                 e1.CastClass(dictOfT);
                 e1.LoadArgument(2);
@@ -62,7 +62,7 @@ namespace SigilTests
                 var t = mod.DefineType("T");
                 var listOfT = typeof(List<>).MakeGenericType(t);
 
-                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.HasThis);
                 e1.LoadArgument(1);
                 e1.CastClass(listOfT);
                 e1.LoadArgument(2);

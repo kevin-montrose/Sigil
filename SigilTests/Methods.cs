@@ -42,7 +42,7 @@ namespace SigilTests
             var mod = asm.DefineDynamicModule("Bar");
             var t = mod.DefineType("T");
 
-            var e1 = Emit<Func<int, string>>.BuildMethod(t, "Instance", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+            var e1 = Emit<Func<int, string>>.BuildMethod(t, "Instance", MethodAttributes.Public, CallingConventions.HasThis);
             e1.LoadArgument(1);
             e1.LoadConstant(1);
             e1.Add();

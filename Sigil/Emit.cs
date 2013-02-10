@@ -424,9 +424,9 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Creates a new Emit, suitable for building a method on the given MethodBuilder.
+        /// Creates a new Emit, suitable for building a method on the given TypeBuilder.
         /// 
-        /// The DelegateType and MethodBuilder must agree on return types, parameter types (including `this`), and parameter counts.
+        /// The DelegateType and MethodBuilder must agree on return types, parameter types, and parameter counts.
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
@@ -469,7 +469,34 @@ namespace Sigil
             return ret;
         }
 
-        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false)
+        /// <summary>
+        /// Convenience method for creating static methods.
+        /// 
+        /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
+        /// </summary>
+        public static Emit<DelegateType> BuildStaticMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        {
+            return BuildMethod(type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode);
+        }
+
+        /// <summary>
+        /// Convenience method for creating instance methods.
+        /// 
+        /// Equivalent to calling to BuildMethod, but with CallingConventions.HasThis.
+        /// </summary>
+        public static Emit<DelegateType> BuildInstanceMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        {
+            return BuildMethod(type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode);
+        }
+
+        /// <summary>
+        /// Creates a new Emit, suitable for building a constructo on the given TypeBuilder.
+        /// 
+        /// The DelegateType and TypeBuilder must agree on parameter types and parameter counts.
+        /// 
+        /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
+        /// </summary>
+        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false)
         {
             if (type == null)
             {
