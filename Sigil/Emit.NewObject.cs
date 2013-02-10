@@ -210,11 +210,6 @@ namespace Sigil
                 throw new ArgumentNullException("constructor");
             }
 
-            if (constructor.DeclaringType.IsValueType)
-            {
-                throw new InvalidOperationException("Cannot NewObject a ValueType");
-            }
-
             var expectedParams = constructor.GetParameters().Select(p => TypeOnStack.Get(p.ParameterType)).ToList();
 
             var onStack = Stack.Top(expectedParams.Count);

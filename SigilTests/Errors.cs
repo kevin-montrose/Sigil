@@ -1378,20 +1378,6 @@ namespace SigilTests
                     Assert.AreEqual("Parameter #0 to Void .ctor(Char[]) should be System.Char[], but found System.Object", e.Message);
                 }
             }
-
-            {
-                var e1 = Emit<Action>.NewDynamicMethod();
-
-                try
-                {
-                    e1.NewObject(typeof(NewObjectStruct), typeof(int));
-                    Assert.Fail();
-                }
-                catch (InvalidOperationException e)
-                {
-                    Assert.AreEqual("Cannot NewObject a ValueType", e.Message);
-                }
-            }
         }
 
         [TestMethod]
