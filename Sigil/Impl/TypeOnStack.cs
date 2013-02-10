@@ -266,6 +266,7 @@ namespace Sigil.Impl
             var ret = Type.FullName;
 
             if (Type == typeof(NativeInt)) ret = "native int";
+            if (Type == typeof(NullType)) ret = "null";
 
             if (IsPointer) ret += "*";
             if (IsReference) ret += "&";
@@ -295,4 +296,7 @@ namespace Sigil.Impl
 
     // Stand in for void
     internal class VoidType { }
+
+    // Stand in for known null type
+    internal class NullType { }
 }

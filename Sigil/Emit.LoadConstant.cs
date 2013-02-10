@@ -188,7 +188,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> LoadNull()
         {
-            UpdateState(OpCodes.Ldnull, TypeOnStack.Get<object>());
+            UpdateState(OpCodes.Ldnull, TypeOnStack.Get<NullType>());
 
             return this;
         }

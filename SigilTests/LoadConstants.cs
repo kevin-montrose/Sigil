@@ -13,6 +13,20 @@ namespace SigilTests
     public class LoadConstants
     {
         [TestMethod]
+        public void Null()
+        {
+            var e1 = Emit<Func<string, string>>.NewDynamicMethod("E1");
+            e1.LoadNull();
+            e1.StoreArgument(0);
+            e1.LoadArgument(0);
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual(null, d1("Foo"));
+        }
+
+        [TestMethod]
         public void AllBools()
         {
             {

@@ -55,6 +55,9 @@ namespace Sigil.Impl
             t1 = Alias(t1);
             t2 = Alias(t2);
 
+            // The null type can be assigned to any reference type
+            if (t2 == typeof(NullType) && !t1.IsValueType) return true;
+
             return t1.IsAssignableFrom(t2);
         }
     }
