@@ -59,14 +59,6 @@ namespace Sigil.Impl
             // The null type can be assigned to any reference type
             if (t2 == typeof(NullType) && !t1.IsValueType) return true;
 
-            // Life gets interesting if the types aren't "finished"
-            /*if (t1 is TypeBuilder || t2 is TypeBuilder)
-            {
-                return ReallyIsAssignableFrom(t1, t2);
-            }
-
-            return t1.IsAssignableFrom(t2);*/
-
             return ReallyIsAssignableFrom(t1, t2);
         }
 
