@@ -10,6 +10,11 @@ namespace Sigil.Impl
     {
         private static Type Alias(Type t)
         {
+            if (t.IsEnum)
+            {
+                return Alias(Enum.GetUnderlyingType(t));
+            }
+
             if (t == typeof(bool) || t == typeof(sbyte) || t == typeof(byte) || t == typeof(short) || t == typeof(ushort) || t == typeof(uint))
             {
                 // Nothing smaller than In32 exists in CLR land

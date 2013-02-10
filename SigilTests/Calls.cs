@@ -11,6 +11,37 @@ namespace SigilTests
     [TestClass]
     public class Calls
     {
+        public enum EnumParamsEnum
+        {
+            A,
+            B
+        }
+
+        private static EnumParamsEnum? _EnumParamsMethod;
+        public static void EnumParamsMethod(EnumParamsEnum foo)
+        {
+            _EnumParamsMethod = foo;
+        }
+
+        [TestMethod]
+        public void EnumParams()
+        {
+            var e1 = Emit<Action<int>>.NewDynamicMethod();
+            e1.LoadArgument(0);
+            e1.Call(typeof(Calls).GetMethod("EnumParamsMethod"));
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            _EnumParamsMethod = null;
+            d1((int)EnumParamsEnum.A);
+            Assert.AreEqual(EnumParamsEnum.A, _EnumParamsMethod.Value);
+
+            _EnumParamsMethod = null;
+            d1((int)EnumParamsEnum.B);
+            Assert.AreEqual(EnumParamsEnum.B, _EnumParamsMethod.Value);
+        }
+
         private static bool DoesNothingWasCalled;
         public static void DoesNothing()
         {

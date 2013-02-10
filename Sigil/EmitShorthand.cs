@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -172,6 +173,12 @@ namespace Sigil
         public DelegateType CreateDelegate()
         {
             return InnerEmit.CreateDelegate();
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.CreateMethod" />
+        public MethodBuilder CreateMethod()
+        {
+            return InnerEmit.CreateMethod();
         }
 
         /// <summary cref="M:Sigil.Emit`1.Add" />
