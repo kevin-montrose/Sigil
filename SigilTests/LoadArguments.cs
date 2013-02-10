@@ -67,6 +67,8 @@ namespace SigilTests
             var ret = (int)d1.DynamicInvoke(args.Cast<object>().ToArray());
 
             Assert.AreEqual(args.Sum(), ret);
+
+            Assert.AreEqual(260, e1.MaxStackSize);
         }
     }
 }

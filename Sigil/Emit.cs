@@ -73,6 +73,13 @@ namespace Sigil
         /// </summary>
         public bool AllowsUnverifiableCIL { get; private set; }
 
+        /// <summary>
+        /// Returns the maxmimum number of items on the stack for the IL stream created with the current emit.
+        /// 
+        /// This is not the maximum that *can be placed*, but the maximum that actually are.
+        /// </summary>
+        public int MaxStackSize { get; private set; }
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -582,6 +589,8 @@ namespace Sigil
             {
                 Stack = Stack.Push(addToStack);
             }
+
+            MaxStackSize = Math.Max(MaxStackSize, Stack.Count());
 
             InstructionStream.Add(Tuple.Create(instr, Stack));
         }
