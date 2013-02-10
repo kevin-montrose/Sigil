@@ -10,7 +10,7 @@ namespace Sigil.Impl
     {
         private static Type Alias(Type t)
         {
-            if (t.IsEnum)
+            if (t.IsValueType && t.IsEnum)
             {
                 return Alias(Enum.GetUnderlyingType(t));
             }
