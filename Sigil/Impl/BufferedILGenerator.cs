@@ -16,7 +16,7 @@ namespace Sigil.Impl
 
         public int Index { get { return Buffer.Count; } }
 
-        private List<Action<ILGenerator, StringBuilder>> Buffer = new List<Action<ILGenerator, StringBuilder>>();
+        private List<Action<ILGenerator, bool, StringBuilder>> Buffer = new List<Action<ILGenerator, bool, StringBuilder>>();
 
         private Type DelegateType;
 
@@ -31,7 +31,7 @@ namespace Sigil.Impl
 
             foreach (var x in Buffer)
             {
-                x(il, log);
+                x(il, false, log);
             }
 
             return log.ToString();
@@ -50,7 +50,7 @@ namespace Sigil.Impl
 
             foreach (var x in Buffer.Take(end))
             {
-                x(il, instrs);
+                x(il, false, instrs);
             }
 
             instructions = instrs.ToString();
@@ -73,7 +73,7 @@ namespace Sigil.Impl
 
             foreach (var x in Buffer)
             {
-                x(il, instrs);
+                x(il, true, instrs);
                 ret.Add(instrs.ToString().TrimEnd());
                 instrs.Clear();
             }
@@ -99,9 +99,13 @@ namespace Sigil.Impl
 
             Buffer.Insert(
                 ix, 
-                (il, log) => 
-                { 
-                    il.Emit(op);
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op);
+                    }
+
                     if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
                     {
                         log.Append(op.ToString());
@@ -117,9 +121,12 @@ namespace Sigil.Impl
         public void Emit(OpCode op)
         {
             Buffer.Add(
-                (il, log) => 
-                { 
-                    il.Emit(op);
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op);
+                    }
 
                     if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
                     {
@@ -136,9 +143,12 @@ namespace Sigil.Impl
         public void Emit(OpCode op, int i)
         {
             Buffer.Add(
-                (il, log) => 
-                { 
-                    il.Emit(op, i);
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, i);
+                    }
 
                     if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
                     {
@@ -160,12 +170,32 @@ namespace Sigil.Impl
                 asInt = (int)ui;
             }
 
-            Buffer.Add((il, log) => { il.Emit(op, asInt); log.AppendLine(op + " " + ui); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, asInt);
+                    }
+                    
+                    log.AppendLine(op + " " + ui);
+                }
+            );
         }
 
         public void Emit(OpCode op, long l)
         {
-            Buffer.Add((il, log) => { il.Emit(op, l); log.AppendLine(op + " " + l); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, l);
+                    }
+                    
+                    log.AppendLine(op + " " + l); 
+                }
+            );
         }
 
         public void Emit(OpCode op, ulong ul)
@@ -176,42 +206,121 @@ namespace Sigil.Impl
                 asLong = (long)ul; 
             }
 
-            Buffer.Add((il, log) => { il.Emit(op, asLong); log.AppendLine(op + " " + ul); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, asLong);
+                    }
+                    
+                    log.AppendLine(op + " " + ul); 
+                }
+            );
         }
 
         public void Emit(OpCode op, float f)
         {
-            Buffer.Add((il, log) => { il.Emit(op, f); log.AppendLine(op + " " + f); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, f);
+                    }
+                    
+                    log.AppendLine(op + " " + f); 
+                }
+            );
         }
 
         public void Emit(OpCode op, double d)
         {
-            Buffer.Add((il, log) => { il.Emit(op, d); log.AppendLine(op + " " + d); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, d);
+                    }
+                    
+                    log.AppendLine(op + " " + d);
+                });
         }
 
         public void Emit(OpCode op, MethodInfo method)
         {
-            Buffer.Add((il, log) => { il.Emit(op, method); log.AppendLine(op + " " + method); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, method);
+                    }
+
+                    log.AppendLine(op + " " + method); 
+                }
+            );
         }
 
         public void Emit(OpCode op, ConstructorInfo cons)
         {
-            Buffer.Add((il, log) => { il.Emit(op, cons); log.AppendLine(op + " " + cons); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, cons);
+                    }
+                    
+                    log.AppendLine(op + " " + cons); 
+                }
+            );
         }
 
         public void Emit(OpCode op, Type type)
         {
-            Buffer.Add((il, log) => { il.Emit(op, type); log.AppendLine(op + " " + type); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, type);
+                    }
+
+                    log.AppendLine(op + " " + type); 
+                }
+            );
         }
 
         public void Emit(OpCode op, FieldInfo field)
         {
-            Buffer.Add((il, log) => { il.Emit(op, field); log.AppendLine(op + " " + field); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, field);
+                    }
+
+                    log.AppendLine(op + " " + field); 
+                }
+            );
         }
 
         public void Emit(OpCode op, string str)
         {
-            Buffer.Add((il, log) => { il.Emit(op, str); log.AppendLine(op + " '" + str.Replace("'", @"\'") + "'"); });
+            Buffer.Add(
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, str);
+                    }
+                    
+                    log.AppendLine(op + " '" + str.Replace("'", @"\'") + "'");
+                }
+            );
         }
 
         public void Emit(OpCode op, Sigil.Label label, out UpdateOpCodeDelegate update)
@@ -225,10 +334,13 @@ namespace Sigil.Impl
                 };
 
             Buffer.Add(
-                (il, log) => 
+                (il, logOnly, log) => 
                 {
-                    var l = label.LabelDel(il);
-                    il.Emit(localOp, l);
+                    if (!logOnly)
+                    {
+                        var l = label.LabelDel(il);
+                        il.Emit(localOp, l);
+                    }
 
                     log.AppendLine(op + " " + label);
                 }
@@ -246,10 +358,13 @@ namespace Sigil.Impl
                 };
 
             Buffer.Add(
-                (il, log) =>
+                (il, logOnly, log) =>
                 {
-                    var ls = labels.Select(l => l.LabelDel(il)).ToArray();
-                    il.Emit(localOp, ls);
+                    if (!logOnly)
+                    {
+                        var ls = labels.Select(l => l.LabelDel(il)).ToArray();
+                        il.Emit(localOp, ls);
+                    }
 
                     log.AppendLine(op + " " + string.Join(", ", labels.AsEnumerable()));
                 }
@@ -259,12 +374,15 @@ namespace Sigil.Impl
         public void Emit(OpCode op, Sigil.Local local)
         {
             Buffer.Add(
-                (il, log) => 
+                (il, logOnly, log) => 
                     {
-                        var l = local.LocalDel(il);
-                        il.Emit(op, l);
+                        if (!logOnly)
+                        {
+                            var l = local.LocalDel(il);
+                            il.Emit(op, l);
+                        }
 
-                        log.AppendLine(op + " " + l);
+                        log.AppendLine(op + " " + local);
                     }
             );
         }
@@ -272,9 +390,12 @@ namespace Sigil.Impl
         public void Emit(OpCode op, CallingConventions callConventions, Type returnType, Type[] parameterTypes)
         {
             Buffer.Add(
-                (il, log) =>
+                (il, logOnly, log) =>
                 {
-                    il.EmitCalli(op, callConventions, returnType, parameterTypes, null);
+                    if (!logOnly)
+                    {
+                        il.EmitCalli(op, callConventions, returnType, parameterTypes, null);
+                    }
 
                     log.AppendLine(op + " " + callConventions + " " + returnType + " " + string.Join(" ", (IEnumerable<Type>)parameterTypes));
                 }
@@ -303,9 +424,12 @@ namespace Sigil.Impl
                 };
 
             Buffer.Add(
-                (il, log) => 
-                { 
-                    ret(il);
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        ret(il);
+                    }
 
                     log.AppendLine("--BeginExceptionBlock--");
                 }
@@ -317,9 +441,12 @@ namespace Sigil.Impl
         public void BeginCatchBlock(Type exception)
         {
             Buffer.Add(
-                (il, log) =>
+                (il, logOnly, log) =>
                 {
-                    il.BeginCatchBlock(exception);
+                    if (!logOnly)
+                    {
+                        il.BeginCatchBlock(exception);
+                    }
 
                     log.AppendLine("--BeginCatchBlock(" + exception + ")--");
                 }
@@ -329,9 +456,12 @@ namespace Sigil.Impl
         public void EndExceptionBlock()
         {
             Buffer.Add(
-                (il, log) =>
+                (il, logOnly, log) =>
                 {
-                    il.EndExceptionBlock();
+                    if (!logOnly)
+                    {
+                        il.EndExceptionBlock();
+                    }
 
                     log.AppendLine("--EndExceptionBlock--");
                 }
@@ -341,9 +471,12 @@ namespace Sigil.Impl
         public void BeginFinallyBlock()
         {
             Buffer.Add(
-                (il, log) =>
+                (il, logOnly, log) =>
                 {
-                    il.BeginFinallyBlock();
+                    if (!logOnly)
+                    {
+                        il.BeginFinallyBlock();
+                    }
 
                     log.AppendLine("--BeginFinallyBlock--");
                 }
@@ -372,9 +505,12 @@ namespace Sigil.Impl
                 };
 
             Buffer.Add(
-                (il, log) => 
-                { 
-                    ret(il);
+                (il, logOnly, log) => 
+                {
+                    if (!logOnly)
+                    {
+                        ret(il);
+                    }
                 }
             );
 
@@ -384,10 +520,13 @@ namespace Sigil.Impl
         public void MarkLabel(Sigil.Label label)
         {
             Buffer.Add(
-                (il, log) =>
+                (il, logOnly, log) =>
                 {
-                    var l = label.LabelDel(il);
-                    il.MarkLabel(l);
+                    if (!logOnly)
+                    {
+                        var l = label.LabelDel(il);
+                        il.MarkLabel(l);
+                    }
 
                     log.AppendLine();
                     log.AppendLine(label + ":");
@@ -417,9 +556,12 @@ namespace Sigil.Impl
                 };
 
             Buffer.Add(
-                (il, log) => 
-                { 
-                    ret(il); 
+                (il, logOnly,log) => 
+                {
+                    if (!logOnly)
+                    {
+                        ret(il);
+                    }
                 }
             );
 
