@@ -181,6 +181,12 @@ namespace Sigil
             return InnerEmit.CreateMethod();
         }
 
+        /// <summary cref="M:Sigil.Emit`1.CreateConstructor" />
+        public ConstructorBuilder CreateConstructor()
+        {
+            return InnerEmit.CreateConstructor();
+        }
+
         /// <summary cref="M:Sigil.Emit`1.Add" />
         public EmitShorthand<DelegateType> Add()
         {

@@ -64,6 +64,7 @@
     <Compile Include="Calls.cs" />
     <Compile Include="CastClass.cs" />
     <Compile Include="CheckFinite.cs" />
+    <Compile Include="Constructor.cs" />
     <Compile Include="InitializeBlock.cs" />
     <Compile Include="Compares.cs" />
     <Compile Include="Converts.cs" />

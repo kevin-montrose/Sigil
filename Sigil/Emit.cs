@@ -65,12 +65,14 @@ namespace Sigil
         private MethodBuilder MtdBuilder;
         private bool MethodBuilt;
 
+        private ConstructorBuilder ConstrBuilder;
+        private bool ConstructorBuilt;
+
         /// <summary>
         /// Returns true if this Emit can make use of unverifiable instructions.
         /// </summary>
         public bool AllowsUnverifiableCIL { get; private set; }
 
-        //private Emit(DynamicMethod dynMethod, bool allowUnverifiable)
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -225,10 +227,10 @@ namespace Sigil
         /// 
         /// Returns a MethodBuilder, which can be used to define overrides or for further inspection.
         /// 
-        /// `instructions` will be set to a representation of the instructions making up the returned delegate.
-        /// Note that this string is typically *not* enough to regenerate the delegate, it is available for
+        /// `instructions` will be set to a representation of the instructions making up the returned method.
+        /// Note that this string is typically *not* enough to regenerate the method, it is available for
         /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
-        /// the returned delegate fails validation (indicative of a bug in Sigil) or
+        /// the returned method fails validation (indicative of a bug in Sigil) or
         /// behaves unexpectedly (indicative of a logic bug in the consumer code).
         /// </summary>
         public MethodBuilder CreateMethod(out string instructions)
@@ -268,6 +270,61 @@ namespace Sigil
         {
             string ignored;
             return CreateMethod(out ignored);
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the ConstructorBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
+        /// 
+        /// `instructions` will be set to a representation of the instructions making up the returned constructor.
+        /// Note that this string is typically *not* enough to regenerate the constructor, it is available for
+        /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
+        /// the returned constructor fails validation (indicative of a bug in Sigil) or
+        /// behaves unexpectedly (indicative of a logic bug in the consumer code).
+        /// </summary>
+        public ConstructorBuilder CreateConstructor(out string instructions)
+        {
+            if (ConstrBuilder == null)
+            {
+                throw new InvalidOperationException("Emit was not created to build a constructor, thus CreateConstructor cannot be called");
+            }
+
+            if (ConstructorBuilt)
+            {
+                instructions = null;
+                return ConstrBuilder;
+            }
+
+            ConstructorBuilt = true;
+
+            var il = ConstrBuilder.GetILGenerator();
+            instructions = IL.UnBuffer(il);
+
+            AutoNamer.Release(this);
+
+            return ConstrBuilder;
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the ConstructorBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
+        /// </summary>
+        public ConstructorBuilder CreateConstructor()
+        {
+            string ignored;
+            return CreateConstructor(out ignored);
         }
 
         private static void CheckIsDelegate<CheckDelegateType>()
@@ -341,6 +398,24 @@ namespace Sigil
             return ret;
         }
 
+        private static void CheckAttributesAndConventions(MethodAttributes attributes, CallingConventions callingConvention)
+        {
+            if ((attributes & ~(MethodAttributes.Abstract | MethodAttributes.Assembly | MethodAttributes.CheckAccessOnOverride | MethodAttributes.FamANDAssem | MethodAttributes.Family | MethodAttributes.FamORAssem | MethodAttributes.Final | MethodAttributes.HasSecurity | MethodAttributes.HideBySig | MethodAttributes.MemberAccessMask | MethodAttributes.NewSlot | MethodAttributes.PinvokeImpl | MethodAttributes.Private | MethodAttributes.PrivateScope | MethodAttributes.Public | MethodAttributes.RequireSecObject | MethodAttributes.ReuseSlot | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName | MethodAttributes.Static | MethodAttributes.UnmanagedExport | MethodAttributes.Virtual | MethodAttributes.VtableLayoutMask)) != 0)
+            {
+                throw new ArgumentException("Unrecognized flag in attributes");
+            }
+
+            if ((callingConvention & ~(CallingConventions.Any | CallingConventions.ExplicitThis | CallingConventions.HasThis | CallingConventions.Standard | CallingConventions.VarArgs)) != 0)
+            {
+                throw new ArgumentException("Unrecognized flag in callingConvention");
+            }
+
+            if (attributes.HasFlag(MethodAttributes.Static) && callingConvention.HasFlag(CallingConventions.HasThis))
+            {
+                throw new ArgumentException("Static methods cannot have a this reference");
+            }
+        }
+
         /// <summary>
         /// Creates a new Emit, suitable for building a method on the given MethodBuilder.
         /// 
@@ -360,20 +435,7 @@ namespace Sigil
                 throw new ArgumentNullException("name");
             }
 
-            if ((attributes & ~(MethodAttributes.Abstract | MethodAttributes.Assembly | MethodAttributes.CheckAccessOnOverride | MethodAttributes.FamANDAssem | MethodAttributes.Family | MethodAttributes.FamORAssem | MethodAttributes.Final | MethodAttributes.HasSecurity | MethodAttributes.HideBySig | MethodAttributes.MemberAccessMask | MethodAttributes.NewSlot | MethodAttributes.PinvokeImpl | MethodAttributes.Private | MethodAttributes.PrivateScope | MethodAttributes.Public | MethodAttributes.RequireSecObject | MethodAttributes.ReuseSlot | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName | MethodAttributes.Static | MethodAttributes.UnmanagedExport | MethodAttributes.Virtual | MethodAttributes.VtableLayoutMask)) != 0)
-            {
-                throw new ArgumentException("Unrecognized flag in attributes");
-            }
-
-            if ((callingConvention & ~(CallingConventions.Any | CallingConventions.ExplicitThis | CallingConventions.HasThis | CallingConventions.Standard | CallingConventions.VarArgs)) != 0)
-            {
-                throw new ArgumentException("Unrecognized flag in callingConvention");
-            }
-
-            if (attributes.HasFlag(MethodAttributes.Static) && callingConvention.HasFlag(CallingConventions.HasThis))
-            {
-                throw new ArgumentException("Static methods cannot have a this reference");
-            }
+            CheckAttributesAndConventions(attributes, callingConvention);
 
             CheckIsDelegate<DelegateType>();
 
@@ -388,11 +450,55 @@ namespace Sigil
             if (callingConvention.HasFlag(CallingConventions.HasThis))
             {
                 // Shove `this` in front, can't require it because it doesn't exist yet!
-                parameterTypes = new Type[] { type }.Union(parameterTypes).ToArray();
+                var pList = new List<Type>(parameterTypes);
+                pList.Insert(0, type);
+
+                parameterTypes = pList.ToArray();
             }
 
             var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode);
             ret.MtdBuilder = methodBuilder;
+
+            return ret;
+        }
+
+        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            CheckAttributesAndConventions(attributes, callingConvention);
+
+            if (!callingConvention.HasFlag(CallingConventions.HasThis))
+            {
+                throw new ArgumentException("Constructors always have a this reference");
+            }
+
+            CheckIsDelegate<DelegateType>();
+
+            var delType = typeof(DelegateType);
+
+            var invoke = delType.GetMethod("Invoke");
+            var returnType = invoke.ReturnType;
+            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+
+            if (returnType != typeof(void))
+            {
+                throw new ArgumentException("DelegateType used must return void");
+            }
+
+            var constructorBuilder = type.DefineConstructor(attributes, callingConvention, parameterTypes);
+
+            // Constructors always have a `this`
+            var pList = new List<Type>(parameterTypes);
+            pList.Insert(0, type);
+
+            parameterTypes = pList.ToArray();
+
+            var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode);
+            ret.ConstrBuilder = constructorBuilder;
 
             return ret;
         }
