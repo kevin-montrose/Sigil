@@ -3,6 +3,8 @@ using Sigil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,6 +13,46 @@ namespace SigilTests
     [TestClass]
     public class Calls
     {
+        [TestMethod]
+        public void PartialTypeMapping()
+        {
+            {
+                var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+                var mod = asm.DefineDynamicModule("Bar");
+                var t = mod.DefineType("T");
+                var listOfT = typeof(List<>).MakeGenericType(t);
+
+                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
+                e1.LoadArgument(1);
+                e1.CastClass(listOfT);
+                e1.LoadArgument(2);
+                e1.CallVirtual(typeof(object).GetMethod("Equals", new Type[] { typeof(object) }));
+                e1.Return();
+
+                e1.CreateMethod();
+
+                var type = t.CreateType();
+
+                var inst = type.GetConstructor(Type.EmptyTypes).Invoke(new object[0]);
+                var e1Mtd = type.GetMethod("E1");
+
+                Func<object, object, bool> d1 = (a, b) => (bool)e1Mtd.Invoke(inst, new object[] { a, b });
+
+                listOfT = typeof(List<>).MakeGenericType(type);
+                var cons = listOfT.GetConstructor(Type.EmptyTypes);
+
+                var listInst = cons.Invoke(new object[0]);
+                var listAdd = listOfT.GetMethod("Add", new[] { type });
+                listAdd.Invoke(listInst, new object[] { inst });
+
+                var x = listInst;
+                var y = "hello world";
+
+                Assert.IsTrue(d1(x, x));
+                Assert.IsFalse(d1(x, new List<int> { 1, 2, 3 }));
+            }
+        }
+
         public enum EnumParamsEnum
         {
             A,

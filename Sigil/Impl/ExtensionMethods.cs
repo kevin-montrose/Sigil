@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -57,6 +58,72 @@ namespace Sigil.Impl
 
             // The null type can be assigned to any reference type
             if (t2 == typeof(NullType) && !t1.IsValueType) return true;
+
+            // Life gets interesting if the types aren't "finished"
+            /*if (t1 is TypeBuilder || t2 is TypeBuilder)
+            {
+                return ReallyIsAssignableFrom(t1, t2);
+            }
+
+            return t1.IsAssignableFrom(t2);*/
+
+            return ReallyIsAssignableFrom(t1, t2);
+        }
+
+        private static List<Type> GetBases(Type t)
+        {
+            if (t.IsValueType) return new List<Type>();
+
+            var ret = new List<Type>();
+            t = t.BaseType;
+
+            while (t != null)
+            {
+                ret.Add(t);
+                t = t.BaseType;
+            }
+
+            return ret;
+        }
+
+        private static bool ReallyIsAssignableFrom(Type t1, Type t2)
+        {
+            if (t1 == t2) return true;
+
+            var t1IsPartial = t1 is TypeBuilder;
+            var t2IsPartial = t2 is TypeBuilder;
+
+            var t1Bases = GetBases(t1);
+            var t2Bases = GetBases(t2);
+
+            if (t2Bases.Any(t2b => TypeOnStack.Get(t1).IsAssignableFrom(TypeOnStack.Get(t2b)))) return true;
+
+            if (t1Bases.Any(t1b => t2Bases.Any(t2b => TypeOnStack.Get(t1b).IsAssignableFrom(TypeOnStack.Get(t2b))))) return true;
+
+            if (t1.IsInterface)
+            {
+                var t2Interfaces = t2.GetInterfaces();
+
+                return t2Interfaces.Any(t2i => TypeOnStack.Get(t1).IsAssignableFrom(TypeOnStack.Get(t2i)));
+            }
+
+            if (t1.IsGenericType && t2.IsGenericType)
+            {
+                var t1Def = t1.GetGenericTypeDefinition();
+                var t2Def = t2.GetGenericTypeDefinition();
+
+                if (t1Def != t2Def) return false;
+
+                var t1Args = t1.GetGenericArguments();
+                var t2Args = t2.GetGenericArguments();
+
+                for (var i = 0; i < t1Args.Length; i++)
+                {
+                    if (!TypeOnStack.Get(t1Args[i]).IsAssignableFrom(TypeOnStack.Get(t2Args[i]))) return false;
+                }
+
+                return true;
+            }
 
             return t1.IsAssignableFrom(t2);
         }
