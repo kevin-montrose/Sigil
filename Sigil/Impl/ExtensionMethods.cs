@@ -90,8 +90,6 @@ namespace Sigil.Impl
 
             if (t2Bases.Any(t2b => TypeOnStack.Get(t1).IsAssignableFrom(TypeOnStack.Get(t2b)))) return true;
 
-            if (t1Bases.Any(t1b => t2Bases.Any(t2b => TypeOnStack.Get(t1b).IsAssignableFrom(TypeOnStack.Get(t2b))))) return true;
-
             if (t1.IsInterface)
             {
                 var t2Interfaces = t2.GetInterfaces();

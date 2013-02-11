@@ -13,6 +13,28 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void GenericThisCall()
+        {
+            {
+                var e1 = Emit<Action<Action<string>>>.NewDynamicMethod("E1");
+                var invoke = typeof(Action<int>).GetMethod("Invoke");
+
+                try
+                {
+                    e1.LoadArgument(0);
+                    e1.LoadConstant(1);
+                    e1.CallVirtual(invoke);
+
+                    Assert.Fail();
+                }
+                catch (SigilVerificationException e)
+                {
+                    Assert.AreEqual("Parameter #0 to Void Invoke(Int32) should be System.Action`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], but found System.Action`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void Compare()
         {
             {

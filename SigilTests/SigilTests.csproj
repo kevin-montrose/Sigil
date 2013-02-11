@@ -57,6 +57,7 @@
     <Compile Include="Add.cs" />
     <Compile Include="AutoNamer.cs" />
     <Compile Include="Bitwise.cs" />
+    <Compile Include="BlogPost.cs" />
     <Compile Include="Boxing.cs" />
     <Compile Include="Branches.cs" />
     <Compile Include="Break.cs" />
