@@ -20,7 +20,7 @@ namespace SigilTests
             var mod = asm.DefineDynamicModule("Bar");
             var t = mod.DefineType("T");
 
-            var e1 = Emit<Func<int, string>>.BuildMethod(t, "Static", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard);
+            var e1 = Emit<Func<int, string>>.BuildStaticMethod(t, "Static", MethodAttributes.Public);
             e1.LoadArgument(0);
             e1.Box<int>();
             e1.CallVirtual(typeof(object).GetMethod("ToString", Type.EmptyTypes));
@@ -42,7 +42,7 @@ namespace SigilTests
             var mod = asm.DefineDynamicModule("Bar");
             var t = mod.DefineType("T");
 
-            var e1 = Emit<Func<int, string>>.BuildMethod(t, "Instance", MethodAttributes.Public, CallingConventions.HasThis);
+            var e1 = Emit<Func<int, string>>.BuildInstanceMethod(t, "Instance", MethodAttributes.Public);
             e1.LoadArgument(1);
             e1.LoadConstant(1);
             e1.Add();
