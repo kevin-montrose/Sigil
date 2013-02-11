@@ -4,7 +4,7 @@ using Sigil;
 
 namespace SigilTests
 {
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Init
     {
         delegate string FooDelegate(object p);

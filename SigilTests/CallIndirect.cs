@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class CallIndirect
     {
         public static string Foo(int i)

@@ -20,7 +20,7 @@ namespace SigilTests
     /// and then confirm that Sigil won't allow that instruction (or instruction sequence) when in a "verified instructions only" mode.
     /// And then that the same sequence actually works in "unverified" mode.
     /// </summary>
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Verifiability
     {
         [TestMethod]

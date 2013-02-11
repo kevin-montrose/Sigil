@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class LoadConstants
     {
         [TestMethod]

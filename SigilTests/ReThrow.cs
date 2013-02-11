@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class ReThrow
     {
         public static void AlwaysThrows()

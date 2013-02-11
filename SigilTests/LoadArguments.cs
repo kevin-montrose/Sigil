@@ -9,7 +9,7 @@ using Sigil;
 
 namespace SigilTests
 {
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class LoadArguments
     {
         [TestMethod]
