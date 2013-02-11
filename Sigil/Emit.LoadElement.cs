@@ -30,17 +30,17 @@ namespace Sigil
 
             if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("LoadElement expects an int or native int on the top of the stack, found " + index, IL, Stack, 0);
+                throw new SigilVerificationException("LoadElement expects an int or native int on the top of the stack, found " + index, IL.Instructions(Locals), Stack, 0);
             }
 
             if (array.IsReference || array.IsPointer || !array.Type.IsArray)
             {
-                throw new SigilVerificationException("LoadElement expects an array as the second element on the stack, found " + array, IL, Stack, 1);
+                throw new SigilVerificationException("LoadElement expects an array as the second element on the stack, found " + array, IL.Instructions(Locals), Stack, 1);
             }
 
             if (array.Type.GetArrayRank() != 1)
             {
-                throw new SigilVerificationException("LoadElement expects a 1-dimensional array, found " + array, IL, Stack, 1);
+                throw new SigilVerificationException("LoadElement expects a 1-dimensional array, found " + array, IL.Instructions(Locals), Stack, 1);
             }
 
             OpCode? instr = null;

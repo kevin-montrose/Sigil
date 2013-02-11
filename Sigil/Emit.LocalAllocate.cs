@@ -44,14 +44,14 @@ namespace Sigil
 
             if (Stack.Count() > 1)
             {
-                throw new SigilVerificationException("LocalAllocate requires the stack only contain the size value", IL, Stack);
+                throw new SigilVerificationException("LocalAllocate requires the stack only contain the size value", IL.Instructions(Locals), Stack);
             }
 
             var numBytes = top[0];
 
             if (numBytes != TypeOnStack.Get<int>() && numBytes != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("LocalAllocate expected an int or native int, found " + numBytes, IL, Stack, 0);
+                throw new SigilVerificationException("LocalAllocate expected an int or native int, found " + numBytes, IL.Instructions(Locals), Stack, 0);
             }
 
             UpdateState(OpCodes.Localloc, TypeOnStack.Get<NativeInt>(), pop: 1);

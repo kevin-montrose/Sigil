@@ -54,7 +54,7 @@ namespace Sigil
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {
-                    throw new SigilVerificationException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, IL, Stack, onStack.Length - 1 - i);
+                    throw new SigilVerificationException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, IL.Instructions(Locals), Stack, onStack.Length - 1 - i);
                 }
             }
 

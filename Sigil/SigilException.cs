@@ -29,19 +29,20 @@ namespace Sigil
         private int? BranchLoc;
         private int? LabelLoc;
 
-        internal SigilVerificationException(string message, BufferedILGenerator il) : base(message)
+        internal SigilVerificationException(string message, string[] instructions) : base(message)
         {
-            Instructions = il.Instructions();
+            Instructions = instructions;
         }
 
-        internal SigilVerificationException(string message, BufferedILGenerator il, StackState stack, params int[] locsOnStack) : this(message, il)
+        internal SigilVerificationException(string message, string[] instructions, StackState stack, params int[] locsOnStack)
+            : this(message, instructions)
         {
             BadValueLocation = locsOnStack;
             Stack = stack;
         }
 
-        internal SigilVerificationException(string message, BufferedILGenerator il, StackState atBranch, int branchLoc, StackState atLabel, int labelLoc)
-            : this(message, il)
+        internal SigilVerificationException(string message, string[] instructions, StackState atBranch, int branchLoc, StackState atLabel, int labelLoc)
+            : this(message, instructions)
         {
             Stack = atBranch;
             SecondStack = atLabel;

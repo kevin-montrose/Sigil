@@ -41,17 +41,17 @@ namespace Sigil
 
             if (!start.IsPointer && !start.IsReference && start != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("InitializeBlock expects the start value to be a pointer, reference, or native int; found " + start, IL, Stack, 2);
+                throw new SigilVerificationException("InitializeBlock expects the start value to be a pointer, reference, or native int; found " + start, IL.Instructions(Locals), Stack, 2);
             }
 
             if (init != TypeOnStack.Get<int>() && init != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("InitBlock expects the initial value to be an int or native int; found " + init, IL, Stack, 1);
+                throw new SigilVerificationException("InitBlock expects the initial value to be an int or native int; found " + init, IL.Instructions(Locals), Stack, 1);
             }
 
             if (count != TypeOnStack.Get<int>())
             {
-                throw new SigilVerificationException("InitBlock expects the count to be an int; found " + count, IL, Stack, 0);
+                throw new SigilVerificationException("InitBlock expects the count to be an int; found " + count, IL.Instructions(Locals), Stack, 0);
             }
 
             if(isVolatile)

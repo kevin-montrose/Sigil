@@ -15,10 +15,10 @@ namespace Sigil
         {
             if (expected == 1)
             {
-                throw new SigilVerificationException(method + " expects a value on the stack, but it was empty", IL, Stack);
+                throw new SigilVerificationException(method + " expects a value on the stack, but it was empty", IL.Instructions(Locals), Stack);
             }
 
-            throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL, Stack);
+            throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL.Instructions(Locals), Stack);
         }
 
         private void FailOwnership<UnownedObject>(UnownedObject obj)
@@ -33,8 +33,8 @@ namespace Sigil
             {
                 throw 
                     new SigilVerificationException(
-                        "Locals [" + string.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used", 
-                        IL,
+                        "Locals [" + string.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used",
+                        IL.Instructions(Locals),
                         Stack
                     );
             }
@@ -43,8 +43,8 @@ namespace Sigil
             {
                 throw 
                     new SigilVerificationException(
-                        "Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used", 
-                        IL,
+                        "Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used",
+                        IL.Instructions(Locals),
                         Stack
                     );
             }
@@ -63,8 +63,8 @@ namespace Sigil
                 {
                     throw 
                         new SigilVerificationException(
-                            "Branch to " + kv.Value.Item1 + " has a stack that doesn't match the destination", 
-                            IL,
+                            "Branch to " + kv.Value.Item1 + " has a stack that doesn't match the destination",
+                            IL.Instructions(Locals),
                             kv.Key,
                             branchLoc,
                             mark,
@@ -82,8 +82,8 @@ namespace Sigil
                 {
                     throw 
                         new SigilVerificationException(
-                            "Unended ExceptionBlock " + kv.Key, 
-                            IL,
+                            "Unended ExceptionBlock " + kv.Key,
+                            IL.Instructions(Locals),
                             Stack
                         );
                 }
@@ -146,7 +146,7 @@ namespace Sigil
                         throw 
                             new SigilVerificationException(
                                 "Cannot branch from inside " + fromCatchBlock + " to outside, exit the ExceptionBlock first",
-                                IL
+                                IL.Instructions(Locals)
                             );
                     }
                 }
@@ -156,7 +156,7 @@ namespace Sigil
                     throw 
                         new SigilVerificationException(
                             "Cannot branch from inside " + fromFinallyBlock + " to outside, exit the ExceptionBlock first",
-                            IL
+                            IL.Instructions(Locals)
                         );
                 }
 
@@ -165,7 +165,7 @@ namespace Sigil
                     throw 
                         new SigilVerificationException(
                             "Cannot branch into a FinallyBlock",
-                            IL
+                            IL.Instructions(Locals)
                         );
                 }
 
@@ -176,7 +176,7 @@ namespace Sigil
                         throw 
                             new SigilVerificationException(
                                 "Cannot branch from inside " + fromTryBlock + " to outside, exit the ExceptionBlock first",
-                                IL
+                                IL.Instructions(Locals)
                             );
                     }
                 }
@@ -199,14 +199,14 @@ namespace Sigil
                     mark.Add(i);
                 }
 
-                throw new SigilVerificationException("Delegates must leave their stack empty when they end", IL, Stack, mark.ToArray());
+                throw new SigilVerificationException("Delegates must leave their stack empty when they end", IL.Instructions(Locals), Stack, mark.ToArray());
             }
 
             var lastInstr = InstructionStream.LastOrDefault();
 
             if (lastInstr == null || lastInstr.Item1 != OpCodes.Ret)
             {
-                throw new SigilVerificationException("Delegate must end with Return", IL, Stack);
+                throw new SigilVerificationException("Delegate must end with Return", IL.Instructions(Locals), Stack);
             }
 
             ValidateLabels();

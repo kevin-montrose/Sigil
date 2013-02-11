@@ -56,12 +56,12 @@ namespace Sigil
 
             if (TypeOnStack.Get(valueType) != val)
             {
-                throw new SigilVerificationException("StoreObject expected a " + valueType + " to be on the stack, found " + val, IL, Stack, 0);
+                throw new SigilVerificationException("StoreObject expected a " + valueType + " to be on the stack, found " + val, IL.Instructions(Locals), Stack, 0);
             }
 
             if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("StoreObject expected a reference, pointer, or native int; found " + addr, IL, Stack, 1);
+                throw new SigilVerificationException("StoreObject expected a reference, pointer, or native int; found " + addr, IL.Instructions(Locals), Stack, 1);
             }
 
             if (isVolatile)

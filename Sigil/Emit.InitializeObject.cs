@@ -44,7 +44,7 @@ namespace Sigil
 
             if (obj != TypeOnStack.Get<NativeInt>() && obj != TypeOnStack.Get(valueType.MakePointerType()) && obj != TypeOnStack.Get(valueType.MakeByRefType()))
             {
-                throw new SigilVerificationException("InitializeObject expected a reference or pointer to a " + valueType + ", or a native int, to be on the stack; found " + obj, IL, Stack, 0);
+                throw new SigilVerificationException("InitializeObject expected a reference or pointer to a " + valueType + ", or a native int, to be on the stack; found " + obj, IL.Instructions(Locals), Stack, 0);
             }
 
             UpdateState(OpCodes.Initobj, valueType, pop: 1);

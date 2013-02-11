@@ -49,7 +49,7 @@ namespace Sigil
 
             if (!method.DeclaringType.IsAssignableFrom(objPtr))
             {
-                throw new SigilVerificationException("Expected a value assignable to " + method.DeclaringType + " to be on the stack, found " + objPtr, IL, Stack, 0);
+                throw new SigilVerificationException("Expected a value assignable to " + method.DeclaringType + " to be on the stack, found " + objPtr, IL.Instructions(Locals), Stack, 0);
             }
 
             var type =

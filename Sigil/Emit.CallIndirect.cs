@@ -291,7 +291,7 @@ namespace Sigil
 
             if (funcPtr != TypeOnStack.Get<NativeInt>())
             {
-                throw new SigilVerificationException("CallIndirect expects a native int to be on the top of the stack, found " + funcPtr, IL, Stack, fPtrLoc);
+                throw new SigilVerificationException("CallIndirect expects a native int to be on the top of the stack, found " + funcPtr, IL.Instructions(Locals), Stack, fPtrLoc);
             }
 
             // We can only do this if the native int got on the stack because of a call to LoadFunctionPointer or LoadVirtualFunctionPointer
@@ -300,17 +300,17 @@ namespace Sigil
             {
                 if (funcPtr.CallingConvention != callConventions)
                 {
-                    throw new SigilVerificationException("CallIndirect expects method calling conventions to match, found " + funcPtr.CallingConvention + " on the stack", IL, Stack, fPtrLoc);
+                    throw new SigilVerificationException("CallIndirect expects method calling conventions to match, found " + funcPtr.CallingConvention + " on the stack", IL.Instructions(Locals), Stack, fPtrLoc);
                 }
 
                 if (funcPtr.InstanceType != null && !funcPtr.InstanceType.IsAssignableFrom(thisType))
                 {
-                    throw new SigilVerificationException("CallIndirect expects a 'this' value assignable to " + funcPtr.InstanceType + ", found " + thisType, IL, Stack, fPtrLoc);
+                    throw new SigilVerificationException("CallIndirect expects a 'this' value assignable to " + funcPtr.InstanceType + ", found " + thisType, IL.Instructions(Locals), Stack, fPtrLoc);
                 }
 
                 if (funcPtr.ReturnType != returnType)
                 {
-                    throw new SigilVerificationException("CallIndirect expects method return types to match, found " + funcPtr.ReturnType + " on the stack", IL, Stack, fPtrLoc);
+                    throw new SigilVerificationException("CallIndirect expects method return types to match, found " + funcPtr.ReturnType + " on the stack", IL.Instructions(Locals), Stack, fPtrLoc);
                 }
 
                 for (var i = 0; i < parameterTypes.Length; i++)
@@ -320,7 +320,7 @@ namespace Sigil
 
                     if (!shouldBe.IsAssignableFrom(actuallyIs))
                     {
-                        throw new SigilVerificationException("CallIndirect expected a value assignable to " + shouldBe + ", found " + actuallyIs, IL, Stack, reversed.Count - 1 - i);
+                        throw new SigilVerificationException("CallIndirect expected a value assignable to " + shouldBe + ", found " + actuallyIs, IL.Instructions(Locals), Stack, reversed.Count - 1 - i);
                     }
                 }
             }

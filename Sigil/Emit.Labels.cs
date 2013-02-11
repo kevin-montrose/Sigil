@@ -23,7 +23,7 @@ namespace Sigil
 
                 if (!Marks.ContainsKey(label))
                 {
-                    throw new SigilVerificationException("Usage of unmarked label " + label, IL);
+                    throw new SigilVerificationException("Usage of unmarked label " + label, IL.Instructions(Locals));
                 }
 
                 var stop = Marks[label].Item2;

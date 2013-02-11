@@ -50,6 +50,8 @@ namespace Sigil
 
             UnusedLocals.Add(ret);
 
+            Locals[localIndex] = ret;
+
             return ret;
         }
 

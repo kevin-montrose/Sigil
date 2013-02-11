@@ -46,7 +46,6 @@ namespace SigilTests
                 listAdd.Invoke(dictInst, new object[] { inst, inst });
 
                 var x = dictInst;
-                var y = "hello world";
 
                 Assert.IsTrue(d1(x, x));
                 Assert.IsFalse(d1(x, new List<int> { 1, 2, 3 }));
@@ -86,7 +85,6 @@ namespace SigilTests
                 listAdd.Invoke(listInst, new object[] { inst });
 
                 var x = listInst;
-                var y = "hello world";
 
                 Assert.IsTrue(d1(x, x));
                 Assert.IsFalse(d1(x, new List<int> { 1, 2, 3 }));

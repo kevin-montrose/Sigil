@@ -54,7 +54,7 @@ namespace Sigil
 
             if (onStack != TypeOnStack.Get<object>())
             {
-                throw new SigilVerificationException("Unbox expects an object on the stack, but found " + onStack, IL, Stack, 0);
+                throw new SigilVerificationException("Unbox expects an object on the stack, but found " + onStack, IL.Instructions(Locals), Stack, 0);
             }
 
             UpdateState(OpCodes.Unbox, valueType, TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
@@ -105,7 +105,7 @@ namespace Sigil
 
             if (onStack != TypeOnStack.Get<object>())
             {
-                throw new SigilVerificationException("UnboxAny expects an object on the stack, but found " + onStack, IL, Stack, 0);
+                throw new SigilVerificationException("UnboxAny expects an object on the stack, but found " + onStack, IL.Instructions(Locals), Stack, 0);
             }
 
             UpdateState(OpCodes.Unbox_Any, valueType, TypeOnStack.Get(valueType), pop: 1);

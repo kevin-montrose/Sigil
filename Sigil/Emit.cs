@@ -38,6 +38,8 @@ namespace Sigil
 
         private int NextLocalIndex = 0;
 
+        private Dictionary<int, Local> Locals;
+
         private HashSet<Local> UnusedLocals;
         private HashSet<Label> UnusedLabels;
         private HashSet<Label> UnmarkedLabels;
@@ -111,7 +113,11 @@ namespace Sigil
             IL = new BufferedILGenerator(typeof(DelegateType));
 
             Stack = new StackState();
+            
             InstructionStream = new List<Tuple<OpCode, StackState>>();
+
+            Locals = new Dictionary<int, Local>();
+
             UnusedLocals = new HashSet<Local>();
             UnusedLabels = new HashSet<Label>();
             UnmarkedLabels = new HashSet<Label>();
@@ -152,7 +158,7 @@ namespace Sigil
         {
             var ret = new StringBuilder();
 
-            foreach (var line in IL.Instructions())
+            foreach (var line in IL.Instructions(Locals))
             {
                 ret.AppendLine(line);
             }

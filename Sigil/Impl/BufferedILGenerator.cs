@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Sigil.Impl
@@ -58,7 +59,7 @@ namespace Sigil.Impl
             return il.ILOffset;
         }
 
-        internal string[] Instructions()
+        internal string[] Instructions(Dictionary<int, Local> locals)
         {
             var ret = new List<string>();
 
@@ -74,11 +75,56 @@ namespace Sigil.Impl
             foreach (var x in Buffer)
             {
                 x(il, true, instrs);
-                ret.Add(instrs.ToString().TrimEnd());
+                var line = instrs.ToString().TrimEnd();
+
+                if (line.StartsWith(OpCodes.Ldloc_0.ToString()) ||
+                    line.StartsWith(OpCodes.Stloc_0.ToString()))
+                {
+                    line += " // " + locals[0];
+                }
+
+                if (line.StartsWith(OpCodes.Ldloc_1.ToString()) ||
+                    line.StartsWith(OpCodes.Stloc_1.ToString()))
+                {
+                    line += " // " + locals[1];
+                }
+
+                if (line.StartsWith(OpCodes.Ldloc_2.ToString()) ||
+                    line.StartsWith(OpCodes.Stloc_2.ToString()))
+                {
+                    line += " // " + locals[2];
+                }
+
+                if (line.StartsWith(OpCodes.Ldloc_3.ToString()) ||
+                    line.StartsWith(OpCodes.Stloc_3.ToString()))
+                {
+                    line += " // " + locals[3];
+                }
+
+                if (line.StartsWith(OpCodes.Ldloc_S.ToString()) ||
+                    line.StartsWith(OpCodes.Stloc_S.ToString()))
+                {
+                    line += " // " + ExtractLocal(line, locals);
+                }
+
+                ret.Add(line);
                 instrs.Clear();
             }
 
             return ret.ToArray();
+        }
+
+        private static Regex _ExtractLocal = new Regex(@"\s+(?<locId>\d+)", RegexOptions.Compiled);
+
+        private static Local ExtractLocal(string from, Dictionary<int, Local> locals)
+        {
+            var match = _ExtractLocal.Match(from);
+
+            var locId = match.Groups["locId"].Value;
+
+            var lid = int.Parse(locId);
+
+            return locals[lid];
         }
 
         public int ByteDistance(int start, int stop)
