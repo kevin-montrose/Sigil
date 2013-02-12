@@ -203,7 +203,7 @@ While generally 1-to-1, Sigil does provide single methods for "families" of opco
 ###Unsupported Operations
 
 Sigil does not support the [Arglist](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.arglist.aspx), [Mkrefany](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.mkrefany.aspx), [Refanytype](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanytype.aspx), or [Refanyval](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanyval.aspx) instructions.
-While not impossible to support, the unusualness of the `VarArgs` methods in .NET makes them not worth the trouble at this time.
+While not impossible to support, the unusualness of `VarArgs` methods in .NET makes them not worth the trouble at this time.
 
 Fault blocks are also not supported, in part because of their rarity (there is not C# equivalent) and because they are forbidden in dynamic methods.
 
