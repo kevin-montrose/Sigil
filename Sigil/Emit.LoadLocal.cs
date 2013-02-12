@@ -39,7 +39,7 @@ namespace Sigil
 
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)
             {
-                UpdateState(OpCodes.Ldloc_S, local.Index, local.StackType);
+                UpdateState(OpCodes.Ldloc_S, (byte)local.Index, local.StackType);
                 return this;
             }
 

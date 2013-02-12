@@ -14,26 +14,32 @@ namespace Sigil
         /// <summary>
         /// Loads a pointer to the argument at index (starting at zero) onto the stack.
         /// </summary>
-        public Emit<DelegateType> LoadArgumentAddress(int index)
+        public Emit<DelegateType> LoadArgumentAddress(ushort index)
         {
             if (ParameterTypes.Length == 0)
             {
                 throw new ArgumentException("Delegate of type " + typeof(DelegateType) + " takes no parameters");
             }
 
-            if (index < 0 || index >= ParameterTypes.Length)
+            if (index >= ParameterTypes.Length)
             {
                 throw new ArgumentException("index must be between 0 and " + (ParameterTypes.Length - 1) + ", inclusive");
             }
 
             if (index >= byte.MinValue && index <= byte.MaxValue)
             {
-                UpdateState(OpCodes.Ldarga_S, index, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
+                UpdateState(OpCodes.Ldarga_S, (byte)index, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
 
                 return this;
             }
 
-            UpdateState(OpCodes.Ldarga, index, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
+            short asShort;
+            unchecked
+            {
+                asShort = (short)index;
+            }
+
+            UpdateState(OpCodes.Ldarga, asShort, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
 
             return this;
         }

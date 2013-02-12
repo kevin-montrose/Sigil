@@ -1134,7 +1134,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.StoreArgument(-1);
+                    e1.StoreArgument(4);
                     Assert.Fail();
                 }
                 catch (ArgumentException e)
@@ -2239,7 +2239,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadArgumentAddress(-1);
+                    e1.LoadArgumentAddress(4);
                     Assert.Fail();
                 }
                 catch (ArgumentException e)
@@ -2269,7 +2269,7 @@ namespace SigilTests
                 var e1 = Emit<Action<int>>.NewDynamicMethod();
                 try
                 {
-                    e1.LoadArgument(-1);
+                    e1.LoadArgument(4);
                     Assert.Fail();
                 }
                 catch (ArgumentException e)
@@ -4533,7 +4533,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Branch to l has a stack that doesn't match the destination", e.Message);
-                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr l // Failure branch\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr.s l // Failure branch\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
             }
         }
 

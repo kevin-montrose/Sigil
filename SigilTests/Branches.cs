@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace SigilTests
@@ -11,6 +12,42 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Branches
     {
+        [TestMethod]
+        public void ShortForm()
+        {
+            {
+                var hasNormalBranch = new Regex("^br ", RegexOptions.Multiline);
+
+                for (var i = 0; i < 127; i++)
+                {
+                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var end = e1.DefineLabel("end");
+
+                    e1.Branch(end);
+
+                    for (var j = 0; j < i; j++)
+                    {
+                        e1.Nop();
+                    }
+
+                    e1.MarkLabel(end);
+                    e1.Return();
+
+                    string instrs;
+                    var d1 = e1.CreateDelegate(out instrs);
+
+                    d1();
+
+                    var shouldFail = hasNormalBranch.IsMatch(instrs);
+
+                    if (shouldFail)
+                    {
+                        Assert.Fail();
+                    }
+                }
+            }
+        }
+
         [TestMethod]
         public void BinaryInput()
         {

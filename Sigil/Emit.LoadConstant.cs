@@ -42,7 +42,13 @@ namespace Sigil
 
             if (i >= sbyte.MinValue && i <= sbyte.MaxValue)
             {
-                UpdateState(OpCodes.Ldc_I4_S, i, TypeOnStack.Get<int>());
+                byte asByte;
+                unchecked
+                {
+                    asByte = (byte)i;
+                }
+
+                UpdateState(OpCodes.Ldc_I4_S, asByte, TypeOnStack.Get<int>());
                 return this;
             }
 
@@ -72,7 +78,7 @@ namespace Sigil
 
             if (i <= sbyte.MaxValue)
             {
-                UpdateState(OpCodes.Ldc_I4_S, i, TypeOnStack.Get<int>());
+                UpdateState(OpCodes.Ldc_I4_S, (byte)i, TypeOnStack.Get<int>());
                 return this;
             }
 

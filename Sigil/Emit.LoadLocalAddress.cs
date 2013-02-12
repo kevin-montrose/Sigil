@@ -38,11 +38,17 @@ namespace Sigil
 
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)
             {
-                UpdateState(OpCodes.Ldloca_S, local.Index, TypeOnStack.Get(ptrType));
+                UpdateState(OpCodes.Ldloca_S, (byte)local.Index, TypeOnStack.Get(ptrType));
                 return this;
             }
 
-            UpdateState(OpCodes.Ldloca, local.Index, TypeOnStack.Get(ptrType));
+            short asShort;
+            unchecked
+            {
+                asShort = (short)local.Index;
+            }
+
+            UpdateState(OpCodes.Ldloca, asShort, TypeOnStack.Get(ptrType));
 
             return this;
         }

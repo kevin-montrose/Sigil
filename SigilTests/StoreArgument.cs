@@ -30,7 +30,7 @@ namespace SigilTests
 
             var args = new List<int>();
 
-            for (var i = 0; i < 260; i++)
+            for (ushort i = 0; i < 260; i++)
             {
                 e1.LoadConstant(i);
                 e1.StoreArgument(i);
@@ -38,7 +38,7 @@ namespace SigilTests
                 args.Add(i);
             }
 
-            for (var i = 0; i < 260; i++)
+            for (ushort i = 0; i < 260; i++)
             {
                 e1.LoadArgument(i);
             }

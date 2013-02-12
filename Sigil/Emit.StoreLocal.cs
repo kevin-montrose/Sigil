@@ -52,7 +52,13 @@ namespace Sigil
 
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)
             {
-                UpdateState(OpCodes.Stloc_S, local.Index, pop: 1);
+                byte asByte;
+                unchecked
+                {
+                    asByte = (byte)local.Index;
+                }
+
+                UpdateState(OpCodes.Stloc_S, asByte, pop: 1);
                 return this;
             }
 

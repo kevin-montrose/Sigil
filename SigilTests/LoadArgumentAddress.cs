@@ -28,7 +28,7 @@ namespace SigilTests
         {
             var e1 = Emit<LotsOfParams>.NewDynamicMethod();
 
-            for (var i = 0; i < 260; i++)
+            for (ushort i = 0; i < 260; i++)
             {
                 e1.LoadArgumentAddress(i);
                 e1.LoadIndirect<int>();

@@ -588,7 +588,7 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadArgument(System.Int32)" />
-        public EmitShorthand<DelegateType> Ldarg(int index)
+        public EmitShorthand<DelegateType> Ldarg(ushort index)
         {
             InnerEmit.LoadArgument(index);
 
@@ -596,7 +596,7 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadArgumentAddress(System.Int32)" />
-        public EmitShorthand<DelegateType> Ldarga(int index)
+        public EmitShorthand<DelegateType> Ldarga(ushort index)
         {
             InnerEmit.LoadArgumentAddress(index);
 
@@ -986,7 +986,7 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.StoreArgument(System.Int32)" />
-        public EmitShorthand<DelegateType> Starg(int index)
+        public EmitShorthand<DelegateType> Starg(ushort index)
         {
             InnerEmit.StoreArgument(index);
 

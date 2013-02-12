@@ -281,15 +281,7 @@ namespace Sigil
                 throw new InvalidOperationException("CatchBlock  has already been ended");
             }
 
-            // There's no equivalent to EndCatchBlock in raw ILGenerator, so no call here.
-            //   But that's kind of weird from a just-in-time validation standpoint.
-
-            Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, forCatch.ExceptionBlock.Label, out update);
-
-            Branches[Stack.Unique()] = Tuple.Create(forCatch.ExceptionBlock.Label, IL.Index);
-
-            BranchPatches[IL.Index] = Tuple.Create(forCatch.ExceptionBlock.Label, update, OpCodes.Leave);
+            IL.EndCatchBlock();
 
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
 
@@ -401,10 +393,7 @@ namespace Sigil
                 throw new SigilVerificationException("Stack should be empty when EndFinallyBlock is called", IL.Instructions(Locals), Stack, mark.ToArray());
             }
 
-            // There's no equivalent to EndFinallyBlock in raw ILGenerator, so no call here.
-            //   But that's kind of weird from a just-in-time validation standpoint.
-
-            UpdateState(OpCodes.Endfinally);
+            IL.EndFinallyBlock();
 
             FinallyBlocks[forFinally] = Tuple.Create(finallyBlock.Item1, IL.Index);
 

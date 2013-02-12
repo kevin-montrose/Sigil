@@ -36,7 +36,7 @@ namespace Sigil
 
         private List<Tuple<OpCode, StackState>> InstructionStream;
 
-        private int NextLocalIndex = 0;
+        private ushort NextLocalIndex = 0;
 
         private Dictionary<int, Local> Locals;
 
@@ -164,6 +164,21 @@ namespace Sigil
             }
 
             return ret.ToString().Trim();
+        }
+
+        /// <summary>
+        /// Returns the current instruction offset (effectively, the length of the CIL stream to date).
+        /// 
+        /// This does not necessarily increase monotonically, as rewrites can cause it to shrink.
+        /// 
+        /// Likewise the effect of any given call is not guaranteed to be the same under all circumstance, as current and future
+        /// state may influence opcode choice.
+        /// 
+        /// This method is meant for debugging purposes only.
+        /// </summary>
+        public int ILOffset()
+        {
+            return IL.ByteDistance(0, IL.Index);
         }
 
         private void Seal()
@@ -633,6 +648,20 @@ namespace Sigil
             UpdateStackAndInstrStream(instr, addToStack, pop);
 
             IL.Emit(instr);
+        }
+
+        private void UpdateState(OpCode instr, byte param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
+        }
+
+        private void UpdateState(OpCode instr, short param, TypeOnStack addToStack = null, int pop = 0)
+        {
+            UpdateStackAndInstrStream(instr, addToStack, pop);
+
+            IL.Emit(instr, param);
         }
 
         private void UpdateState(OpCode instr, int param, TypeOnStack addToStack = null, int pop = 0)
