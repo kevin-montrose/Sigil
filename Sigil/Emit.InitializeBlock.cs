@@ -25,7 +25,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                throw new InvalidOperationException("InitializeBlock isn't verifiable");
+                FailUnverifiable();
             }
 
             var onStack = Stack.Top(3);

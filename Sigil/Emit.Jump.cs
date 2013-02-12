@@ -40,7 +40,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                throw new InvalidOperationException("Jump isn't verifiable");
+                FailUnverifiable();
             }
 
             if (CatchBlocks.Any(t => t.Value.Item2 == -1))

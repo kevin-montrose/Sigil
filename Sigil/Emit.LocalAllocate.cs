@@ -32,7 +32,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                throw new InvalidOperationException("LocalAllocate isn't verifiable");
+                FailUnverifiable();
             }
 
             var top = Stack.Top();

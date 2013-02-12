@@ -70,7 +70,7 @@ namespace Sigil
         {
             if (!AllowsUnverifiableCIL)
             {
-                throw new InvalidOperationException("LoadElementAddress isn't verifiable");
+                FailUnverifiable();
             }
 
             var top = Stack.Top(2);

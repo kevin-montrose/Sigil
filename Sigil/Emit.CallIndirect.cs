@@ -258,7 +258,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                throw new InvalidOperationException("CallIndirect isn't verifiable");
+                FailUnverifiable();
             }
 
             var takeExtra = 1;

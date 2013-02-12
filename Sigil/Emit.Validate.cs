@@ -26,6 +26,11 @@ namespace Sigil
             throw new ArgumentException(obj + " is not owned by this Emit, and thus cannot be used");
         }
 
+        private void FailUnverifiable([CallerMemberName]string method = null)
+        {
+            throw new InvalidOperationException(method + " isn't verifiable");
+        }
+
         private void ValidateLabels()
         {
             if (UnusedLocals.Count != 0)
