@@ -21,8 +21,7 @@ namespace Sigil
             throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL.Instructions(Locals), Stack);
         }
 
-        private void FailOwnership<UnownedObject>(UnownedObject obj)
-            where UnownedObject : IOwned
+        private void FailOwnership(IOwned obj)
         {
             throw new ArgumentException(obj + " is not owned by this Emit, and thus cannot be used");
         }
