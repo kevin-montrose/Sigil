@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Sigil.Impl;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-
-using Sigil.Impl;
 
 namespace Sigil
 {
@@ -29,7 +25,7 @@ namespace Sigil
             var paramList = parameters.Select(p => p.ParameterType).ToList();
 
             var thisType =
-                method.CallingConvention.HasFlag(CallingConventions.HasThis) ?
+                HasFlag(method.CallingConvention, CallingConventions.HasThis) ?
                     method.DeclaringType :
                     null;
 

@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
-using System.Threading.Tasks;
-
-using Sigil.Impl;
-using System.Reflection;
 
 namespace Sigil
 {
@@ -21,7 +19,7 @@ namespace Sigil
 
         static Emit()
         {
-            var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Sigil.Emit.DynamicAssembly"), AssemblyBuilderAccess.Run);
+            var asm = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("Sigil.Emit.DynamicAssembly"), AssemblyBuilderAccess.Run);
             Module = asm.DefineDynamicModule("DynamicModule");
         }
 
@@ -374,6 +372,10 @@ namespace Sigil
             }
         }
 
+        private static bool AllowsUnverifiableCode(Module m)
+        {
+            return Attribute.IsDefined(m, typeof(System.Security.UnverifiableCodeAttribute));
+        }
         private static bool AllowsUnverifiableCode(ModuleBuilder m)
         {
             var canaryMethod = new DynamicMethod("__Canary" + Guid.NewGuid(), typeof(void), Type.EmptyTypes, m);
@@ -426,6 +428,34 @@ namespace Sigil
             return ret;
         }
 
+        /// <summary>
+        /// Creates a new Emit, optionally using the provided name and owner for the inner DynamicMethod.
+        /// 
+        /// If name is not defined, a sane default is generated.
+        /// 
+        /// If owner is not defined, a module with the same trust as the executing assembly is used instead.
+        /// </summary>
+        public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null)
+        {
+            if (owner == null) return NewDynamicMethod(name: name, module: null);
+            name = name ?? AutoNamer.Next("_DynamicMethod");
+
+            CheckIsDelegate<DelegateType>();
+
+            var delType = typeof(DelegateType);
+
+            var invoke = delType.GetMethod("Invoke");
+            var returnType = invoke.ReturnType;
+            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+
+            var dynMethod = new DynamicMethod(name, returnType, parameterTypes, owner, skipVisibility: true);
+
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module));
+            ret.DynMethod = dynMethod;
+
+            return ret;
+        }
+
         private static void CheckAttributesAndConventions(MethodAttributes attributes, CallingConventions callingConvention)
         {
             if ((attributes & ~(MethodAttributes.Abstract | MethodAttributes.Assembly | MethodAttributes.CheckAccessOnOverride | MethodAttributes.FamANDAssem | MethodAttributes.Family | MethodAttributes.FamORAssem | MethodAttributes.Final | MethodAttributes.HasSecurity | MethodAttributes.HideBySig | MethodAttributes.MemberAccessMask | MethodAttributes.NewSlot | MethodAttributes.PinvokeImpl | MethodAttributes.Private | MethodAttributes.PrivateScope | MethodAttributes.Public | MethodAttributes.RequireSecObject | MethodAttributes.ReuseSlot | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName | MethodAttributes.Static | MethodAttributes.UnmanagedExport | MethodAttributes.Virtual | MethodAttributes.VtableLayoutMask)) != 0)
@@ -438,10 +468,18 @@ namespace Sigil
                 throw new ArgumentException("Unrecognized flag in callingConvention");
             }
 
-            if (attributes.HasFlag(MethodAttributes.Static) && callingConvention.HasFlag(CallingConventions.HasThis))
+            if (HasFlag(attributes, MethodAttributes.Static) && HasFlag(callingConvention, CallingConventions.HasThis))
             {
                 throw new ArgumentException("Static methods cannot have a this reference");
             }
+        }
+        static bool HasFlag(MethodAttributes value, MethodAttributes flag)
+        {
+            return (value & flag) != 0;
+        }
+        static bool HasFlag(CallingConventions value, CallingConventions flag)
+        {
+            return (value & flag) != 0;
         }
 
         /// <summary>
@@ -475,7 +513,7 @@ namespace Sigil
 
             var methodBuilder = type.DefineMethod(name, attributes, callingConvention, returnType, parameterTypes);
 
-            if (callingConvention.HasFlag(CallingConventions.HasThis))
+            if (HasFlag(callingConvention, CallingConventions.HasThis))
             {
                 // Shove `this` in front, can't require it because it doesn't exist yet!
                 var pList = new List<Type>(parameterTypes);
@@ -526,7 +564,7 @@ namespace Sigil
 
             CheckAttributesAndConventions(attributes, callingConvention);
 
-            if (!callingConvention.HasFlag(CallingConventions.HasThis))
+            if (!HasFlag(callingConvention, CallingConventions.HasThis))
             {
                 throw new ArgumentException("Constructors always have a this reference");
             }

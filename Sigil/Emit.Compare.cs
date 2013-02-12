@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Sigil.Impl;
 using System.Linq;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-
-using Sigil.Impl;
 
 namespace Sigil
 {

@@ -4,14 +4,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private void FailStackUnderflow(int expected, [CallerMemberName]string method = null)
+        private void FailStackUnderflow(int expected
+#if NET35
+            , string method = "caller"
+#else
+            , [CallerMemberName]string method = null
+#endif
+)
         {
             if (expected == 1)
             {
@@ -26,7 +30,13 @@ namespace Sigil
             throw new ArgumentException(obj + " is not owned by this Emit, and thus cannot be used");
         }
 
-        private void FailUnverifiable([CallerMemberName]string method = null)
+        private void FailUnverifiable(
+#if NET35
+            string method = "caller"
+#else
+            [CallerMemberName]string method = null
+#endif
+            )
         {
             throw new InvalidOperationException(method + " isn't verifiable");
         }
@@ -37,7 +47,7 @@ namespace Sigil
             {
                 throw 
                     new SigilVerificationException(
-                        "Locals [" + string.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used",
+                        "Locals [" + BufferedILGenerator.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used",
                         IL.Instructions(Locals),
                         Stack
                     );
@@ -47,7 +57,7 @@ namespace Sigil
             {
                 throw 
                     new SigilVerificationException(
-                        "Labels [" + string.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used",
+                        "Labels [" + BufferedILGenerator.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used",
                         IL.Instructions(Locals),
                         Stack
                     );
