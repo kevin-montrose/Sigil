@@ -9,6 +9,15 @@ namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
+        public static bool IsPrefix(this OpCode op)
+        {
+            return
+                op == OpCodes.Tailcall ||
+                op == OpCodes.Readonly ||
+                op == OpCodes.Volatile ||
+                op == OpCodes.Unaligned;
+        }
+
         private static Type Alias(Type t)
         {
             if (t.IsValueType && t.IsEnum)

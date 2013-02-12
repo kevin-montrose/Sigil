@@ -152,7 +152,7 @@ namespace Sigil.Impl
                         il.Emit(op);
                     }
 
-                    if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
+                    if (op.IsPrefix())
                     {
                         log.Append(op.ToString());
                     }
@@ -174,7 +174,7 @@ namespace Sigil.Impl
                         il.Emit(op);
                     }
 
-                    if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
+                    if (op.IsPrefix())
                     {
                         log.Append(op.ToString());
                     }
@@ -196,7 +196,7 @@ namespace Sigil.Impl
                         il.Emit(op, i);
                     }
 
-                    if (new[] { OpCodes.Volatile, OpCodes.Readonly, OpCodes.Tailcall, OpCodes.Unaligned }.Contains(op))
+                    if (op.IsPrefix())
                     {
                         log.Append(op + "" + i + ".");
                     }
