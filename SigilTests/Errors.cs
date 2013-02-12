@@ -159,7 +159,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.UnboxAny(typeof(string));
+                    e1.UnboxAny(typeof(string)); // MG: UnboxAny is meant to work for ref types
                     Assert.Fail();
                 }
                 catch (ArgumentException e)

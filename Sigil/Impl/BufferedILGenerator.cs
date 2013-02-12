@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Sigil.Impl
 {
@@ -106,7 +105,7 @@ namespace Sigil.Impl
                 }
 
                 ret.Add(line);
-                instrs.Clear();
+                instrs.Length = 0;
             }
 
             return ret.ToArray();
@@ -488,11 +487,27 @@ namespace Sigil.Impl
                         il.Emit(localOp, ls);
                     }
 
-                    log.AppendLine(localOp + " " + string.Join(", ", labels.AsEnumerable()));
+                    log.AppendLine(localOp + " " + Join(", ", labels.AsEnumerable()));
                 }
             );
         }
-
+        internal static string Join<T>(string delimiter, IEnumerable<T> parts) where T: class
+        {
+            using (var iter = parts.GetEnumerator())
+            {
+                if (!iter.MoveNext()) return "";
+                var sb = new StringBuilder();
+                var next = iter.Current;
+                if (next != null) sb.Append(next);
+                while (iter.MoveNext())
+                {
+                    sb.Append(delimiter);
+                    next = iter.Current;
+                    if (next != null) sb.Append(next);
+                }
+                return sb.ToString();
+            }
+        }
         public void Emit(OpCode op, Sigil.Local local)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
@@ -523,7 +538,7 @@ namespace Sigil.Impl
                         il.EmitCalli(op, callConventions, returnType, parameterTypes, null);
                     }
 
-                    log.AppendLine(op + " " + callConventions + " " + returnType + " " + string.Join(" ", (IEnumerable<Type>)parameterTypes));
+                    log.AppendLine(op + " " + callConventions + " " + returnType + " " + Join(" ", (IEnumerable<Type>)parameterTypes));
                 }
             );
         }

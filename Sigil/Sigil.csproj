@@ -198,6 +198,7 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Tuple.cs" />
     <Compile Include="Emit.Unbox.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

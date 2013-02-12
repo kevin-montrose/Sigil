@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Sigil.Impl;
+﻿using Sigil.Impl;
+using System;
 using System.Reflection.Emit;
 
 namespace Sigil
@@ -27,7 +22,7 @@ namespace Sigil
             }
 
             UnusedLabels.Remove(label);
-
+            
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
             UpdateState(OpCodes.Br, label, out update);
