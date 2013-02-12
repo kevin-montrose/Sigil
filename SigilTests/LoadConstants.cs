@@ -76,6 +76,16 @@ namespace SigilTests
 
                 Assert.AreEqual(i, d1());
             }
+
+            {
+                var e1 = Emit<Func<uint>>.NewDynamicMethod();
+                e1.LoadConstant(uint.MaxValue);
+                e1.Return();
+
+                var d1 = e1.CreateDelegate();
+
+                Assert.AreEqual(uint.MaxValue, d1());
+            }
         }
 
         [TestMethod]

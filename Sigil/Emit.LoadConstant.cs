@@ -58,6 +58,7 @@ namespace Sigil
         {
             switch (i)
             {
+                case uint.MaxValue: UpdateState(OpCodes.Ldc_I4_M1, TypeOnStack.Get<int>()); return this;
                 case 0: UpdateState(OpCodes.Ldc_I4_0, TypeOnStack.Get<int>()); return this;
                 case 1: UpdateState(OpCodes.Ldc_I4_1, TypeOnStack.Get<int>()); return this;
                 case 2: UpdateState(OpCodes.Ldc_I4_2, TypeOnStack.Get<int>()); return this;
