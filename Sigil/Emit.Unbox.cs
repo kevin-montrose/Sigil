@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Sigil.Impl;
+using System;
 using System.Linq;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-
-using Sigil.Impl;
 
 namespace Sigil
 {
@@ -84,9 +80,9 @@ namespace Sigil
                 throw new ArgumentNullException("valueType");
             }
 
-            if (!valueType.IsValueType || valueType.IsByRef || valueType.IsPointer)
+            if (valueType.IsByRef || valueType.IsPointer)
             {
-                throw new ArgumentException("UnboxAny expects a ValueType, found " + valueType);
+                throw new ArgumentException("UnboxAny cannot operate on pointers, found " + valueType);
             }
 
             if (valueType == typeof(void))

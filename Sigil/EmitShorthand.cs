@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sigil
 {
@@ -676,9 +672,9 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadField(System.Reflection.FieldInfo, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public EmitShorthand<DelegateType> Ldfld(FieldInfo field, bool isVolatile = false, int? unaligned = null)
+        public EmitShorthand<DelegateType> Ldfld(FieldInfo field, int? unaligned = null)
         {
-            InnerEmit.LoadField(field, isVolatile, unaligned);
+            InnerEmit.LoadField(field, unaligned);
 
             return this;
         }

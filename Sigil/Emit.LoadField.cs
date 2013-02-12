@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Sigil.Impl;
+using System;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-
-using Sigil.Impl;
 using System.Reflection.Emit;
 
 namespace Sigil
@@ -17,7 +12,7 @@ namespace Sigil
         /// 
         /// Instance fields expect a reference on the stack, which is popped.
         /// </summary>
-        public Emit<DelegateType> LoadField(FieldInfo field, bool isVolatile = false, int? unaligned = null)
+        public Emit<DelegateType> LoadField(FieldInfo field, int? unaligned = null)
         {
             if (field == null)
             {
@@ -33,6 +28,8 @@ namespace Sigil
             {
                 throw new ArgumentException("unaligned cannot be used with static fields");
             }
+
+            var isVolatile = Array.IndexOf(field.GetRequiredCustomModifiers(), typeof(System.Runtime.CompilerServices.IsVolatile)) >= 0;
 
             if (!field.IsStatic)
             {

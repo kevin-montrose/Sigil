@@ -1,10 +1,8 @@
 ﻿using Sigil.Impl;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Sigil
 {
@@ -154,7 +152,9 @@ namespace Sigil
         /// <summary>
         /// Implementation for ISerializable.
         /// </summary>
+#if !NET35
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
@@ -168,7 +168,9 @@ namespace Sigil
         /// <summary>
         /// Returns the message and stacks on this exception, in string form.
         /// </summary>
+#if !NET35
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
+#endif
         public override string ToString()
         {
             return

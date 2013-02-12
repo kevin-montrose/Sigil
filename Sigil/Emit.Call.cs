@@ -1,11 +1,8 @@
 ﻿using Sigil.Impl;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sigil
 {
@@ -44,7 +41,7 @@ namespace Sigil
             var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
 
             // Instance methods expect this to preceed parameters
-            if (method.CallingConvention.HasFlag(CallingConventions.HasThis))
+            if (HasFlag(method.CallingConvention, CallingConventions.HasThis))
             {
                 expectedParams.Insert(0, TypeOnStack.Get(method.DeclaringType));
             }
@@ -68,7 +65,7 @@ namespace Sigil
                 {
                     // OK, apparently for the `this` pointer, you can get away with using an explicit reference (type &) rather than
                     //   an "object reference" (type O)
-                    if (i == 0 && actuallyIs.IsReference && method.CallingConvention.HasFlag(CallingConventions.HasThis))
+                    if (i == 0 && actuallyIs.IsReference && HasFlag(method.CallingConvention, CallingConventions.HasThis))
                     {
                         var actuallyIsDeref = TypeOnStack.Get(actuallyIs.Type);
                         if (shouldBe.IsAssignableFrom(actuallyIsDeref))
@@ -84,8 +81,8 @@ namespace Sigil
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);
 
             var firstParamIsThis =
-                method.CallingConvention.HasFlag(CallingConventions.HasThis) ||
-                method.CallingConvention.HasFlag(CallingConventions.ExplicitThis);
+                HasFlag(method.CallingConvention, CallingConventions.HasThis) ||
+                HasFlag(method.CallingConvention, CallingConventions.ExplicitThis);
             
             UpdateState(OpCodes.Call, method, resultType, pop: expectedParams.Count, firstParamIsThis: firstParamIsThis);
 

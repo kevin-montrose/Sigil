@@ -13,6 +13,55 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
+        public void LeaveDataOnStackBetweenBranches()
+        {
+            var il = Emit<Func<int>>.NewDynamicMethod("LeaveDataOnStackBetweenBranches");
+
+            Sigil.Label b0 = il.DefineLabel("b0"), b1 = il.DefineLabel("b1"), b2 = il.DefineLabel("b2");
+            il.LoadConstant("abc");
+            il.Branch(b0); // jump to b0 with "abc"
+
+            il.MarkLabel(b1); // incoming: 3
+            il.LoadConstant(4);
+            il.Call(typeof(Math).GetMethod("Max", new[] { typeof(int), typeof(int) }));
+            il.Branch(b2); // jump to b2 with 4
+
+            il.MarkLabel(b0); // incoming: "abc"
+            il.CallVirtual(typeof(string).GetProperty("Length").GetGetMethod());
+            il.Branch(b1); // jump to b1 with 3
+
+            il.MarkLabel(b2); // incoming: 4
+            il.Return();
+            int i = il.CreateDelegate()();
+            Assert.AreEqual(4, i);
+        }
+
+        [TestMethod]
+        public void LeaveDataOnStackBetweenBranches_OldSchool()
+        {
+            var dm = new System.Reflection.Emit.DynamicMethod("foo", typeof(int), null);
+            var il = dm.GetILGenerator();
+            System.Reflection.Emit.Label b0 = il.DefineLabel(), b1 = il.DefineLabel(), b2 = il.DefineLabel();
+            il.Emit(System.Reflection.Emit.OpCodes.Ldstr, "abc");
+            il.Emit(System.Reflection.Emit.OpCodes.Br, b0); // jump to b0 with "abc"
+
+            il.MarkLabel(b1); // incoming: 3
+            il.Emit(System.Reflection.Emit.OpCodes.Ldc_I4_4);
+            il.EmitCall(System.Reflection.Emit.OpCodes.Call, typeof(Math).GetMethod("Max", new[] { typeof(int), typeof(int) }), null);
+            il.Emit(System.Reflection.Emit.OpCodes.Br, b2); // jump to b2 with 4
+
+            il.MarkLabel(b0); // incoming: "abc"
+            il.EmitCall(System.Reflection.Emit.OpCodes.Callvirt, typeof(string).GetProperty("Length").GetGetMethod(), null);
+            il.Emit(System.Reflection.Emit.OpCodes.Br, b1); // jump to b1 with 3
+
+            il.MarkLabel(b2); // incoming: 4
+            il.Emit(System.Reflection.Emit.OpCodes.Ret);
+            int i = ((Func<int>)dm.CreateDelegate(typeof(Func<int>)))();
+            Assert.AreEqual(4, i);
+        }
+
+
+        [TestMethod]
         public void ShortForm()
         {
             {

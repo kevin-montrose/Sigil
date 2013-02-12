@@ -1,0 +1,8 @@
+obj/
+[Bb]in
+[Dd]ebug*/
+[Rr]elease*/
+*.[Oobj]
+*.user
+*.suo
+*.bak
