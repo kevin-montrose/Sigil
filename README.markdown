@@ -200,6 +200,13 @@ While generally 1-to-1, Sigil does provide single methods for "families" of opco
  - `StoreIndirect(...)` -&gt; Stind_* depending on the type  
  - `StoreLocal(Local)` -&gt; Stloc_0 through Stloc_3, and Stloc_S are used if possible  
 
+###Unsupported Operations
+
+Sigil does not support the [Arglist](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.arglist.aspx), [Mkrefany](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.mkrefany.aspx), [Refanytype](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanytype.aspx), or [Refanyval](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanyval.aspx) instructions.
+While not impossible to support, the unusualness of the `VarArgs` methods in .NET makes them not worth the trouble at this time.
+
+Fault blocks are also not supported, in part because of their rarity (there is not C# equivalent) and because they are forbidden in dynamic methods.
+
 #Sigil is a WORK IN PROGRESS
 
 Use at your own risk, there are almost certainly serious bugs at the moment.
