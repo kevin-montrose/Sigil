@@ -13,6 +13,86 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
+        public void BranchingOverExceptions()
+        {
+            {
+                var hasNormalBranch = new Regex("^br ", RegexOptions.Multiline);
+
+                for (var i = 0; i < 127 - 10; i++)
+                {
+                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var end = e1.DefineLabel("end");
+
+                    e1.Branch(end);
+
+                    var t = e1.BeginExceptionBlock();
+                    var c = e1.BeginCatchBlock<Exception>(t);
+                    e1.Pop();
+                    e1.EndCatchBlock(c);
+                    e1.EndExceptionBlock(t);
+
+                    for (var j = 0; j < i; j++)
+                    {
+                        e1.Nop();
+                    }
+
+                    e1.MarkLabel(end);
+                    e1.Return();
+
+                    string instrs;
+                    var d1 = e1.CreateDelegate(out instrs);
+
+                    d1();
+
+                    var shouldFail = hasNormalBranch.IsMatch(instrs);
+                    if (shouldFail)
+                    {
+                        Assert.Fail();
+                    }
+                }
+            }
+
+            {
+                var hasNormalBranch = new Regex("^br ", RegexOptions.Multiline);
+
+                for (var i = 0; i < 127 - 16; i++)
+                {
+                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var end = e1.DefineLabel("end");
+
+                    e1.Branch(end);
+
+                    var t = e1.BeginExceptionBlock();
+                    var c = e1.BeginCatchBlock<Exception>(t);
+                    e1.Pop();
+                    e1.EndCatchBlock(c);
+                    var f = e1.BeginFinallyBlock(t);
+                    e1.EndFinallyBlock(f);
+                    e1.EndExceptionBlock(t);
+
+                    for (var j = 0; j < i; j++)
+                    {
+                        e1.Nop();
+                    }
+
+                    e1.MarkLabel(end);
+                    e1.Return();
+
+                    string instrs;
+                    var d1 = e1.CreateDelegate(out instrs);
+
+                    d1();
+
+                    var shouldFail = hasNormalBranch.IsMatch(instrs);
+                    if (shouldFail)
+                    {
+                        Assert.Fail();
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
         public void ShortForm()
         {
             {
@@ -39,7 +119,6 @@ namespace SigilTests
                     d1();
 
                     var shouldFail = hasNormalBranch.IsMatch(instrs);
-
                     if (shouldFail)
                     {
                         Assert.Fail();

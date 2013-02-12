@@ -36,7 +36,7 @@ Call `CreateDelegate()` and `CreateMethod()` to finish building with DynamicMeth
 
 ###Instructions and Validation
 
-There are methods on Emit<DelegateType> for each legal CIL opcode.  Note that not all CIL opcodes are legal within DynamicMethods.
+There are methods on `Emit<DelegateType>` for each legal CIL opcode.  Note that not all CIL opcodes are legal within DynamicMethods.
 
 DynamicMethods are created using a different Module with the current assembly's trust level, if loaded under full trust unverifiable instructions are legal.
 
@@ -183,7 +183,7 @@ While generally 1-to-1, Sigil does provide single methods for "families" of opco
  - `Convert(...)` -&gt; Conv_* opcodes depending on the type  
  - `ConvertOverflow(...)` -&gt; Conv_Ovf_* opcodes depending on the type  
  - `UnsignedConvertOverflow(...)` -&gt; Conv_Ovf_*_Un opcodes depending on the type  
-   - note that `UnsignedConvertToFloat()` is separate from the three above, as their is no overflow checking for `Conv_R_Un`  
+   - note that `UnsignedConvertToFloat()` is separate from the three above, as their is no overflow checking for Conv_R_Un  
  - `Leave(Label)` -&gt; Leave_S is used if possible  
  - `LoadArgument(int)` -&gt; Ldarg_0 through Ldarg_3, and Ldarg_S are used if possible  
  - `LoadArgumentAddress(int)` -&gt; Ldarga_S is used if possible  
@@ -205,7 +205,7 @@ While generally 1-to-1, Sigil does provide single methods for "families" of opco
 Sigil does not support the [Arglist](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.arglist.aspx), [Mkrefany](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.mkrefany.aspx), [Refanytype](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanytype.aspx), or [Refanyval](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanyval.aspx) instructions.
 While not impossible to support, the unusualness of `VarArgs` methods in .NET makes them not worth the trouble at this time.
 
-Fault blocks are also not supported, in part because of their rarity (there is not C# equivalent) and because they are forbidden in dynamic methods.
+Fault blocks are also not supported because of their rarity (there is no C# equivalent) and because they are forbidden in dynamic methods.
 
 #Sigil is a WORK IN PROGRESS
 
