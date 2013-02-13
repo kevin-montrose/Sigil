@@ -25,10 +25,8 @@ namespace Sigil
 
             UnusedLocals.Remove(local);
 
-            var type = local.StackType.Type;
-            if (local.StackType.IsPointer) type = type.MakePointerType();
-            if (local.StackType.IsReference) type = type.MakeByRefType();
-
+            var type = local.StackType.EffectiveType();
+            
             var ptrType = type.MakePointerType();
 
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)

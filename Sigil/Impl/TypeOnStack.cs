@@ -287,6 +287,14 @@ namespace Sigil.Impl
                     (IsReference ? 0xFFFF0000 : 0)
                 );
         }
+
+        internal System.Type EffectiveType()
+        {
+            var type = Type;
+            if (IsPointer) type = type.MakePointerType();
+            if (IsReference) type = type.MakeByRefType();
+            return type;
+        }
     }
 
     // Stand in for native int type
