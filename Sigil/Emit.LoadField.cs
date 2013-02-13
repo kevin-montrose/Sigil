@@ -12,7 +12,7 @@ namespace Sigil
         /// 
         /// Instance fields expect a reference on the stack, which is popped.
         /// </summary>
-        public Emit<DelegateType> LoadField(FieldInfo field, int? unaligned = null)
+        public Emit<DelegateType> LoadField(FieldInfo field, bool? isVolatile = null, int? unaligned = null)
         {
             if (field == null)
             {
@@ -29,7 +29,7 @@ namespace Sigil
                 throw new ArgumentException("unaligned cannot be used with static fields");
             }
 
-            var isVolatile = Array.IndexOf(field.GetRequiredCustomModifiers(), typeof(System.Runtime.CompilerServices.IsVolatile)) >= 0;
+            var useVolatile = isVolatile ?? field.IsVolatile();
 
             if (!field.IsStatic)
             {
@@ -46,7 +46,7 @@ namespace Sigil
                     throw new SigilVerificationException("LoadField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL.Instructions(Locals), Stack, 0);
                 }
 
-                if (isVolatile)
+                if (useVolatile)
                 {
                     UpdateState(OpCodes.Volatile);
                 }
@@ -60,7 +60,7 @@ namespace Sigil
             }
             else
             {
-                if (isVolatile)
+                if (useVolatile)
                 {
                     UpdateState(OpCodes.Volatile);
                 }

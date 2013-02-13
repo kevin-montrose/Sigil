@@ -673,9 +673,9 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.LoadField(System.Reflection.FieldInfo, System.Boolean, System.Nullable&lt;int&gt;)" />
-        public EmitShorthand<DelegateType> Ldfld(FieldInfo field, int? unaligned = null)
+        public EmitShorthand<DelegateType> Ldfld(FieldInfo field, bool? isVolatile = null, int? unaligned = null)
         {
-            InnerEmit.LoadField(field, unaligned);
+            InnerEmit.LoadField(field, isVolatile, unaligned);
 
             return this;
         }

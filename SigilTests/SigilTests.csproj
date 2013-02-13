@@ -115,6 +115,7 @@
     <Compile Include="TryCatchFinally.cs" />
     <Compile Include="Unbox.cs" />
     <Compile Include="Verifiability.cs" />
+    <Compile Include="Volatile.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sigil\Sigil.csproj">

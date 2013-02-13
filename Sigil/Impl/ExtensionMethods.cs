@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
+        public static bool IsVolatile(this FieldInfo field)
+        {
+            // field builder doesn't implement GetRequiredCustomModifiers
+            if (field is FieldBuilder) return false;
+
+            return Array.IndexOf(field.GetRequiredCustomModifiers(), typeof(System.Runtime.CompilerServices.IsVolatile)) >= 0;
+        }
+
         public static bool IsPrefix(this OpCode op)
         {
             return
