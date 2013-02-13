@@ -75,22 +75,6 @@ namespace SigilTests
         {
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
-                var l = e1.DefineLabel();
-                e1.Return();
-
-                try
-                {
-                    var d1 = e1.CreateDelegate();
-                    Assert.Fail();
-                }
-                catch (SigilVerificationException e)
-                {
-                    Assert.AreEqual("Labels [_label0] were declared but never used", e.Message);
-                }
-            }
-
-            {
-                var e1 = Emit<Action>.NewDynamicMethod();
                 var t = e1.BeginExceptionBlock();
                 e1.Return();
 
@@ -2320,7 +2304,9 @@ namespace SigilTests
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
                 var l = e1.DefineLabel();
+                var d = e1.DefineLabel();
                 e1.Branch(l);
+                e1.MarkLabel(d, Type.EmptyTypes);
                 e1.Return();
 
                 try
@@ -4297,10 +4283,12 @@ namespace SigilTests
         {
             var e1 = Emit<Action>.NewDynamicMethod("E1");
             var l = e1.DefineLabel("end");
+            var dead = e1.DefineLabel();
 
             var t = e1.BeginExceptionBlock();
             var f = e1.BeginFinallyBlock(t);
             e1.Branch(l);
+            e1.MarkLabel(dead, Type.EmptyTypes);
             e1.EndFinallyBlock(f);
             e1.EndExceptionBlock(t);
 
@@ -4323,8 +4311,10 @@ namespace SigilTests
         {
             var e1 = Emit<Action>.NewDynamicMethod("E1");
             var l = e1.DefineLabel("inFinally");
+            var dead = e1.DefineLabel();
 
             e1.Branch(l);
+            e1.MarkLabel(dead, Type.EmptyTypes);
 
             var t = e1.BeginExceptionBlock();
             var f = e1.BeginFinallyBlock(t);
@@ -4501,10 +4491,12 @@ namespace SigilTests
         {
             var e1 = Emit<Action>.NewDynamicMethod("E1");
             var l = e1.DefineLabel("l");
+            var dead = e1.DefineLabel("dead_code");
 
             e1.LoadConstant(1);
             e1.Branch(l);
 
+            e1.MarkLabel(dead, new[] { typeof(int) });
             e1.Pop();
             e1.Return();
 
@@ -4519,7 +4511,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Branch to l has a stack that doesn't match the destination", e.Message);
-                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr.s l // Failure branch\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr.s l // Failure branch\r\n\r\ndead_code:\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
             }
         }
 

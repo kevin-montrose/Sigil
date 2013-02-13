@@ -16,7 +16,7 @@ namespace Sigil.Impl
                 op == OpCodes.Unaligned;
         }
 
-        private static Type Alias(Type t)
+        public static Type Alias(this Type t)
         {
             if (t.IsValueType && t.IsEnum)
             {
@@ -25,7 +25,7 @@ namespace Sigil.Impl
 
             if (t == typeof(bool) || t == typeof(sbyte) || t == typeof(byte) || t == typeof(short) || t == typeof(ushort) || t == typeof(uint))
             {
-                // Nothing smaller than In32 exists in CLR land
+                // Nothing smaller than Int32 exists in CLR land
                 return typeof(int);
             }
 

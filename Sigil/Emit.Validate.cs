@@ -41,29 +41,6 @@ namespace Sigil
             throw new InvalidOperationException(method + " isn't verifiable");
         }
 
-        private void ValidateLabels()
-        {
-            if (UnusedLocals.Count != 0)
-            {
-                throw 
-                    new SigilVerificationException(
-                        "Locals [" + BufferedILGenerator.Join(", ", UnusedLocals.Select(u => u.Name)) + "] were declared but never used",
-                        IL.Instructions(Locals),
-                        Stack
-                    );
-            }
-
-            if (UnusedLabels.Count != 0)
-            {
-                throw 
-                    new SigilVerificationException(
-                        "Labels [" + BufferedILGenerator.Join(", ", UnusedLabels.Select(l => l.Name)) + "] were declared but never used",
-                        IL.Instructions(Locals),
-                        Stack
-                    );
-            }
-        }
-
         private void ValidateBranches()
         {
             foreach (var kv in Branches)
@@ -222,8 +199,6 @@ namespace Sigil
             {
                 throw new SigilVerificationException("Delegate must end with Return", IL.Instructions(Locals), Stack);
             }
-
-            ValidateLabels();
 
             ValidateBranches();
 

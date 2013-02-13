@@ -113,7 +113,7 @@ namespace SigilTests
             emiter.BranchIfEqual(inputIsNull);
             emiter.Branch(tryCall);
 
-            emiter.MarkLabel(inputIsNull);
+            emiter.MarkLabel(inputIsNull, Type.EmptyTypes);
             emiter.LoadConstant(false);
             emiter.Return();
 

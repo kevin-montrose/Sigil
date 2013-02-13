@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -79,9 +80,9 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.MarkLabel(Sigil.Label)" />
-        public EmitShorthand<DelegateType> MarkLabel(Label label)
+        public EmitShorthand<DelegateType> MarkLabel(Label label, IEnumerable<Type> stackAssertion = null)
         {
-            InnerEmit.MarkLabel(label);
+            InnerEmit.MarkLabel(label, stackAssertion);
 
             return this;
         }

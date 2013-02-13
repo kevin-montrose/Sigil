@@ -16,11 +16,14 @@ namespace SigilTests
         {
             var e1 = Emit<Func<int, int>>.NewDynamicMethod();
             var t = e1.BeginExceptionBlock();
+            var l = e1.DefineLabel("dead_code");
             e1.Leave(t.Label);
+            e1.MarkLabel(l, Type.EmptyTypes);
             e1.LoadArgument(0);
             e1.LoadConstant(1);
             e1.Add();
             e1.StoreArgument(0);
+            e1.Branch(l);
             var c = e1.BeginCatchAllBlock(t);
             e1.Pop();
             e1.EndCatchBlock(c);

@@ -80,6 +80,8 @@ namespace Sigil
         /// </summary>
         public int MaxStackSize { get; private set; }
 
+        private bool RequireTypeAssertion;
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -664,6 +666,11 @@ namespace Sigil
             if (Invalidated)
             {
                 throw new InvalidOperationException("Cannot modify Emit after a delegate has been generated from it");
+            }
+
+            if (RequireTypeAssertion)
+            {
+                throw new InvalidOperationException("Immediately after a Branch or Leave, the only legal operation is to mark a label with a type assertion");
             }
 
             if (pop > 0)

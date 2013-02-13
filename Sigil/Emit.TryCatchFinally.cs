@@ -228,6 +228,8 @@ namespace Sigil
 
             CatchBlocks[ret] = Tuple.Create(IL.Index, -1);
 
+            RequireTypeAssertion = false;
+
             return ret;
         }
 
@@ -280,6 +282,8 @@ namespace Sigil
             IL.EndCatchBlock();
 
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
+
+            RequireTypeAssertion = false;
 
             return this;
         }

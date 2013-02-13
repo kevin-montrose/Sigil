@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -166,12 +167,24 @@ namespace Sigil
         /// When branching, leaving, or switching with a label control will be transfered to where it was *marked* not defined.
         /// 
         /// Label's can only be marked once, and *must* be marked before creating a delegate.
+        /// 
+        /// Logically after a Branch or Leave instruction, a stack assertion is required to continue emiting.  The stack
+        /// is assumed to match that state in these cases.
+        /// 
+        /// In all other cases, a stack assertion is merely checked (and if failing, a verification exception is thrown).
+        /// 
+        /// In the assertion, the top of the stack is the first (0-indexed, left-most) parameter.
         /// </summary>
-        public Emit<DelegateType> MarkLabel(Label label)
+        public Emit<DelegateType> MarkLabel(Label label, IEnumerable<Type> stackAssertion = null)
         {
             if (label == null)
             {
                 throw new ArgumentNullException("label");
+            }
+
+            if (RequireTypeAssertion && stackAssertion == null)
+            {
+                throw new ArgumentNullException("stackAssertion must be set when marking a label after a Branch or Leave instruction");
             }
 
             if (((IOwned)label).Owner != this)
@@ -182,6 +195,43 @@ namespace Sigil
             if (!UnmarkedLabels.Contains(label))
             {
                 throw new InvalidOperationException("label [" + label.Name + "] has already been marked, and cannot be marked a second time");
+            }
+
+            if (RequireTypeAssertion)
+            {
+                var newStack = new StackState();
+                foreach (var x in stackAssertion.Reverse())
+                {
+                    newStack = newStack.Push(TypeOnStack.Get(x.Alias()));
+                }
+
+                Stack = newStack;
+
+                RequireTypeAssertion = false;
+            }
+            else
+            {
+                if (stackAssertion != null)
+                {
+                    var onStack = Stack.Top(stackAssertion.Count());
+
+                    if (onStack == null)
+                    {
+                        FailStackUnderflow(onStack.Count());
+                    }
+
+                    for (var i = 0; i < onStack.Length; i++)
+                    {
+                        var shouldBe = TypeOnStack.Get(stackAssertion.ElementAt(i).Alias());
+                        var actuallyIs = onStack[i];
+
+                        // strict equality, assignment clouds things for debugging
+                        if (shouldBe != actuallyIs)
+                        {
+                            throw new SigilVerificationException("Assertion failed expected " + shouldBe + ", but found " + actuallyIs, IL.Instructions(Locals), Stack, i);
+                        }
+                    }
+                }
             }
 
             UnmarkedLabels.Remove(label);

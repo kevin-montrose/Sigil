@@ -31,6 +31,8 @@ namespace Sigil
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
 
+            RequireTypeAssertion = true;
+
             return this;
         }
 
