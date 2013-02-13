@@ -52,7 +52,17 @@ namespace Sigil
             if (isTrivial)
             {
                 // already trivially castable; we don't need any IL for this
+
+                var onStack = Stack.Top()[0];
+
+                if (onStack.IsMarkable)
+                {
+                    newType = TypeOnStack.Get(referenceType, makeMarkable: true);
+                }
+
                 Stack = Stack.Pop().Push(newType);
+
+                onStack.ReplacedWith(newType);
             }
             else
             {

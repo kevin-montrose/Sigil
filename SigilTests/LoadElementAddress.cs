@@ -98,5 +98,28 @@ namespace SigilTests
             Assert.AreEqual("123", d1(0, new object[] { 123 }));
             Assert.IsFalse(instrs.Contains("readonly."));
         }
+
+        [TestMethod]
+        public void ReadOnlyTrivialCast()
+        {
+            var toString = typeof(object).GetMethod("ToString");
+
+            var e1 = Emit<Func<int, object[], string>>.NewDynamicMethod("E1");
+            e1.LoadArgument(1);
+            e1.LoadArgument(0);
+            e1.LoadElementAddress();
+            e1.CastClass(typeof(object).MakeByRefType());
+            e1.Duplicate();
+            e1.Pop();
+            e1.LoadIndirect<object>();
+            e1.CallVirtual(toString);
+            e1.Return();
+
+            string instrs;
+            var d1 = e1.CreateDelegate(out instrs);
+
+            Assert.AreEqual("123", d1(0, new object[] { 123 }));
+            Assert.IsFalse(instrs.Contains("readonly."));
+        }
     }
 }
