@@ -75,8 +75,8 @@ If a local is unused in a method body, a SigilVerificationException will be thro
 
 The methods `DefineLabel` and `MarkLabel`, and the instruction family `Branch*` and `Leave` are provided to specify control flow.  Sigil will verify that control transfer is legal, with one important caveat.
 
-At this time Sigil *does not* infer the state of the stack after an unconditional control flow transfer (which are `Branch()` and `Leave()`).  Immediately after such
-and instruction, you must mark a label with a "stack assertion" to continue.
+At this time Sigil *does not* infer the state of the stack after an unconditional control flow transfer (which are `Branch()` and `Leave()`).
+Immediately one of these instructions, you must mark a label with a "stack assertion" to continue.
 
 For example:
 ```
