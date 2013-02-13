@@ -211,7 +211,11 @@ Many methods in Sigil map to multiple OpCodes, the ideal one is chosen automatic
 For example, `Br_S` is chosen when `Branch(Label)` is called if the offset needed is small enough for `Br_S` to be used instead of `Br`.
 Similarly, `LoadIndirect<Type>()` chooses the correct version of `Ldind_*` based on it's generic parameter.
 
-The `tailcall` and `readonly` prefixes are also inserted automatically, but not the `volatile` or `unaligned` prefixes.
+The `tailcall` and `readonly` prefixes are also inserted automatically.
+
+The `volatile` prefix is inserted automatically when using `LoadField()` with non FieldBuilder FieldInfos.  An override is available as well.
+
+The `unaligned` prefix is not automatically inserted, but is available as an optional parameters on all operations where it is legal.
 
 While generally 1-to-1, Sigil does provide single methods for "families" of opcodes, all methods that map to multiple opcodes are listed below:
 
