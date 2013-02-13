@@ -41,8 +41,23 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            UpdateState(OpCodes.Castclass, referenceType, TypeOnStack.Get(referenceType), pop: 1);
+            var newType = TypeOnStack.Get(referenceType);
+            bool isTrivial = false;
 
+            try
+            {
+                isTrivial = newType.IsAssignableFrom(top[0]);
+            }
+            catch { /* not always possible to detect, due to builders etc  */ }
+            if (isTrivial)
+            {
+                // already trivially castable; we don't need any IL for this
+                Stack = Stack.Pop().Push(newType);
+            }
+            else
+            {
+                UpdateState(OpCodes.Castclass, referenceType, newType, pop: 1);
+            }
             return this;
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Sigil.Impl
@@ -8,6 +9,24 @@ namespace Sigil.Impl
     /// </summary>
     internal class StackState
     {
+        public IEnumerable<Type> GetTypes(int skip=0)
+        {
+            var current = this;
+            if(skip < 0) throw new ArgumentOutOfRangeException("skip");
+            while (skip != 0 && !current.IsRoot)
+            {
+                current = current.Previous;
+                skip--;
+            }
+            
+            if (skip != 0) throw new ArgumentException("Stack underflow", "skip");
+            
+            while (!current.IsRoot)
+            {
+                yield return current.Value.EffectiveType();
+                current = current.Previous;
+            }
+        }
         private StackState Previous;
 
         public TypeOnStack Value { get; private set; }
