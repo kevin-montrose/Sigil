@@ -71,9 +71,45 @@ Sigil exposes `DeclareLocal<Type>()` for creating new locals, and a number of Op
 
 If a local is unused in a method body, a SigilVerificationException will be thrown when `CreateDelegate()` is called.
 
-###Labels, Try, Catch, and Finally
+###Labels and Branches
 
-Sigil exposes `DefineLabel`, `MarkLabel`, `BeginExceptionBlock`, `EndExceptionBlock`, `BeginCatchBlock`, `BeginCatchAllBlock`, `EndCatchBlock`, `BeginFinallyBlock`, and `EndFinallyBlock`.
+The methods `DefineLabel` and `MarkLabel`, and the instruction family `Branch*` and `Leave` are provided to specify control flow.  Sigil will verify that control transfer is legal, with one important caveat.
+
+At this time Sigil *does not* infer the state of the stack after an unconditional control flow transfer (which are `Branch()` and `Leave()`).  Immediately after such
+and instruction, you must mark a label with a "stack assertion" to continue.
+
+For example:
+```
+var emiter = Emit<Func<int>>.NewDynamicMethod("Unconditional");
+
+var label1 = emiter.DefineLabel("label1");
+var label2 = emiter.DefineLabel("label2");
+var label3 = emiter.DefineLabel("label3");
+
+emiter.LoadConstant(1);
+emiter.Branch(label1);
+
+emiter.MarkLabel(label2, new[] { typeof(int) });
+emiter.LoadConstant(2);
+emiter.Branch(label3);
+
+emiter.MarkLabel(label1, new[] { typeof(int) });
+emiter.Branch(label2);
+
+emiter.MarkLabel(label3, new[] { typeof(int), typeof(int) }); // the top of the stack is the first element
+emiter.Add();
+emiter.Return();
+
+var d = emiter.CreateDelegate();
+d();  // returns 3
+```
+
+When an assertion is *not necessary* it's used to validate the inferred state of the stack, and a SigilVerificationException will be thrown
+when that validation fails.
+
+###Try, Catch, and Finally
+
+Sigil exposes `BeginExceptionBlock`, `EndExceptionBlock`, `BeginCatchBlock`, `BeginCatchAllBlock`, `EndCatchBlock`, `BeginFinallyBlock`, and `EndFinallyBlock`.
 
 An example of dynamically building a try/catch block:
 ```
@@ -89,7 +125,7 @@ emiter.LoadNull();
 emiter.BranchIfEqual(inputIsNull);
 emiter.Branch(tryCall);
 
-emiter.MarkLabel(inputIsNull);
+emiter.MarkLabel(inputIsNull, Type.EmptyTypes);
 emiter.LoadConstant(false);
 emiter.Return();
 

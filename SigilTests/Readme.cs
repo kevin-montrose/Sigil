@@ -198,5 +198,32 @@ namespace SigilTests
             Assert.IsFalse(del(null));
             Assert.IsFalse(AlwaysCallCalled);
         }
+
+        [TestMethod]
+        public void Block6()
+        {
+            var emiter = Emit<Func<int>>.NewDynamicMethod("Unconditional");
+            var label1 = emiter.DefineLabel("label1");
+            var label2 = emiter.DefineLabel("label2");
+            var label3 = emiter.DefineLabel("label3");
+
+            emiter.LoadConstant(1);
+            emiter.Branch(label1);
+
+            emiter.MarkLabel(label2, new[] { typeof(int) });
+            emiter.LoadConstant(2);
+            emiter.Branch(label3);
+
+            emiter.MarkLabel(label1, new[] { typeof(int) });
+            emiter.Branch(label2);
+
+            emiter.MarkLabel(label3, new[] { typeof(int), typeof(int) }); // the top of the stack is the first element
+            emiter.Add();
+            emiter.Return();
+
+            var d = emiter.CreateDelegate();
+
+            Assert.AreEqual(3, d());
+        }
     }
 }
