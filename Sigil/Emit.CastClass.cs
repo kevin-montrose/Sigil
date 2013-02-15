@@ -44,11 +44,8 @@ namespace Sigil
             var newType = TypeOnStack.Get(referenceType);
             bool isTrivial = false;
 
-            try
-            {
-                isTrivial = newType.IsAssignableFrom(top[0]);
-            }
-            catch { /* not always possible to detect, due to builders etc  */ }
+            isTrivial = newType.IsAssignableFrom(top[0]);
+
             if (isTrivial)
             {
                 // already trivially castable; we don't need any IL for this

@@ -131,7 +131,15 @@ namespace Sigil.Impl
                 return true;
             }
 
-            return t1.IsAssignableFrom(t2);
+            try
+            {
+                return t1.IsAssignableFrom(t2);
+            }
+            catch (NotSupportedException) 
+            { 
+                // Builders, some generic types, and so on don't implement this; just assume it's *no good* for now
+                return false; 
+            }
         }
     }
 }
