@@ -321,7 +321,7 @@ namespace Sigil
                 reversed.RemoveAt(0);
             }
 
-            if (funcPtr != TypeOnStack.Get<NativeInt>())
+            if (funcPtr != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("CallIndirect expects a native int to be on the top of the stack, found " + funcPtr, IL.Instructions(Locals), Stack, fPtrLoc);
             }

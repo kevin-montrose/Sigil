@@ -19,9 +19,9 @@ namespace Sigil
                     return;
                 }
 
-                if (val2 == TypeOnStack.Get<NativeInt>())
+                if (val2 == TypeOnStack.Get<NativeIntType>())
                 {
-                    UpdateState(addOp, TypeOnStack.Get<NativeInt>(), pop: 2);
+                    UpdateState(addOp, TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                     return;
                 }
@@ -81,18 +81,18 @@ namespace Sigil
 
             if (allowReference)
             {
-                if (val1 == TypeOnStack.Get<NativeInt>())
+                if (val1 == TypeOnStack.Get<NativeIntType>())
                 {
                     if (val2 == TypeOnStack.Get<int>())
                     {
-                        UpdateState(addOp, TypeOnStack.Get<NativeInt>(), pop: 2);
+                        UpdateState(addOp, TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                         return;
                     }
 
-                    if (val2 == TypeOnStack.Get<NativeInt>())
+                    if (val2 == TypeOnStack.Get<NativeIntType>())
                     {
-                        UpdateState(addOp, TypeOnStack.Get<NativeInt>(), pop: 2);
+                        UpdateState(addOp, TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                         return;
                     }
@@ -109,7 +109,7 @@ namespace Sigil
 
                 if (val1.IsReference || val1.IsPointer)
                 {
-                    if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeInt>())
+                    if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeIntType>())
                     {
                         UpdateState(addOp, val1, pop: 2);
 
@@ -413,7 +413,7 @@ namespace Sigil
 
             var val = onStack[0];
 
-            if (val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>() && val != TypeOnStack.Get<NativeInt>())
+            if (val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>() && val != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("Negate expects an int, long, float, double, or native int; found " + val, IL.Instructions(Locals), Stack, 0);
             }

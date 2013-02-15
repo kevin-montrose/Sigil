@@ -26,7 +26,7 @@ namespace Sigil
                 throw new SigilVerificationException("StoreElement expects a rank one array, found " + arr, IL.Instructions(Locals), Stack, 2);
             }
 
-            if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeInt>())
+            if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("StoreElement expects an index of type int or native int, found " + index, IL.Instructions(Locals), Stack, 1);
             }

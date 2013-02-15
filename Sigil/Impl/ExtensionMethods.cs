@@ -46,7 +46,7 @@ namespace Sigil.Impl
 
             if (t == typeof(IntPtr) || t == typeof(UIntPtr))
             {
-                return typeof(NativeInt);
+                return typeof(NativeIntType);
             }
 
             return t;
@@ -60,8 +60,8 @@ namespace Sigil.Impl
         public static bool IsAssignableFrom(this TypeOnStack type1, TypeOnStack type2)
         {
             // Native int can be convereted to any pointer type
-            if (type1.IsPointer && type2 == TypeOnStack.Get<NativeInt>()) return true;
-            if (type2.IsPointer && type1 == TypeOnStack.Get<NativeInt>()) return true;
+            if (type1.IsPointer && type2 == TypeOnStack.Get<NativeIntType>()) return true;
+            if (type2.IsPointer && type1 == TypeOnStack.Get<NativeIntType>()) return true;
 
             if ((type1.IsPointer || type1.IsReference) && !(type2.IsPointer || type2.IsReference)) return false;
             if ((type2.IsPointer || type2.IsReference) && !(type1.IsPointer || type1.IsReference)) return false;

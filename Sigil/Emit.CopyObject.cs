@@ -44,12 +44,12 @@ namespace Sigil
             var dest = onStack[1];
             var source = onStack[0];
 
-            if (!source.IsPointer && !source.IsReference && source != TypeOnStack.Get<NativeInt>())
+            if (!source.IsPointer && !source.IsReference && source != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("CopyObject expects the source value to be a pointer, reference, or native int; found " + source, IL.Instructions(Locals), Stack, 0);
             }
 
-            if (!dest.IsPointer && !dest.IsReference && dest != TypeOnStack.Get<NativeInt>())
+            if (!dest.IsPointer && !dest.IsReference && dest != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("CopyObject expects the destination value to be a pointer, reference, or native int; found " + dest, IL.Instructions(Locals), Stack, 1);
             }

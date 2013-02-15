@@ -54,7 +54,7 @@ namespace Sigil
                 throw new SigilVerificationException("StoreObject expected a " + valueType + " to be on the stack, found " + val, IL.Instructions(Locals), Stack, 0);
             }
 
-            if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeInt>())
+            if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("StoreObject expected a reference, pointer, or native int; found " + addr, IL.Instructions(Locals), Stack, 1);
             }

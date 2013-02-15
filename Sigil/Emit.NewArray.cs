@@ -33,7 +33,7 @@ namespace Sigil
 
             var size = onStack[0];
 
-            if (size != TypeOnStack.Get<int>() && size != TypeOnStack.Get<NativeInt>())
+            if (size != TypeOnStack.Get<int>() && size != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("NewArray expecte size to be an int or native int, found " + size, IL.Instructions(Locals), Stack, 0);
             }

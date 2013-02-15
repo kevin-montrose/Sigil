@@ -34,12 +34,12 @@ namespace Sigil
             var init = onStack[1];
             var count = onStack[0];
 
-            if (!start.IsPointer && !start.IsReference && start != TypeOnStack.Get<NativeInt>())
+            if (!start.IsPointer && !start.IsReference && start != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("InitializeBlock expects the start value to be a pointer, reference, or native int; found " + start, IL.Instructions(Locals), Stack, 2);
             }
 
-            if (init != TypeOnStack.Get<int>() && init != TypeOnStack.Get<NativeInt>())
+            if (init != TypeOnStack.Get<int>() && init != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("InitBlock expects the initial value to be an int or native int; found " + init, IL.Instructions(Locals), Stack, 1);
             }

@@ -9,7 +9,7 @@ namespace Sigil
     {
         private void CheckConvertible(string method, TypeOnStack item)
         {
-            if (item != TypeOnStack.Get<int>() && item != TypeOnStack.Get<NativeInt>() &&
+            if (item != TypeOnStack.Get<int>() && item != TypeOnStack.Get<NativeIntType>() &&
                 item != TypeOnStack.Get<long>() && item != TypeOnStack.Get<float>() &&
                 item != TypeOnStack.Get<double>() && !item.IsPointer
                )
@@ -365,32 +365,32 @@ namespace Sigil
 
         private void ConvertToNativeInt()
         {
-            UpdateState(OpCodes.Conv_I, TypeOnStack.Get<NativeInt>(), pop: 1);
+            UpdateState(OpCodes.Conv_I, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
         private void ConvertToNativeIntOverflow()
         {
-            UpdateState(OpCodes.Conv_Ovf_I, TypeOnStack.Get<NativeInt>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
         private void UnsignedConvertToNativeIntOverflow()
         {
-            UpdateState(OpCodes.Conv_Ovf_I_Un, TypeOnStack.Get<NativeInt>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I_Un, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
         private void ConvertToUnsignedNativeInt()
         {
-            UpdateState(OpCodes.Conv_U, TypeOnStack.Get<NativeInt>(), pop: 1);
+            UpdateState(OpCodes.Conv_U, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
         private void ConvertToUnsignedNativeIntOverflow()
         {
-            UpdateState(OpCodes.Conv_Ovf_U, TypeOnStack.Get<NativeInt>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
         private void UnsignedConvertToUnsignedNativeIntOverflow()
         {
-            UpdateState(OpCodes.Conv_Ovf_U_Un, TypeOnStack.Get<NativeInt>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U_Un, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
         private void ConvertToSByte()

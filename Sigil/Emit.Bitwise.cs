@@ -18,12 +18,12 @@ namespace Sigil
             var val2 = onStack[0];
             var val1 = onStack[1];
 
-            if (val1 != TypeOnStack.Get<int>() && val1 != TypeOnStack.Get<long>() && val1 != TypeOnStack.Get<NativeInt>())
+            if (val1 != TypeOnStack.Get<int>() && val1 != TypeOnStack.Get<long>() && val1 != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException(name + " expects integral types, but the first value type was " + val1, IL.Instructions(Locals), Stack, 1);
             }
 
-            if (val2 != TypeOnStack.Get<int>() && val2 != TypeOnStack.Get<long>() && val2 != TypeOnStack.Get<NativeInt>())
+            if (val2 != TypeOnStack.Get<int>() && val2 != TypeOnStack.Get<long>() && val2 != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException(name + " expects integral types, but the second value type was " + val2, IL.Instructions(Locals), Stack, 0);
             }
@@ -80,7 +80,7 @@ namespace Sigil
 
             var val = onStack[0];
 
-            if (val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<NativeInt>())
+            if (val != TypeOnStack.Get<int>() && val != TypeOnStack.Get<long>() && val != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("Not expects integral types, but found " + val, IL.Instructions(Locals), Stack, 0);
             }
@@ -102,12 +102,12 @@ namespace Sigil
             var shift = onStack[0];
             var value = onStack[1];
 
-            if (value != TypeOnStack.Get<int>() && value != TypeOnStack.Get<long>() && value != TypeOnStack.Get<NativeInt>())
+            if (value != TypeOnStack.Get<int>() && value != TypeOnStack.Get<long>() && value != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException(name + " expects the value to be shifted to be an int, long, or native int; found " + value, IL.Instructions(Locals), Stack, 1);
             }
 
-            if (shift != TypeOnStack.Get<int>() && shift != TypeOnStack.Get<NativeInt>())
+            if (shift != TypeOnStack.Get<int>() && shift != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException(name + " expects the shift to be an int or native int; found " + shift, IL.Instructions(Locals), Stack, 0);
             }

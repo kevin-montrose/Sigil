@@ -45,12 +45,12 @@ namespace Sigil
 
             var numBytes = top[0];
 
-            if (numBytes != TypeOnStack.Get<int>() && numBytes != TypeOnStack.Get<NativeInt>())
+            if (numBytes != TypeOnStack.Get<int>() && numBytes != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("LocalAllocate expected an int or native int, found " + numBytes, IL.Instructions(Locals), Stack, 0);
             }
 
-            UpdateState(OpCodes.Localloc, TypeOnStack.Get<NativeInt>(), pop: 1);
+            UpdateState(OpCodes.Localloc, TypeOnStack.Get<NativeIntType>(), pop: 1);
 
             return this;
         }

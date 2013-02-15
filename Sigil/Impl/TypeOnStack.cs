@@ -96,7 +96,7 @@ namespace Sigil.Impl
             if (object.ReferenceEquals(b, null)) return false;
 
             // There's not exact map of NativeInt in .NET; but once it's on the stack IntPtr can be manipulated similarly
-            if (a.Type == typeof(NativeInt) && b.Type == typeof(IntPtr) || b.Type == typeof(NativeInt) && a.Type == typeof(IntPtr))
+            if (a.Type == typeof(NativeIntType) && b.Type == typeof(IntPtr) || b.Type == typeof(NativeIntType) && a.Type == typeof(IntPtr))
             {
                 return a.IsPointer == b.IsPointer && a.IsReference == b.IsReference;
             }
@@ -198,11 +198,6 @@ namespace Sigil.Impl
                 throw new InvalidOperationException("Sigil does not currently support generic types; found " + type);
             }
 
-            if (type == typeof(void))
-            {
-                type = typeof(VoidType);
-            }
-
             TypeOnStack ret;
 
             if (type.IsPointer)
@@ -261,7 +256,7 @@ namespace Sigil.Impl
                         new TypeOnStack
                         {
                             HasAttachedMethodInfo = true,
-                            Type = typeof(NativeInt),
+                            Type = typeof(NativeIntType),
                             CallingConvention = conv,
                             InstanceType = instanceType,
                             ReturnType = returnType,
@@ -279,7 +274,7 @@ namespace Sigil.Impl
         {
             var ret = Type.FullName;
 
-            if (Type == typeof(NativeInt)) ret = "native int";
+            if (Type == typeof(NativeIntType)) ret = "native int";
             if (Type == typeof(NullType)) ret = "null";
 
             if (IsPointer) ret += "*";
@@ -312,13 +307,4 @@ namespace Sigil.Impl
             return type;
         }
     }
-
-    // Stand in for native int type
-    internal class NativeInt { }
-
-    // Stand in for void
-    internal class VoidType { }
-
-    // Stand in for known null type
-    internal class NullType { }
 }

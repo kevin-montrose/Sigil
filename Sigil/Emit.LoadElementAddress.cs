@@ -78,7 +78,7 @@ namespace Sigil
             var index = top[0];
             var array = top[1];
 
-            if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeInt>())
+            if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeIntType>())
             {
                 throw new SigilVerificationException("LoadElementAddress expects an int or native int on the top of the stack, found " + index, IL.Instructions(Locals), Stack, 0);
             }

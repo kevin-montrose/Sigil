@@ -204,6 +204,8 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="NativeIntType.cs" />
+    <Compile Include="NullType.cs" />
     <Compile Include="Tuple.cs" />
     <Compile Include="Emit.Unbox.cs">
       <DependentUpon>Emit.cs</DependentUpon>
