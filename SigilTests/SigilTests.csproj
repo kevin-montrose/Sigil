@@ -78,6 +78,7 @@
     <Compile Include="Instructions.cs" />
     <Compile Include="IsInstance.cs" />
     <Compile Include="Jump.cs" />
+    <Compile Include="Labels.cs" />
     <Compile Include="Leave.cs" />
     <Compile Include="LoadArgumentAddress.cs" />
     <Compile Include="LoadArguments.cs" />

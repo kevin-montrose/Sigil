@@ -90,12 +90,19 @@ namespace Sigil
         private Dictionary<string, Local> CurrentLocals;
 
         /// <summary>
-        /// Dictionary to look up locals currently in scope by name.
+        /// Lookup for the locals currently in scope by name.
         /// 
         /// Locals go out of scode when released (by calling Dispose() directly, or via  using) and go into scope
         /// immediately after a DeclareLocal()
         /// </summary>
         public LocalLookup Locals { get; private set; }
+
+        private Dictionary<string, Label> CurrentLabels;
+
+        /// <summary>
+        /// Lookup for declared labels by name.
+        /// </summary>
+        public LabelLookup Labels { get; private set; }
 
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
@@ -156,6 +163,9 @@ namespace Sigil
 
             CurrentLocals = new Dictionary<string, Local>();
             Locals = new LocalLookup(CurrentLocals);
+
+            CurrentLabels = new Dictionary<string, Label>();
+            Labels = new LabelLookup(CurrentLabels);
         }
 
         /// <summary>

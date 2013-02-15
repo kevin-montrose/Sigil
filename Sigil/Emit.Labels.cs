@@ -136,12 +136,19 @@ namespace Sigil
         {
             name = name ?? AutoNamer.Next(this, "_label");
 
+            if (CurrentLabels.ContainsKey(name))
+            {
+                throw new InvalidOperationException("Label with name '" + name + "' already exists");
+            }
+
             var label = IL.DefineLabel();
 
             var ret = new Label(this, label, name);
 
             UnusedLabels.Add(ret);
             UnmarkedLabels.Add(ret);
+
+            CurrentLabels[name] = ret;
 
             return ret;
         }

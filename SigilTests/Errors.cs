@@ -13,6 +13,23 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void DoubleLabelDeclaration()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            e1.DefineLabel("a");
+
+            try
+            {
+                e1.DefineLabel("a");
+                Assert.Fail();
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.AreEqual("Label with name 'a' already exists", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void DoubleLocalDeclaration()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
