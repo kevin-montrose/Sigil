@@ -13,6 +13,27 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void DoubleLocalDeclaration()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            var a = e1.DeclareLocal<int>("a");
+
+            try
+            {
+                e1.DeclareLocal<string>("a");
+                Assert.Fail();
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.AreEqual("Local with name 'a' already exists", e.Message);
+            }
+
+            a.Dispose();
+
+            e1.DeclareLocal<string>("a");
+        }
+
+        [TestMethod]
         public void GenericThisCall()
         {
             {

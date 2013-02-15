@@ -45,6 +45,11 @@ namespace Sigil
 
             name = name ?? AutoNamer.Next(this, "_local");
 
+            if (CurrentLocals.ContainsKey(name))
+            {
+                throw new InvalidOperationException("Local with name '" + name + "' already exists");
+            }
+
             var existingLocal = FreedLocals.FirstOrDefault(l => l.LocalType == type);
 
             BufferedILGenerator.DeclareLocallDelegate local;
