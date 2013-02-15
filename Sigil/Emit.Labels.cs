@@ -166,7 +166,7 @@ namespace Sigil
         /// 
         /// When branching, leaving, or switching with a label control will be transfered to where it was *marked* not defined.
         /// 
-        /// Label's can only be marked once, and *must* be marked before creating a delegate.
+        /// Labels can only be marked once, and *must* be marked before creating a delegate.
         /// 
         /// Logically after a Branch or Leave instruction, a stack assertion is required to continue emiting.  The stack
         /// is assumed to match that state in these cases.
