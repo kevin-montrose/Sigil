@@ -8,6 +8,8 @@ using System.Text;
 
 namespace Sigil
 {
+    internal delegate void LocalReusableDelegate(Local local);
+
     /// <summary>
     /// Helper for CIL generation that fails as soon as a sequence of instructions
     /// can be shown to be invalid.
@@ -82,6 +84,8 @@ namespace Sigil
 
         private bool RequireTypeAssertion;
 
+        private List<Local> FreedLocals { get; set; }
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -136,6 +140,8 @@ namespace Sigil
             ReadonlyPatches = new List<Tuple<int, TypeOnStack>>();
 
             Shorthand = new EmitShorthand<DelegateType>(this);
+
+            FreedLocals = new List<Local>();
         }
 
         /// <summary>

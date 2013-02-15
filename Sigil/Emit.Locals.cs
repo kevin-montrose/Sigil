@@ -1,10 +1,16 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Linq;
 
 namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private void LocalReleased(Local local)
+        {
+            FreedLocals.Add(local);
+        }
+
         /// <summary>
         /// Declare a new local of the given type in the current method.
         /// 
@@ -37,12 +43,27 @@ namespace Sigil
 
             name = name ?? AutoNamer.Next(this, "_local");
 
-            var local = IL.DeclareLocal(type);
+            var existingLocal = FreedLocals.FirstOrDefault(l => l.LocalType == type);
 
-            var localIndex = NextLocalIndex;
-            NextLocalIndex++;
+            BufferedILGenerator.DeclareLocallDelegate local;
+            ushort localIndex;
 
-            var ret = new Local(this, localIndex, type, local, name);
+            if (existingLocal == null)
+            {
+                local = IL.DeclareLocal(type);
+
+                localIndex = NextLocalIndex;
+                NextLocalIndex++;
+            }
+            else
+            {
+                local = existingLocal.LocalDel;
+                localIndex = existingLocal.Index;
+
+                FreedLocals.Remove(existingLocal);
+            }
+
+            var ret = new Local(this, localIndex, type, local, name, LocalReleased);
 
             UnusedLocals.Add(ret);
 

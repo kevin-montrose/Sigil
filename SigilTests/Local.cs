@@ -42,5 +42,31 @@ namespace SigilTests
 
             Assert.AreEqual("System.Int32 local", local.ToString());
         }
+
+        [TestMethod]
+        public void Reuse()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod();
+
+            using (var a = e1.DeclareLocal<int>("a"))
+            {
+                e1.LoadLocal(a);
+                e1.LoadConstant(1);
+                e1.Add();
+            }
+
+            using (var b = e1.DeclareLocal<int>("b"))
+            {
+                e1.StoreLocal(b);
+                e1.LoadLocal(b);
+                e1.Return();
+            }
+
+            string instrs;
+            var d1 = e1.CreateDelegate(out instrs);
+
+            Assert.AreEqual(1, d1());
+            Assert.AreEqual("ldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nldloc.0\r\nret\r\n", instrs);
+        }
     }
 }
