@@ -71,6 +71,28 @@ Sigil exposes `DeclareLocal<Type>()` for creating new locals, and a number of Op
 
 If a local is unused in a method body, a SigilVerificationException will be thrown when `CreateDelegate()` is called.
 
+Locals implement IDisposable, letting you free locals up for Sigil to reuse.  This can result in more compact code, and a smaller stack frame.
+
+The following code only allocates a single local  
+```
+var e1 = Emit<Func<int>>.NewDynamicMethod();
+
+using (var a = e1.DeclareLocal<int>("a"))
+{
+	e1.LoadLocal(a);
+	e1.LoadConstant(1);
+	e1.Add();
+}
+
+// reuses the definition of "a", since it's available and the types match
+using (var b = e1.DeclareLocal<int>("b"))
+{
+	e1.StoreLocal(b);
+	e1.LoadLocal(b);
+	e1.Return();
+}
+```
+
 ###Labels and Branches
 
 The methods `DefineLabel` and `MarkLabel`, and the instruction family `Branch*` and `Leave` are provided to specify control flow.  Sigil will verify that control transfer is legal, with one important caveat.

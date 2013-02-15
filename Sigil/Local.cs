@@ -55,6 +55,13 @@ namespace Sigil
             return LocalType.FullName + " " + Name;
         }
 
+        /// <summary>
+        /// Frees this local.
+        /// 
+        /// While not strictly required, freeing a local allows it's index to be reused.
+        /// 
+        /// Locals are only elligible for reuse when the new local is exactly the same type.
+        /// </summary>
         public void Dispose()
         {
             if (Reusable == null)
