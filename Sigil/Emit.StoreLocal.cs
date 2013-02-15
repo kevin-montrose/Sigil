@@ -32,7 +32,7 @@ namespace Sigil
 
             if (!local.LocalType.IsAssignableFrom(top[0]))
             {
-                throw new SigilVerificationException("StoreLocal expects a value assignable to " + local.LocalType.FullName + " to be on the stack; found " + top[0], IL.Instructions(Locals), Stack, 0);
+                throw new SigilVerificationException("StoreLocal expects a value assignable to " + local.LocalType.FullName + " to be on the stack; found " + top[0], IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
             UnusedLocals.Remove(local);

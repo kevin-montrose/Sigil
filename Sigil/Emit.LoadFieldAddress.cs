@@ -37,7 +37,7 @@ namespace Sigil
 
                 if (!field.DeclaringType.IsAssignableFrom(val))
                 {
-                    throw new SigilVerificationException("LoadFieldAddress expected a " + field.DeclaringType + ", found " + val, IL.Instructions(Locals), Stack, 0);
+                    throw new SigilVerificationException("LoadFieldAddress expected a " + field.DeclaringType + ", found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
                 }
 
                 UpdateState(OpCodes.Ldflda, field, TypeOnStack.Get(field.FieldType.MakeByRefType()), pop: 1);

@@ -1,6 +1,7 @@
 ﻿using Sigil.Impl;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -38,7 +39,7 @@ namespace Sigil
 
         private ushort NextLocalIndex = 0;
 
-        private Dictionary<int, Local> Locals;
+        private Dictionary<int, Local> LocalsByIndex;
 
         private HashSet<Local> UnusedLocals;
         private HashSet<Label> UnusedLabels;
@@ -86,6 +87,16 @@ namespace Sigil
 
         private List<Local> FreedLocals { get; set; }
 
+        private Dictionary<string, Local> CurrentLocals;
+
+        /// <summary>
+        /// Dictionary to look up locals currently in scope by name.
+        /// 
+        /// Locals go out of scode when released (by calling Dispose() directly, or via  using) and go into scope
+        /// immediately after a DeclareLocal()
+        /// </summary>
+        public LocalLookup Locals { get; private set; }
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -120,7 +131,7 @@ namespace Sigil
             
             InstructionStream = new List<Tuple<OpCode, StackState>>();
 
-            Locals = new Dictionary<int, Local>();
+            LocalsByIndex = new Dictionary<int, Local>();
 
             UnusedLocals = new HashSet<Local>();
             UnusedLabels = new HashSet<Label>();
@@ -142,6 +153,9 @@ namespace Sigil
             Shorthand = new EmitShorthand<DelegateType>(this);
 
             FreedLocals = new List<Local>();
+
+            CurrentLocals = new Dictionary<string, Local>();
+            Locals = new LocalLookup(CurrentLocals);
         }
 
         /// <summary>
@@ -164,7 +178,7 @@ namespace Sigil
         {
             var ret = new StringBuilder();
 
-            foreach (var line in IL.Instructions(Locals))
+            foreach (var line in IL.Instructions(LocalsByIndex))
             {
                 ret.AppendLine(line);
             }

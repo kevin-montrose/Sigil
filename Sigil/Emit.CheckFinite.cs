@@ -23,7 +23,7 @@ namespace Sigil
 
             if (val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>())
             {
-                throw new SigilVerificationException("CheckFinite expects a floating point value, found " + val, IL.Instructions(Locals), Stack, 0);
+                throw new SigilVerificationException("CheckFinite expects a floating point value, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
             // ckfinite leaves the value on the stack, oddly enough

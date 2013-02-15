@@ -43,7 +43,7 @@ namespace Sigil
 
                 if (!field.DeclaringType.IsAssignableFrom(type))
                 {
-                    throw new SigilVerificationException("LoadField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL.Instructions(Locals), Stack, 0);
+                    throw new SigilVerificationException("LoadField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL.Instructions(LocalsByIndex), Stack, 0);
                 }
 
                 if (useVolatile)

@@ -36,17 +36,17 @@ namespace Sigil
 
             if (!(dest.IsPointer || dest.IsReference || dest == TypeOnStack.Get<NativeIntType>()))
             {
-                throw new SigilVerificationException("CopyBlock expects the destination value to be a pointer, reference, or native int; found " + dest, IL.Instructions(Locals), Stack, 2);
+                throw new SigilVerificationException("CopyBlock expects the destination value to be a pointer, reference, or native int; found " + dest, IL.Instructions(LocalsByIndex), Stack, 2);
             }
 
             if (!(source.IsPointer || source.IsReference || source == TypeOnStack.Get<NativeIntType>()))
             {
-                throw new SigilVerificationException("CopyBlock expects the source value to be a pointer, reference, or native int; found " + source, IL.Instructions(Locals), Stack, 1);
+                throw new SigilVerificationException("CopyBlock expects the source value to be a pointer, reference, or native int; found " + source, IL.Instructions(LocalsByIndex), Stack, 1);
             }
 
             if (count != TypeOnStack.Get<int>())
             {
-                throw new SigilVerificationException("CopyBlock expects the count value to be an int; found " + count, IL.Instructions(Locals), Stack, 0);
+                throw new SigilVerificationException("CopyBlock expects the count value to be an int; found " + count, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
             if (isVolatile)

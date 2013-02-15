@@ -26,7 +26,7 @@ namespace Sigil
                         mark.Add(i);
                     }
 
-                    throw new SigilVerificationException("Returning from a void method must leave the stack empty", IL.Instructions(Locals), Stack, mark.ToArray());
+                    throw new SigilVerificationException("Returning from a void method must leave the stack empty", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
                 }
 
                 UpdateState(OpCodes.Ret);
@@ -43,7 +43,7 @@ namespace Sigil
 
             if (!ReturnType.IsAssignableFrom(retType[0]))
             {
-                throw new SigilVerificationException("Return expects a value assignable to " + ReturnType + " to be on the stack; found " + retType[0], IL.Instructions(Locals), Stack, 0);
+                throw new SigilVerificationException("Return expects a value assignable to " + ReturnType + " to be on the stack; found " + retType[0], IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
             UpdateState(OpCodes.Ret, pop: 1);
@@ -57,7 +57,7 @@ namespace Sigil
                     mark.Add(i);
                 }
 
-                throw new SigilVerificationException("Return should leave the stack empty", IL.Instructions(Locals), Stack, mark.ToArray());
+                throw new SigilVerificationException("Return should leave the stack empty", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
             }
 
             return this;

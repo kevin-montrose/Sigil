@@ -21,7 +21,7 @@ namespace Sigil
                     mark.Add(i);
                 }
 
-                throw new SigilVerificationException("Stack should be empty when BeginExceptionBlock is called", IL.Instructions(Locals), Stack, mark.ToArray());
+                throw new SigilVerificationException("Stack should be empty when BeginExceptionBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
             }
 
             var labelDel = IL.BeginExceptionBlock();
@@ -210,14 +210,14 @@ namespace Sigil
                     mark.Add(i);
                 }
 
-                throw new SigilVerificationException("Stack should be empty when BeginCatchBlock is called", IL.Instructions(Locals), Stack, mark.ToArray());
+                throw new SigilVerificationException("Stack should be empty when BeginCatchBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
             }
 
             var tryBlock = TryBlocks[forTry];
 
             if (tryBlock.Item2 != -1)
             {
-                throw new SigilVerificationException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", IL.Instructions(Locals), Stack);
+                throw new SigilVerificationException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", IL.Instructions(LocalsByIndex), Stack);
             }
 
             IL.BeginCatchBlock(exceptionType);
@@ -269,7 +269,7 @@ namespace Sigil
                     mark.Add(i);
                 }
 
-                throw new SigilVerificationException("Stack should be empty when EndCatchBlock is called", IL.Instructions(Locals), Stack, mark.ToArray());
+                throw new SigilVerificationException("Stack should be empty when EndCatchBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
             }
 
             var location = CatchBlocks[forCatch];
@@ -347,7 +347,7 @@ namespace Sigil
                     mark.Add(i);
                 }
 
-                throw new SigilVerificationException("Stack should be empty when BeginFinallyBlock is called", IL.Instructions(Locals), Stack, mark.ToArray());
+                throw new SigilVerificationException("Stack should be empty when BeginFinallyBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
             }
 
             var ret = new FinallyBlock(forTry);
@@ -390,7 +390,7 @@ namespace Sigil
                     mark.Add(i);
                 }
 
-                throw new SigilVerificationException("Stack should be empty when EndFinallyBlock is called", IL.Instructions(Locals), Stack, mark.ToArray());
+                throw new SigilVerificationException("Stack should be empty when EndFinallyBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
             }
 
             IL.EndFinallyBlock();

@@ -23,19 +23,19 @@ namespace Sigil
 
             if (arr.IsPointer || arr.IsReference || !arr.Type.IsArray || arr.Type.GetArrayRank() != 1)
             {
-                throw new SigilVerificationException("StoreElement expects a rank one array, found " + arr, IL.Instructions(Locals), Stack, 2);
+                throw new SigilVerificationException("StoreElement expects a rank one array, found " + arr, IL.Instructions(LocalsByIndex), Stack, 2);
             }
 
             if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeIntType>())
             {
-                throw new SigilVerificationException("StoreElement expects an index of type int or native int, found " + index, IL.Instructions(Locals), Stack, 1);
+                throw new SigilVerificationException("StoreElement expects an index of type int or native int, found " + index, IL.Instructions(LocalsByIndex), Stack, 1);
             }
 
             var elemType = arr.Type.GetElementType();
 
             if (!elemType.IsAssignableFrom(value))
             {
-                throw new SigilVerificationException("StoreElement expects a value assignable to " + elemType + ", found " + value, IL.Instructions(Locals), Stack, 2);
+                throw new SigilVerificationException("StoreElement expects a value assignable to " + elemType + ", found " + value, IL.Instructions(LocalsByIndex), Stack, 2);
             }
 
             OpCode? instr = null;

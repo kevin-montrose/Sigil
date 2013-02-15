@@ -57,7 +57,7 @@ namespace Sigil
 
             if (!Stack.IsRoot)
             {
-                throw new SigilVerificationException("Jump expected the stack to be empty", IL.Instructions(Locals), Stack);
+                throw new SigilVerificationException("Jump expected the stack to be empty", IL.Instructions(LocalsByIndex), Stack);
             }
 
             for (var i = 0; i < paras.Length; i++)
@@ -67,7 +67,7 @@ namespace Sigil
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {
-                    throw new SigilVerificationException("Jump expected the #" + i + " parameter to be assignable from " + actuallyIs + ", but found " + shouldBe, IL.Instructions(Locals), Stack);
+                    throw new SigilVerificationException("Jump expected the #" + i + " parameter to be assignable from " + actuallyIs + ", but found " + shouldBe, IL.Instructions(LocalsByIndex), Stack);
                 }
             }
 

@@ -14,7 +14,7 @@ namespace Sigil
                 item != TypeOnStack.Get<double>() && !item.IsPointer
                )
             {
-                throw new SigilVerificationException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item, IL.Instructions(Locals));
+                throw new SigilVerificationException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item, IL.Instructions(LocalsByIndex));
             }
         }
 

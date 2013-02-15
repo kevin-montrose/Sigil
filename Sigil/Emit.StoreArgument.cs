@@ -32,7 +32,7 @@ namespace Sigil
 
             if (!paramType.IsAssignableFrom(onStack[0]))
             {
-                throw new SigilVerificationException("StoreArgument expects type on stack to be assignable to " + paramType + ", found " + onStack[0], IL.Instructions(Locals), Stack, 0);
+                throw new SigilVerificationException("StoreArgument expects type on stack to be assignable to " + paramType + ", found " + onStack[0], IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
             if (index >= byte.MinValue && index <= byte.MaxValue)

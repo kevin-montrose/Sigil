@@ -9,6 +9,8 @@ namespace Sigil
         private void LocalReleased(Local local)
         {
             FreedLocals.Add(local);
+
+            CurrentLocals.Remove(local.Name);
         }
 
         /// <summary>
@@ -67,7 +69,9 @@ namespace Sigil
 
             UnusedLocals.Add(ret);
 
-            Locals[localIndex] = ret;
+            LocalsByIndex[localIndex] = ret;
+
+            CurrentLocals[ret.Name] = ret;
 
             return ret;
         }

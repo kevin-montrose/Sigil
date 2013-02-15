@@ -68,5 +68,28 @@ namespace SigilTests
             Assert.AreEqual(1, d1());
             Assert.AreEqual("ldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nldloc.0\r\nret\r\n", instrs);
         }
+
+        [TestMethod]
+        public void Lookup()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            var a = e1.DeclareLocal<int>("a");
+
+            var aRef = e1.Locals["a"];
+
+            Assert.IsTrue(a == aRef);
+
+            a.Dispose();
+
+            try
+            {
+                var x = e1.Locals["a"];
+                Assert.Fail();
+            }
+            catch (KeyNotFoundException e)
+            {
+                Assert.AreEqual("No local with name 'a' found", e.Message);
+            }
+        }
     }
 }

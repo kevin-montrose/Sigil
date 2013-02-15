@@ -21,7 +21,7 @@ namespace Sigil
 
                 if (!Marks.ContainsKey(label))
                 {
-                    throw new SigilVerificationException("Usage of unmarked label " + label, IL.Instructions(Locals));
+                    throw new SigilVerificationException("Usage of unmarked label " + label, IL.Instructions(LocalsByIndex));
                 }
 
                 var stop = Marks[label].Item2;
@@ -228,7 +228,7 @@ namespace Sigil
                         // strict equality, assignment clouds things for debugging
                         if (shouldBe != actuallyIs)
                         {
-                            throw new SigilVerificationException("Assertion failed expected " + shouldBe + ", but found " + actuallyIs, IL.Instructions(Locals), Stack, i);
+                            throw new SigilVerificationException("Assertion failed expected " + shouldBe + ", but found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, i);
                         }
                     }
                 }
