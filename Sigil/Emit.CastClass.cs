@@ -41,16 +41,16 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
+            var onStack = top[0];
+
             var newType = TypeOnStack.Get(referenceType);
             bool isTrivial = false;
 
-            isTrivial = newType.IsAssignableFrom(top[0]);
+            isTrivial = newType.IsAssignableFrom(onStack);
 
             if (isTrivial)
             {
                 // already trivially castable; we don't need any IL for this
-
-                var onStack = Stack.Top()[0];
 
                 if (onStack.IsMarkable)
                 {
