@@ -60,7 +60,7 @@ namespace Sigil
         /// 
         /// While not strictly required, freeing a local allows it's index to be reused.
         /// 
-        /// Locals are only elligible for reuse when the new local is exactly the same type.
+        /// Locals are only eligible for reuse when the new local is exactly the same type.
         /// </summary>
         public void Dispose()
         {
