@@ -43,5 +43,13 @@ namespace Sigil
 
             return this;
         }
+
+        /// <summary>
+        /// Loads the value in the local with the given name onto the stack.
+        /// </summary>
+        public Emit<DelegateType> LoadLocal(string localName)
+        {
+            return LoadLocal(Locals[localName]);
+        } 
     }
 }

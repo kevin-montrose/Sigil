@@ -760,7 +760,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.StoreLocal(null);
+                    e1.StoreLocal((Sigil.Local)null);
                     Assert.Fail();
                 }
                 catch (ArgumentNullException e)
@@ -1739,7 +1739,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadLocal(null);
+                    e1.LoadLocal((Sigil.Local)null);
                     Assert.Fail();
                 }
                 catch (ArgumentNullException e)
