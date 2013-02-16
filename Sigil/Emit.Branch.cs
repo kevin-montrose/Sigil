@@ -38,6 +38,14 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Unconditionally branches to the label with the given name.
+        /// </summary>
+        public Emit<DelegateType> Branch(string name)
+        {
+            return Branch(Labels[name]);
+        }
+
+        /// <summary>
         /// Pops two arguments from the stack, if both are equal branches to the given label.
         /// </summary>
         public Emit<DelegateType> BranchIfEqual(Label label)
@@ -70,6 +78,14 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
 
             return this;
+        }
+
+        /// <summary>
+        /// Pops two arguments from the stack, if both are equal branches to the label with the given name.
+        /// </summary>
+        public Emit<DelegateType> BranchIfEqual(string name)
+        {
+            return BranchIfEqual(Labels[name]);
         }
 
         /// <summary>
@@ -108,6 +124,14 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Pops two arguments from the stack, if they are not equal (when treated as unsigned values) branches to the label with the given name.
+        /// </summary>
+        public Emit<DelegateType> UnsignedBranchIfNotEqual(string name)
+        {
+            return UnsignedBranchIfNotEqual(Labels[name]);
+        }
+
+        /// <summary>
         /// Pops two arguments from the stack, branches to the given label if the second value is greater than or equal to the first value.
         /// </summary>
         public Emit<DelegateType> BranchIfGreaterOrEqual(Label label)
@@ -140,6 +164,14 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge);
 
             return this;
+        }
+
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is greater than or equal to the first value.
+        /// </summary>
+        public Emit<DelegateType> BranchIfGreaterOrEqual(string name)
+        {
+            return BranchIfGreaterOrEqual(Labels[name]);
         }
 
         /// <summary>
@@ -178,6 +210,14 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is greater than or equal to the first value (when treated as unsigned values).
+        /// </summary>
+        public Emit<DelegateType> UnsignedBranchIfGreaterOrEqual(string name)
+        {
+            return UnsignedBranchIfGreaterOrEqual(Labels[name]);
+        }
+
+        /// <summary>
         /// Pops two arguments from the stack, branches to the given label if the second value is greater than the first value.
         /// </summary>
         public Emit<DelegateType> BranchIfGreater(Label label)
@@ -210,6 +250,14 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt);
 
             return this;
+        }
+
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is greater than the first value.
+        /// </summary>
+        public Emit<DelegateType> BranchIfGreater(string name)
+        {
+            return BranchIfGreater(Labels[name]);
         }
 
         /// <summary>
@@ -248,6 +296,14 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is greater than the first value (when treated as unsigned values).
+        /// </summary>
+        public Emit<DelegateType> UnsignedBranchIfGreater(string name)
+        {
+            return UnsignedBranchIfGreater(Labels[name]);
+        }
+
+        /// <summary>
         /// Pops two arguments from the stack, branches to the given label if the second value is less than or equal to the first value.
         /// </summary>
         public Emit<DelegateType> BranchIfLessOrEqual(Label label)
@@ -280,6 +336,14 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble);
 
             return this;
+        }
+
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is less than or equal to the first value.
+        /// </summary>
+        public Emit<DelegateType> BranchIfLessOrEqual(string name)
+        {
+            return BranchIfLessOrEqual(Labels[name]);
         }
 
         /// <summary>
@@ -318,6 +382,14 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is less than or equal to the first value (when treated as unsigned values).
+        /// </summary>
+        public Emit<DelegateType> UnsignedBranchIfLessOrEqual(string name)
+        {
+            return UnsignedBranchIfLessOrEqual(Labels[name]);
+        }
+
+        /// <summary>
         /// Pops two arguments from the stack, branches to the given label if the second value is less than the first value.
         /// </summary>
         public Emit<DelegateType> BranchIfLess(Label label)
@@ -353,6 +425,14 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is less than the first value.
+        /// </summary>
+        public Emit<DelegateType> BranchIfLess(string name)
+        {
+            return BranchIfLess(Labels[name]);
+        }
+
+        /// <summary>
         /// Pops two arguments from the stack, branches to the given label if the second value is less than the first value (when treated as unsigned values).
         /// </summary>
         public Emit<DelegateType> UnsignedBranchIfLess(Label label)
@@ -385,6 +465,14 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
 
             return this;
+        }
+
+        /// <summary>
+        /// Pops two arguments from the stack, branches to the label with the given name if the second value is less than the first value (when treated as unsigned values).
+        /// </summary>
+        public Emit<DelegateType> UnsignedBranchIfLess(string name)
+        {
+            return UnsignedBranchIfLess(Labels[name]);
         }
 
         /// <summary>
@@ -425,6 +513,16 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Pops one argument from the stack, branches to the label with the given name if the value is false.
+        /// 
+        /// A value is false if it is zero or null.
+        /// </summary>
+        public Emit<DelegateType> BranchIfFalse(string name)
+        {
+            return BranchIfFalse(Labels[name]);
+        }
+
+        /// <summary>
         /// Pops one argument from the stack, branches to the given label if the value is true.
         /// 
         /// A value is true if it is non-zero or non-null.
@@ -459,6 +557,16 @@ namespace Sigil
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brtrue);
 
             return this;
+        }
+
+        /// <summary>
+        /// Pops one argument from the stack, branches to the label with the given name if the value is true.
+        /// 
+        /// A value is true if it is non-zero or non-null.
+        /// </summary>
+        public Emit<DelegateType> BranchIfTrue(string name)
+        {
+            return BranchIfTrue(Labels[name]);
         }
     }
 }

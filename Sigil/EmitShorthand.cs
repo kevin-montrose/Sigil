@@ -227,10 +227,26 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.BranchIfEqual(System.String)" />
+        public EmitShorthand<DelegateType> Beq(string name)
+        {
+            InnerEmit.BranchIfEqual(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.BranchIfGreaterOrEqual(Sigil.Label)" />
         public EmitShorthand<DelegateType> Bge(Label label)
         {
             InnerEmit.BranchIfGreaterOrEqual(label);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.BranchIfGreaterOrEqual(System.String)" />
+        public EmitShorthand<DelegateType> Bge(string name)
+        {
+            InnerEmit.BranchIfGreaterOrEqual(name);
 
             return this;
         }
@@ -243,10 +259,26 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfGreaterOrEqual(System.String)" />
+        public EmitShorthand<DelegateType> Bge_Un(string name)
+        {
+            InnerEmit.UnsignedBranchIfGreaterOrEqual(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.BranchIfGreater(Sigil.Label)" />
         public EmitShorthand<DelegateType> Bgt(Label label)
         {
             InnerEmit.BranchIfGreater(label);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.BranchIfGreater(System.String)" />
+        public EmitShorthand<DelegateType> Bgt(string name)
+        {
+            InnerEmit.BranchIfGreater(name);
 
             return this;
         }
@@ -259,10 +291,26 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfGreater(System.String)" />
+        public EmitShorthand<DelegateType> Bgt_Un(string name)
+        {
+            InnerEmit.UnsignedBranchIfGreater(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.BranchIfLessOrEqual(Sigil.Label)" />
         public EmitShorthand<DelegateType> Ble(Label label)
         {
             InnerEmit.BranchIfLessOrEqual(label);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.BranchIfLessOrEqual(System.String)" />
+        public EmitShorthand<DelegateType> Ble(string name)
+        {
+            InnerEmit.BranchIfLessOrEqual(name);
 
             return this;
         }
@@ -275,10 +323,26 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfLessOrEqual(System.String)" />
+        public EmitShorthand<DelegateType> Ble_Un(string name)
+        {
+            InnerEmit.UnsignedBranchIfLessOrEqual(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.BranchIfLess(Sigil.Label)" />
         public EmitShorthand<DelegateType> Blt(Label label)
         {
             InnerEmit.BranchIfLess(label);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.BranchIfLess(System.String)" />
+        public EmitShorthand<DelegateType> Blt(string name)
+        {
+            InnerEmit.BranchIfLess(name);
 
             return this;
         }
@@ -291,10 +355,26 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfLess(System.String)" />
+        public EmitShorthand<DelegateType> Blt_Un(string name)
+        {
+            InnerEmit.UnsignedBranchIfLess(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfNotEqual(Sigil.Label)" />
         public EmitShorthand<DelegateType> Bne_Un(Label label)
         {
             InnerEmit.UnsignedBranchIfNotEqual(label);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.UnsignedBranchIfNotEqual(System.String)" />
+        public EmitShorthand<DelegateType> Bne_Un(string name)
+        {
+            InnerEmit.UnsignedBranchIfNotEqual(name);
 
             return this;
         }
@@ -323,6 +403,14 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.Branch(System.String)" />
+        public EmitShorthand<DelegateType> Br(string name)
+        {
+            InnerEmit.Branch(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.Break" />
         public EmitShorthand<DelegateType> Break()
         {
@@ -339,10 +427,26 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.BranchIfFalse(System.String)" />
+        public EmitShorthand<DelegateType> Brfalse(string name)
+        {
+            InnerEmit.BranchIfFalse(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.BranchIfTrue(Sigil.Label)" />
         public EmitShorthand<DelegateType> Brtrue(Label label)
         {
             InnerEmit.BranchIfTrue(label);
+
+            return this;
+        }
+
+        // <summary cref="M:Sigil.Emit`1.BranchIfTrue(System.String)" />
+        public EmitShorthand<DelegateType> Brtrue(string name)
+        {
+            InnerEmit.BranchIfTrue(name);
 
             return this;
         }
@@ -831,6 +935,14 @@ namespace Sigil
         public EmitShorthand<DelegateType> Leave(Label label)
         {
             InnerEmit.Leave(label);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.Leave(System.String)" />
+        public EmitShorthand<DelegateType> Leave(string name)
+        {
+            InnerEmit.Leave(name);
 
             return this;
         }

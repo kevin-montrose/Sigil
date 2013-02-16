@@ -225,16 +225,16 @@ namespace SigilTests
             var branches =
                 new[]
                 {
-                    emit.GetMethod("BranchIfEqual"),
-                    emit.GetMethod("BranchIfGreater"),
-                    emit.GetMethod("BranchIfGreaterOrEqual"),
-                    emit.GetMethod("BranchIfLess"),
-                    emit.GetMethod("BranchIfLessOrEqual"),
-                    emit.GetMethod("UnsignedBranchIfNotEqual"),
-                    emit.GetMethod("UnsignedBranchIfGreater"),
-                    emit.GetMethod("UnsignedBranchIfGreaterOrEqual"),
-                    emit.GetMethod("UnsignedBranchIfLess"),
-                    emit.GetMethod("UnsignedBranchIfLessOrEqual")
+                    emit.GetMethod("BranchIfEqual", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("BranchIfGreater", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("BranchIfGreaterOrEqual", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("BranchIfLess", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("BranchIfLessOrEqual", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("UnsignedBranchIfNotEqual", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("UnsignedBranchIfGreater", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("UnsignedBranchIfGreaterOrEqual", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("UnsignedBranchIfLess", new [] { typeof(Sigil.Label) }),
+                    emit.GetMethod("UnsignedBranchIfLessOrEqual", new [] { typeof(Sigil.Label) })
                 };
 
             foreach (var branch in branches)

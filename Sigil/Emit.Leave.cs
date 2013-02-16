@@ -41,5 +41,15 @@ namespace Sigil
 
             return this;
         }
+
+        /// <summary>
+        /// Leave an exception or catch block, branching to the label with the given name.
+        /// 
+        /// This instruction empties the stack.
+        /// </summary>
+        public Emit<DelegateType> Leave(string name)
+        {
+            return Leave(Labels[name]);
+        }
     }
 }
