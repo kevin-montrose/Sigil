@@ -3,6 +3,8 @@ using Sigil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -12,6 +14,44 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Branches
     {
+        [TestMethod]
+        public void InMethod()
+        {
+            var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
+            var mod = asm.DefineDynamicModule("Bar");
+            var t = mod.DefineType("T");
+
+            var e1 = Emit<Func<int, string>>.BuildStaticMethod(t, "Static", MethodAttributes.Public);
+            var gt = e1.DefineLabel("GreaterThan");
+            var skip = e1.DefineLabel("Skip");
+
+            e1.Branch(skip);
+            e1.MarkLabel(skip, Type.EmptyTypes);
+
+            e1.LoadArgument(0);
+            e1.LoadConstant(0);
+            e1.BranchIfGreater(gt);
+
+            e1.LoadConstant("less than or equal");
+            e1.Return();
+
+            e1.MarkLabel(gt);
+            e1.LoadConstant("greater than");
+            e1.Return();
+
+            e1.CreateMethod();
+
+            var type = t.CreateType();
+
+            var d = type.GetMethod("Static");
+
+            Func<int, string> d1 = x => (string)d.Invoke(null, new object[] { x });
+
+            Assert.AreEqual("less than or equal", d1(0));
+            Assert.AreEqual("less than or equal", d1(-100));
+            Assert.AreEqual("greater than", d1(50));
+        }
+
         [TestMethod]
         public void BranchingOverExceptions()
         {

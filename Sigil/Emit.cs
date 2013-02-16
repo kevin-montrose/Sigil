@@ -304,6 +304,8 @@ namespace Sigil
                 return MtdBuilder;
             }
 
+            Seal();
+
             MethodBuilt = true;
 
             var il = MtdBuilder.GetILGenerator();
@@ -360,6 +362,8 @@ namespace Sigil
             }
 
             ConstructorBuilt = true;
+
+            Seal();
 
             var il = ConstrBuilder.GetILGenerator();
             instructions = IL.UnBuffer(il);
