@@ -590,7 +590,7 @@ namespace SigilTests
                 var e1 = Emit<Action>.NewDynamicMethod();
                 try
                 {
-                    e1.Switch(null);
+                    e1.Switch((Label[])null);
                     Assert.Fail();
                 }
                 catch (ArgumentNullException e)
@@ -2367,7 +2367,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.MarkLabel(null);
+                    e1.MarkLabel((Sigil.Label)null);
                     Assert.Fail();
                 }
                 catch (ArgumentNullException e)

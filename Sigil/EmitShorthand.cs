@@ -82,10 +82,18 @@ namespace Sigil
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.MarkLabel(Sigil.Label)" />
+        /// <summary cref="M:Sigil.Emit`1.MarkLabel(Sigil.Label, IEnumerable``1)" />
         public EmitShorthand<DelegateType> MarkLabel(Label label, IEnumerable<Type> stackAssertion = null)
         {
             InnerEmit.MarkLabel(label, stackAssertion);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.MarkLabel(System.String, IEnumerable``1)" />
+        public EmitShorthand<DelegateType> MarkLabel(string name, IEnumerable<Type> stackAssertion = null)
+        {
+            InnerEmit.MarkLabel(name, stackAssertion);
 
             return this;
         }
@@ -1209,6 +1217,14 @@ namespace Sigil
         public EmitShorthand<DelegateType> Switch(params Label[] labels)
         {
             InnerEmit.Switch(labels);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.Switch(System.String[])" />
+        public EmitShorthand<DelegateType> Switch(params string[] names)
+        {
+            InnerEmit.Switch(names);
 
             return this;
         }
