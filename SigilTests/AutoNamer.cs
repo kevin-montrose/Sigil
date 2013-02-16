@@ -28,5 +28,17 @@ namespace SigilTests
 
             d1();
         }
+
+        [TestMethod]
+        public void NoCollisions()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            var l1 = e1.DefineLabel("_label0");
+            var l2 = e1.DefineLabel();
+
+            Assert.AreEqual(2, e1.Labels.Count);
+            Assert.IsTrue(e1.Labels.Names.SingleOrDefault(x => x == "_label0") != null);
+            Assert.IsTrue(e1.Labels.Names.SingleOrDefault(x => x == "_label1") != null);
+        }
     }
 }

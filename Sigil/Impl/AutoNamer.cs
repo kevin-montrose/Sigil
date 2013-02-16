@@ -15,7 +15,7 @@ namespace Sigil.Impl
             return Next(NullKey, root);
         }
 
-        public static string Next(object on, string root)
+        public static string Next(object on, string root, params IEnumerable<string>[] inUse)
         {
             var key = Tuple.Create(on, root);
 
@@ -30,7 +30,14 @@ namespace Sigil.Impl
 
                 State[key]++;
 
-                return root + next;
+                var ret = root + next;
+
+                if (inUse.Any(a => a.Any(x => x == ret)))
+                {
+                    return Next(on, root, inUse);
+                }
+
+                return ret;
             }
         }
 

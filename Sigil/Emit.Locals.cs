@@ -43,7 +43,7 @@ namespace Sigil
                 throw new ArgumentNullException("type");
             }
 
-            name = name ?? AutoNamer.Next(this, "_local");
+            name = name ?? AutoNamer.Next(this, "_local", Locals.Names, Labels.Names);
 
             if (CurrentLocals.ContainsKey(name))
             {

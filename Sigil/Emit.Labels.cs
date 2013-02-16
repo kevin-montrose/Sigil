@@ -134,7 +134,7 @@ namespace Sigil
         /// </summary>
         public Label DefineLabel(string name = null)
         {
-            name = name ?? AutoNamer.Next(this, "_label");
+            name = name ?? AutoNamer.Next(this, "_label", Locals.Names, Labels.Names);
 
             if (CurrentLabels.ContainsKey(name))
             {
