@@ -49,6 +49,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Leave(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return Leave(Labels[name]);
         }
     }

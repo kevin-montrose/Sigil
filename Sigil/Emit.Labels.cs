@@ -266,6 +266,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> MarkLabel(string name, IEnumerable<Type> stackAssertion = null)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return MarkLabel(Labels[name], stackAssertion);
         }
     }

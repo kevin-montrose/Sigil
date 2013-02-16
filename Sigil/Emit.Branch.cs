@@ -42,6 +42,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Branch(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return Branch(Labels[name]);
         }
 
@@ -85,6 +87,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> BranchIfEqual(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return BranchIfEqual(Labels[name]);
         }
 
@@ -128,6 +132,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedBranchIfNotEqual(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return UnsignedBranchIfNotEqual(Labels[name]);
         }
 
@@ -171,6 +177,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> BranchIfGreaterOrEqual(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return BranchIfGreaterOrEqual(Labels[name]);
         }
 
@@ -214,6 +222,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedBranchIfGreaterOrEqual(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return UnsignedBranchIfGreaterOrEqual(Labels[name]);
         }
 
@@ -257,6 +267,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> BranchIfGreater(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return BranchIfGreater(Labels[name]);
         }
 
@@ -300,6 +312,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedBranchIfGreater(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return UnsignedBranchIfGreater(Labels[name]);
         }
 
@@ -343,6 +357,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> BranchIfLessOrEqual(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return BranchIfLessOrEqual(Labels[name]);
         }
 
@@ -386,6 +402,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedBranchIfLessOrEqual(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return UnsignedBranchIfLessOrEqual(Labels[name]);
         }
 
@@ -429,6 +447,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> BranchIfLess(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return BranchIfLess(Labels[name]);
         }
 
@@ -472,6 +492,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedBranchIfLess(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return UnsignedBranchIfLess(Labels[name]);
         }
 
@@ -519,6 +541,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> BranchIfFalse(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return BranchIfFalse(Labels[name]);
         }
 
@@ -566,6 +590,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> BranchIfTrue(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return BranchIfTrue(Labels[name]);
         }
     }

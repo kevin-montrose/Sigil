@@ -70,6 +70,10 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Switch(params string[] names)
         {
+            if (names == null) throw new ArgumentNullException("names");
+
+            if (names.Any(n => n == null)) throw new ArgumentException("no label can be null");
+
             return Switch(names.Select(n => Labels[n]).ToArray());
         }
     }

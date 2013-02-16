@@ -51,6 +51,8 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> LoadLocalAddress(string name)
         {
+            if (name == null) throw new ArgumentNullException("name");
+
             return LoadLocalAddress(Locals[name]);
         }
     }
