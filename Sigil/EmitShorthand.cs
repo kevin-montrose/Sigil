@@ -14,6 +14,9 @@ namespace Sigil
     {
         private readonly Emit<DelegateType> InnerEmit;
 
+        public LocalLookup Locals { get { return InnerEmit.Locals; } }
+        public LabelLookup Labels { get { return InnerEmit.Labels; } }
+
         internal EmitShorthand(Emit<DelegateType> inner)
         {
             InnerEmit = inner;
@@ -728,10 +731,26 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.LoadLocal(System.String)" />
+        public EmitShorthand<DelegateType> Ldloc(string name)
+        {
+            InnerEmit.LoadLocal(name);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.LoadLocalAddress(Sigil.Local)" />
         public EmitShorthand<DelegateType> Ldloca(Local local)
         {
             InnerEmit.LoadLocalAddress(local);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.LoadLocalAddress(System.String)" />
+        public EmitShorthand<DelegateType> Ldloca(string name)
+        {
+            InnerEmit.LoadLocalAddress(name);
 
             return this;
         }
@@ -1024,6 +1043,14 @@ namespace Sigil
         public EmitShorthand<DelegateType> Stloc(Local local)
         {
             InnerEmit.StoreLocal(local);
+
+            return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.StoreLocal(System.String)" />
+        public EmitShorthand<DelegateType> Stloc(string name)
+        {
+            InnerEmit.StoreLocal(name);
 
             return this;
         }

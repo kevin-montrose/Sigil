@@ -45,5 +45,13 @@ namespace Sigil
 
             return this;
         }
+
+        /// <summary>
+        /// Pushes a pointer to the local with the given name onto the stack.
+        /// </summary>
+        public Emit<DelegateType> LoadLocalAddress(string name)
+        {
+            return LoadLocalAddress(Locals[name]);
+        }
     }
 }

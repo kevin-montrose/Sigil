@@ -1705,7 +1705,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadLocalAddress(null);
+                    e1.LoadLocalAddress((Sigil.Local)null);
                     Assert.Fail();
                 }
                 catch (ArgumentNullException e)
