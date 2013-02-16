@@ -23,7 +23,7 @@ namespace Sigil.Impl
             
             while (!current.IsRoot)
             {
-                yield return current.Value.EffectiveType();
+                yield return current.Value.Type;
                 current = current.Previous;
             }
         }

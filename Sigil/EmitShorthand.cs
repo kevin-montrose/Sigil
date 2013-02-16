@@ -14,7 +14,29 @@ namespace Sigil
     {
         private readonly Emit<DelegateType> InnerEmit;
 
+        /// <summary>
+        /// Returns true if this Emit can make use of unverifiable instructions.
+        /// </summary>
+        public bool AllowsUnverifiableCIL { get { return InnerEmit.AllowsUnverifiableCIL; } }
+
+        /// <summary>
+        /// Returns the maxmimum number of items on the stack for the IL stream created with the current emit.
+        /// 
+        /// This is not the maximum that *can be placed*, but the maximum that actually are.
+        /// </summary>
+        public int MaxStackSize { get { return InnerEmit.MaxStackSize; } }
+
+        /// <summary>
+        /// Lookup for the locals currently in scope by name.
+        /// 
+        /// Locals go out of scope when released (by calling Dispose() directly, or via using) and go into scope
+        /// immediately after a DeclareLocal()
+        /// </summary>
         public LocalLookup Locals { get { return InnerEmit.Locals; } }
+
+        /// <summary>
+        /// Lookup for declared labels by name.
+        /// </summary>
         public LabelLookup Labels { get { return InnerEmit.Labels; } }
 
         internal EmitShorthand(Emit<DelegateType> inner)
@@ -451,7 +473,7 @@ namespace Sigil
             return this;
         }
 
-        // <summary cref="M:Sigil.Emit`1.BranchIfTrue(System.String)" />
+        /// <summary cref="M:Sigil.Emit`1.BranchIfTrue(System.String)" />
         public EmitShorthand<DelegateType> Brtrue(string name)
         {
             InnerEmit.BranchIfTrue(name);

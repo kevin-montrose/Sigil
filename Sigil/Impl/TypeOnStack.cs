@@ -22,63 +22,7 @@ namespace Sigil.Impl
                         ret =
                             new TypeOnStack
                             {
-                                Type = t,
-                                IsReference = false,
-                                IsPointer = false
-                            };
-
-                        Cache[t] = ret;
-                    }
-
-                    return ret;
-                }
-            }
-        }
-
-        private class ReferenceTypeCache
-        {
-            private static Dictionary<Type, TypeOnStack> Cache = new Dictionary<Type, TypeOnStack>();
-
-            public static TypeOnStack Get(Type t)
-            {
-                lock (Cache)
-                {
-                    TypeOnStack ret;
-                    if (!Cache.TryGetValue(t, out ret))
-                    {
-                        ret =
-                            new TypeOnStack
-                            {
-                                Type = t,
-                                IsReference = true,
-                                IsPointer = false
-                            };
-
-                        Cache[t] = ret;
-                    }
-
-                    return ret;
-                }
-            }
-        }
-
-        private class PointerTypeCache
-        {
-            private static Dictionary<Type, TypeOnStack> Cache = new Dictionary<Type, TypeOnStack>();
-
-            public static TypeOnStack Get(Type t)
-            {
-                lock (Cache)
-                {
-                    TypeOnStack ret;
-                    if (!Cache.TryGetValue(t, out ret))
-                    {
-                        ret =
-                            new TypeOnStack
-                            {
-                                Type = t,
-                                IsReference = false,
-                                IsPointer = true
+                                Type = t
                             };
 
                         Cache[t] = ret;
@@ -115,9 +59,9 @@ namespace Sigil.Impl
         private static readonly Dictionary<Tuple<CallingConventions, Type, Type, Type[]>, TypeOnStack> KnownFunctionPointerCache = new Dictionary<Tuple<CallingConventions, Type, Type, Type[]>, TypeOnStack>();
 
         public Type Type { get; private set; }
-        public bool IsReference { get; private set; }
 
-        public bool IsPointer { get; private set; }
+        public bool IsReference { get { return Type.IsByRef; } }
+        public bool IsPointer { get { return Type.IsPointer; } }
 
         public bool HasAttachedMethodInfo { get; private set; }
         public CallingConventions CallingConvention { get; private set; }
@@ -176,16 +120,6 @@ namespace Sigil.Impl
             return UsedBy.Count + ReplacedWithTypes.Sum(t => t.CountMarks());
         }
 
-        public static TypeOnStack GetReference(Type type)
-        {
-            return ReferenceTypeCache.Get(type);
-        }
-
-        public static TypeOnStack GetPointer(Type type)
-        {
-            return PointerTypeCache.Get(type);
-        }
-
         public static TypeOnStack Get<T>()
         {
             return Get(typeof(T));
@@ -198,28 +132,7 @@ namespace Sigil.Impl
                 throw new InvalidOperationException("Sigil does not currently support generic types; found " + type);
             }
 
-            TypeOnStack ret;
-
-            if (type.IsPointer)
-            {
-                var nonPointer = type.GetElementType();
-
-                ret = GetPointer(nonPointer);
-            }
-            else
-            {
-
-                if (type.IsByRef)
-                {
-                    var nonRef = type.GetElementType();
-
-                    ret = GetReference(nonRef);
-                }
-                else
-                {
-                    ret = TypeCache.Get(type);
-                }
-            }
+            var ret = TypeCache.Get(type);
 
             if (!makeMarkable)
             {
@@ -232,8 +145,6 @@ namespace Sigil.Impl
                     CallingConvention = ret.CallingConvention,
                     HasAttachedMethodInfo = ret.HasAttachedMethodInfo,
                     InstanceType = ret.InstanceType,
-                    IsPointer = ret.IsPointer,
-                    IsReference = ret.IsReference,
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
@@ -277,9 +188,6 @@ namespace Sigil.Impl
             if (Type == typeof(NativeIntType)) ret = "native int";
             if (Type == typeof(NullType)) ret = "null";
 
-            if (IsPointer) ret += "*";
-            if (IsReference) ret += "&";
-
             return ret;
         }
 
@@ -297,14 +205,6 @@ namespace Sigil.Impl
                     (IsPointer ? 0x0000FFFF : 0) ^
                     (IsReference ? 0xFFFF0000 : 0)
                 );
-        }
-
-        internal System.Type EffectiveType()
-        {
-            var type = Type;
-            if (IsPointer) type = type.MakePointerType();
-            if (IsReference) type = type.MakeByRefType();
-            return type;
         }
     }
 }

@@ -45,7 +45,7 @@ namespace Sigil
 
             if (ptr.IsPointer || ptr.IsReference)
             {
-                if (!type.IsAssignableFrom(TypeOnStack.Get(ptr.Type)))
+                if (!type.IsAssignableFrom(TypeOnStack.Get(ptr.Type.GetElementType())))
                 {
                     throw new SigilVerificationException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, IL.Instructions(LocalsByIndex), Stack, 0);
                 }

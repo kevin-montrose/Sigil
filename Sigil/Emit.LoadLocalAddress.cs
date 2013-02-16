@@ -25,7 +25,7 @@ namespace Sigil
 
             UnusedLocals.Remove(local);
 
-            var type = local.StackType.EffectiveType();
+            var type = local.StackType.Type;
             
             var ptrType = type.MakePointerType();
 
