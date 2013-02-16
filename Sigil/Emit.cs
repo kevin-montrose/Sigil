@@ -36,6 +36,7 @@ namespace Sigil
         private StackState Stack;
 
         private List<Tuple<OpCode, StackState>> InstructionStream;
+        private List<VerifiableTracker> Trackers;
 
         private ushort NextLocalIndex = 0;
 
@@ -137,6 +138,7 @@ namespace Sigil
             Stack = new StackState();
             
             InstructionStream = new List<Tuple<OpCode, StackState>>();
+            Trackers = new List<VerifiableTracker>();
 
             LocalsByIndex = new Dictionary<int, Local>();
 
@@ -421,6 +423,7 @@ namespace Sigil
         {
             return Attribute.IsDefined(m, typeof(System.Security.UnverifiableCodeAttribute));
         }
+
         private static bool AllowsUnverifiableCode(ModuleBuilder m)
         {
             var canaryMethod = new DynamicMethod("__Canary" + Guid.NewGuid(), typeof(void), Type.EmptyTypes, m);
@@ -518,11 +521,13 @@ namespace Sigil
                 throw new ArgumentException("Static methods cannot have a this reference");
             }
         }
-        static bool HasFlag(MethodAttributes value, MethodAttributes flag)
+
+        private static bool HasFlag(MethodAttributes value, MethodAttributes flag)
         {
             return (value & flag) != 0;
         }
-        static bool HasFlag(CallingConventions value, CallingConventions flag)
+
+        private static bool HasFlag(CallingConventions value, CallingConventions flag)
         {
             return (value & flag) != 0;
         }

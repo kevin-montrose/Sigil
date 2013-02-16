@@ -59,6 +59,9 @@ namespace Sigil.Impl
 
         public static bool IsAssignableFrom(this TypeOnStack type1, TypeOnStack type2)
         {
+            // wildcards match *everything*
+            if (type1 == TypeOnStack.Get<WildcardType>() || type2 == TypeOnStack.Get<WildcardType>()) return true;
+
             // Native int can be convereted to any pointer type
             if (type1.IsPointer && type2 == TypeOnStack.Get<NativeIntType>()) return true;
             if (type2.IsPointer && type1 == TypeOnStack.Get<NativeIntType>()) return true;
