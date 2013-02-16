@@ -92,7 +92,7 @@ namespace Sigil
         /// <summary>
         /// Lookup for the locals currently in scope by name.
         /// 
-        /// Locals go out of scode when released (by calling Dispose() directly, or via  using) and go into scope
+        /// Locals go out of scope when released (by calling Dispose() directly, or via using) and go into scope
         /// immediately after a DeclareLocal()
         /// </summary>
         public LocalLookup Locals { get; private set; }
