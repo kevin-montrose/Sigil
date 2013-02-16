@@ -169,6 +169,15 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Returns the information currently on the stack, ignoring the top "skip" items; the types are returned
+        /// top-to-bottom, making this directly usable from MarkLabel.
+        /// </summary>
+        public IEnumerable<Type> GetStack(int skip = 0)
+        {
+            return Stack.GetTypes(skip);
+        }
+
+        /// <summary>
         /// Returns a proxy for this Emit that exposes method names that more closely
         /// match the fields on System.Reflection.Emit.OpCodes.
         /// 

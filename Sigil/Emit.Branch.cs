@@ -38,15 +38,6 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Returns the information currently on the stack, ignoring the top "skip" items; the types are returned
-        /// top-to-bottom, making this directly usable from MarkLabel.
-        /// </summary>
-        public IEnumerable<Type> GetStack(int skip = 0)
-        {
-            return Stack.GetTypes(skip);
-        }
-
-        /// <summary>
         /// Pops two arguments from the stack, if both are equal branches to the given label.
         /// </summary>
         public Emit<DelegateType> BranchIfEqual(Label label)
