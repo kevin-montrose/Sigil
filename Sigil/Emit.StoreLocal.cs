@@ -61,5 +61,13 @@ namespace Sigil
 
             return this;
         }
+
+        /// <summary>
+        /// Pops a value off the stack and stores it in the local with the given name.
+        /// </summary>
+        public Emit<DelegateType> StoreLocal(string localName)
+        {
+            return StoreLocal(Locals[localName]);
+        } 
     }
 }
