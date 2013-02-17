@@ -282,9 +282,8 @@ namespace Sigil.Impl
                         return VerificationResult.FailureUnderflow(wouldPop);
                     }
 
-                    var stackI = FindStackFailureIndex(runningStack, ops);
-
-                    var expected = ops.Select(o => o.PoppedFromStack.ElementAt(stackI)).Distinct().ToList();
+                    IEnumerable<TypeOnStack> expected;
+                    var stackI = FindStackFailureIndex(runningStack, ops, out expected);
 
                     return VerificationResult.FailureTypeMismatch(i, stackI, expected, runningStack);
                 }
@@ -310,34 +309,23 @@ namespace Sigil.Impl
             return VerificationResult.Successful();
         }
 
-        private int FindStackFailureIndex(Stack<IEnumerable<TypeOnStack>> types, IEnumerable<StackTransition> ops)
+        private int FindStackFailureIndex(Stack<IEnumerable<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)
         {
-            var typesByIndex = new List<List<TypeOnStack>>();
+            var stillLegal = new List<StackTransition>(ops);
 
-            foreach (var op in ops)
+            for (var i = 0; i < types.Count; i++)
             {
-                for (var i = 0; i < op.PoppedFromStack.Count(); i++)
+                var actuallyIs = types.ElementAt(i);
+
+                var legal = stillLegal.Where(l => actuallyIs.Any(a => l.PoppedFromStack.ElementAt(i).IsAssignableFrom(a))).ToList();
+
+                if (legal.Count == 0)
                 {
-                    var type = op.PoppedFromStack.ElementAt(i);
-
-                    while(typesByIndex.Count <= i)
-                    {
-                        typesByIndex.Add(new List<TypeOnStack>());
-                    }
-
-                    typesByIndex[i].Add(type);
-                }
-            }
-
-            for (var i = 0; i < typesByIndex.Count; i++)
-            {
-                var onStack = types.ElementAt(i);
-                var demanded = typesByIndex[i];
-
-                if (!demanded.Any(d => onStack.Any(s => d.IsAssignableFrom(s))))
-                {
+                    expected = stillLegal.Select(l => l.PoppedFromStack.ElementAt(i)).Distinct().ToList();
                     return i;
                 }
+
+                stillLegal = legal;
             }
 
             throw new Exception("Shouldn't be possible");

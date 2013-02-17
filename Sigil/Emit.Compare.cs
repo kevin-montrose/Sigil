@@ -7,18 +7,8 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private TransitionWrapper ValidateComparable(string method, TypeOnStack t1, TypeOnStack t2)
+        private TransitionWrapper ValidateComparable(string method)
         {
-            if (t1 != t2)
-            {
-                throw new SigilVerificationException(method + " expected two comparable values of the same type, instead found " + t1 + " and " + t2, IL.Instructions(LocalsByIndex), Stack, 0, 1);
-            }
-
-            if (!t1.Type.IsPrimitive)
-            {
-                throw new SigilVerificationException(method + " expected primitive types, instead found " + t1, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             return
                 new[]
                 {
@@ -37,13 +27,6 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> CompareEqual()
         {
-            var top = Stack.Top(2);
-
-            if (top == null)
-            {
-                FailStackUnderflow(2);
-            }
-
             var transitions =
                 new[]
                 {
@@ -62,14 +45,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> CompareGreaterThan()
         {
-            var top = Stack.Top(2);
-
-            if (top == null)
-            {
-                FailStackUnderflow(2);
-            }
-
-            var transitions = ValidateComparable("CompareGreaterThan", top.First(), top.Last());
+            var transitions = ValidateComparable("CompareGreaterThan");
 
             UpdateState(OpCodes.Cgt, transitions, TypeOnStack.Get<int>(), pop: 2);
 
@@ -83,14 +59,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedCompareGreaterThan()
         {
-            var top = Stack.Top(2);
-
-            if (top == null)
-            {
-                FailStackUnderflow(2);
-            }
-
-            var transitions = ValidateComparable("UnsignedCompareGreaterThan", top.First(), top.Last());
+            var transitions = ValidateComparable("UnsignedCompareGreaterThan");
 
             UpdateState(OpCodes.Cgt_Un, transitions, TypeOnStack.Get<int>(), pop: 2);
 
@@ -104,14 +73,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> CompareLessThan()
         {
-            var top = Stack.Top(2);
-
-            if (top == null)
-            {
-                FailStackUnderflow(2);
-            }
-
-            var transitions = ValidateComparable("CompareLessThan", top.First(), top.Last());
+            var transitions = ValidateComparable("CompareLessThan");
 
             UpdateState(OpCodes.Clt, transitions, TypeOnStack.Get<int>(), pop: 2);
 
@@ -125,14 +87,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedCompareLessThan()
         {
-            var top = Stack.Top(2);
-
-            if (top == null)
-            {
-                FailStackUnderflow(2);
-            }
-
-            var transitions = ValidateComparable("UnsignedCompareLessThan", top.First(), top.Last());
+            var transitions = ValidateComparable("UnsignedCompareLessThan");
 
             UpdateState(OpCodes.Clt_Un, transitions, TypeOnStack.Get<int>(), pop: 2);
 

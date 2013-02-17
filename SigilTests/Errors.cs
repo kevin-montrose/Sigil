@@ -87,7 +87,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CompareLessThan expected two comparable values of the same type, instead found float and int", e.Message);
+                    Assert.AreEqual("CompareLessThan expected a float; found int", e.Message);
                 }
             }
 
@@ -103,7 +103,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CompareLessThan expected primitive types, instead found System.Object", e.Message);
+                    Assert.AreEqual("CompareLessThan expected a double, float, int, long, or native int; found System.Object", e.Message);
                 }
             }
         }
