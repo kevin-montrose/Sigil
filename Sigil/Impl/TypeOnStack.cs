@@ -187,6 +187,11 @@ namespace Sigil.Impl
 
             if (Type == typeof(NativeIntType)) ret = "native int";
             if (Type == typeof(NullType)) ret = "null";
+            if (Type == typeof(int)) ret = "int";
+            if (Type == typeof(long)) ret = "long";
+            if (Type == typeof(float)) ret = "float";
+            if (Type == typeof(double)) ret = "double";
+            if (Type == typeof(AnyPointerType)) ret = "pointer";
 
             return ret;
         }

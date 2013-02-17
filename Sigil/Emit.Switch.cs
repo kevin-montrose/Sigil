@@ -59,7 +59,7 @@ namespace Sigil
                 };
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), transitions, out update, pop: 1);
+            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), transitions.Wrap("Switch"), out update, pop: 1);
 
             foreach (var label in labels)
             {

@@ -11,6 +11,19 @@ namespace Sigil
 {
     internal delegate void LocalReusableDelegate(Local local);
 
+    internal class TransitionWrapper
+    {
+        public IEnumerable<StackTransition> Transitions { get; private set; }
+        public string MethodName { get; private set; }
+
+        private TransitionWrapper() { }
+
+        public static TransitionWrapper Get(string name, IEnumerable<StackTransition> transitions)
+        {
+            return new TransitionWrapper { MethodName = name, Transitions = transitions };
+        }
+    }
+
     /// <summary>
     /// Helper for CIL generation that fails as soon as a sequence of instructions
     /// can be shown to be invalid.
@@ -715,7 +728,7 @@ namespace Sigil
             }
         }
 
-        private void UpdateStackAndInstrStream(OpCode instr, IEnumerable<StackTransition> transitions, TypeOnStack addToStack, int pop, bool firstParamIsThis = false)
+        private void UpdateStackAndInstrStream(OpCode instr, TransitionWrapper transitions, TypeOnStack addToStack, int pop, bool firstParamIsThis = false)
         {
             if (Invalidated)
             {
@@ -732,22 +745,21 @@ namespace Sigil
                 Stack = Stack.Push(addToStack);
             }
 
-            if(transitions.Any(t => t.PoppedFromStack.Count() != pop))
+            if(transitions.Transitions.Any(t => t.PoppedFromStack.Count() != pop))
             {
                 throw new Exception("transitions do not match expected pop");
             }
 
-            if(transitions.Any(t => t.PushedToStack.Count() != (addToStack == null ? 0 : 1)))
+            if (transitions.Transitions.Any(t => t.PushedToStack.Count() != (addToStack == null ? 0 : 1)))
             {
                 throw new Exception("transitions do not match expected push");
             }
 
-            var verifyRes = CurrentVerifier.Transition(transitions);
+            var verifyRes = CurrentVerifier.Transition(transitions.Transitions);
 
             if (!verifyRes.Success)
             {
-                // TODO: Gotta do better than this, needs "what the hell happened" messaging
-                throw new Exception("Operand violates stack");
+                throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(LocalsByIndex));
             }
 
             MaxStackSize = Math.Max(MaxStackSize, Stack.Count());
@@ -755,126 +767,126 @@ namespace Sigil
             InstructionStream.Add(Tuple.Create(instr, Stack));
         }
 
-        private void UpdateState(OpCode instr, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr);
         }
 
-        private void UpdateState(OpCode instr, byte param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, byte param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, short param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, short param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, int param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, int param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, uint param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, uint param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, long param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, long param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, ulong param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, ulong param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, float param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, float param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, double param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, double param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, Local param, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Local param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, Label param, IEnumerable<StackTransition> transitions, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Label param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, Label[] param, IEnumerable<StackTransition> transitions, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Label[] param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, MethodInfo method, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0, bool firstParamIsThis = false)
+        private void UpdateState(OpCode instr, MethodInfo method, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0, bool firstParamIsThis = false)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop, firstParamIsThis);
 
             IL.Emit(instr, method);
         }
 
-        private void UpdateState(OpCode instr, ConstructorInfo cons, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, ConstructorInfo cons, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, cons);
         }
 
-        private void UpdateState(OpCode instr, Type type, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Type type, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, type);
         }
 
-        private void UpdateState(OpCode instr, FieldInfo field, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, FieldInfo field, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, field);
         }
 
-        private void UpdateState(OpCode instr, string str, IEnumerable<StackTransition> transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, string str, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
 
             IL.Emit(instr, str);
         }
 
-        private void UpdateState(OpCode instr, CallingConventions callConventions, Type returnType, Type[] parameterTypes, IEnumerable<StackTransition> transitions, int pop = 0)
+        private void UpdateState(OpCode instr, CallingConventions callConventions, Type returnType, Type[] parameterTypes, TransitionWrapper transitions, int pop = 0)
         {
             UpdateStackAndInstrStream(instr, transitions, returnType != typeof(void) ? TypeOnStack.Get(returnType) : null, pop);
 

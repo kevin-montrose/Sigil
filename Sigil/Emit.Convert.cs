@@ -8,15 +8,15 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private IEnumerable<StackTransition> CheckConvertible(string method, TypeOnStack item, Type toType)
+        private TransitionWrapper CheckConvertible(string method, TypeOnStack item, Type toType)
         {
-            if (item != TypeOnStack.Get<int>() && item != TypeOnStack.Get<NativeIntType>() &&
+            /*if (item != TypeOnStack.Get<int>() && item != TypeOnStack.Get<NativeIntType>() &&
                 item != TypeOnStack.Get<long>() && item != TypeOnStack.Get<float>() &&
                 item != TypeOnStack.Get<double>() && !item.IsPointer
                )
             {
                 throw new SigilVerificationException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item, IL.Instructions(LocalsByIndex));
-            }
+            }*/
 
             return
                 new[]
@@ -26,7 +26,13 @@ namespace Sigil
                     new StackTransition(new [] { typeof(long) }, new [] { toType }),
                     new StackTransition(new [] { typeof(float) }, new [] { toType }),
                     new StackTransition(new [] { typeof(double) }, new [] { toType }),
-                };
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(NativeIntType) }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(long) }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(float) }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(double) })
+                    
+                }.Wrap(method);
         }
 
         /// <summary>
@@ -374,162 +380,162 @@ namespace Sigil
             return this;
         }
 
-        private void ConvertToNativeInt(IEnumerable<StackTransition> transitions)
+        private void ConvertToNativeInt(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_I, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToNativeIntOverflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToNativeIntOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void UnsignedConvertToNativeIntOverflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToNativeIntOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I_Un, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToUnsignedNativeInt(IEnumerable<StackTransition> transitions)
+        private void ConvertToUnsignedNativeInt(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_U, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToUnsignedNativeIntOverflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToUnsignedNativeIntOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void UnsignedConvertToUnsignedNativeIntOverflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToUnsignedNativeIntOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U_Un, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToSByte(IEnumerable<StackTransition> transitions)
+        private void ConvertToSByte(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_I1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToSByteOverflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToSByteOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToSByteOverflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToSByteOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I1_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt16(IEnumerable<StackTransition> transitions)
+        private void ConvertToInt16(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_I2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt16Overflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToInt16Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToInt16Overflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToInt16Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I2_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt32(IEnumerable<StackTransition> transitions)
+        private void ConvertToInt32(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_I4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt32Overflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToInt32Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToInt32Overflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToInt32Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I4_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt64(IEnumerable<StackTransition> transitions)
+        private void ConvertToInt64(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_I8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void ConvertToInt64Overflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToInt64Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void UnsignedConvertToInt64Overflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToInt64Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_I8_Un, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void ConvertToFloat(IEnumerable<StackTransition> transitions)
+        private void ConvertToFloat(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_R4, transitions, TypeOnStack.Get<float>(), pop: 1);
         }
 
-        private void ConvertToDouble(IEnumerable<StackTransition> transitions)
+        private void ConvertToDouble(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_R8, transitions, TypeOnStack.Get<double>(), pop: 1);
         }
 
-        private void ConvertToByte(IEnumerable<StackTransition> transitions)
+        private void ConvertToByte(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_U1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToByteOverflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToByteOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToByteOverflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToByteOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U1_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt16(IEnumerable<StackTransition> transitions)
+        private void ConvertToUInt16(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_U2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt16Overflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToUInt16Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToUInt16Overflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToUInt16Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U2_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt32(IEnumerable<StackTransition> transitions)
+        private void ConvertToUInt32(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_U4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt32Overflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToUInt32Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToUInt32Overflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToUInt32Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U4_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt64(IEnumerable<StackTransition> transitions)
+        private void ConvertToUInt64(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_U8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void ConvertToUInt64Overflow(IEnumerable<StackTransition> transitions)
+        private void ConvertToUInt64Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void UnsignedConvertToUInt64Overflow(IEnumerable<StackTransition> transitions)
+        private void UnsignedConvertToUInt64Overflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U8_Un, transitions, TypeOnStack.Get<long>(), pop: 1);
         }

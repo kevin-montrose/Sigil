@@ -33,7 +33,7 @@ namespace Sigil
                     new StackTransition(new [] { arrayType ?? arr.Type }, new [] { typeof(int) })
                 };
 
-            UpdateState(OpCodes.Ldlen, transitions, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Ldlen, transitions.Wrap("LoadLength"), TypeOnStack.Get<int>(), pop: 1);
 
             return this;
         }

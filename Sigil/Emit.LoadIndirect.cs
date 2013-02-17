@@ -208,15 +208,15 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile, StackTransition.None());
+                UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("LoadIndirect"));
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
+                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None().Wrap("LoadIndirect"));
             }
 
-            UpdateState(instr.Value, transitions, TypeOnStack.Get(type), pop: 1);
+            UpdateState(instr.Value, transitions.Wrap("LoadIndirect"), TypeOnStack.Get(type), pop: 1);
 
             return this;
         }

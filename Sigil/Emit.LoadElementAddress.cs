@@ -110,7 +110,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(int), array.Type }, new [] { arrElemType.MakeByRefType() })
                 };
 
-            UpdateState(OpCodes.Ldelema, arrElemType, transitions, pushToStack, pop: 2);
+            UpdateState(OpCodes.Ldelema, arrElemType, transitions.Wrap("LoadElementAddress"), pushToStack, pop: 2);
 
             return this;
         }

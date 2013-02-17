@@ -68,7 +68,7 @@ namespace Sigil
                     new StackTransition(new [] { valueType }, new [] { typeof(object) })
                 };
 
-            UpdateState(OpCodes.Box, valueType, transitions, TypeOnStack.Get(typeof(object)), pop: 1);
+            UpdateState(OpCodes.Box, valueType, transitions.Wrap("Box"), TypeOnStack.Get(typeof(object)), pop: 1);
 
             return this;
         }

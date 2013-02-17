@@ -21,7 +21,7 @@ namespace Sigil
                 throw new ArgumentException("index must be between 0 and " + (ParameterTypes.Length - 1) + ", inclusive");
             }
 
-            var transitions = StackTransition.Push(ParameterTypes[index]);
+            var transitions = StackTransition.Push(ParameterTypes[index]).Wrap("LoadArgument");
 
             switch (index)
             {

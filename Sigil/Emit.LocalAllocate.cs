@@ -56,7 +56,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(NativeIntType) })
                 };
 
-            UpdateState(OpCodes.Localloc, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Localloc, transitions.Wrap("LocalAllocate"), TypeOnStack.Get<NativeIntType>(), pop: 1);
 
             return this;
         }

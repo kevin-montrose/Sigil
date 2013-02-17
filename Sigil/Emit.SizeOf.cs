@@ -30,7 +30,7 @@ namespace Sigil
                 throw new ArgumentException("valueType must be a ValueType");
             }
 
-            UpdateState(OpCodes.Sizeof, valueType, StackTransition.Push<int>(), TypeOnStack.Get<int>());
+            UpdateState(OpCodes.Sizeof, valueType, StackTransition.Push<int>().Wrap("SizeOf"), TypeOnStack.Get<int>());
 
             return this;
         }

@@ -7,6 +7,9 @@ namespace Sigil.Impl
     // Represents a type that *could be* anything
     internal class WildcardType { }
 
+    // Represents *any* pointer
+    internal class AnyPointerType { }
+
     public class StackTransition
     {
         internal int PoppedCount { get { return PoppedFromStack.Count(); } }

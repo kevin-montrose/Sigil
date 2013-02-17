@@ -45,11 +45,11 @@ namespace Sigil
                         new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType.MakeByRefType() })
                     };
 
-                UpdateState(OpCodes.Ldflda, field, transitions, TypeOnStack.Get(field.FieldType.MakeByRefType()), pop: 1);
+                UpdateState(OpCodes.Ldflda, field, transitions.Wrap("LoadFieldAddress"), TypeOnStack.Get(field.FieldType.MakeByRefType()), pop: 1);
             }
             else
             {
-                UpdateState(OpCodes.Ldsflda, field, StackTransition.Push(field.FieldType.MakeByRefType()), TypeOnStack.Get(field.FieldType.MakeByRefType()));
+                UpdateState(OpCodes.Ldsflda, field, StackTransition.Push(field.FieldType.MakeByRefType()).Wrap("LoadFieldAddress"), TypeOnStack.Get(field.FieldType.MakeByRefType()));
             }
 
             return this;

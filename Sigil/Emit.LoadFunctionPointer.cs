@@ -37,7 +37,7 @@ namespace Sigil
                     paramList.ToArray()
                 );
 
-            UpdateState(OpCodes.Ldftn, method, StackTransition.Push<NativeIntType>(), type);
+            UpdateState(OpCodes.Ldftn, method, StackTransition.Push<NativeIntType>().Wrap("LoadFunctionPointer"), type);
 
             return this;
         }

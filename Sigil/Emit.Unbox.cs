@@ -55,7 +55,7 @@ namespace Sigil
 
             var transitions = new[] { new StackTransition(new[] { typeof(object) }, new[] { valueType.MakeByRefType() }) };
 
-            UpdateState(OpCodes.Unbox, valueType, transitions, TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
+            UpdateState(OpCodes.Unbox, valueType, transitions.Wrap("Unbox"), TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
 
             return this;
         }
@@ -108,7 +108,7 @@ namespace Sigil
 
             var transitions = new[] { new StackTransition(new[] { typeof(object) }, new[] { valueType }) };
 
-            UpdateState(OpCodes.Unbox_Any, valueType, transitions, TypeOnStack.Get(valueType), pop: 1);
+            UpdateState(OpCodes.Unbox_Any, valueType, transitions.Wrap("UnboxAny"), TypeOnStack.Get(valueType), pop: 1);
 
             return this;
         }

@@ -45,7 +45,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(int) }, new[] { elementType.MakeArrayType() })
                 };
 
-            UpdateState(OpCodes.Newarr, elementType, transitions, TypeOnStack.Get(elementType.MakeArrayType()), pop: 1);
+            UpdateState(OpCodes.Newarr, elementType, transitions.Wrap("NewArray"), TypeOnStack.Get(elementType.MakeArrayType()), pop: 1);
 
             return this;
         }

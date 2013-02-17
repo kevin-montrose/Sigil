@@ -7,7 +7,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private IEnumerable<StackTransition> ValidateComparable(string method, TypeOnStack t1, TypeOnStack t2)
+        private TransitionWrapper ValidateComparable(string method, TypeOnStack t1, TypeOnStack t2)
         {
             if (t1 != t2)
             {
@@ -27,7 +27,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(long), typeof(long) }, new [] { typeof(int) }),
                     new StackTransition(new [] { typeof(float), typeof(float) }, new [] { typeof(int) }),
                     new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(int) }),
-                };
+                }.Wrap(method);
         }
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, new [] { typeof(int) })
                 };
 
-            UpdateState(OpCodes.Ceq, transitions, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Ceq, transitions.Wrap("CompareEqual"), TypeOnStack.Get<int>(), pop: 2);
 
             return this;
         }

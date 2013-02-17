@@ -27,7 +27,7 @@ namespace Sigil
             TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Br, label, StackTransition.None(), out update);
+            UpdateState(OpCodes.Br, label, StackTransition.None().Wrap("Branch"), out update);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -92,7 +92,7 @@ namespace Sigil
                 };
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Beq, label, transitions, out update, pop: 2);
+            UpdateState(OpCodes.Beq, label, transitions.Wrap("BranchIfEqual"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -144,7 +144,7 @@ namespace Sigil
                 };
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Bne_Un, label, transitions, out update, pop: 2);
+            UpdateState(OpCodes.Bne_Un, label, transitions.Wrap("UnsignedBranchIfNotEqual"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -165,7 +165,7 @@ namespace Sigil
             return UnsignedBranchIfNotEqual(Labels[name]);
         }
 
-        private IEnumerable<StackTransition> BranchComparableTransitions()
+        private TransitionWrapper BranchComparableTransitions(string name)
         {
             return
                 new[]
@@ -177,7 +177,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(long), typeof(long) }, Type.EmptyTypes),
                     new StackTransition(new [] { typeof(float), typeof(float) }, Type.EmptyTypes),
                     new StackTransition(new [] { typeof(double), typeof(double) }, Type.EmptyTypes)
-                };
+                }.Wrap(name);
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace Sigil
             UnusedLabels.Remove(label);
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bge, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Bge, label, BranchComparableTransitions("BranchIfGreaterOrEqual"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -252,7 +252,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bge_Un, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Bge_Un, label, BranchComparableTransitions("UnsignedBranchIfGreaterOrEqual"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -299,7 +299,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bgt, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Bgt, label, BranchComparableTransitions("BranchIfGreater"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -346,7 +346,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Bgt_Un, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Bgt_Un, label, BranchComparableTransitions("UnsignedBranchIfGreater"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -393,7 +393,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Ble, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Ble, label, BranchComparableTransitions("BranchIfLessOrEqual"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -440,7 +440,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Ble_Un, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Ble_Un, label, BranchComparableTransitions("UnsignedBranchIfLessOrEqual"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -487,7 +487,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Blt, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Blt, label, BranchComparableTransitions("BranchIfLess"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -534,7 +534,7 @@ namespace Sigil
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
 
-            UpdateState(OpCodes.Blt_Un, label, BranchComparableTransitions(), out update, pop: 2);
+            UpdateState(OpCodes.Blt_Un, label, BranchComparableTransitions("UnsignedBranchIfLess"), out update, pop: 2);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -588,7 +588,7 @@ namespace Sigil
                 };
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Brfalse, label, transitions, out update, pop: 1);
+            UpdateState(OpCodes.Brfalse, label, transitions.Wrap("BranchIfFalse"), out update, pop: 1);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
@@ -644,7 +644,7 @@ namespace Sigil
                 };
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Brtrue, label, transitions, out update, pop: 1);
+            UpdateState(OpCodes.Brtrue, label, transitions.Wrap("BranchIfTrue"), out update, pop: 1);
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 

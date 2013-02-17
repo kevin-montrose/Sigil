@@ -17,7 +17,7 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            UpdateState(OpCodes.Pop, StackTransition.Pop<WildcardType>(), pop: 1);
+            UpdateState(OpCodes.Pop, StackTransition.Pop<WildcardType>().Wrap("Pop"), pop: 1);
 
             return this;
         }

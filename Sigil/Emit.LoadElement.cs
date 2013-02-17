@@ -188,11 +188,11 @@ namespace Sigil
                         new StackTransition(new [] { typeof(int), array.Type }, new [] { elemType }),
                     };
 
-                UpdateState(OpCodes.Ldelem, elemType, transitions, TypeOnStack.Get(elemType), pop: 2);
+                UpdateState(OpCodes.Ldelem, elemType, transitions.Wrap("LoadElement"), TypeOnStack.Get(elemType), pop: 2);
                 return this;
             }
 
-            UpdateState(instr.Value, transitions, TypeOnStack.Get(elemType), pop: 2);
+            UpdateState(instr.Value, transitions.Wrap("LoadElement"), TypeOnStack.Get(elemType), pop: 2);
 
             return this;
         }

@@ -17,7 +17,7 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            UpdateState(OpCodes.Dup, CurrentVerifier.DuplicateTop(), onStack[0]);
+            UpdateState(OpCodes.Dup, CurrentVerifier.DuplicateTop().Wrap("Duplicate"), onStack[0]);
 
             return this;
         }

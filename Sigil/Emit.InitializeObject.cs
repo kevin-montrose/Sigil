@@ -50,7 +50,7 @@ namespace Sigil
                     new StackTransition(new [] { valueType.MakeByRefType() }, Type.EmptyTypes),
                 };
 
-            UpdateState(OpCodes.Initobj, valueType, transitions, pop: 1);
+            UpdateState(OpCodes.Initobj, valueType, transitions.Wrap("InitializeObject"), pop: 1);
 
             return this;
         }

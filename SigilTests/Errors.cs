@@ -87,7 +87,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CompareLessThan expected two comparable values of the same type, instead found System.Single and System.Int32", e.Message);
+                    Assert.AreEqual("CompareLessThan expected two comparable values of the same type, instead found float and int", e.Message);
                 }
             }
 
@@ -1256,7 +1256,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Return expects a value assignable to System.Int32 to be on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("Return expects a value assignable to int to be on the stack; found System.Object", e.Message);
                 }
             }
 
@@ -1617,7 +1617,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Expected a value assignable to System.Collections.Generic.List`1[System.Int32] to be on the stack, found System.Int32", e.Message);
+                    Assert.AreEqual("Expected a value assignable to System.Collections.Generic.List`1[System.Int32] to be on the stack, found int", e.Message);
                 }
             }
         }
@@ -2092,7 +2092,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadElementAddress expects an array as the second element on the stack, found System.Int32", e.Message);
+                    Assert.AreEqual("LoadElementAddress expects an array as the second element on the stack, found int", e.Message);
                 }
             }
 
@@ -2973,7 +2973,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Convert expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("Convert expected a double, float, int, long, native int, or pointer; found System.Object", e.Message);
                 }
             }
 
@@ -2988,7 +2988,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("ConvertOverflow expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("ConvertOverflow expected a double, float, int, long, native int, or pointer; found System.Object", e.Message);
                 }
             }
 
@@ -3003,7 +3003,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("UnsignedConvertOverflow expected an int, native int, long, float, double, or pointer on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("UnsignedConvertOverflow expected a double, float, int, long, native int, or pointer; found System.Object", e.Message);
                 }
             }
         }
@@ -3427,7 +3427,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CallIndirect expected a value assignable to System.Int32, found System.Double", e.Message);
+                    Assert.AreEqual("CallIndirect expected a value assignable to System.Int32, found double", e.Message);
                 }
             }
         }
@@ -4520,7 +4520,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Expected System.Guid to be on the stack, found System.Int32", e.Message);
+                Assert.AreEqual("Expected System.Guid to be on the stack, found int", e.Message);
             }
         }
 
@@ -4549,7 +4549,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Branch to l has a stack that doesn't match the destination", e.Message);
-                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nSystem.Int32\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr.s l // Failure branch\r\n\r\ndead_code:\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nint\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr.s l // Failure branch\r\n\r\ndead_code:\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
             }
         }
 
@@ -4568,7 +4568,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
-                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String // Bad value\r\nSystem.Int32\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String // Bad value\r\nint\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n", e.GetDebugInfo());
             }
         }
     }

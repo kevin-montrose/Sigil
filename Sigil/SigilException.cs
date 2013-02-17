@@ -27,6 +27,12 @@ namespace Sigil
         private int? BranchLoc;
         private int? LabelLoc;
 
+        internal SigilVerificationException(string method, VerificationResult failure, string[] instructions)
+            : this(GetMessage(method, failure), instructions)
+        {
+            
+        }
+
         internal SigilVerificationException(string message, string[] instructions) : base(message)
         {
             Instructions = instructions;
@@ -47,6 +53,37 @@ namespace Sigil
 
             BranchLoc = branchLoc;
             LabelLoc = labelLoc;
+        }
+
+        private static string GetMessage(string method, VerificationResult failure)
+        {
+            if (failure.Success) throw new Exception("What?!");
+
+            if (failure.IsStackUnderflow)
+            {
+                if (failure.ExpectedStackSize == 1)
+                {
+                    return method + " expects a value on the stack, but it was empty";
+                }
+
+                return method + " expects " + failure.ExpectedStackSize + " values on the stack";
+            }
+
+            if (failure.IsTypeMismatch)
+            {
+                var expected = failure.ExpectedAtStackIndex.ErrorMessageString();
+                var found = failure.Stack.ElementAt(failure.StackIndex).ErrorMessageString();
+
+                return method + " expected " + (expected.StartsWithVowel() ? "an " : "a ") + expected + "; found " + found;
+            }
+
+            if (failure.IsStackMismatch)
+            {
+                // TODO: oh, so much better than this is needed
+                return method + " stack doesn't match destination";
+            }
+
+            throw new Exception("Shouldn't be possible!");
         }
 
         /// <summary>

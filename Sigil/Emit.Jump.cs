@@ -72,7 +72,7 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Jmp, method, StackTransition.None());
+            UpdateState(OpCodes.Jmp, method, StackTransition.None().Wrap("Jump"));
 
             return this;
         }

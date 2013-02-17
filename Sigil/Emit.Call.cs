@@ -103,7 +103,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Call, method, transitions, resultType, pop: expectedParams.Count, firstParamIsThis: firstParamIsThis);
+            UpdateState(OpCodes.Call, method, transitions.Wrap("Call"), resultType, pop: expectedParams.Count, firstParamIsThis: firstParamIsThis);
 
             return this;
         }

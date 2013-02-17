@@ -3,11 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
 
 namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
+        public static bool StartsWithVowel(this IEnumerable<char> str)
+        {
+            var c = char.ToLower(str.ElementAt(0));
+
+            return "aeiou".Contains(c);
+        }
+
+        public static TransitionWrapper Wrap(this IEnumerable<StackTransition> transitions, string method)
+        {
+            return TransitionWrapper.Get(method, transitions);
+        }
+
+        public static string ErrorMessageString(this IEnumerable<TypeOnStack> types)
+        {
+            var names = types.Select(t => t.ToString()).OrderBy(n => n).ToArray();
+
+            if (names.Length == 1) return names[0];
+
+            var ret = new StringBuilder();
+            ret.Append(names[0]);
+
+            for (var i = 1; i < names.Length - 1; i++)
+            {
+                ret.Append(", " + names[i]);
+            }
+
+            ret.Append(", or " + names[names.Length - 1]);
+
+            return ret.ToString();
+        }
+
         public static bool IsVolatile(this FieldInfo field)
         {
             // field builder doesn't implement GetRequiredCustomModifiers
@@ -61,6 +93,9 @@ namespace Sigil.Impl
         {
             // wildcards match *everything*
             if (type1 == TypeOnStack.Get<WildcardType>() || type2 == TypeOnStack.Get<WildcardType>()) return true;
+
+            if (type1.Type == typeof(AnyPointerType) && type2.IsPointer) return true;
+            if (type2.Type == typeof(AnyPointerType) && type1.IsPointer) return true;
 
             // Native int can be convereted to any pointer type
             if (type1.IsPointer && type2 == TypeOnStack.Get<NativeIntType>()) return true;

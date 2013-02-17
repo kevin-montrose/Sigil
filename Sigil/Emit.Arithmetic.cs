@@ -46,14 +46,14 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<int>())
                 {
-                    UpdateState(addOp, transitions, TypeOnStack.Get<int>(), pop: 2);
+                    UpdateState(addOp, transitions.Wrap(name), TypeOnStack.Get<int>(), pop: 2);
 
                     return;
                 }
 
                 if (val2 == TypeOnStack.Get<NativeIntType>())
                 {
-                    UpdateState(addOp, transitions, TypeOnStack.Get<NativeIntType>(), pop: 2);
+                    UpdateState(addOp, transitions.Wrap(name), TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                     return;
                 }
@@ -62,7 +62,7 @@ namespace Sigil
                 {
                     if (val2.IsReference || val2.IsPointer)
                     {
-                        UpdateState(addOp, transitions, val2, pop: 2);
+                        UpdateState(addOp, transitions.Wrap(name), val2, pop: 2);
 
                         return;
                     }
@@ -79,7 +79,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<long>())
                 {
-                    UpdateState(addOp, transitions, TypeOnStack.Get<long>(), pop: 2);
+                    UpdateState(addOp, transitions.Wrap(name), TypeOnStack.Get<long>(), pop: 2);
 
                     return;
                 }
@@ -91,7 +91,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<float>())
                 {
-                    UpdateState(addOp, transitions, TypeOnStack.Get<float>(), pop: 2);
+                    UpdateState(addOp, transitions.Wrap(name), TypeOnStack.Get<float>(), pop: 2);
 
                     return;
                 }
@@ -103,7 +103,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<double>())
                 {
-                    UpdateState(addOp, transitions, TypeOnStack.Get<double>(), pop: 2);
+                    UpdateState(addOp, transitions.Wrap(name), TypeOnStack.Get<double>(), pop: 2);
 
                     return;
                 }
@@ -117,21 +117,21 @@ namespace Sigil
                 {
                     if (val2 == TypeOnStack.Get<int>())
                     {
-                        UpdateState(addOp, transitions, TypeOnStack.Get<NativeIntType>(), pop: 2);
+                        UpdateState(addOp, transitions.Wrap(name), TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                         return;
                     }
 
                     if (val2 == TypeOnStack.Get<NativeIntType>())
                     {
-                        UpdateState(addOp, transitions, TypeOnStack.Get<NativeIntType>(), pop: 2);
+                        UpdateState(addOp, transitions.Wrap(name), TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                         return;
                     }
 
                     if (val2.IsReference || val2.IsPointer)
                     {
-                        UpdateState(addOp, transitions, val2, pop: 2);
+                        UpdateState(addOp, transitions.Wrap(name), val2, pop: 2);
 
                         return;
                     }
@@ -143,7 +143,7 @@ namespace Sigil
                 {
                     if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeIntType>())
                     {
-                        UpdateState(addOp, transitions, val1, pop: 2);
+                        UpdateState(addOp, transitions.Wrap(name), val1, pop: 2);
 
                         return;
                     }
@@ -460,7 +460,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(double) }, new [] { typeof(double) })
                 };
 
-            UpdateState(OpCodes.Neg, transitions, val, pop: 1);
+            UpdateState(OpCodes.Neg, transitions.Wrap("Negate"), val, pop: 1);
 
             return this;
         }

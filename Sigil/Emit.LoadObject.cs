@@ -54,12 +54,12 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile, StackTransition.None());
+                UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("LoadObject"));
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
+                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None().Wrap("LoadObject"));
             }
 
             var transitions =
@@ -70,7 +70,7 @@ namespace Sigil
                         new StackTransition(new [] { valueType.MakeByRefType() }, new [] { valueType })
                     };
 
-            UpdateState(OpCodes.Ldobj, valueType, transitions, TypeOnStack.Get(valueType), pop: 1);
+            UpdateState(OpCodes.Ldobj, valueType, transitions.Wrap("LoadObject"), TypeOnStack.Get(valueType), pop: 1);
 
             return this;
         }

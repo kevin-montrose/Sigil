@@ -406,7 +406,7 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions, pop: (parameterTypes.Length + takeExtra));
+            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions.Wrap("CallIndirect"), pop: (parameterTypes.Length + takeExtra));
 
             return this;
         }
