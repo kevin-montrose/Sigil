@@ -2614,7 +2614,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("InitializeObject expected a reference or pointer to a System.DateTime, or a native int, to be on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("InitializeObject expected a native int, System.DateTime&, or System.DateTime*; found System.Object", e.Message);
                 }
             }
         }
