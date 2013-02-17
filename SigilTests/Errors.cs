@@ -1452,7 +1452,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("NewArray expecte size to be an int or native int, found System.Object", e.Message);
+                    Assert.AreEqual("NewArray expected an int, or native int; found System.Object", e.Message);
                 }
             }
         }

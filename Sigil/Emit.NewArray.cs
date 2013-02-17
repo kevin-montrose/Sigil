@@ -24,20 +24,6 @@ namespace Sigil
                 throw new ArgumentNullException("elementType");
             }
 
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var size = onStack[0];
-
-            if (size != TypeOnStack.Get<int>() && size != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("NewArray expecte size to be an int or native int, found " + size, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             var transitions =
                 new[]
                 {
