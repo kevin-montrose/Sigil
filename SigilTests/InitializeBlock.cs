@@ -21,7 +21,7 @@ namespace SigilTests
             e1.LoadElementAddress<byte>();
             e1.LoadConstant(101);
             e1.LoadArgument(0);
-            e1.LoadLength();
+            e1.LoadLength<byte>();
             e1.InitializeBlock();
             e1.Return();
 
@@ -43,7 +43,7 @@ namespace SigilTests
             e1.LoadElementAddress<byte>();
             e1.LoadConstant(101);
             e1.LoadArgument(0);
-            e1.LoadLength();
+            e1.LoadLength<byte>();
             e1.InitializeBlock(isVolatile: true);
             e1.Return();
 

@@ -1773,7 +1773,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadLength();
+                    e1.LoadLength<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
@@ -1788,12 +1788,12 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadLength();
+                    e1.LoadLength<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadLength expects a rank 1 array, found System.Object", e.Message);
+                    Assert.AreEqual("LoadLength expected a System.Int32[]; found System.Object", e.Message);
                 }
             }
         }

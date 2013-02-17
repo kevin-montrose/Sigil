@@ -25,7 +25,7 @@ namespace SigilTests
             e1.LoadElementAddress<byte>();
             
             e1.LoadArgument(0);
-            e1.LoadLength();
+            e1.LoadLength<byte>();
 
             e1.CopyBlock();
 
@@ -59,7 +59,7 @@ namespace SigilTests
             e1.LoadElementAddress<byte>();
 
             e1.LoadArgument(0);
-            e1.LoadLength();
+            e1.LoadLength<byte>();
 
             e1.CopyBlock(isVolatile: true);
 

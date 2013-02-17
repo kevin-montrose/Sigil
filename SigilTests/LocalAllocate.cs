@@ -26,21 +26,21 @@ namespace SigilTests
             e1.StoreLocal(arg);
             
             e1.LoadArgument(0);
-            e1.LoadLength();
+            e1.LoadLength<byte>();
             e1.LocalAllocate();
             e1.StoreLocal(stack);
 
             e1.LoadLocal(stack);
             e1.LoadConstant(123);
             e1.LoadArgument(0);
-            e1.LoadLength();
+            e1.LoadLength<byte>();
             e1.InitializeBlock();
 
             e1.LoadLocal(arg);
             e1.LoadLocal(stack);
 
             e1.LoadArgument(0);
-            e1.LoadLength();
+            e1.LoadLength<byte>();
 
             e1.CopyBlock();
 

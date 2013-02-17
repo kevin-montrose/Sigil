@@ -861,10 +861,16 @@ namespace Sigil
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.LoadLength" />
-        public EmitShorthand<DelegateType> Ldlen()
+        /// <summary cref="M:Sigil.Emit`1.LoadLength``1" />
+        public EmitShorthand<DelegateType> Ldlen<ElementType>()
         {
-            InnerEmit.LoadLength();
+            return Ldlen(typeof(ElementType));
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.LoadLength(System.Type)" />
+        public EmitShorthand<DelegateType> Ldlen(Type elementType)
+        {
+            InnerEmit.LoadLength(elementType);
 
             return this;
         }
