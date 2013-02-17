@@ -56,7 +56,13 @@ namespace Sigil
                     UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
                 }
 
-                UpdateState(OpCodes.Ldfld, field, StackTransition.Push(field.FieldType), TypeOnStack.Get(field.FieldType), pop: 1);
+                var transitions =
+                    new[]
+                    {
+                        new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType })
+                    };
+
+                UpdateState(OpCodes.Ldfld, field, transitions, TypeOnStack.Get(field.FieldType), pop: 1);
             }
             else
             {

@@ -34,7 +34,7 @@ namespace Sigil
                 };
 
             // ckfinite leaves the value on the stack, oddly enough
-            UpdateState(OpCodes.Ckfinite, transitions);
+            UpdateState(OpCodes.Ckfinite, transitions, val, pop: 1);
 
             return this;
         }

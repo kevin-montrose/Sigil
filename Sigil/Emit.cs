@@ -732,6 +732,16 @@ namespace Sigil
                 Stack = Stack.Push(addToStack);
             }
 
+            if(transitions.Any(t => t.PoppedFromStack.Count() != pop))
+            {
+                throw new Exception("transitions do not match expected pop");
+            }
+
+            if(transitions.Any(t => t.PushedToStack.Count() != (addToStack == null ? 0 : 1)))
+            {
+                throw new Exception("transitions do not match expected push");
+            }
+
             if (!CurrentVerifier.Transition(transitions))
             {
                 // TODO: Gotta do better than this, needs "what the hell happened" messaging
