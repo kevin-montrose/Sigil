@@ -50,7 +50,9 @@ namespace Sigil
             {
                 var partial = TrackersAtLabels[label];
 
-                if (!partial.Incoming(CurrentVerifier))
+                var verifyRes = partial.Incoming(CurrentVerifier);
+
+                if (!verifyRes.Success)
                 {
                     // TODO: Gotta do better than this, needs "what the hell happened" messaging
                     throw new Exception("Branch violates stack");

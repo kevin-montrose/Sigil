@@ -46,6 +46,72 @@ namespace Sigil.Impl
         internal static StackTransition[] Pop(TypeOnStack popType) { return new[] { new StackTransition(new[] { popType }, new TypeOnStack[0]) }; }
     }
 
+    public class VerificationResult
+    {
+        public bool Success { get; private set; }
+
+        // Set when the stack is underflowed
+        public bool IsStackUnderflow { get; private set; }
+        public int ExpectedStackSize { get; private set; }
+
+        // Set when stacks don't match during an incoming
+        public bool IsStackMismatch { get; private set; }
+        internal Stack<IEnumerable<TypeOnStack>> ExpectedStack { get; private set; }
+        internal Stack<IEnumerable<TypeOnStack>> IncomingStack { get; private set; }
+
+        // Set when types are dodge
+        public bool IsTypeMismatch { get; private set; }
+        public int TransitionIndex { get; private set; }
+        public int StackIndex { get; private set; }
+        internal IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
+        internal Stack<IEnumerable<TypeOnStack>> Stack { get; private set; }
+
+        internal static VerificationResult Successful()
+        {
+            return new VerificationResult { Success = true };
+        }
+
+        internal static VerificationResult FailureUnderflow(int expectedSize)
+        {
+            return
+                new VerificationResult
+                {
+                    Success = false,
+
+                    IsStackUnderflow = true,
+                    ExpectedStackSize = expectedSize
+                };
+        }
+
+        internal static VerificationResult FailureStackMismatch(Stack<IEnumerable<TypeOnStack>> expected, Stack<IEnumerable<TypeOnStack>> incoming)
+        {
+            return
+                new VerificationResult
+                {
+                    Success = false,
+
+                    IsStackMismatch = true,
+                    ExpectedStack = expected,
+                    IncomingStack = incoming
+                };
+        }
+
+        internal static VerificationResult FailureTypeMismatch(int transitionIndex, int stackIndex, IEnumerable<TypeOnStack> expectedTypes, Stack<IEnumerable<TypeOnStack>> stack)
+        {
+            return
+                new VerificationResult
+                {
+                    Success = false,
+
+                    IsTypeMismatch = true,
+                    TransitionIndex =transitionIndex,
+                    StackIndex = stackIndex,
+                    ExpectedAtStackIndex = expectedTypes,
+                    Stack = stack
+                };
+        }
+    }
+
     public class VerifiableTracker
     {
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
@@ -66,30 +132,35 @@ namespace Sigil.Impl
                 );
         }
 
-        public bool Transition(IEnumerable<StackTransition> legalTransitions)
+        public VerificationResult Transition(IEnumerable<StackTransition> legalTransitions)
         {
             Transitions.Add(legalTransitions);
             var ret = CollapseAndVerify();
 
             // revert!
-            if(!ret) Transitions.RemoveAt(Transitions.Count - 1);
+            if (!ret.Success)
+            {
+                Transitions.RemoveAt(Transitions.Count - 1);
+            }
 
             return ret;
         }
 
-        private bool IsEquivalent(VerifiableTracker other)
+        private static Stack<IEnumerable<TypeOnStack>> GetStack(VerifiableTracker tracker)
         {
-            var ourStack = new Stack<IEnumerable<TypeOnStack>>();
-            foreach (var t in Transitions)
+            var retStack = new Stack<IEnumerable<TypeOnStack>>();
+            foreach (var t in tracker.Transitions)
             {
-                UpdateStack(ourStack, t);
+                UpdateStack(retStack, t);
             }
 
-            var otherStack = new Stack<IEnumerable<TypeOnStack>>();
-            foreach (var t in other.Transitions)
-            {
-                UpdateStack(otherStack, t);
-            }
+            return retStack;
+        }
+
+        private bool IsEquivalent(VerifiableTracker other)
+        {
+            var ourStack = GetStack(this);
+            var otherStack = GetStack(other);
 
             if (ourStack.Count != otherStack.Count) return false;
 
@@ -106,12 +177,19 @@ namespace Sigil.Impl
             return true;
         }
 
-        public bool Incoming(VerifiableTracker other)
+        public VerificationResult Incoming(VerifiableTracker other)
         {
             // If we're not baseless, we can't modify ourselves; but we have to make sure the other one is equivalent
             if (!Baseless)
             {
-                return IsEquivalent(other);
+                var isEquivalent = IsEquivalent(other);
+
+                if (isEquivalent)
+                {
+                    return VerificationResult.Successful();
+                }
+
+                return VerificationResult.FailureStackMismatch(GetStack(this), GetStack(other));
             }
 
             var old = Transitions;
@@ -123,7 +201,7 @@ namespace Sigil.Impl
             var ret = CollapseAndVerify();
 
             
-            if (!ret)
+            if (!ret.Success)
             {
                 // revert!
                 Transitions = old;
@@ -137,7 +215,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        private void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, IEnumerable<StackTransition> legal)
+        private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, IEnumerable<StackTransition> legal)
         {
             var toPop = legal.First().PoppedCount;
 
@@ -159,7 +237,7 @@ namespace Sigil.Impl
             }
         }
 
-        public bool CollapseAndVerify()
+        public VerificationResult CollapseAndVerify()
         {
             var runningStack = new Stack<IEnumerable<TypeOnStack>>();
 
@@ -195,7 +273,11 @@ namespace Sigil.Impl
 
                 if (legal.Count == 0)
                 {
-                    return false;
+                    var stackI = FindStackFailureIndex(runningStack, ops);
+
+                    var expected = ops.Select(o => o.PoppedFromStack.ElementAt(stackI)).Distinct().ToList();
+
+                    return VerificationResult.FailureTypeMismatch(i, stackI, expected, runningStack);
                 }
 
                 if (legal.GroupBy(g => new { a = g.PoppedCount, b = g.PushedToStack.Count() }).Count() > 1)
@@ -210,13 +292,46 @@ namespace Sigil.Impl
 
                 if (toPop > runningStack.Count && !Baseless)
                 {
-                    return false;
+                    return VerificationResult.FailureUnderflow(toPop);
                 }
 
                 UpdateStack(runningStack, legal);
             }
 
-            return true;
+            return VerificationResult.Successful();
+        }
+
+        private int FindStackFailureIndex(Stack<IEnumerable<TypeOnStack>> types, IEnumerable<StackTransition> ops)
+        {
+            var typesByIndex = new List<List<TypeOnStack>>();
+
+            foreach (var op in ops)
+            {
+                for (var i = 0; i < op.PoppedFromStack.Count(); i++)
+                {
+                    var type = op.PoppedFromStack.ElementAt(i);
+
+                    while(typesByIndex.Count <= i)
+                    {
+                        typesByIndex.Add(new List<TypeOnStack>());
+                    }
+
+                    typesByIndex[i].Add(type);
+                }
+            }
+
+            for (var i = 0; i < typesByIndex.Count; i++)
+            {
+                var onStack = types.ElementAt(i);
+                var demanded = typesByIndex[i];
+
+                if (!demanded.Any(d => onStack.Any(s => d.IsAssignableFrom(s))))
+                {
+                    return i;
+                }
+            }
+
+            throw new Exception("Shouldn't be possible");
         }
 
         public VerifiableTracker Clone()

@@ -17,7 +17,7 @@ namespace SigilTests
             var tracker = new VerifiableTracker();
             var x = tracker.Transition(new [] { new StackTransition(Type.EmptyTypes, new[] { typeof(string) }) });
 
-            Assert.IsTrue(x);
+            Assert.IsTrue(x.Success);
         }
 
         [TestMethod]
@@ -28,9 +28,9 @@ namespace SigilTests
             var y = tracker.Transition(new[] { new StackTransition(Type.EmptyTypes, new[] { typeof(int) }) });
             var z = tracker.Transition(new[] { new StackTransition(new [] { typeof(int), typeof(int) }, new[] { typeof(int) }) });
 
-            Assert.IsTrue(x);
-            Assert.IsTrue(y);
-            Assert.IsTrue(z);
+            Assert.IsTrue(x.Success);
+            Assert.IsTrue(y.Success);
+            Assert.IsTrue(z.Success);
         }
 
         [TestMethod]
@@ -40,8 +40,8 @@ namespace SigilTests
             var x = tracker.Transition(new[] { new StackTransition(Type.EmptyTypes, new[] { typeof(int) }) });
             var y = tracker.Transition(new[] { new StackTransition(new[] { typeof(string) }, new[] { typeof(string) }) });
 
-            Assert.IsTrue(x);
-            Assert.IsFalse(y);
+            Assert.IsTrue(x.Success);
+            Assert.IsFalse(y.Success);
         }
 
         [TestMethod]
@@ -56,10 +56,10 @@ namespace SigilTests
 
             var aleph = tracker.Incoming(other);
 
-            Assert.IsTrue(x);
-            Assert.IsTrue(y);
-            Assert.IsTrue(z);
-            Assert.IsTrue(aleph);
+            Assert.IsTrue(x.Success);
+            Assert.IsTrue(y.Success);
+            Assert.IsTrue(z.Success);
+            Assert.IsTrue(aleph.Success);
         }
 
         [TestMethod]
@@ -75,11 +75,11 @@ namespace SigilTests
 
             var bet = tracker.Incoming(other);
 
-            Assert.IsTrue(x);
-            Assert.IsTrue(y);
-            Assert.IsTrue(z);
-            Assert.IsTrue(aleph);
-            Assert.IsFalse(bet);
+            Assert.IsTrue(x.Success);
+            Assert.IsTrue(y.Success);
+            Assert.IsTrue(z.Success);
+            Assert.IsTrue(aleph.Success);
+            Assert.IsFalse(bet.Success);
         }
     }
 }

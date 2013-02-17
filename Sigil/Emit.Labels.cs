@@ -203,7 +203,9 @@ namespace Sigil
             {
                 var incoming = TrackersAtBranches[label];
 
-                if (!CurrentVerifier.Incoming(incoming))
+                var verifyRes = CurrentVerifier.Incoming(incoming);
+
+                if (!verifyRes.Success)
                 {
                     // TODO: Gotta do better than this, needs "what the hell happened" messaging
                     throw new Exception("Control flow violates stack");

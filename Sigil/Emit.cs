@@ -742,7 +742,9 @@ namespace Sigil
                 throw new Exception("transitions do not match expected push");
             }
 
-            if (!CurrentVerifier.Transition(transitions))
+            var verifyRes = CurrentVerifier.Transition(transitions);
+
+            if (!verifyRes.Success)
             {
                 // TODO: Gotta do better than this, needs "what the hell happened" messaging
                 throw new Exception("Operand violates stack");
