@@ -1169,10 +1169,16 @@ namespace Sigil
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.StoreElement" />
-        public EmitShorthand<DelegateType> Stelem()
+        /// <summary cref="M:Sigil.Emit`1.StoreElement``1" />
+        public EmitShorthand<DelegateType> Stelem<ElementType>()
         {
-            InnerEmit.StoreElement();
+            return Stelem(typeof(ElementType));
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.StoreElement(System.Type)" />
+        public EmitShorthand<DelegateType> Stelem(Type elementType)
+        {
+            InnerEmit.StoreElement(elementType);
 
             return this;
         }

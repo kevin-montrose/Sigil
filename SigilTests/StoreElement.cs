@@ -19,7 +19,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<sbyte>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -35,7 +35,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<byte>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -51,7 +51,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<short>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -67,7 +67,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<ushort>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -83,7 +83,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<int>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -99,7 +99,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<uint>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -115,7 +115,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<long>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -131,7 +131,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<ulong>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -147,7 +147,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<float>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -163,7 +163,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<double>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -179,7 +179,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<object>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -195,7 +195,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement<DateTime>();
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();
@@ -213,7 +213,7 @@ namespace SigilTests
                 e1.LoadArgument(0);
                 e1.LoadArgument(1);
                 e1.LoadArgument(2);
-                e1.StoreElement();
+                e1.StoreElement(typeof(int*));
                 e1.Return();
 
                 var d1 = e1.CreateDelegate();

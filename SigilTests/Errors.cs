@@ -1059,7 +1059,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.StoreElement();
+                    e1.StoreElement<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
@@ -1076,46 +1076,46 @@ namespace SigilTests
 
                 try
                 {
-                    e1.StoreElement();
+                    e1.StoreElement<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreElement expects a rank one array, found System.Object", e.Message);
+                    Assert.AreEqual("StoreElement expected an int; found System.Object", e.Message);
                 }
             }
 
             {
                 var e1 = Emit<Action<int[], int, int>>.NewDynamicMethod();
-                e1.LoadArgument(0);
                 e1.NewObject<object>();
                 e1.NewObject<object>();
+                e1.LoadArgument(2);
 
                 try
                 {
-                    e1.StoreElement();
+                    e1.StoreElement<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreElement expects an index of type int or native int, found System.Object", e.Message);
+                    Assert.AreEqual("StoreElement expected an int, or native int; found System.Object", e.Message);
                 }
             }
 
             {
                 var e1 = Emit<Action<int[], int, int>>.NewDynamicMethod();
-                e1.LoadArgument(0);
+                e1.NewObject<object>();
                 e1.LoadArgument(1);
-                e1.NewObject<object>();
+                e1.LoadArgument(2);
 
                 try
                 {
-                    e1.StoreElement();
+                    e1.StoreElement<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreElement expects a value assignable to System.Int32, found System.Object", e.Message);
+                    Assert.AreEqual("StoreElement expected a System.Int32[]; found System.Object", e.Message);
                 }
             }
         }
