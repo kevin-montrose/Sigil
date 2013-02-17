@@ -3444,7 +3444,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Parameter #0 to Void CallBadParam() should be SigilTests.Errors, but found System.Object", e.Message);
+                Assert.AreEqual("Call expected a SigilTests.Errors; found System.Object", e.Message);
             }
         }
 

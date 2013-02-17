@@ -47,38 +47,6 @@ namespace Sigil
                 expectedParams.Insert(0, TypeOnStack.Get(method.DeclaringType));
             }
 
-            var onStack = Stack.Top(expectedParams.Count);
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(expectedParams.Count);
-            }
-
-            // Things come off the stack in "Reverse" order
-            var onStackR = onStack.Reverse().ToList();
-
-            for (var i = 0; i < expectedParams.Count; i++)
-            {
-                var shouldBe = expectedParams[i];
-                var actuallyIs = onStackR[i];
-
-                if (!shouldBe.IsAssignableFrom(actuallyIs))
-                {
-                    // OK, apparently for the `this` pointer, you can get away with using an explicit reference (type &) rather than
-                    //   an "object reference" (type O)
-                    if (i == 0 && actuallyIs.IsReference && HasFlag(method.CallingConvention, CallingConventions.HasThis))
-                    {
-                        var actuallyIsDeref = TypeOnStack.Get(actuallyIs.Type);
-                        if (shouldBe.IsAssignableFrom(actuallyIsDeref))
-                        {
-                            continue;
-                        }
-                    }
-
-                    throw new SigilVerificationException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, onStack.Length - 1 - i);
-                }
-            }
-
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);
 
             var firstParamIsThis =
