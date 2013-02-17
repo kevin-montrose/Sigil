@@ -36,32 +36,6 @@ namespace Sigil
                 throw new InvalidOperationException("Box with by-ref types is not verifiable");
             }
 
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var onStack = top.Single();
-
-            var actually32Bit = valueType.IsPrimitive && valueType.IsAssignableFrom(TypeOnStack.Get<int>());
-
-            if (actually32Bit)
-            {
-                if (!TypeOnStack.Get<int>().IsAssignableFrom(onStack))
-                {
-                    throw new SigilVerificationException(onStack + " cannot be boxed as an " + valueType, IL.Instructions(LocalsByIndex), Stack, 0);
-                }
-            }
-            else
-            {
-                if (onStack != TypeOnStack.Get(valueType))
-                {
-                    throw new SigilVerificationException("Expected " + valueType + " to be on the stack, found " + onStack, IL.Instructions(LocalsByIndex), Stack, 0);
-                }
-            }
-
             var transitions =
                 new[] 
                 {

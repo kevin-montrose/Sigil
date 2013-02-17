@@ -4508,7 +4508,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("System.String cannot be boxed as an System.Byte", e.Message);
+                Assert.AreEqual("Box expected a System.Byte; found System.String", e.Message);
             }
 
             var e5 = Emit<Action>.NewDynamicMethod("E5");
@@ -4520,7 +4520,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Expected System.Guid to be on the stack, found int", e.Message);
+                Assert.AreEqual("Box expected a System.Guid; found int", e.Message);
             }
         }
 
