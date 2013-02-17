@@ -301,60 +301,7 @@ namespace Sigil
                 takeExtra++;
             }
 
-            var onStack = Stack.Top(parameterTypes.Length + takeExtra);
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(parameterTypes.Length + takeExtra);
-            }
-
-            var reversed = onStack.Reverse().ToList();
-            int fPtrLoc= reversed.Count - 1;
-            var funcPtr = reversed[fPtrLoc];
-            reversed.RemoveAt(reversed.Count - 1);
-
-            TypeOnStack thisType = null;
-            if (HasFlag(callConventions, CallingConventions.HasThis))
-            {
-                thisType = reversed[0];
-                reversed.RemoveAt(0);
-            }
-
-            if (funcPtr != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("CallIndirect expects a native int to be on the top of the stack, found " + funcPtr, IL.Instructions(LocalsByIndex), Stack, fPtrLoc);
-            }
-
-            // We can only do this if the native int got on the stack because of a call to LoadFunctionPointer or LoadVirtualFunctionPointer
-            //   If someone got an IntPtr or similar on the stack from a method call, we can't validate jack
-            if (funcPtr.HasAttachedMethodInfo)
-            {
-                if (funcPtr.CallingConvention != callConventions)
-                {
-                    throw new SigilVerificationException("CallIndirect expects method calling conventions to match, found " + funcPtr.CallingConvention + " on the stack", IL.Instructions(LocalsByIndex), Stack, fPtrLoc);
-                }
-
-                if (funcPtr.InstanceType != null && !funcPtr.InstanceType.IsAssignableFrom(thisType))
-                {
-                    throw new SigilVerificationException("CallIndirect expects a 'this' value assignable to " + funcPtr.InstanceType + ", found " + thisType, IL.Instructions(LocalsByIndex), Stack, fPtrLoc);
-                }
-
-                if (funcPtr.ReturnType != returnType)
-                {
-                    throw new SigilVerificationException("CallIndirect expects method return types to match, found " + funcPtr.ReturnType + " on the stack", IL.Instructions(LocalsByIndex), Stack, fPtrLoc);
-                }
-
-                for (var i = 0; i < parameterTypes.Length; i++)
-                {
-                    var shouldBe = parameterTypes[i];
-                    var actuallyIs = reversed[i];
-
-                    if (!shouldBe.IsAssignableFrom(actuallyIs))
-                    {
-                        throw new SigilVerificationException("CallIndirect expected a value assignable to " + shouldBe + ", found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, reversed.Count - 1 - i);
-                    }
-                }
-            }
+            // TODO: Restore checking for known-bad pointers when possible
 
             IEnumerable<StackTransition> transitions;
 

@@ -3357,7 +3357,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("CallIndirect expects a native int to be on the top of the stack, found System.Object", e.Message);
+                Assert.AreEqual("CallIndirect expected a native int; found System.Object", e.Message);
             }
         }
 
