@@ -1,5 +1,6 @@
 ﻿
 using Sigil.Impl;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Sigil
@@ -10,18 +11,49 @@ namespace Sigil
         {
             // See: http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.add.aspx
             //   For legal arguments table
+            IEnumerable<StackTransition> transitions;
+            if (allowReference)
+            {
+                // TODO: figure out how to represent pointer/reference addition rules
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(int), typeof(int) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                        new StackTransition(new [] { typeof(long), typeof(long) }, new [] { typeof(long) }),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, new [] { typeof(NativeIntType) }),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                        new StackTransition(new [] { typeof(float), typeof(float) }, new [] { typeof(float) }),
+                        new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(double) })
+                    };
+            }
+            else
+            {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(int), typeof(int) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                        new StackTransition(new [] { typeof(long), typeof(long) }, new [] { typeof(long) }),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, new [] { typeof(NativeIntType) }),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                        new StackTransition(new [] { typeof(float), typeof(float) }, new [] { typeof(float) }),
+                        new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(double) })
+                    };
+            }
+
             if (val1 == TypeOnStack.Get<int>())
             {
                 if (val2 == TypeOnStack.Get<int>())
                 {
-                    UpdateState(addOp, TypeOnStack.Get<int>(), pop: 2);
+                    UpdateState(addOp, transitions, TypeOnStack.Get<int>(), pop: 2);
 
                     return;
                 }
 
                 if (val2 == TypeOnStack.Get<NativeIntType>())
                 {
-                    UpdateState(addOp, TypeOnStack.Get<NativeIntType>(), pop: 2);
+                    UpdateState(addOp, transitions, TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                     return;
                 }
@@ -30,7 +62,7 @@ namespace Sigil
                 {
                     if (val2.IsReference || val2.IsPointer)
                     {
-                        UpdateState(addOp, val2, pop: 2);
+                        UpdateState(addOp, transitions, val2, pop: 2);
 
                         return;
                     }
@@ -47,7 +79,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<long>())
                 {
-                    UpdateState(addOp, TypeOnStack.Get<long>(), pop: 2);
+                    UpdateState(addOp, transitions, TypeOnStack.Get<long>(), pop: 2);
 
                     return;
                 }
@@ -59,7 +91,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<float>())
                 {
-                    UpdateState(addOp, TypeOnStack.Get<float>(), pop: 2);
+                    UpdateState(addOp, transitions, TypeOnStack.Get<float>(), pop: 2);
 
                     return;
                 }
@@ -71,7 +103,7 @@ namespace Sigil
             {
                 if (val2 == TypeOnStack.Get<double>())
                 {
-                    UpdateState(addOp, TypeOnStack.Get<double>(), pop: 2);
+                    UpdateState(addOp, transitions, TypeOnStack.Get<double>(), pop: 2);
 
                     return;
                 }
@@ -85,21 +117,21 @@ namespace Sigil
                 {
                     if (val2 == TypeOnStack.Get<int>())
                     {
-                        UpdateState(addOp, TypeOnStack.Get<NativeIntType>(), pop: 2);
+                        UpdateState(addOp, transitions, TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                         return;
                     }
 
                     if (val2 == TypeOnStack.Get<NativeIntType>())
                     {
-                        UpdateState(addOp, TypeOnStack.Get<NativeIntType>(), pop: 2);
+                        UpdateState(addOp, transitions, TypeOnStack.Get<NativeIntType>(), pop: 2);
 
                         return;
                     }
 
                     if (val2.IsReference || val2.IsPointer)
                     {
-                        UpdateState(addOp, val2, pop: 2);
+                        UpdateState(addOp, transitions, val2, pop: 2);
 
                         return;
                     }
@@ -111,7 +143,7 @@ namespace Sigil
                 {
                     if (val2 == TypeOnStack.Get<int>() || val2 == TypeOnStack.Get<NativeIntType>())
                     {
-                        UpdateState(addOp, val1, pop: 2);
+                        UpdateState(addOp, transitions, val1, pop: 2);
 
                         return;
                     }
@@ -418,7 +450,17 @@ namespace Sigil
                 throw new SigilVerificationException("Negate expects an int, long, float, double, or native int; found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Neg, val, pop: 1);
+            var transitions =
+                new[]
+                {
+                    new StackTransition(new [] { typeof(int) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                    new StackTransition(new [] { typeof(long) }, new [] { typeof(long) }),
+                    new StackTransition(new [] { typeof(float) }, new [] { typeof(float) }),
+                    new StackTransition(new [] { typeof(double) }, new [] { typeof(double) })
+                };
+
+            UpdateState(OpCodes.Neg, transitions, val, pop: 1);
 
             return this;
         }

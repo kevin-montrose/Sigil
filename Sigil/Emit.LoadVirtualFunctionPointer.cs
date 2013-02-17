@@ -56,7 +56,13 @@ namespace Sigil
                     paramList.ToArray()
                 );
 
-            UpdateState(OpCodes.Ldvirtftn, method, type, pop: 1);
+            var transitions = 
+                new[]
+                {
+                    new StackTransition(new [] { method.DeclaringType }, new [] { typeof(NativeIntType) })
+                };
+
+            UpdateState(OpCodes.Ldvirtftn, method, transitions, type, pop: 1);
 
             return this;
         }

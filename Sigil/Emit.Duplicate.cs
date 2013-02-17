@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using Sigil.Impl;
+using System.Reflection.Emit;
 
 namespace Sigil
 {
@@ -16,7 +17,7 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            UpdateState(OpCodes.Dup, onStack[0]);
+            UpdateState(OpCodes.Dup, CurrentVerifier.DuplicateTop(), onStack[0]);
 
             return this;
         }

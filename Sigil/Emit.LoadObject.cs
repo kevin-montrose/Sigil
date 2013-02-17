@@ -54,15 +54,23 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile);
+                UpdateState(OpCodes.Volatile, StackTransition.None());
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value);
+                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
             }
 
-            UpdateState(OpCodes.Ldobj, valueType, TypeOnStack.Get(valueType), pop: 1);
+            var transitions =
+                    new[]
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { valueType }),
+                        new StackTransition(new [] { valueType.MakePointerType() }, new [] { valueType }),
+                        new StackTransition(new [] { valueType.MakeByRefType() }, new [] { valueType })
+                    };
+
+            UpdateState(OpCodes.Ldobj, valueType, transitions, TypeOnStack.Get(valueType), pop: 1);
 
             return this;
         }

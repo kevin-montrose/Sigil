@@ -51,8 +51,15 @@ namespace Sigil
                 throw new SigilVerificationException("Switch expected an int on the stack, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
+            var transitions =
+                new[]
+                {
+                    new StackTransition(new [] { typeof(int) }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType) }, Type.EmptyTypes),
+                };
+
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), out update, pop: 1);
+            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), transitions, out update, pop: 1);
 
             foreach (var label in labels)
             {

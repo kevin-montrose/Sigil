@@ -266,7 +266,13 @@ namespace Sigil
 
             var makesType = TypeOnStack.Get(constructor.DeclaringType);
 
-            UpdateState(OpCodes.Newobj, constructor, makesType, pop: expectedParams.Count);
+            var transitions =
+                new[]
+                {
+                    new StackTransition(expectedParams, new [] { makesType })
+                };
+
+            UpdateState(OpCodes.Newobj, constructor, transitions, makesType, pop: expectedParams.Count);
 
             return this;
         }

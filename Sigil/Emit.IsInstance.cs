@@ -35,7 +35,13 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            UpdateState(OpCodes.Isinst, type, TypeOnStack.Get(type), pop: 1);
+            var transitions =
+                new[] 
+                {
+                    new StackTransition(new[] { typeof(WildcardType) }, new [] { type })
+                };
+
+            UpdateState(OpCodes.Isinst, type, transitions, TypeOnStack.Get(type), pop: 1);
 
             return this;
         }

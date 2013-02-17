@@ -53,15 +53,21 @@ namespace Sigil
 
                 if (isVolatile)
                 {
-                    UpdateState(OpCodes.Volatile);
+                    UpdateState(OpCodes.Volatile, StackTransition.None());
                 }
 
                 if (unaligned.HasValue)
                 {
-                    UpdateState(OpCodes.Unaligned, unaligned.Value);
+                    UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
                 }
 
-                UpdateState(OpCodes.Stfld, field, pop: 2);
+                var transitions =
+                    new[]
+                    {
+                        new StackTransition(new [] { field.FieldType, field.DeclaringType }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stfld, field, transitions, pop: 2);
             }
             else
             {
@@ -81,10 +87,16 @@ namespace Sigil
 
                 if (isVolatile)
                 {
-                    UpdateState(OpCodes.Volatile);
+                    UpdateState(OpCodes.Volatile, StackTransition.None());
                 }
 
-                UpdateState(OpCodes.Stsfld, field, pop: 1);
+                var transitions =
+                    new[]
+                    {
+                        new StackTransition(new [] { field.FieldType }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stsfld, field, transitions, pop: 1);
             }
 
             return this;

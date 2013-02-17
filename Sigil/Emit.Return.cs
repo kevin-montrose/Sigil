@@ -29,7 +29,7 @@ namespace Sigil
                     throw new SigilVerificationException("Returning from a void method must leave the stack empty", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
                 }
 
-                UpdateState(OpCodes.Ret);
+                UpdateState(OpCodes.Ret, StackTransition.None());
 
                 return this;
             }
@@ -46,7 +46,7 @@ namespace Sigil
                 throw new SigilVerificationException("Return expects a value assignable to " + ReturnType + " to be on the stack; found " + retType[0], IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Ret, pop: 1);
+            UpdateState(OpCodes.Ret, StackTransition.Pop(ReturnType), pop: 1);
 
             if (!Stack.IsRoot)
             {

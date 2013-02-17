@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using Sigil.Impl;
+using System.Reflection.Emit;
 
 namespace Sigil
 {
@@ -16,7 +17,7 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            UpdateState(OpCodes.Pop, pop: 1);
+            UpdateState(OpCodes.Pop, StackTransition.Pop<WildcardType>(), pop: 1);
 
             return this;
         }

@@ -51,59 +51,125 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile);
+                UpdateState(OpCodes.Volatile, StackTransition.None());
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value);
+                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
             }
 
             if (type.IsPointer)
             {
-                UpdateState(OpCodes.Stind_I, pop: 2);
+                var transition = new[] { new StackTransition(new[] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes) };
+
+                UpdateState(OpCodes.Stind_I, transition, pop: 2);
                 return this;
             }
 
             if (!type.IsValueType)
             {
-                UpdateState(OpCodes.Stind_Ref, pop: 2);
+                var transition = 
+                    new[] 
+                    { 
+                        new StackTransition(new[] { type, type.MakePointerType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { type, type.MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { type, typeof(NativeIntType) }, Type.EmptyTypes),
+                    };
+
+                UpdateState(OpCodes.Stind_Ref, transition, pop: 2);
                 return this;
             }
 
             if (type == typeof(sbyte) || type == typeof(byte))
             {
-                UpdateState(OpCodes.Stind_I1, pop:2);
+                var transition =
+                    new[] 
+                    { 
+                        new StackTransition(new[] { typeof(int), typeof(byte*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(sbyte*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(sbyte).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stind_I1, transition, pop:2);
                 return this;
             }
 
             if (type == typeof(short) || type == typeof(ushort))
             {
-                UpdateState(OpCodes.Stind_I2, pop: 2);
+                var transition =
+                    new[] 
+                    { 
+                        new StackTransition(new[] { typeof(int), typeof(short*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(short).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(ushort*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(ushort).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stind_I2, transition, pop: 2);
                 return this;
             }
 
             if (type == typeof(int) || type == typeof(uint))
             {
-                UpdateState(OpCodes.Stind_I4, pop: 2);
+                var transition =
+                    new[] 
+                    { 
+                        new StackTransition(new[] { typeof(int), typeof(int*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(int).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(uint*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(uint).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stind_I4, transition, pop: 2);
                 return this;
             }
 
             if (type == typeof(long) || type == typeof(ulong))
             {
-                UpdateState(OpCodes.Stind_I8, pop: 2);
+                var transition =
+                    new[] 
+                    { 
+                        new StackTransition(new[] { typeof(long), typeof(long*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(long).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(ulong*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(ulong).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(NativeIntType) }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stind_I8, transition, pop: 2);
                 return this;
             }
 
             if (type == typeof(float))
             {
-                UpdateState(OpCodes.Stind_R4, pop: 2);
+                var transition =
+                    new[] 
+                    { 
+                        new StackTransition(new[] { typeof(float), typeof(float*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(float), typeof(float).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(float), typeof(NativeIntType) }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stind_R4, transition, pop: 2);
                 return this;
             }
 
             if (type == typeof(double))
             {
-                UpdateState(OpCodes.Stind_R8, pop: 2);
+                var transition =
+                    new[] 
+                    { 
+                        new StackTransition(new[] { typeof(double), typeof(double*) }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(double), typeof(double).MakeByRefType() }, Type.EmptyTypes),
+                        new StackTransition(new[] { typeof(double), typeof(NativeIntType) }, Type.EmptyTypes)
+                    };
+
+                UpdateState(OpCodes.Stind_R8, transition, pop: 2);
                 return this;
             }
 

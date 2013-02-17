@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Sigil
@@ -52,59 +53,151 @@ namespace Sigil
             }
 
             OpCode? instr = null;
+            IEnumerable<StackTransition> transitions = null;
 
             if (type.IsPointer)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { type }),
+                        new StackTransition(new [] { type.MakePointerType() }, new[] { type }),
+                        new StackTransition(new [] { type.MakeByRefType() }, new[] { type })
+                    };
+
+
                 instr = OpCodes.Ldind_I;
             }
 
             if (!type.IsValueType && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { type }),
+                        new StackTransition(new [] { type.MakePointerType() }, new[] { type }),
+                        new StackTransition(new [] { type.MakeByRefType() }, new[] { type })
+                    };
+
                 instr = OpCodes.Ldind_Ref;
             }
 
             if (type == typeof(sbyte) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(sbyte*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(sbyte).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
                 instr = OpCodes.Ldind_I1;
             }
 
             if (type == typeof(byte) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(byte*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(byte).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
                 instr = OpCodes.Ldind_U1;
             }
 
             if (type == typeof(short) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(short*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(short).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
                 instr = OpCodes.Ldind_I2;
             }
 
             if (type == typeof(ushort) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(ushort*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(ushort).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
                 instr = OpCodes.Ldind_U2;
             }
 
             if (type == typeof(int) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
                 instr = OpCodes.Ldind_I4;
             }
 
             if (type == typeof(uint) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(uint*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(uint).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
                 instr = OpCodes.Ldind_U4;
             }
 
             if ((type == typeof(long) || type == typeof(ulong)) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(long) }),
+                        new StackTransition(new [] { typeof(long*) }, new[] { typeof(long) }),
+                        new StackTransition(new [] { typeof(long).MakeByRefType() }, new[] { typeof(long) }),
+                        new StackTransition(new [] { typeof(ulong*) }, new[] { typeof(long) }),
+                        new StackTransition(new [] { typeof(ulong).MakeByRefType() }, new[] { typeof(long) })
+                    };
+
                 instr = OpCodes.Ldind_I8;
             }
 
             if (type == typeof(float) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(float) }),
+                        new StackTransition(new [] { typeof(float*) }, new[] { typeof(float) }),
+                        new StackTransition(new [] { typeof(float).MakeByRefType() }, new[] { typeof(float) })
+                    };
+
                 instr = OpCodes.Ldind_R4;
             }
 
             if (type == typeof(double) && !instr.HasValue)
             {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(double) }),
+                        new StackTransition(new [] { typeof(double*) }, new[] { typeof(double) }),
+                        new StackTransition(new [] { typeof(double).MakeByRefType() }, new[] { typeof(double) })
+                    };
+
                 instr = OpCodes.Ldind_R8;
             }
 
@@ -115,15 +208,15 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile);
+                UpdateState(OpCodes.Volatile, StackTransition.None());
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value);
+                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
             }
 
-            UpdateState(instr.Value, TypeOnStack.Get(type), pop: 1);
+            UpdateState(instr.Value, transitions, TypeOnStack.Get(type), pop: 1);
 
             return this;
         }

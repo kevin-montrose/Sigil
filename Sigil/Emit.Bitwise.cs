@@ -33,7 +33,15 @@ namespace Sigil
                 throw new SigilVerificationException(name + " expects the same types for values, found " + val1 + " and " + val2, IL.Instructions(LocalsByIndex), Stack, 0, 1);
             }
 
-            UpdateState(op, val1, pop: 2);
+            var transitions =
+                new[] 
+                {
+                    new StackTransition(new [] { typeof(int), typeof(int) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(long), typeof(long) }, new [] { typeof(long) }),
+                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                };
+
+            UpdateState(op, transitions, val1, pop: 2);
         }
 
         /// <summary>
@@ -85,7 +93,15 @@ namespace Sigil
                 throw new SigilVerificationException("Not expects integral types, but found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Not, val, pop: 1);
+            var transitions =
+                new[]
+                {
+                    new StackTransition(new [] { typeof(int) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(long) }, new [] { typeof(long) }),
+                    new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                };
+
+            UpdateState(OpCodes.Not, transitions, val, pop: 1);
 
             return this;
         }
@@ -112,7 +128,18 @@ namespace Sigil
                 throw new SigilVerificationException(name + " expects the shift to be an int or native int; found " + shift, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(op, value, pop: 2);
+            var transitions =
+                new[] 
+                {
+                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                    new StackTransition(new [] { typeof(int), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
+                    new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(int), typeof(int) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(NativeIntType), typeof(long) }, new [] { typeof(long) }),
+                    new StackTransition(new [] { typeof(int), typeof(long) }, new [] { typeof(long) })
+                };
+
+            UpdateState(op, transitions, value, pop: 2);
         }
 
         /// <summary>

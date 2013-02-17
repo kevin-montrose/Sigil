@@ -23,7 +23,13 @@ namespace Sigil
 
             if (index >= byte.MinValue && index <= byte.MaxValue)
             {
-                UpdateState(OpCodes.Ldarga_S, (byte)index, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
+                byte asByte;
+                unchecked
+                {
+                    asByte = (byte)index;
+                }
+
+                UpdateState(OpCodes.Ldarga_S, asByte, StackTransition.Push(ParameterTypes[index].MakePointerType()), TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
 
                 return this;
             }
@@ -34,7 +40,7 @@ namespace Sigil
                 asShort = (short)index;
             }
 
-            UpdateState(OpCodes.Ldarga, asShort, TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
+            UpdateState(OpCodes.Ldarga, asShort, StackTransition.Push(ParameterTypes[index].MakePointerType()), TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
 
             return this;
         }

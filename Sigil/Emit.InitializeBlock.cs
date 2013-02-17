@@ -51,15 +51,25 @@ namespace Sigil
 
             if(isVolatile)
             {
-                UpdateState(OpCodes.Volatile);
+                UpdateState(OpCodes.Volatile, StackTransition.None());
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value);
+                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
             }
 
-            UpdateState(OpCodes.Initblk, pop: 3);
+            var transition =
+                new[] {
+                    new StackTransition(new [] { typeof(int), typeof(int), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(int), typeof(byte*) }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(byte*) }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(int), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(byte).MakeByRefType() }, Type.EmptyTypes)
+                };
+
+            UpdateState(OpCodes.Initblk, transition, pop: 3);
 
             return this;
         }

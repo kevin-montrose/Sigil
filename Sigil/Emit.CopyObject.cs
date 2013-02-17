@@ -59,7 +59,21 @@ namespace Sigil
                 throw new SigilVerificationException("CopyObject expects the source and destination types to match; found " + source + " and " + dest, IL.Instructions(LocalsByIndex), Stack, 0, 1);
             }
 
-            UpdateState(OpCodes.Cpobj, valueType, pop: 2);
+            var transitions =
+                new[] 
+                {
+                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType(), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType(), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType), valueType.MakePointerType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType(), valueType.MakePointerType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType(), valueType.MakePointerType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType), valueType.MakeByRefType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType(), valueType.MakeByRefType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType(), valueType.MakeByRefType() }, Type.EmptyTypes),
+                };
+
+            UpdateState(OpCodes.Cpobj, valueType, transitions, pop: 2);
 
             return this;
         }

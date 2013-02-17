@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -29,15 +30,32 @@ namespace Sigil
                 throw new InvalidOperationException("Leave can only be used within an exception or catch block");
             }
 
+            var popAll = new List<Type>();
+            for (var i = 0; i < Stack.Count(); i++)
+            {
+                popAll.Add(typeof(WildcardType));
+            }
+
+            TrackersAtBranches[label] = CurrentVerifier.Clone();
+
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, label, out update, pop: Stack.Count());
+            UpdateState(OpCodes.Leave, label, new [] { new StackTransition(popAll, Type.EmptyTypes) }, out update, pop: Stack.Count());
 
             Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Leave);
 
-            RequireTypeAssertion = true;
+            if (TrackersAtLabels.ContainsKey(label))
+            {
+                var partial = TrackersAtLabels[label];
+
+                if (!partial.Incoming(CurrentVerifier))
+                {
+                    // TODO: Gotta do better than this, needs "what the hell happened" messaging
+                    throw new Exception("Branch violates stack");
+                }
+            }
 
             return this;
         }

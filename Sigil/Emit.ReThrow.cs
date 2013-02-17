@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -16,7 +17,7 @@ namespace Sigil
                 throw new InvalidOperationException("ReThrow is only legal in a catch block");
             }
 
-            UpdateState(OpCodes.Rethrow);
+            UpdateState(OpCodes.Rethrow, StackTransition.None());
 
             return this;
         }

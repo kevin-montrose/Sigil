@@ -48,24 +48,24 @@ namespace Sigil
 
                 if (useVolatile)
                 {
-                    UpdateState(OpCodes.Volatile);
+                    UpdateState(OpCodes.Volatile, StackTransition.None());
                 }
 
                 if (unaligned.HasValue)
                 {
-                    UpdateState(OpCodes.Unaligned, unaligned.Value);
+                    UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
                 }
 
-                UpdateState(OpCodes.Ldfld, field, TypeOnStack.Get(field.FieldType), pop: 1);
+                UpdateState(OpCodes.Ldfld, field, StackTransition.Push(field.FieldType), TypeOnStack.Get(field.FieldType), pop: 1);
             }
             else
             {
                 if (useVolatile)
                 {
-                    UpdateState(OpCodes.Volatile);
+                    UpdateState(OpCodes.Volatile, StackTransition.None());
                 }
 
-                UpdateState(OpCodes.Ldsfld, field, TypeOnStack.Get(field.FieldType));
+                UpdateState(OpCodes.Ldsfld, field, StackTransition.Push(field.FieldType), TypeOnStack.Get(field.FieldType));
             }
 
             return this;

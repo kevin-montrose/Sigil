@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -83,8 +84,26 @@ namespace Sigil
             var firstParamIsThis =
                 HasFlag(method.CallingConvention, CallingConventions.HasThis) ||
                 HasFlag(method.CallingConvention, CallingConventions.ExplicitThis);
-            
-            UpdateState(OpCodes.Call, method, resultType, pop: expectedParams.Count, firstParamIsThis: firstParamIsThis);
+
+            IEnumerable<StackTransition> transitions;
+            if (resultType != null)
+            {
+                transitions =
+                    new[]
+                    {
+                        new StackTransition(expectedParams.AsEnumerable().Reverse(), new [] { resultType })
+                    };
+            }
+            else
+            {
+                transitions =
+                    new[]
+                    {
+                        new StackTransition(expectedParams.AsEnumerable().Reverse(), new TypeOnStack[0])
+                    };
+            }
+
+            UpdateState(OpCodes.Call, method, transitions, resultType, pop: expectedParams.Count, firstParamIsThis: firstParamIsThis);
 
             return this;
         }

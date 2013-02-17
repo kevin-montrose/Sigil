@@ -26,8 +26,15 @@ namespace Sigil
                 throw new SigilVerificationException("CheckFinite expects a floating point value, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
+            var transitions =
+                new[]
+                {
+                    new StackTransition(new [] { typeof(float) }, new [] { typeof(float) }),
+                    new StackTransition(new [] { typeof(double) }, new [] { typeof(double) })
+                };
+
             // ckfinite leaves the value on the stack, oddly enough
-            UpdateState(OpCodes.Ckfinite);
+            UpdateState(OpCodes.Ckfinite, transitions);
 
             return this;
         }

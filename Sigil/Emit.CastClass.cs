@@ -63,7 +63,13 @@ namespace Sigil
             }
             else
             {
-                UpdateState(OpCodes.Castclass, referenceType, newType, pop: 1);
+                var transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(object) }, new [] { referenceType })
+                    };
+
+                UpdateState(OpCodes.Castclass, referenceType, transitions, newType, pop: 1);
             }
             return this;
         }

@@ -38,7 +38,14 @@ namespace Sigil
                 throw new SigilVerificationException("NewArray expecte size to be an int or native int, found " + size, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Newarr, elementType, TypeOnStack.Get(elementType.MakeArrayType()), pop: 1);
+            var transitions =
+                new[]
+                {
+                    new StackTransition(new [] { typeof(NativeIntType) }, new[] { elementType.MakeArrayType() }),
+                    new StackTransition(new [] { typeof(int) }, new[] { elementType.MakeArrayType() })
+                };
+
+            UpdateState(OpCodes.Newarr, elementType, transitions, TypeOnStack.Get(elementType.MakeArrayType()), pop: 1);
 
             return this;
         }

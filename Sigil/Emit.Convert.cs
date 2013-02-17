@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -7,7 +8,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private void CheckConvertible(string method, TypeOnStack item)
+        private IEnumerable<StackTransition> CheckConvertible(string method, TypeOnStack item, Type toType)
         {
             if (item != TypeOnStack.Get<int>() && item != TypeOnStack.Get<NativeIntType>() &&
                 item != TypeOnStack.Get<long>() && item != TypeOnStack.Get<float>() &&
@@ -16,6 +17,16 @@ namespace Sigil
             {
                 throw new SigilVerificationException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item, IL.Instructions(LocalsByIndex));
             }
+
+            return
+                new[]
+                {
+                    new StackTransition(new [] { typeof(int) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(NativeIntType) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(long) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(float) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(double) }, new [] { toType }),
+                };
         }
 
         /// <summary>
@@ -52,77 +63,77 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            CheckConvertible("Convert", top.Single());
+            var transitions = CheckConvertible("Convert", top.Single(), primitiveType);
 
             if (primitiveType == typeof(byte))
             {
-                ConvertToByte();
+                ConvertToByte(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(sbyte))
             {
-                ConvertToSByte();
+                ConvertToSByte(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(short))
             {
-                ConvertToInt16();
+                ConvertToInt16(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(ushort))
             {
-                ConvertToUInt16();
+                ConvertToUInt16(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(int))
             {
-                ConvertToInt32();
+                ConvertToInt32(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(uint))
             {
-                ConvertToUInt32();
+                ConvertToUInt32(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(long))
             {
-                ConvertToInt64();
+                ConvertToInt64(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(ulong))
             {
-                ConvertToUInt64();
+                ConvertToUInt64(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(IntPtr))
             {
-                ConvertToNativeInt();
+                ConvertToNativeInt(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(UIntPtr))
             {
-                ConvertToUnsignedNativeInt();
+                ConvertToUnsignedNativeInt(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(float))
             {
-                ConvertToFloat();
+                ConvertToFloat(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(double))
             {
-                ConvertToDouble();
+                ConvertToDouble(transitions);
                 return this;
             }
 
@@ -174,65 +185,65 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            CheckConvertible("ConvertOverflow", top.Single());
+            var transitions = CheckConvertible("ConvertOverflow", top.Single(), primitiveType);
 
             if (primitiveType == typeof(byte))
             {
-                ConvertToByteOverflow();
+                ConvertToByteOverflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(sbyte))
             {
-                ConvertToSByteOverflow();
+                ConvertToSByteOverflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(short))
             {
-                ConvertToInt16Overflow();
+                ConvertToInt16Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(ushort))
             {
-                ConvertToUInt16Overflow();
+                ConvertToUInt16Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(int))
             {
-                ConvertToInt32Overflow();
+                ConvertToInt32Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(uint))
             {
-                ConvertToUInt32Overflow();
+                ConvertToUInt32Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(long))
             {
-                ConvertToInt64Overflow();
+                ConvertToInt64Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(ulong))
             {
-                ConvertToUInt64Overflow();
+                ConvertToUInt64Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(IntPtr))
             {
-                ConvertToNativeIntOverflow();
+                ConvertToNativeIntOverflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(UIntPtr))
             {
-                ConvertToUnsignedNativeIntOverflow();
+                ConvertToUnsignedNativeIntOverflow(transitions);
                 return this;
             }
 
@@ -289,53 +300,53 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            CheckConvertible("UnsignedConvertOverflow", top.Single());
+            var transitions = CheckConvertible("UnsignedConvertOverflow", top.Single(), primitiveType);
 
             if (primitiveType == typeof(byte))
             {
-                UnsignedConvertToByteOverflow();
+                UnsignedConvertToByteOverflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(sbyte))
             {
-                UnsignedConvertToSByteOverflow();
+                UnsignedConvertToSByteOverflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(short))
             {
-                UnsignedConvertToInt16Overflow();
+                UnsignedConvertToInt16Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(ushort))
             {
-                UnsignedConvertToUInt16Overflow();
+                UnsignedConvertToUInt16Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(int))
             {
-                UnsignedConvertToInt32Overflow();
+                UnsignedConvertToInt32Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(uint))
             {
-                UnsignedConvertToUInt32Overflow();
+                UnsignedConvertToUInt32Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(long))
             {
-                UnsignedConvertToInt64Overflow();
+                UnsignedConvertToInt64Overflow(transitions);
                 return this;
             }
 
             if (primitiveType == typeof(ulong))
             {
-                UnsignedConvertToUInt64Overflow();
+                UnsignedConvertToUInt64Overflow(transitions);
                 return this;
             }
 
@@ -356,171 +367,171 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            CheckConvertible("UnsignedConvertToFloat", top.Single());
+            var transitions = CheckConvertible("UnsignedConvertToFloat", top.Single(), typeof(float));
 
-            UpdateState(OpCodes.Conv_R_Un, TypeOnStack.Get<float>(), pop: 1);
+            UpdateState(OpCodes.Conv_R_Un, transitions, TypeOnStack.Get<float>(), pop: 1);
 
             return this;
         }
 
-        private void ConvertToNativeInt()
+        private void ConvertToNativeInt(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_I, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Conv_I, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToNativeIntOverflow()
+        private void ConvertToNativeIntOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void UnsignedConvertToNativeIntOverflow()
+        private void UnsignedConvertToNativeIntOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I_Un, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I_Un, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToUnsignedNativeInt()
+        private void ConvertToUnsignedNativeInt(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_U, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Conv_U, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToUnsignedNativeIntOverflow()
+        private void ConvertToUnsignedNativeIntOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void UnsignedConvertToUnsignedNativeIntOverflow()
+        private void UnsignedConvertToUnsignedNativeIntOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U_Un, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U_Un, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
         }
 
-        private void ConvertToSByte()
+        private void ConvertToSByte(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_I1, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_I1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToSByteOverflow()
+        private void ConvertToSByteOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I1, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToSByteOverflow()
+        private void UnsignedConvertToSByteOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I1_Un, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I1_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt16()
+        private void ConvertToInt16(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_I2, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_I2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt16Overflow()
+        private void ConvertToInt16Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I2, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToInt16Overflow()
+        private void UnsignedConvertToInt16Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I2_Un, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I2_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt32()
+        private void ConvertToInt32(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_I4, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_I4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt32Overflow()
+        private void ConvertToInt32Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I4, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToInt32Overflow()
+        private void UnsignedConvertToInt32Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I4_Un, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I4_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToInt64()
+        private void ConvertToInt64(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_I8, TypeOnStack.Get<long>(), pop: 1);
+            UpdateState(OpCodes.Conv_I8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void ConvertToInt64Overflow()
+        private void ConvertToInt64Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I8, TypeOnStack.Get<long>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void UnsignedConvertToInt64Overflow()
+        private void UnsignedConvertToInt64Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_I8_Un, TypeOnStack.Get<long>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_I8_Un, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void ConvertToFloat()
+        private void ConvertToFloat(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_R4, TypeOnStack.Get<float>(), pop: 1);
+            UpdateState(OpCodes.Conv_R4, transitions, TypeOnStack.Get<float>(), pop: 1);
         }
 
-        private void ConvertToDouble()
+        private void ConvertToDouble(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_R8, TypeOnStack.Get<double>(), pop: 1);
+            UpdateState(OpCodes.Conv_R8, transitions, TypeOnStack.Get<double>(), pop: 1);
         }
 
-        private void ConvertToByte()
+        private void ConvertToByte(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_U1, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_U1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToByteOverflow()
+        private void ConvertToByteOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U1, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U1, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToByteOverflow()
+        private void UnsignedConvertToByteOverflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U1_Un, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U1_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt16()
+        private void ConvertToUInt16(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_U2, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_U2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt16Overflow()
+        private void ConvertToUInt16Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U2, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U2, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToUInt16Overflow()
+        private void UnsignedConvertToUInt16Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U2_Un, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U2_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt32()
+        private void ConvertToUInt32(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_U4, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_U4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt32Overflow()
+        private void ConvertToUInt32Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U4, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U4, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void UnsignedConvertToUInt32Overflow()
+        private void UnsignedConvertToUInt32Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U4_Un, TypeOnStack.Get<int>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U4_Un, transitions, TypeOnStack.Get<int>(), pop: 1);
         }
 
-        private void ConvertToUInt64()
+        private void ConvertToUInt64(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_U8, TypeOnStack.Get<long>(), pop: 1);
+            UpdateState(OpCodes.Conv_U8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void ConvertToUInt64Overflow()
+        private void ConvertToUInt64Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U8, TypeOnStack.Get<long>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U8, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
 
-        private void UnsignedConvertToUInt64Overflow()
+        private void UnsignedConvertToUInt64Overflow(IEnumerable<StackTransition> transitions)
         {
-            UpdateState(OpCodes.Conv_Ovf_U8_Un, TypeOnStack.Get<long>(), pop: 1);
+            UpdateState(OpCodes.Conv_Ovf_U8_Un, transitions, TypeOnStack.Get<long>(), pop: 1);
         }
     }
 }

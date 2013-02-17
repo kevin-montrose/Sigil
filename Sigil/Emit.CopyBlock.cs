@@ -51,15 +51,29 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile);
+                UpdateState(OpCodes.Volatile, StackTransition.None());
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value);
+                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None());
             }
 
-            UpdateState(OpCodes.Cpblk, pop: 3);
+            var transition =
+                new[]
+                {
+                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(byte*) }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(byte*) }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(byte*) }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(byte).MakeByRefType() }, Type.EmptyTypes)
+                };
+
+            UpdateState(OpCodes.Cpblk, transition, pop: 3);
 
             return this;
         }

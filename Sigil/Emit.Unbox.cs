@@ -53,7 +53,9 @@ namespace Sigil
                 throw new SigilVerificationException("Unbox expects an object on the stack, but found " + onStack, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Unbox, valueType, TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
+            var transitions = new[] { new StackTransition(new[] { typeof(object) }, new[] { valueType.MakeByRefType() }) };
+
+            UpdateState(OpCodes.Unbox, valueType, transitions, TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
 
             return this;
         }
@@ -104,7 +106,9 @@ namespace Sigil
                 throw new SigilVerificationException("UnboxAny expects an object on the stack, but found " + onStack, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Unbox_Any, valueType, TypeOnStack.Get(valueType), pop: 1);
+            var transitions = new[] { new StackTransition(new[] { typeof(object) }, new[] { valueType }) };
+
+            UpdateState(OpCodes.Unbox_Any, valueType, transitions, TypeOnStack.Get(valueType), pop: 1);
 
             return this;
         }

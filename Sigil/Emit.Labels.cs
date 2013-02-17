@@ -189,11 +189,6 @@ namespace Sigil
                 throw new ArgumentNullException("label");
             }
 
-            if (RequireTypeAssertion && stackAssertion == null)
-            {
-                throw new ArgumentNullException("stackAssertion must be set when marking a label after a Branch or Leave instruction");
-            }
-
             if (((IOwned)label).Owner != this)
             {
                 FailOwnership(label);
@@ -204,39 +199,37 @@ namespace Sigil
                 throw new InvalidOperationException("label [" + label.Name + "] has already been marked, and cannot be marked a second time");
             }
 
-            if (RequireTypeAssertion)
+            if (TrackersAtBranches.ContainsKey(label))
             {
-                var newStack = new StackState();
-                foreach (var x in stackAssertion.Reverse())
+                var incoming = TrackersAtBranches[label];
+
+                if (!CurrentVerifier.Incoming(incoming))
                 {
-                    newStack = newStack.Push(TypeOnStack.Get(x.Alias()));
+                    // TODO: Gotta do better than this, needs "what the hell happened" messaging
+                    throw new Exception("Control flow violates stack");
+                }
+            }
+
+            TrackersAtLabels[label] = CurrentVerifier.Clone();
+
+            if (stackAssertion != null)
+            {
+                var onStack = Stack.Top(stackAssertion.Count());
+
+                if (onStack == null)
+                {
+                    FailStackUnderflow(onStack.Count());
                 }
 
-                Stack = newStack;
-
-                RequireTypeAssertion = false;
-            }
-            else
-            {
-                if (stackAssertion != null)
+                for (var i = 0; i < onStack.Length; i++)
                 {
-                    var onStack = Stack.Top(stackAssertion.Count());
+                    var shouldBe = TypeOnStack.Get(stackAssertion.ElementAt(i).Alias());
+                    var actuallyIs = onStack[i];
 
-                    if (onStack == null)
+                    // strict equality, assignment clouds things for debugging
+                    if (shouldBe != actuallyIs)
                     {
-                        FailStackUnderflow(onStack.Count());
-                    }
-
-                    for (var i = 0; i < onStack.Length; i++)
-                    {
-                        var shouldBe = TypeOnStack.Get(stackAssertion.ElementAt(i).Alias());
-                        var actuallyIs = onStack[i];
-
-                        // strict equality, assignment clouds things for debugging
-                        if (shouldBe != actuallyIs)
-                        {
-                            throw new SigilVerificationException("Assertion failed expected " + shouldBe + ", but found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, i);
-                        }
+                        throw new SigilVerificationException("Assertion failed expected " + shouldBe + ", but found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, i);
                     }
                 }
             }

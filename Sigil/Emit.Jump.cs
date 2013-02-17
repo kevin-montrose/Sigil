@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -71,7 +72,7 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Jmp, method);
+            UpdateState(OpCodes.Jmp, method, StackTransition.None());
 
             return this;
         }

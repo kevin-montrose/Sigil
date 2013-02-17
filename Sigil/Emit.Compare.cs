@@ -1,4 +1,5 @@
 ﻿using Sigil.Impl;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
 
@@ -6,7 +7,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private void ValidateComparable(string method, TypeOnStack t1, TypeOnStack t2)
+        private IEnumerable<StackTransition> ValidateComparable(string method, TypeOnStack t1, TypeOnStack t2)
         {
             if (t1 != t2)
             {
@@ -17,6 +18,16 @@ namespace Sigil
             {
                 throw new SigilVerificationException(method + " expected primitive types, instead found " + t1, IL.Instructions(LocalsByIndex), Stack, 0);
             }
+
+            return
+                new[]
+                {
+                    new StackTransition(new [] { typeof(int), typeof(int) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(long), typeof(long) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(float), typeof(float) }, new [] { typeof(int) }),
+                    new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(int) }),
+                };
         }
 
         /// <summary>
@@ -33,7 +44,13 @@ namespace Sigil
                 FailStackUnderflow(2);
             }
 
-            UpdateState(OpCodes.Ceq, TypeOnStack.Get<int>(), pop: 2);
+            var transitions =
+                new[]
+                {
+                    new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, new [] { typeof(int) })
+                };
+
+            UpdateState(OpCodes.Ceq, transitions, TypeOnStack.Get<int>(), pop: 2);
 
             return this;
         }
@@ -52,9 +69,9 @@ namespace Sigil
                 FailStackUnderflow(2);
             }
 
-            ValidateComparable("CompareGreaterThan", top.First(), top.Last());
+            var transitions = ValidateComparable("CompareGreaterThan", top.First(), top.Last());
 
-            UpdateState(OpCodes.Cgt, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Cgt, transitions, TypeOnStack.Get<int>(), pop: 2);
 
             return this;
         }
@@ -73,9 +90,9 @@ namespace Sigil
                 FailStackUnderflow(2);
             }
 
-            ValidateComparable("UnsignedCompareGreaterThan", top.First(), top.Last());
+            var transitions = ValidateComparable("UnsignedCompareGreaterThan", top.First(), top.Last());
 
-            UpdateState(OpCodes.Cgt_Un, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Cgt_Un, transitions, TypeOnStack.Get<int>(), pop: 2);
 
             return this;
         }
@@ -94,9 +111,9 @@ namespace Sigil
                 FailStackUnderflow(2);
             }
 
-            ValidateComparable("CompareLessThan", top.First(), top.Last());
+            var transitions = ValidateComparable("CompareLessThan", top.First(), top.Last());
 
-            UpdateState(OpCodes.Clt, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Clt, transitions, TypeOnStack.Get<int>(), pop: 2);
 
             return this;
         }
@@ -115,9 +132,9 @@ namespace Sigil
                 FailStackUnderflow(2);
             }
 
-            ValidateComparable("UnsignedCompareLessThan", top.First(), top.Last());
+            var transitions = ValidateComparable("UnsignedCompareLessThan", top.First(), top.Last());
 
-            UpdateState(OpCodes.Clt_Un, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Clt_Un, transitions, TypeOnStack.Get<int>(), pop: 2);
 
             return this;
         }

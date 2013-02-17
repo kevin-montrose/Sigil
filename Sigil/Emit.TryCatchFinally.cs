@@ -224,11 +224,11 @@ namespace Sigil
             Stack = new StackState();
             Stack = Stack.Push(TypeOnStack.Get(exceptionType));
 
+            CurrentVerifier.Transition(StackTransition.Push(exceptionType));
+
             var ret = new CatchBlock(exceptionType, forTry);
 
             CatchBlocks[ret] = Tuple.Create(IL.Index, -1);
-
-            RequireTypeAssertion = false;
 
             return ret;
         }
@@ -282,8 +282,6 @@ namespace Sigil
             IL.EndCatchBlock();
 
             CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
-
-            RequireTypeAssertion = false;
 
             return this;
         }

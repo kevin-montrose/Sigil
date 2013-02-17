@@ -61,8 +61,10 @@ namespace Sigil
         /// 
         /// Pops both, and pushes the address of the element at the given index.
         /// </summary>
-        public Emit<DelegateType> LoadElementAddress()
+        public Emit<DelegateType> LoadElementAddress(Type arrType = null)
         {
+            // TODO: Another may-not-be-able to infer case, deal with it
+
             if (!AllowsUnverifiableCIL)
             {
                 FailUnverifiable();
@@ -101,7 +103,14 @@ namespace Sigil
             // Shove this away, later on we'll figure out if we can insert a readonly here
             ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
 
-            UpdateState(OpCodes.Ldelema, arrElemType, pushToStack, pop: 2);
+            var transitions =
+                new[] 
+                {
+                    new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { arrElemType.MakeByRefType() }),
+                    new StackTransition(new [] { typeof(int), array.Type }, new [] { arrElemType.MakeByRefType() })
+                };
+
+            UpdateState(OpCodes.Ldelema, arrElemType, transitions, pushToStack, pop: 2);
 
             return this;
         }

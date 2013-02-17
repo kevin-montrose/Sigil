@@ -50,7 +50,13 @@ namespace Sigil
                 throw new SigilVerificationException("LocalAllocate expected an int or native int, found " + numBytes, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Localloc, TypeOnStack.Get<NativeIntType>(), pop: 1);
+            var transitions =
+                new[] {
+                    new StackTransition(new [] { typeof(int) }, new [] { typeof(NativeIntType) }),
+                    new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(NativeIntType) })
+                };
+
+            UpdateState(OpCodes.Localloc, transitions, TypeOnStack.Get<NativeIntType>(), pop: 1);
 
             return this;
         }

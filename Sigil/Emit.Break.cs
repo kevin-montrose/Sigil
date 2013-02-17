@@ -1,4 +1,5 @@
-﻿using System.Reflection.Emit;
+﻿using Sigil.Impl;
+using System.Reflection.Emit;
 
 namespace Sigil
 {
@@ -9,7 +10,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Break()
         {
-            UpdateState(OpCodes.Break);
+            UpdateState(OpCodes.Break, StackTransition.None());
 
             return this;
         }

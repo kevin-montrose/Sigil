@@ -43,7 +43,7 @@ namespace Sigil
                     asByte = (byte)index;
                 }
 
-                UpdateState(OpCodes.Starg_S, asByte, pop: 1);
+                UpdateState(OpCodes.Starg_S, asByte, StackTransition.Pop(ParameterTypes[index]), pop: 1);
                 return this;
             }
 
@@ -53,7 +53,7 @@ namespace Sigil
                 asShort = (short)index;
             }
             
-            UpdateState(OpCodes.Starg, asShort, pop: 1);
+            UpdateState(OpCodes.Starg, asShort, StackTransition.Pop(ParameterTypes[index]), pop: 1);
 
             return this;
         }

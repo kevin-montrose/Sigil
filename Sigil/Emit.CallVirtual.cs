@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -60,10 +61,29 @@ namespace Sigil
             // Shove the constrained prefix in if it's supplied
             if (constrained != null)
             {
-                UpdateState(OpCodes.Constrained, constrained);
+                UpdateState(OpCodes.Constrained, constrained, StackTransition.None());
             }
 
-            UpdateState(OpCodes.Callvirt, method, resultType, pop: expectedParams.Count);
+            IEnumerable<StackTransition> transitions;
+
+            if (resultType != null)
+            {
+                transitions =
+                    new[]
+                    {
+                        new StackTransition(expectedParams.AsEnumerable().Reverse(), new [] { resultType })
+                    };
+            }
+            else
+            {
+                transitions =
+                    new[]
+                    {
+                        new StackTransition(expectedParams.AsEnumerable().Reverse(), new TypeOnStack[0])
+                    };
+            }
+
+            UpdateState(OpCodes.Callvirt, method, transitions, resultType, pop: expectedParams.Count);
 
             return this;
         }

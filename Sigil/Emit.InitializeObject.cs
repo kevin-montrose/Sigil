@@ -42,7 +42,15 @@ namespace Sigil
                 throw new SigilVerificationException("InitializeObject expected a reference or pointer to a " + valueType + ", or a native int, to be on the stack; found " + obj, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Initobj, valueType, pop: 1);
+            var transitions =
+                new[]
+                {
+                    new StackTransition(new [] { typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType() }, Type.EmptyTypes),
+                };
+
+            UpdateState(OpCodes.Initobj, valueType, transitions, pop: 1);
 
             return this;
         }

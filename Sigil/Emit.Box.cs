@@ -62,7 +62,13 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Box, valueType, TypeOnStack.Get(typeof(object)), pop: 1);
+            var transitions =
+                new[] 
+                {
+                    new StackTransition(new [] { valueType }, new [] { typeof(object) })
+                };
+
+            UpdateState(OpCodes.Box, valueType, transitions, TypeOnStack.Get(typeof(object)), pop: 1);
 
             return this;
         }

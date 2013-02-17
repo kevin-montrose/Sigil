@@ -37,7 +37,7 @@ namespace Sigil
                     paramList.ToArray()
                 );
 
-            UpdateState(OpCodes.Ldftn, method, type);
+            UpdateState(OpCodes.Ldftn, method, StackTransition.Push<NativeIntType>(), type);
 
             return this;
         }

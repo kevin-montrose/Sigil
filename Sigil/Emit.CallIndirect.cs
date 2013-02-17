@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -307,8 +308,6 @@ namespace Sigil
                 FailStackUnderflow(parameterTypes.Length + takeExtra);
             }
 
-            
-
             var reversed = onStack.Reverse().ToList();
             int fPtrLoc= reversed.Count - 1;
             var funcPtr = reversed[fPtrLoc];
@@ -357,7 +356,57 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, pop: (parameterTypes.Length + takeExtra));
+            IEnumerable<StackTransition> transitions;
+
+            if (HasFlag(callConventions, CallingConventions.HasThis))
+            {
+                var p = new List<Type>();
+                p.Add(typeof(NativeIntType));
+                p.AddRange(parameterTypes.Reverse());
+                p.Add(typeof(object));
+
+                if (returnType != typeof(void))
+                {
+                    transitions =
+                        new[]
+                        {
+                            new StackTransition(p, new [] { returnType })
+                        };
+                }
+                else
+                {
+                    transitions =
+                        new[]
+                        {
+                            new StackTransition(p, Type.EmptyTypes)
+                        };
+                }
+            }
+            else
+            {
+                var p = new List<Type>();
+                p.Add(typeof(NativeIntType));
+                p.AddRange(parameterTypes.Reverse());
+
+                if (returnType != typeof(void))
+                {
+                    transitions =
+                        new[]
+                        {
+                            new StackTransition(p, new [] { returnType })
+                        };
+                }
+                else
+                {
+                    transitions =
+                        new[]
+                        {
+                            new StackTransition(p, Type.EmptyTypes)
+                        };
+                }
+            }
+
+            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions, pop: (parameterTypes.Length + takeExtra));
 
             return this;
         }

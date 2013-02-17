@@ -27,7 +27,7 @@ namespace Sigil
                 throw new SigilVerificationException("Throw expected an exception to be on the stack, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
             }
 
-            UpdateState(OpCodes.Throw, pop: 1);
+            UpdateState(OpCodes.Throw, StackTransition.Pop<Exception>(), pop: 1);
 
             return this;
         }
