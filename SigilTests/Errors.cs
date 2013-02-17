@@ -1692,7 +1692,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadObject expected a reference, pointer, or native int; found System.Object", e.Message);
+                    Assert.AreEqual("LoadObject expected a native int, System.DateTime&, or System.DateTime*; found System.Object", e.Message);
                 }
             }
         }
