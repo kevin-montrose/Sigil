@@ -33,19 +33,6 @@ namespace Sigil
 
             if (!field.IsStatic)
             {
-                var onStack = Stack.Top();
-
-                if (onStack == null)
-                {
-                    FailStackUnderflow(1);
-                }
-                var type = onStack[0];
-
-                if (!field.DeclaringType.IsAssignableFrom(type))
-                {
-                    throw new SigilVerificationException("LoadField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL.Instructions(LocalsByIndex), Stack, 0);
-                }
-
                 if (useVolatile)
                 {
                     UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("LoadField"));

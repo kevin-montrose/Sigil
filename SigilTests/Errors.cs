@@ -2042,7 +2042,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadField expected a type on the stack assignable to SigilTests.Errors+LoadFieldClass, found System.Object", e.Message);
+                    Assert.AreEqual("LoadField expected a SigilTests.Errors+LoadFieldClass; found System.Object", e.Message);
                 }
             }
         }
