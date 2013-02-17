@@ -116,6 +116,7 @@
     <Compile Include="TryCatchFinally.cs" />
     <Compile Include="Unbox.cs" />
     <Compile Include="Verifiability.cs" />
+    <Compile Include="VerifiableTrackerT.cs" />
     <Compile Include="Volatile.cs" />
   </ItemGroup>
   <ItemGroup>

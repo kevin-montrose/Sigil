@@ -7,124 +7,119 @@ namespace Sigil.Impl
     // Represents a type that *could be* anything
     internal class WildcardType { }
 
-    internal class StackTransition
+    public class StackTransition
     {
         // on the stack, first item is on the top of the stack
-        public IEnumerable<TypeOnStack> PoppedFromStack { get; private set; }
+        internal IEnumerable<TypeOnStack> PoppedFromStack { get; private set; }
 
         // pushed onto the stack, first item is first pushed (ends up lowest on the stack)
-        public IEnumerable<TypeOnStack> PushedToStack { get; private set; }
+        internal IEnumerable<TypeOnStack> PushedToStack { get; private set; }
 
-        public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed)
+        public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed)
         {
-            PoppedFromStack = popped.ToList().AsReadOnly();
-            PushedToStack = pushed.ToList().AsReadOnly();
+
+
+            PoppedFromStack = popped.Select(s => TypeOnStack.Get(s)).ToList().AsReadOnly();
+            PushedToStack = pushed.Select(s => TypeOnStack.Get(s)).ToList().AsReadOnly();
         }
     }
 
-    internal class VerifiableTracker
+    public class VerifiableTracker
     {
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
         //   eventually they'll be fixed up to actual types
-        private bool BaselessStack;
-        private Stack<IEnumerable<TypeOnStack>> Stack = new Stack<IEnumerable<TypeOnStack>>();
+        private bool Baseless;
+        private List<IEnumerable<StackTransition>> Transitions = new List<IEnumerable<StackTransition>>();
         private int Index;
 
-        public VerifiableTracker() { }
+        public VerifiableTracker(bool baseless = false) { Baseless = baseless; }
 
-        private IEnumerable<TypeOnStack>[] Peek(int count)
+        public bool Transition(IEnumerable<StackTransition> legalTransitions)
         {
-            if (Stack.Count < count && !BaselessStack) return null;
+            Transitions.Add(legalTransitions);
+            var ret = CollapseAndVerify();
 
-            var ret = new IEnumerable<TypeOnStack>[count];
-
-            int i;
-            for (i = 0; i < count && i < Stack.Count; i++)
-            {
-                ret[i] = Stack.ElementAt(i);
-            }
-
-            for(;i < ret.Length; i++)
-            {
-                ret[i] = new[] { TypeOnStack.Get<WildcardType>() };
-            }
+            // revert!
+            if(!ret) Transitions.RemoveAt(Transitions.Count - 1);
 
             return ret;
         }
 
-        private bool HasAssignableType(IEnumerable<TypeOnStack> legal, TypeOnStack found)
+        public bool Incoming(VerifiableTracker other)
         {
-            return legal.Any(t => t.IsAssignableFrom(found));
+            var old = Transitions;
+
+            Transitions = new List<IEnumerable<StackTransition>>();
+            Transitions.AddRange(other.Transitions);
+            Transitions.AddRange(old);
+
+            var ret = CollapseAndVerify();
+
+            // revert!
+            if (!ret) Transitions = old;
+
+            return ret;
         }
 
-        public bool Transition(out VerifiableTracker next, params StackTransition[] legalTransitions)
+        public bool CollapseAndVerify()
         {
-            var applicable =
-                legalTransitions
-                    .Where(
-                        t =>
+            var runningStack = new Stack<IEnumerable<TypeOnStack>>();
+
+            for (var i = 0; i < Transitions.Count; i++)
+            {
+                var ops = Transitions[i];
+
+                var legal =
+                    ops.Where(
+                        w =>
                         {
-                            var onStack = Peek(t.PoppedFromStack.Count());
+                            var onStack = runningStack.Peek(Baseless, w.PoppedFromStack.Count());
 
-                            if(onStack == null) return false;
+                            if (onStack == null) return false;
 
-                            for (var i = 0; i < onStack.Length; i++)
+                            for (var j = 0; j < w.PoppedFromStack.Count(); j++)
                             {
-                                var shouldBe = t.PoppedFromStack.ElementAt(i);
-                                var actuallyIs = onStack[i];
+                                var shouldBe = w.PoppedFromStack.ElementAt(j);
+                                var actuallyIs = onStack[j];
 
-                                if (!HasAssignableType(actuallyIs, shouldBe))
-                                {
-                                    return false;
-                                }
+                                if (!actuallyIs.Any(a => shouldBe.IsAssignableFrom(a))) return false;
                             }
 
                             return true;
                         }
                     ).ToList();
 
-            if (applicable.Count == 0)
-            {
-                next = null;
-                return false;
-            }
+                if (legal.Count == 0) return false;
 
-            if (applicable.GroupBy(g => new { popped = g.PoppedFromStack.Count(), pushed = g.PushedToStack.Count() }).Count() > 1)
-            {
-                throw new Exception("legal transitions should all modify the stack in the same way");
-            }
-
-            var pop = applicable.First().PoppedFromStack.Count();
-            
-            var copy = new Stack<IEnumerable<TypeOnStack>>(Stack);
-
-            // remember, baseless-ness means `copy.Count` is not necessarily less than `pop`
-            while (pop > 0 && copy.Count > 0)
-            {
-                copy.Pop();
-                pop--;
-            }
-
-            var push = applicable.First().PushedToStack.Count();
-
-            for (var i = 0; i < push; i++)
-            {
-                var toPush = new List<TypeOnStack>();
-                foreach (var possible in applicable)
+                if (legal.GroupBy(g => new { a = g.PoppedFromStack.Count(), b = g.PushedToStack.Count() }).Count() > 1)
                 {
-                    var atPos = possible.PushedToStack.ElementAt(i); 
-                    toPush.Add(atPos);
+                    throw new Exception("Shouldn't be possible; legal transitions should have same push/pop #s");
                 }
 
-                copy.Push(toPush.Distinct().ToList());
-            }
+                // No reason to do all this work again
+                Transitions[i] = legal;
 
-            next = new VerifiableTracker
-            {
-                BaselessStack = BaselessStack,
-                Stack = copy,
-                Index = Index + 1
-            };
+                var toPop = legal.First().PoppedFromStack.Count();
+
+                if (toPop > runningStack.Count && !Baseless) return false;
+
+                for (var j = 0; j < toPop && runningStack.Count > 0; j++)
+                {
+                    runningStack.Pop();
+                }
+
+                var toPush = new List<TypeOnStack>();
+
+                foreach (var op in legal)
+                {
+                    toPush.AddRange(op.PushedToStack);
+                }
+
+                if(toPush.Count > 0)
+                {
+                    runningStack.Push(toPush.Distinct().ToList());
+                }
+            }
 
             return true;
         }

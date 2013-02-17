@@ -149,5 +149,27 @@ namespace Sigil.Impl
                 return false; 
             }
         }
+
+        public static IEnumerable<TypeOnStack>[] Peek(this Stack<IEnumerable<TypeOnStack>> stack, bool baseless, int n)
+        {
+            if (stack.Count < n && !baseless) return null;
+
+            var ret = new IEnumerable<TypeOnStack>[n];
+
+            int i;
+            for (i = 0; i < n && i < stack.Count; i++)
+            {
+                ret[i] = stack.ElementAt(i);
+            }
+
+            var wild = new[] { TypeOnStack.Get<WildcardType>() }; 
+            while (i < n)
+            {
+                ret[i] = wild;
+                i++;
+            }
+
+            return ret;
+        }
     }
 }
