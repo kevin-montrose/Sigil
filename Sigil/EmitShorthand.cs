@@ -793,10 +793,16 @@ namespace Sigil
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.LoadElement" />
-        public EmitShorthand<DelegateType> Ldelem()
+        /// <summary cref="M:Sigil.Emit`1.LoadElement``1" />
+        public EmitShorthand<DelegateType> Ldelem<ElementType>()
         {
-            InnerEmit.LoadElement();
+            return Ldelem(typeof(ElementType));
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.LoadElement(System.Type)" />
+        public EmitShorthand<DelegateType> Ldelem(Type elementType)
+        {
+            InnerEmit.LoadElement(elementType);
 
             return this;
         }

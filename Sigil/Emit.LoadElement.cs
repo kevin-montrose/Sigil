@@ -8,172 +8,156 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        public Emit<DelegateType> LoadElement<ElementType>()
+        {
+            return LoadElement(typeof(ElementType));
+        }
+
         /// <summary>
         /// Expects a reference to an array and an index on the stack.
         /// 
         /// Pops both, and pushes the element in the array at the index onto the stack.
         /// </summary>
-        public Emit<DelegateType> LoadElement(Type arrayType = null)
+        public Emit<DelegateType> LoadElement(Type elementType)
         {
-            // TODO: We can't always infer the array type, handle the case where we can't
-
-            var top = Stack.Top(2);
-
-            if (top == null)
+            if (elementType == null)
             {
-                FailStackUnderflow(2);
-            }
-
-            var index = top[0];
-            var array = top[1];
-
-            if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("LoadElement expects an int or native int on the top of the stack, found " + index, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            if (array.IsReference || array.IsPointer || !array.Type.IsArray)
-            {
-                throw new SigilVerificationException("LoadElement expects an array as the second element on the stack, found " + array, IL.Instructions(LocalsByIndex), Stack, 1);
-            }
-
-            if (array.Type.GetArrayRank() != 1)
-            {
-                throw new SigilVerificationException("LoadElement expects a 1-dimensional array, found " + array, IL.Instructions(LocalsByIndex), Stack, 1);
+                throw new ArgumentNullException("elementType");
             }
 
             OpCode? instr = null;
-            var elemType = array.Type.GetElementType();
 
             IEnumerable<StackTransition> transitions = null;
 
-            if (elemType.IsPointer)
+            var arrType = elementType.MakeArrayType();
+
+            if (elementType.IsPointer)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { elemType }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { elemType }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { elementType }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { elementType }),
                     };
 
                 instr = OpCodes.Ldelem_I;
             }
 
-            if (!elemType.IsValueType && !instr.HasValue)
+            if (!elementType.IsValueType && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { elemType }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { elemType }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { elementType }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { elementType }),
                     };
 
                 instr = OpCodes.Ldelem_Ref;
             }
 
-            if (elemType == typeof(sbyte) && !instr.HasValue)
+            if (elementType == typeof(sbyte) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(int) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(int) }),
                     };
 
                 instr = OpCodes.Ldelem_I1;
             }
 
-            if (elemType == typeof(byte) && !instr.HasValue)
+            if (elementType == typeof(byte) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(int) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(int) }),
                     };
 
                 instr = OpCodes.Ldelem_U1;
             }
 
-            if (elemType == typeof(short) && !instr.HasValue)
+            if (elementType == typeof(short) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(int) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(int) }),
                     };
 
                 instr = OpCodes.Ldelem_I2;
             }
 
-            if (elemType == typeof(ushort) && !instr.HasValue)
+            if (elementType == typeof(ushort) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(int) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(int) }),
                     };
 
                 instr = OpCodes.Ldelem_U2;
             }
 
-            if (elemType == typeof(int) && !instr.HasValue)
+            if (elementType == typeof(int) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(int) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(int) }),
                     };
 
                 instr = OpCodes.Ldelem_I4;
             }
 
-            if (elemType == typeof(uint) && !instr.HasValue)
+            if (elementType == typeof(uint) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(int) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(int) }),
                     };
 
                 instr = OpCodes.Ldelem_U4;
             }
 
-            if ((elemType == typeof(long) || elemType == typeof(ulong)) && !instr.HasValue)
+            if ((elementType == typeof(long) || elementType == typeof(ulong)) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(long) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(long) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(long) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(long) }),
                     };
 
                 instr = OpCodes.Ldelem_I8;
             }
 
-            if (elemType == typeof(float) && !instr.HasValue)
+            if (elementType == typeof(float) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(float) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(float) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(float) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(float) }),
                     };
 
                 instr = OpCodes.Ldelem_R4;
             }
 
-            if (elemType == typeof(double) && !instr.HasValue)
+            if (elementType == typeof(double) && !instr.HasValue)
             {
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { typeof(double) }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { typeof(double) }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { typeof(double) }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { typeof(double) }),
                     };
 
                 instr = OpCodes.Ldelem_R8;
@@ -184,15 +168,15 @@ namespace Sigil
                 transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { elemType }),
-                        new StackTransition(new [] { typeof(int), array.Type }, new [] { elemType }),
+                        new StackTransition(new [] { typeof(NativeIntType), arrType }, new [] { elementType }),
+                        new StackTransition(new [] { typeof(int), arrType }, new [] { elementType }),
                     };
 
-                UpdateState(OpCodes.Ldelem, elemType, transitions.Wrap("LoadElement"), TypeOnStack.Get(elemType), pop: 2);
+                UpdateState(OpCodes.Ldelem, elementType, transitions.Wrap("LoadElement"), TypeOnStack.Get(elementType), pop: 2);
                 return this;
             }
 
-            UpdateState(instr.Value, transitions.Wrap("LoadElement"), TypeOnStack.Get(elemType), pop: 2);
+            UpdateState(instr.Value, transitions.Wrap("LoadElement"), TypeOnStack.Get(elementType), pop: 2);
 
             return this;
         }
