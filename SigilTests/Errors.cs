@@ -1176,7 +1176,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreArgument expects type on stack to be assignable to System.Int32, found System.Object", e.Message);
+                    Assert.AreEqual("StoreArgument expected an int; found System.Object", e.Message);
                 }
             }
         }

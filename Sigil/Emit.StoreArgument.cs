@@ -21,20 +21,6 @@ namespace Sigil
                 throw new ArgumentException("index must be between 0 and " + (ParameterTypes.Length - 1) + ", inclusive");
             }
 
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var paramType = ParameterTypes[index];
-
-            if (!paramType.IsAssignableFrom(onStack[0]))
-            {
-                throw new SigilVerificationException("StoreArgument expects type on stack to be assignable to " + paramType + ", found " + onStack[0], IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             if (index >= byte.MinValue && index <= byte.MaxValue)
             {
                 byte asByte;
