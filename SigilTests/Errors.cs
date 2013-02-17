@@ -2779,7 +2779,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CopyObject expects the source value to be a pointer, reference, or native int; found System.Object", e.Message);
+                    Assert.AreEqual("CopyObject expected a native int, System.Int32&, or System.Int32*; found System.Object", e.Message);
                 }
             }
 
@@ -2796,7 +2796,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CopyObject expects the destination value to be a pointer, reference, or native int; found System.Object", e.Message);
+                    Assert.AreEqual("CopyObject expected a native int, System.Int32&, or System.Int32*; found System.Object", e.Message);
                 }
             }
         }

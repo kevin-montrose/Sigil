@@ -34,31 +34,6 @@ namespace Sigil
                 throw new ArgumentException("CopyObject expects a ValueType; found " + valueType);
             }
 
-            var onStack = Stack.Top(2);
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(2);
-            }
-
-            var dest = onStack[1];
-            var source = onStack[0];
-
-            if (!source.IsPointer && !source.IsReference && source != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("CopyObject expects the source value to be a pointer, reference, or native int; found " + source, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            if (!dest.IsPointer && !dest.IsReference && dest != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("CopyObject expects the destination value to be a pointer, reference, or native int; found " + dest, IL.Instructions(LocalsByIndex), Stack, 1);
-            }
-
-            if (source != dest)
-            {
-                throw new SigilVerificationException("CopyObject expects the source and destination types to match; found " + source + " and " + dest, IL.Instructions(LocalsByIndex), Stack, 0, 1);
-            }
-
             var transitions =
                 new[] 
                 {
