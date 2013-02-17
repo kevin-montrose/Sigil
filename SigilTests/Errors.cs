@@ -998,15 +998,15 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreField expected a type on the stack assignable to SigilTests.Errors+StoreFieldClass, found System.Object", e.Message);
+                    Assert.AreEqual("StoreField expected an int; found System.Object", e.Message);
                 }
             }
 
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
                 var f = typeof(StoreFieldClass).GetField("Instance");
-                e1.NewObject<StoreFieldClass>();
                 e1.NewObject<object>();
+                e1.LoadConstant(0);
 
                 try
                 {
@@ -1015,7 +1015,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreField expected a type on the stack assignable to System.Int32, found System.Object", e.Message);
+                    Assert.AreEqual("StoreField expected a SigilTests.Errors+StoreFieldClass; found System.Object", e.Message);
                 }
             }
 
@@ -1046,7 +1046,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreField expected a type on the stack assignable to System.Int32, found System.Object", e.Message);
+                    Assert.AreEqual("StoreField expected an int; found System.Object", e.Message);
                 }
             }
         }

@@ -31,26 +31,6 @@ namespace Sigil
 
             if (!field.IsStatic)
             {
-                var onStack = Stack.Top(2);
-
-                if (onStack == null)
-                {
-                    FailStackUnderflow(2);
-                }
-
-                var type = onStack[1];
-                var val = onStack[0];
-
-                if (!field.DeclaringType.IsAssignableFrom(type))
-                {
-                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.DeclaringType + ", found " + type, IL.Instructions(LocalsByIndex), Stack, 1);
-                }
-
-                if (!field.FieldType.IsAssignableFrom(val))
-                {
-                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
-                }
-
                 if (isVolatile)
                 {
                     UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("StoreField"));
@@ -71,20 +51,6 @@ namespace Sigil
             }
             else
             {
-                var onStack = Stack.Top();
-
-                if (onStack == null)
-                {
-                    FailStackUnderflow(1);
-                }
-
-                var val = onStack[0];
-
-                if (!field.FieldType.IsAssignableFrom(val))
-                {
-                    throw new SigilVerificationException("StoreField expected a type on the stack assignable to " + field.FieldType + ", found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
-                }
-
                 if (isVolatile)
                 {
                     UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("StoreField"));
