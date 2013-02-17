@@ -2663,16 +2663,15 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("InitializeBlock expects the start value to be a pointer, reference, or native int; found System.Object", e.Message);
+                    Assert.AreEqual("InitializeBlock expected an int; found System.Object", e.Message);
                 }
             }
 
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
                 e1.LoadConstant(0);
-                e1.Convert<IntPtr>();
-                e1.NewObject<object>();
-                e1.NewObject<object>();
 
                 try
                 {
@@ -2681,16 +2680,16 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("InitBlock expects the initial value to be an int or native int; found System.Object", e.Message);
+                    Assert.AreEqual("InitializeBlock expected an int, or native int; found System.Object", e.Message);
                 }
             }
 
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
                 e1.LoadConstant(0);
                 e1.Convert<IntPtr>();
                 e1.LoadConstant(0);
-                e1.NewObject<object>();
 
                 try
                 {
@@ -2699,7 +2698,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("InitBlock expects the count to be an int; found System.Object", e.Message);
+                    Assert.AreEqual("InitializeBlock expected a native int, System.Byte&, or System.Byte*; found System.Object", e.Message);
                 }
             }
         }
