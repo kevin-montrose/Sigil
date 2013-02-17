@@ -34,43 +34,18 @@ namespace Sigil
                 throw new ArgumentException("Can only cast to ReferenceTypes, found " + referenceType);
             }
 
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var onStack = top[0];
+            // TODO: Restore trivial cast elliding
 
             var newType = TypeOnStack.Get(referenceType);
-            bool isTrivial = false;
 
-            isTrivial = newType.IsAssignableFrom(onStack);
-
-            if (isTrivial)
-            {
-                // already trivially castable; we don't need any IL for this
-
-                if (onStack.IsMarkable)
-                {
-                    newType = TypeOnStack.Get(referenceType, makeMarkable: true);
-                }
-
-                Stack = Stack.Pop().Push(newType);
-
-                onStack.ReplacedWith(newType);
-            }
-            else
-            {
-                var transitions =
+            var transitions =
                     new[] 
                     {
                         new StackTransition(new [] { typeof(object) }, new [] { referenceType })
                     };
 
-                UpdateState(OpCodes.Castclass, referenceType, transitions.Wrap("CastClass"), newType, pop: 1);
-            }
+            UpdateState(OpCodes.Castclass, referenceType, transitions.Wrap("CastClass"), newType, pop: 1);
+
             return this;
         }
     }
