@@ -1952,7 +1952,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadFieldAddress expected a SigilTests.Errors+LoadFieldClass, found System.Object", e.Message);
+                    Assert.AreEqual("LoadFieldAddress expected a SigilTests.Errors+LoadFieldClass; found System.Object", e.Message);
                 }
             }
         }

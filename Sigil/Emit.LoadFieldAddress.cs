@@ -26,20 +26,6 @@ namespace Sigil
 
             if (!field.IsStatic)
             {
-                var onStack = Stack.Top();
-
-                if (onStack == null)
-                {
-                    FailStackUnderflow(1);
-                }
-
-                var val = onStack[0];
-
-                if (!field.DeclaringType.IsAssignableFrom(val))
-                {
-                    throw new SigilVerificationException("LoadFieldAddress expected a " + field.DeclaringType + ", found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
-                }
-
                 var transitions =
                     new[] {
                         new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType.MakeByRefType() })
