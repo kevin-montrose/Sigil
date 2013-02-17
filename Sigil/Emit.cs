@@ -735,17 +735,8 @@ namespace Sigil
                 throw new InvalidOperationException("Cannot modify Emit after a delegate has been generated from it");
             }
 
-            if (pop > 0)
-            {
-                Stack = Stack.Pop(instr, pop, firstParamIsThis);
-            }
-
-            if (addToStack != null)
-            {
-                Stack = Stack.Push(addToStack);
-            }
-
-            if(transitions.Transitions.Any(t => t.PoppedFromStack.Count() != pop))
+            // DEBUG
+            if (transitions.Transitions.Any(t => t.PoppedFromStack.Count() != pop))
             {
                 throw new Exception("transitions do not match expected pop");
             }
@@ -754,12 +745,22 @@ namespace Sigil
             {
                 throw new Exception("transitions do not match expected push");
             }
+            // END DEBUG
 
             var verifyRes = CurrentVerifier.Transition(transitions.Transitions);
-
             if (!verifyRes.Success)
             {
                 throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(LocalsByIndex));
+            }
+
+            if (pop > 0)
+            {
+                Stack = Stack.Pop(instr, pop, firstParamIsThis);
+            }
+
+            if (addToStack != null)
+            {
+                Stack = Stack.Push(addToStack);
             }
 
             MaxStackSize = Math.Max(MaxStackSize, Stack.Count());

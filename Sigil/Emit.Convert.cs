@@ -8,16 +8,8 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private TransitionWrapper CheckConvertible(string method, TypeOnStack item, Type toType)
+        private TransitionWrapper CheckConvertible(string method, Type toType)
         {
-            /*if (item != TypeOnStack.Get<int>() && item != TypeOnStack.Get<NativeIntType>() &&
-                item != TypeOnStack.Get<long>() && item != TypeOnStack.Get<float>() &&
-                item != TypeOnStack.Get<double>() && !item.IsPointer
-               )
-            {
-                throw new SigilVerificationException(method + " expected an int, native int, long, float, double, or pointer on the stack; found " + item, IL.Instructions(LocalsByIndex));
-            }*/
-
             return
                 new[]
                 {
@@ -26,11 +18,11 @@ namespace Sigil
                     new StackTransition(new [] { typeof(long) }, new [] { toType }),
                     new StackTransition(new [] { typeof(float) }, new [] { toType }),
                     new StackTransition(new [] { typeof(double) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(int) }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(NativeIntType) }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(long) }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(float) }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { typeof(double) })
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType })
                     
                 }.Wrap(method);
         }
@@ -63,13 +55,7 @@ namespace Sigil
                 throw new ArgumentException("Convert expects a non-character primitive type");
             }
 
-            var top = Stack.Top();
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var transitions = CheckConvertible("Convert", top.Single(), primitiveType);
+            var transitions = CheckConvertible("Convert", primitiveType);
 
             if (primitiveType == typeof(byte))
             {
@@ -185,13 +171,7 @@ namespace Sigil
                 throw new InvalidOperationException("There is no operation for converting to a double with overflow checking");
             }
 
-            var top = Stack.Top();
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var transitions = CheckConvertible("ConvertOverflow", top.Single(), primitiveType);
+            var transitions = CheckConvertible("ConvertOverflow", primitiveType);
 
             if (primitiveType == typeof(byte))
             {
@@ -300,13 +280,7 @@ namespace Sigil
                 throw new InvalidOperationException("There is no operation for converting to a pointer with overflow checking");
             }
 
-            var top = Stack.Top();
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var transitions = CheckConvertible("UnsignedConvertOverflow", top.Single(), primitiveType);
+            var transitions = CheckConvertible("UnsignedConvertOverflow", primitiveType);
 
             if (primitiveType == typeof(byte))
             {
@@ -366,14 +340,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> UnsignedConvertToFloat()
         {
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var transitions = CheckConvertible("UnsignedConvertToFloat", top.Single(), typeof(float));
+            var transitions = CheckConvertible("UnsignedConvertToFloat", typeof(float));
 
             UpdateState(OpCodes.Conv_R_Un, transitions, TypeOnStack.Get<float>(), pop: 1);
 

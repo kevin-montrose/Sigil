@@ -276,6 +276,12 @@ namespace Sigil.Impl
 
                 if (legal.Count == 0)
                 {
+                    if (runningStack.Count == 0)
+                    {
+                        var wouldPop = ops.GroupBy(g => g.PoppedFromStack.Count()).Single().Key;
+                        return VerificationResult.FailureUnderflow(wouldPop);
+                    }
+
                     var stackI = FindStackFailureIndex(runningStack, ops);
 
                     var expected = ops.Select(o => o.PoppedFromStack.ElementAt(stackI)).Distinct().ToList();
