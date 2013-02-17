@@ -53,7 +53,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress();
+                    e1.LoadElementAddress<int>();
                     Assert.Fail();
                 }
                 catch (InvalidOperationException e)
@@ -67,7 +67,7 @@ namespace SigilTests
                 var d1 = e1
                     .LoadArgument(0)
                     .LoadConstant(0)
-                    .LoadElementAddress()
+                    .LoadElementAddress<int>()
                     .LoadIndirect<int>()
                     .Pop()
                     .Return()

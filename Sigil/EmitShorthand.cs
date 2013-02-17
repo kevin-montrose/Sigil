@@ -807,10 +807,16 @@ namespace Sigil
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.LoadElementAddress" />
-        public EmitShorthand<DelegateType> Ldelema()
+        /// <summary cref="M:Sigil.Emit`1.LoadElementAddress``1" />
+        public EmitShorthand<DelegateType> Ldelema<ElementType>()
         {
-            InnerEmit.LoadElementAddress();
+            return Ldelema(typeof(ElementType));
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.LoadElementAddress(System.Type)" />
+        public EmitShorthand<DelegateType> Ldelema(Type elementType)
+        {
+            InnerEmit.LoadElementAddress(elementType);
 
             return this;
         }

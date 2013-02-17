@@ -22,7 +22,7 @@ namespace SigilTests
             
             e1.LoadArgument(0);
             e1.LoadConstant(0);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<byte>();
             e1.StoreLocal(arg);
             
             e1.LoadArgument(0);

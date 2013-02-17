@@ -18,11 +18,11 @@ namespace SigilTests
 
             e1.LoadArgument(1);
             e1.LoadConstant(0);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<byte>();
 
             e1.LoadArgument(0);
             e1.LoadConstant(0);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<byte>();
             
             e1.LoadArgument(0);
             e1.LoadLength();
@@ -52,11 +52,11 @@ namespace SigilTests
 
             e1.LoadArgument(1);
             e1.LoadConstant(0);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<byte>();
 
             e1.LoadArgument(0);
             e1.LoadConstant(0);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<byte>();
 
             e1.LoadArgument(0);
             e1.LoadLength();

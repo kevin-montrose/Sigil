@@ -2055,7 +2055,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress();
+                    e1.LoadElementAddress<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
@@ -2071,12 +2071,12 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress();
+                    e1.LoadElementAddress<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadElementAddress expects an int or native int on the top of the stack, found System.Object", e.Message);
+                    Assert.AreEqual("LoadElementAddress expected an int, or native int; found System.Object", e.Message);
                 }
             }
 
@@ -2087,12 +2087,12 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress();
+                    e1.LoadElementAddress<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadElementAddress expects an array as the second element on the stack, found int", e.Message);
+                    Assert.AreEqual("LoadElementAddress expected a System.Int32[]; found int", e.Message);
                 }
             }
 
@@ -2103,12 +2103,12 @@ namespace SigilTests
 
                 try
                 {
-                    e1.LoadElementAddress();
+                    e1.LoadElementAddress<int>();
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadElementAddress expects a 1-dimensional array, found System.Int32[,]", e.Message);
+                    Assert.AreEqual("LoadElementAddress expected a System.Int32[]; found System.Int32[,]", e.Message);
                 }
             }
         }

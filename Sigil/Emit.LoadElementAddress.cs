@@ -61,7 +61,17 @@ namespace Sigil
         /// 
         /// Pops both, and pushes the address of the element at the given index.
         /// </summary>
-        public Emit<DelegateType> LoadElementAddress(Type arrType = null)
+        public Emit<DelegateType> LoadElementAddress<ElementType>()
+        {
+            return LoadElementAddress(typeof(ElementType));
+        }
+
+        /// <summary>
+        /// Expects a reference to an array of the given element type and an index on the stack.
+        /// 
+        /// Pops both, and pushes the address of the element at the given index.
+        /// </summary>
+        public Emit<DelegateType> LoadElementAddress(Type elementType)
         {
             // TODO: Another may-not-be-able to infer case, deal with it
 
@@ -70,35 +80,10 @@ namespace Sigil
                 FailUnverifiable();
             }
 
-            var top = Stack.Top(2);
+            var arrayType = elementType.MakeArrayType();
 
-            if (top == null)
-            {
-                FailStackUnderflow(2);
-            }
-
-            var index = top[0];
-            var array = top[1];
-
-            if (index != TypeOnStack.Get<int>() && index != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("LoadElementAddress expects an int or native int on the top of the stack, found " + index, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            if (array.IsReference || array.IsPointer || !array.Type.IsArray)
-            {
-                throw new SigilVerificationException("LoadElementAddress expects an array as the second element on the stack, found " + array, IL.Instructions(LocalsByIndex), Stack, 1);
-            }
-
-            if (array.Type.GetArrayRank() != 1)
-            {
-                throw new SigilVerificationException("LoadElementAddress expects a 1-dimensional array, found " + array, IL.Instructions(LocalsByIndex), Stack, 1);
-            }
-
-            var arrElemType = array.Type.GetElementType();
-            
             // needs to be markable so we can keep track of what makes use of this value
-            var pushToStack = TypeOnStack.Get(arrElemType.MakeByRefType(), makeMarkable: true);
+            var pushToStack = TypeOnStack.Get(elementType.MakeByRefType(), makeMarkable: true);
 
             // Shove this away, later on we'll figure out if we can insert a readonly here
             ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
@@ -106,11 +91,11 @@ namespace Sigil
             var transitions =
                 new[] 
                 {
-                    new StackTransition(new [] { typeof(NativeIntType), array.Type }, new [] { arrElemType.MakeByRefType() }),
-                    new StackTransition(new [] { typeof(int), array.Type }, new [] { arrElemType.MakeByRefType() })
+                    new StackTransition(new [] { typeof(NativeIntType), arrayType }, new [] { elementType.MakeByRefType() }),
+                    new StackTransition(new [] { typeof(int), arrayType }, new [] { elementType.MakeByRefType() })
                 };
 
-            UpdateState(OpCodes.Ldelema, arrElemType, transitions.Wrap("LoadElementAddress"), pushToStack, pop: 2);
+            UpdateState(OpCodes.Ldelema, elementType, transitions.Wrap("LoadElementAddress"), pushToStack, pop: 2);
 
             return this;
         }

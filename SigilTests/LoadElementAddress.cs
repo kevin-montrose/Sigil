@@ -19,7 +19,7 @@ namespace SigilTests
             var e1 = Emit<Func<int[], int, int>>.NewDynamicMethod("E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<int>();
             e1.LoadIndirect<int>();
             e1.Return();
 
@@ -36,7 +36,7 @@ namespace SigilTests
             var e1 = Emit<Action<int[], int>>.NewDynamicMethod("E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<int>();
             e1.Duplicate();
             e1.LoadIndirect<int>();
             e1.LoadConstant(1);
@@ -65,7 +65,7 @@ namespace SigilTests
             var e1 = Emit<Func<int, object[], string>>.NewDynamicMethod("E1");
             e1.LoadArgument(1);
             e1.LoadArgument(0);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<object>();
             e1.LoadIndirect<object>();
             e1.CallVirtual(toString);
             e1.Return();
@@ -85,7 +85,7 @@ namespace SigilTests
             var e1 = Emit<Func<int, object[], string>>.NewDynamicMethod("E1");
             e1.LoadArgument(1);
             e1.LoadArgument(0);
-            e1.LoadElementAddress();
+            e1.LoadElementAddress<object>();
             e1.Duplicate();
             e1.Pop();
             e1.LoadIndirect<object>();
