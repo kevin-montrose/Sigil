@@ -2842,16 +2842,15 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CopyBlock expects the destination value to be a pointer, reference, or native int; found System.Object", e.Message);
+                    Assert.AreEqual("CopyBlock expected an int; found System.Object", e.Message);
                 }
             }
 
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
+                e1.NewObject<object>();
                 e1.LoadConstant(0);
-                e1.Convert<IntPtr>();
-                e1.NewObject<object>();
-                e1.NewObject<object>();
                 try
                 {
                     e1.CopyBlock();
@@ -2859,16 +2858,16 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CopyBlock expects the source value to be a pointer, reference, or native int; found System.Object", e.Message);
+                    Assert.AreEqual("CopyBlock expected a native int, System.Byte&, or System.Byte*; found System.Object", e.Message);
                 }
             }
 
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
+                e1.NewObject<object>();
                 e1.LoadConstant(0);
                 e1.Convert<IntPtr>();
-                e1.Duplicate();
-                e1.NewObject<object>();
+                e1.LoadConstant(0);
                 try
                 {
                     e1.CopyBlock();
@@ -2876,7 +2875,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CopyBlock expects the count value to be an int; found System.Object", e.Message);
+                    Assert.AreEqual("CopyBlock expected a native int, System.Byte&, or System.Byte*; found System.Object", e.Message);
                 }
             }
         }

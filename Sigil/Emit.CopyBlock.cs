@@ -23,32 +23,6 @@ namespace Sigil
                 FailUnverifiable();
             }
 
-            var onStack = Stack.Top(3);
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(3);
-            }
-
-            var dest = onStack[2];
-            var source = onStack[1];
-            var count = onStack[0];
-
-            if (!(dest.IsPointer || dest.IsReference || dest == TypeOnStack.Get<NativeIntType>()))
-            {
-                throw new SigilVerificationException("CopyBlock expects the destination value to be a pointer, reference, or native int; found " + dest, IL.Instructions(LocalsByIndex), Stack, 2);
-            }
-
-            if (!(source.IsPointer || source.IsReference || source == TypeOnStack.Get<NativeIntType>()))
-            {
-                throw new SigilVerificationException("CopyBlock expects the source value to be a pointer, reference, or native int; found " + source, IL.Instructions(LocalsByIndex), Stack, 1);
-            }
-
-            if (count != TypeOnStack.Get<int>())
-            {
-                throw new SigilVerificationException("CopyBlock expects the count value to be an int; found " + count, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             if (isVolatile)
             {
                 UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("CopyBlock"));
