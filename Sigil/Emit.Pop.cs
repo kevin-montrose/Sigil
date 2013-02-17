@@ -10,13 +10,6 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Pop()
         {
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
             UpdateState(OpCodes.Pop, StackTransition.Pop<WildcardType>().Wrap("Pop"), pop: 1);
 
             return this;
