@@ -1854,22 +1854,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadIndirect expects a pointer, reference, or native int on the stack, found System.Object", e.Message);
-                }
-            }
-
-            {
-                var e1 = Emit<Action<double>>.NewDynamicMethod();
-                e1.LoadArgumentAddress(0);
-
-                try
-                {
-                    e1.LoadIndirect<int>();
-                    Assert.Fail();
-                }
-                catch (SigilVerificationException e)
-                {
-                    Assert.AreEqual("LoadIndirect expected a pointer or reference to type System.Int32, but found System.Double*", e.Message);
+                    Assert.AreEqual("LoadIndirect expected a native int, System.Int32&, or System.Int32*; found System.Object", e.Message);
                 }
             }
 

@@ -30,7 +30,7 @@ namespace Sigil
                 throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
-            var onStack = Stack.Top();
+            /*var onStack = Stack.Top();
 
             if (onStack == null)
             {
@@ -50,7 +50,7 @@ namespace Sigil
                 {
                     throw new SigilVerificationException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, IL.Instructions(LocalsByIndex), Stack, 0);
                 }
-            }
+            }*/
 
             OpCode? instr = null;
             IEnumerable<StackTransition> transitions = null;
