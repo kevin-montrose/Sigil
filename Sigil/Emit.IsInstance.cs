@@ -28,13 +28,6 @@ namespace Sigil
                 throw new ArgumentNullException("type");
             }
 
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
             var transitions =
                 new[] 
                 {
