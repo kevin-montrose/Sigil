@@ -31,6 +31,8 @@ namespace Sigil
 
                 UpdateState(OpCodes.Ret, StackTransition.None());
 
+                CurrentVerifier = new VerifiableTracker(baseless: true);
+
                 return this;
             }
 
@@ -59,6 +61,8 @@ namespace Sigil
 
                 throw new SigilVerificationException("Return should leave the stack empty", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
             }
+
+            CurrentVerifier = new VerifiableTracker(baseless: true);
 
             return this;
         }

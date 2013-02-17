@@ -44,6 +44,8 @@ namespace Sigil
                 }
             }
 
+            CurrentVerifier = new VerifiableTracker(baseless: true);
+
             return this;
         }
 

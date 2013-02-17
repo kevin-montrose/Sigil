@@ -77,8 +77,43 @@ namespace Sigil.Impl
             return ret;
         }
 
+        private bool IsEquivalent(VerifiableTracker other)
+        {
+            var ourStack = new Stack<IEnumerable<TypeOnStack>>();
+            foreach (var t in Transitions)
+            {
+                UpdateStack(ourStack, t);
+            }
+
+            var otherStack = new Stack<IEnumerable<TypeOnStack>>();
+            foreach (var t in other.Transitions)
+            {
+                UpdateStack(otherStack, t);
+            }
+
+            if (ourStack.Count != otherStack.Count) return false;
+
+            for (var i = 0; i < ourStack.Count; i++)
+            {
+                var ours = ourStack.ElementAt(i);
+                var theirs = otherStack.ElementAt(i);
+
+                if (ours.Count() != theirs.Count()) return false;
+
+                if (ours.Any(o => !theirs.Any(t => o == t))) return false;
+            }
+
+            return true;
+        }
+
         public bool Incoming(VerifiableTracker other)
         {
+            // If we're not baseless, we can't modify ourselves; but we have to make sure the other one is equivalent
+            if (!Baseless)
+            {
+                return IsEquivalent(other);
+            }
+
             var old = Transitions;
 
             Transitions = new List<IEnumerable<StackTransition>>();
@@ -87,10 +122,41 @@ namespace Sigil.Impl
 
             var ret = CollapseAndVerify();
 
-            // revert!
-            if (!ret) Transitions = old;
+            
+            if (!ret)
+            {
+                // revert!
+                Transitions = old;
+            }
+            else
+            {
+                // we're no longer baseless if the other guy isn't
+                this.Baseless = other.Baseless;
+            }
 
             return ret;
+        }
+
+        private void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, IEnumerable<StackTransition> legal)
+        {
+            var toPop = legal.First().PoppedCount;
+
+            for (var j = 0; j < toPop && stack.Count > 0; j++)
+            {
+                stack.Pop();
+            }
+
+            var toPush = new List<TypeOnStack>();
+
+            foreach (var op in legal)
+            {
+                toPush.AddRange(op.PushedToStack);
+            }
+
+            if (toPush.Count > 0)
+            {
+                stack.Push(toPush.Distinct().ToList());
+            }
         }
 
         public bool CollapseAndVerify()
@@ -147,22 +213,7 @@ namespace Sigil.Impl
                     return false;
                 }
 
-                for (var j = 0; j < toPop && runningStack.Count > 0; j++)
-                {
-                    runningStack.Pop();
-                }
-
-                var toPush = new List<TypeOnStack>();
-
-                foreach (var op in legal)
-                {
-                    toPush.AddRange(op.PushedToStack);
-                }
-
-                if(toPush.Count > 0)
-                {
-                    runningStack.Push(toPush.Distinct().ToList());
-                }
+                UpdateStack(runningStack, legal);
             }
 
             return true;
