@@ -243,27 +243,6 @@ namespace Sigil
 
             var expectedParams = constructor.GetParameters().Select(p => TypeOnStack.Get(p.ParameterType)).ToList();
 
-            var onStack = Stack.Top(expectedParams.Count);
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(expectedParams.Count);
-            }
-
-            // Parameters come off the Stack in reverse order
-            var onStackR = onStack.Reverse().ToList();
-
-            for (var i = 0; i < expectedParams.Count; i++)
-            {
-                var shouldBe = expectedParams[i];
-                var actuallyIs = onStackR[i];
-
-                if (!shouldBe.IsAssignableFrom(actuallyIs))
-                {
-                    throw new SigilVerificationException("Parameter #" + i + " to " + constructor + " should be " + shouldBe + ", but found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, onStack.Length - 1 - i);
-                }
-            }
-
             var makesType = TypeOnStack.Get(constructor.DeclaringType);
 
             var transitions =

@@ -1405,7 +1405,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Parameter #0 to Void .ctor(Char[]) should be System.Char[], but found System.Object", e.Message);
+                    Assert.AreEqual("NewObject expected a System.Char[]; found System.Object", e.Message);
                 }
             }
         }
