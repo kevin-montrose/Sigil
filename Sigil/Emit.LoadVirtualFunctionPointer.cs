@@ -34,20 +34,6 @@ namespace Sigil
             var paramList = parameters.Select(p => p.ParameterType).ToList();
             paramList.Insert(0, method.DeclaringType);
 
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var objPtr = top[0];
-
-            if (!method.DeclaringType.IsAssignableFrom(objPtr))
-            {
-                throw new SigilVerificationException("Expected a value assignable to " + method.DeclaringType + " to be on the stack, found " + objPtr, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             var type =
                 TypeOnStack.GetKnownFunctionPointer(
                     method.CallingConvention,
@@ -62,7 +48,7 @@ namespace Sigil
                     new StackTransition(new [] { method.DeclaringType }, new [] { typeof(NativeIntType) })
                 };
 
-            UpdateState(OpCodes.Ldvirtftn, method, transitions.Wrap("LoadVirtualFunction"), type, pop: 1);
+            UpdateState(OpCodes.Ldvirtftn, method, transitions.Wrap("LoadVirtualFunctionPointer"), type, pop: 1);
 
             return this;
         }

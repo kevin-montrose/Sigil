@@ -1617,7 +1617,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Expected a value assignable to System.Collections.Generic.List`1[System.Int32] to be on the stack, found int", e.Message);
+                    Assert.AreEqual("LoadVirtualFunctionPointer expected a System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]; found int", e.Message);
                 }
             }
         }
