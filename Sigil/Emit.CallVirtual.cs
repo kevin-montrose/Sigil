@@ -35,27 +35,6 @@ namespace Sigil
             // "this" parameter
             expectedParams.Insert(0, TypeOnStack.Get(method.DeclaringType));
 
-            var onStack = Stack.Top(expectedParams.Count);
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(expectedParams.Count);
-            }
-
-            // Things come off the stack in "Reverse" order
-            var onStackR = onStack.Reverse().ToList();
-
-            for (var i = 0; i < expectedParams.Count; i++)
-            {
-                var shouldBe = expectedParams[i];
-                var actuallyIs = onStackR[i];
-
-                if (!shouldBe.IsAssignableFrom(actuallyIs))
-                {
-                    throw new SigilVerificationException("Parameter #" + i + " to " + method + " should be " + shouldBe + ", but found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, onStack.Length - 1 - i);
-                }
-            }
-
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);
 
             // Shove the constrained prefix in if it's supplied

@@ -67,7 +67,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Parameter #0 to Void Invoke(Int32) should be System.Action`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], but found System.Action`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", e.Message);
+                    Assert.AreEqual("CallVirtual expected a System.Action`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]; found System.Action`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", e.Message);
                 }
             }
         }
@@ -3460,7 +3460,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Parameter #0 to Void CallVirtualBadParam() should be SigilTests.Errors, but found System.Object", e.Message);
+                Assert.AreEqual("CallVirtual expected a SigilTests.Errors; found System.Object", e.Message);
             }
         }
 
