@@ -39,26 +39,6 @@ namespace Sigil
                 throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
-            var onStack = Stack.Top(2);
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(2);
-            }
-
-            var val = onStack[0];
-            var addr = onStack[1];
-
-            if (TypeOnStack.Get(valueType) != val)
-            {
-                throw new SigilVerificationException("StoreObject expected a " + valueType + " to be on the stack, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            if (!addr.IsPointer && !addr.IsReference && addr != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("StoreObject expected a reference, pointer, or native int; found " + addr, IL.Instructions(LocalsByIndex), Stack, 1);
-            }
-
             if (isVolatile)
             {
                 UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("StoreObject"));

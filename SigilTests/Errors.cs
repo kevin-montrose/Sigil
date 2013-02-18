@@ -731,7 +731,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreObject expected a System.Int32 to be on the stack, found System.Object", e.Message);
+                    Assert.AreEqual("StoreObject expected an int; found System.Object", e.Message);
                 }
             }
 
@@ -747,7 +747,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreObject expected a reference, pointer, or native int; found System.Object", e.Message);
+                    Assert.AreEqual("StoreObject expected a native int, System.Int32&, or System.Int32*; found System.Object", e.Message);
                 }
             }
         }
