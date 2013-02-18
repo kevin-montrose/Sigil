@@ -874,7 +874,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreIndirect expected a System.Int32 on the stack, found System.Object", e.Message);
+                    Assert.AreEqual("StoreIndirect expected an int; found System.Object", e.Message);
                 }
             }
 
@@ -890,7 +890,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreIndirect expected a reference, pointer, or native int on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("StoreIndirect expected a native int, System.Int32&, System.Int32*, System.UInt32&, or System.UInt32*; found System.Object", e.Message);
                 }
             }
 
