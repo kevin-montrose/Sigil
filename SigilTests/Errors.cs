@@ -655,7 +655,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Switch expected an int on the stack, found System.Object", e.Message);
+                    Assert.AreEqual("Switch expected an int, or native int; found System.Object", e.Message);
                 }
             }
         }
