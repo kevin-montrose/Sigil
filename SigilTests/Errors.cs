@@ -578,7 +578,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Throw expected an exception to be on the stack, found System.Object", e.Message);
+                    Assert.AreEqual("Throw expected a System.Exception; found System.Object", e.Message);
                 }
             }
         }

@@ -20,13 +20,6 @@ namespace Sigil
                 FailStackUnderflow(1);
             }
 
-            var val = onStack[0];
-
-            if (!typeof(Exception).IsAssignableFrom(val))
-            {
-                throw new SigilVerificationException("Throw expected an exception to be on the stack, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             UpdateState(OpCodes.Throw, StackTransition.Pop<Exception>().Wrap("Throw"), pop: 1);
 
             return this;
