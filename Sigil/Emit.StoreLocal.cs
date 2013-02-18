@@ -23,18 +23,6 @@ namespace Sigil
                 FailOwnership(local);
             }
 
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            if (!local.LocalType.IsAssignableFrom(top[0]))
-            {
-                throw new SigilVerificationException("StoreLocal expects a value assignable to " + local.LocalType.FullName + " to be on the stack; found " + top[0], IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             UnusedLocals.Remove(local);
 
             switch (local.Index)

@@ -812,7 +812,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("StoreLocal expects a value assignable to System.Int32 to be on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("StoreLocal expected an int; found System.Object", e.Message);
                 }
             }
         }
