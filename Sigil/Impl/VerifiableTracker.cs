@@ -10,6 +10,9 @@ namespace Sigil.Impl
     // Represents *any* pointer
     internal class AnyPointerType { }
 
+    // Something that's *only* assignable from object
+    internal class OnlyObjectType { }
+
     public class StackTransition
     {
         internal int PoppedCount { get { return PoppedFromStack.Count(); } }

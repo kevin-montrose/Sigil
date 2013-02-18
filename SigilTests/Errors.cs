@@ -215,7 +215,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("UnboxAny expects an object on the stack, but found System.String", e.Message);
+                    Assert.AreEqual("UnboxAny expected a System.Object; found System.String", e.Message);
                 }
             }
         }
@@ -290,7 +290,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Unbox expects an object on the stack, but found System.String", e.Message);
+                    Assert.AreEqual("Unbox expected a System.Object; found System.String", e.Message);
                 }
             }
         }

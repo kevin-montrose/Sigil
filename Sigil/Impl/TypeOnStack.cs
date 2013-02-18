@@ -192,6 +192,7 @@ namespace Sigil.Impl
             if (Type == typeof(float)) ret = "float";
             if (Type == typeof(double)) ret = "double";
             if (Type == typeof(AnyPointerType)) ret = "pointer";
+            if (Type == typeof(OnlyObjectType)) ret = typeof(object).ToString();
 
             return ret;
         }

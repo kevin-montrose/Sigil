@@ -141,6 +141,13 @@ namespace Sigil.Impl
         {
             if (t1 == t2) return true;
 
+            if (t1 == typeof(OnlyObjectType))
+            {
+                if (t2 == typeof(object)) return true;
+
+                return false;
+            }
+
             // quick and dirty base case
             if (t1 == typeof(object) && !t2.IsValueType) return true;
 

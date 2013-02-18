@@ -39,21 +39,7 @@ namespace Sigil
                 throw new ArgumentException("Void cannot be boxed, and thus cannot be unboxed");
             }
 
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var onStack = top.Single();
-
-            if (onStack != TypeOnStack.Get<object>())
-            {
-                throw new SigilVerificationException("Unbox expects an object on the stack, but found " + onStack, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            var transitions = new[] { new StackTransition(new[] { typeof(object) }, new[] { valueType.MakeByRefType() }) };
+            var transitions = new[] { new StackTransition(new[] { typeof(OnlyObjectType) }, new[] { valueType.MakeByRefType() }) };
 
             UpdateState(OpCodes.Unbox, valueType, transitions.Wrap("Unbox"), TypeOnStack.Get(valueType.MakeByRefType()), pop: 1);
 
@@ -92,21 +78,7 @@ namespace Sigil
                 throw new ArgumentException("Void cannot be boxed, and thus cannot be unboxed");
             }
 
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var onStack = top.Single();
-
-            if (onStack != TypeOnStack.Get<object>())
-            {
-                throw new SigilVerificationException("UnboxAny expects an object on the stack, but found " + onStack, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            var transitions = new[] { new StackTransition(new[] { typeof(object) }, new[] { valueType }) };
+            var transitions = new[] { new StackTransition(new[] { typeof(OnlyObjectType) }, new[] { valueType }) };
 
             UpdateState(OpCodes.Unbox_Any, valueType, transitions.Wrap("UnboxAny"), TypeOnStack.Get(valueType), pop: 1);
 
