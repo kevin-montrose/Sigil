@@ -13,13 +13,6 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Throw()
         {
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
             UpdateState(OpCodes.Throw, StackTransition.Pop<Exception>().Wrap("Throw"), pop: 1);
 
             return this;

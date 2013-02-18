@@ -37,20 +37,6 @@ namespace Sigil
                 UnusedLabels.Remove(label);
             }
 
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            /*var val = onStack[0];
-
-            if (val != TypeOnStack.Get<int>())
-            {
-                throw new SigilVerificationException("Switch expected an int on the stack, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
-            }*/
-
             var transitions =
                 new[]
                 {
