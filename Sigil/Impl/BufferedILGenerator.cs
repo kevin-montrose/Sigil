@@ -40,33 +40,35 @@ namespace Sigil.Impl
             return log.ToString();
         }
 
-        private Dictionary<int, Tuple<int, string>> LengthCache = new Dictionary<int, Tuple<int, string>>();
+        private Dictionary<int, int> LengthCache = new Dictionary<int, int>();
 
-        private int LengthTo(int end, out string instructions)
+        private int LengthTo(int end)
         {
-            Tuple<int, string> cached;
+            if (end == 0)
+            {
+                return 0;
+            }
+
+            int cached;
             if (LengthCache.TryGetValue(end, out cached))
             {
-                instructions = cached.Item2;
-
-                return cached.Item1;
+                return cached;
             }
 
-            var instrs = new StringBuilder();
+            int runningTotal = 0;
 
-            foreach (var x in Buffer.Take(end))
+            for (var i = 0; i < end; i++)
             {
-                x(null, true, instrs);
+                var s = InstructionSizes[i];
+
+                runningTotal += s();
+
+                LengthCache[i + 1] = runningTotal;
             }
 
-            instructions = instrs.ToString();
+            cached = LengthCache[end];
 
-            var instrSizes = InstructionSizes.Take(end).Select(s => s()).Sum();
-
-            cached = Tuple.Create(instrSizes, instructions);
-            LengthCache[end] = cached;
-
-            return instrSizes;
+            return cached;
         }
 
         internal string[] Instructions(Dictionary<int, Local> locals)
@@ -139,9 +141,8 @@ namespace Sigil.Impl
 
         public int ByteDistance(int start, int stop)
         {
-            string ignored;
-            var toStart = LengthTo(start, out ignored);
-            var toStop = LengthTo(stop, out ignored);
+            var toStart = LengthTo(start);
+            var toStop = LengthTo(stop);
 
             return toStop - toStart;
         }
