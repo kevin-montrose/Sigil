@@ -208,6 +208,7 @@
     <Compile Include="NativeIntType.cs" />
     <Compile Include="NullType.cs" />
     <Compile Include="LocalLookup.cs" />
+    <Compile Include="OptimizationOptions.cs" />
     <Compile Include="Tuple.cs" />
     <Compile Include="Emit.Unbox.cs">
       <DependentUpon>Emit.cs</DependentUpon>
