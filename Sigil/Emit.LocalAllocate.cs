@@ -31,24 +31,7 @@ namespace Sigil
                 FailUnverifiable();
             }
 
-            var top = Stack.Top();
-
-            if (top == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            if (Stack.Count() > 1)
-            {
-                throw new SigilVerificationException("LocalAllocate requires the stack only contain the size value", IL.Instructions(LocalsByIndex), Stack);
-            }
-
-            var numBytes = top[0];
-
-            if (numBytes != TypeOnStack.Get<int>() && numBytes != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("LocalAllocate expected an int or native int, found " + numBytes, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
+            UpdateState(new[] { new StackTransition(1) }.Wrap("LocalAllocate"));
 
             var transitions =
                 new[] {
@@ -56,7 +39,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(NativeIntType) })
                 };
 
-            UpdateState(OpCodes.Localloc, transitions.Wrap("LocalAllocate"), TypeOnStack.Get<NativeIntType>(), pop: 1);
+            UpdateState(OpCodes.Localloc, transitions.Wrap("LocalAllocate"));
 
             return this;
         }

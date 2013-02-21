@@ -30,19 +30,13 @@ namespace Sigil
                 throw new InvalidOperationException("Leave can only be used within an exception or catch block");
             }
 
-            var popAll = new List<Type>();
-            for (var i = 0; i < Stack.Count(); i++)
-            {
-                popAll.Add(typeof(WildcardType));
-            }
-
             TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
             Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, label, new[] { new StackTransition(popAll, Type.EmptyTypes) }.Wrap("Leave"), out update, pop: Stack.Count());
+            UpdateState(OpCodes.Leave, label, new[] { new StackTransition(new [] { typeof(PopAllType) }, Type.EmptyTypes) }.Wrap("Leave"), out update);
 
-            Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
+            Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Leave);
 

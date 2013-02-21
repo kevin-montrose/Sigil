@@ -56,10 +56,7 @@ namespace Sigil
                 throw new InvalidOperationException("Jump cannot transfer control from an exception block");
             }
 
-            if (!Stack.IsRoot)
-            {
-                throw new SigilVerificationException("Jump expected the stack to be empty", IL.Instructions(LocalsByIndex), Stack);
-            }
+            UpdateState((new [] {new StackTransition(0) }).Wrap("Jump"));
 
             for (var i = 0; i < paras.Length; i++)
             {
@@ -68,7 +65,7 @@ namespace Sigil
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {
-                    throw new SigilVerificationException("Jump expected the #" + i + " parameter to be assignable from " + actuallyIs + ", but found " + shouldBe, IL.Instructions(LocalsByIndex), Stack);
+                    throw new SigilVerificationException("Jump expected the #" + i + " parameter to be assignable from " + actuallyIs + ", but found " + shouldBe, IL.Instructions(LocalsByIndex));
                 }
             }
 

@@ -27,10 +27,10 @@ namespace Sigil
 
             switch (local.Index)
             {
-                case 0: UpdateState(OpCodes.Stloc_0, StackTransition.Pop(local.StackType).Wrap("StoreLocal"), pop: 1); return this;
-                case 1: UpdateState(OpCodes.Stloc_1, StackTransition.Pop(local.StackType).Wrap("StoreLocal"), pop: 1); return this;
-                case 2: UpdateState(OpCodes.Stloc_2, StackTransition.Pop(local.StackType).Wrap("StoreLocal"), pop: 1); return this;
-                case 3: UpdateState(OpCodes.Stloc_3, StackTransition.Pop(local.StackType).Wrap("StoreLocal"), pop: 1); return this;
+                case 0: UpdateState(OpCodes.Stloc_0, StackTransition.Pop(local.StackType).Wrap("StoreLocal")); return this;
+                case 1: UpdateState(OpCodes.Stloc_1, StackTransition.Pop(local.StackType).Wrap("StoreLocal")); return this;
+                case 2: UpdateState(OpCodes.Stloc_2, StackTransition.Pop(local.StackType).Wrap("StoreLocal")); return this;
+                case 3: UpdateState(OpCodes.Stloc_3, StackTransition.Pop(local.StackType).Wrap("StoreLocal")); return this;
             }
 
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)
@@ -41,11 +41,11 @@ namespace Sigil
                     asByte = (byte)local.Index;
                 }
 
-                UpdateState(OpCodes.Stloc_S, asByte, StackTransition.Pop(local.StackType).Wrap("StoreLocal"), pop: 1);
+                UpdateState(OpCodes.Stloc_S, asByte, StackTransition.Pop(local.StackType).Wrap("StoreLocal"));
                 return this;
             }
 
-            UpdateState(OpCodes.Stloc, local, StackTransition.Pop(local.StackType).Wrap("StoreLocal"), pop: 1);
+            UpdateState(OpCodes.Stloc, local, StackTransition.Pop(local.StackType).Wrap("StoreLocal"));
 
             return this;
         }

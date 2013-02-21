@@ -353,7 +353,7 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions.Wrap("CallIndirect"), pop: (parameterTypes.Length + takeExtra));
+            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions.Wrap("CallIndirect"));
 
             return this;
         }

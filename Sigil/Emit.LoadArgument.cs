@@ -25,15 +25,15 @@ namespace Sigil
 
             switch (index)
             {
-                case 0: UpdateState(OpCodes.Ldarg_0, transitions, TypeOnStack.Get(ParameterTypes[index])); return this;
-                case 1: UpdateState(OpCodes.Ldarg_1, transitions, TypeOnStack.Get(ParameterTypes[index])); return this;
-                case 2: UpdateState(OpCodes.Ldarg_2, transitions, TypeOnStack.Get(ParameterTypes[index])); return this;
-                case 3: UpdateState(OpCodes.Ldarg_3, transitions, TypeOnStack.Get(ParameterTypes[index])); return this;
+                case 0: UpdateState(OpCodes.Ldarg_0, transitions); return this;
+                case 1: UpdateState(OpCodes.Ldarg_1, transitions); return this;
+                case 2: UpdateState(OpCodes.Ldarg_2, transitions); return this;
+                case 3: UpdateState(OpCodes.Ldarg_3, transitions); return this;
             }
 
             if (index >= byte.MinValue && index <= byte.MaxValue)
             {
-                UpdateState(OpCodes.Ldarg_S, (byte)index, transitions, TypeOnStack.Get(ParameterTypes[index]));
+                UpdateState(OpCodes.Ldarg_S, (byte)index, transitions);
                 return this;
             }
 
@@ -43,7 +43,7 @@ namespace Sigil
                 asShort = (short)index;
             }
 
-            UpdateState(OpCodes.Ldarg, asShort, transitions, TypeOnStack.Get(ParameterTypes[index]));
+            UpdateState(OpCodes.Ldarg, asShort, transitions);
 
             return this;
         }

@@ -24,20 +24,7 @@ namespace Sigil
 
             var paramList = parameters.Select(p => p.ParameterType).ToList();
 
-            var thisType =
-                HasFlag(method.CallingConvention, CallingConventions.HasThis) ?
-                    method.DeclaringType :
-                    null;
-
-            var type = 
-                TypeOnStack.GetKnownFunctionPointer(
-                    method.CallingConvention,
-                    thisType,
-                    method.ReturnType,
-                    paramList.ToArray()
-                );
-
-            UpdateState(OpCodes.Ldftn, method, StackTransition.Push<NativeIntType>().Wrap("LoadFunctionPointer"), type);
+            UpdateState(OpCodes.Ldftn, method, StackTransition.Push<NativeIntType>().Wrap("LoadFunctionPointer"));
 
             return this;
         }

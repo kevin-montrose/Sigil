@@ -21,7 +21,7 @@ namespace SigilTests
             e1.LoadConstant(0);
             e1.StoreLocal(loc);
             e1.Branch(label);
-            e1.MarkLabel(label, Type.EmptyTypes);
+            e1.MarkLabel(label);
             e1.Return();
 
             var d1 = e1.CreateDelegate();

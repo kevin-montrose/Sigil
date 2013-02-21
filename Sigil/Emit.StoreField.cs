@@ -47,7 +47,7 @@ namespace Sigil
                         new StackTransition(new [] { field.FieldType, field.DeclaringType }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stfld, field, transitions.Wrap("StoreField"), pop: 2);
+                UpdateState(OpCodes.Stfld, field, transitions.Wrap("StoreField"));
             }
             else
             {
@@ -62,7 +62,7 @@ namespace Sigil
                         new StackTransition(new [] { field.FieldType }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stsfld, field, transitions.Wrap("StoreField"), pop: 1);
+                UpdateState(OpCodes.Stsfld, field, transitions.Wrap("StoreField"));
             }
 
             return this;

@@ -45,10 +45,8 @@ namespace Sigil
         private TypeOnStack ReturnType;
         private Type[] ParameterTypes;
         private CallingConventions CallingConventions;
-        
-        private StackState Stack;
 
-        private List<Tuple<OpCode, StackState>> InstructionStream;
+        private List<OpCode> InstructionStream;
         private List<VerifiableTracker> Trackers;
 
         private ushort NextLocalIndex = 0;
@@ -59,8 +57,8 @@ namespace Sigil
         private HashSet<Label> UnusedLabels;
         private HashSet<Label> UnmarkedLabels;
 
-        private Dictionary<StackState, Tuple<Label, int>> Branches;
-        private Dictionary<Label, Tuple<StackState, int>> Marks;
+        private List<Tuple<Label, int>> Branches;
+        private Dictionary<Label, int> Marks;
 
         private Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
@@ -149,10 +147,8 @@ namespace Sigil
                     ).ToArray();
 
             IL = new BufferedILGenerator(typeof(DelegateType));
-
-            Stack = new StackState();
             
-            InstructionStream = new List<Tuple<OpCode, StackState>>();
+            InstructionStream = new List<OpCode>();
             Trackers = new List<VerifiableTracker>();
 
             LocalsByIndex = new Dictionary<int, Local>();
@@ -161,8 +157,8 @@ namespace Sigil
             UnusedLabels = new HashSet<Label>();
             UnmarkedLabels = new HashSet<Label>();
 
-            Branches = new Dictionary<StackState, Tuple<Label, int>>();
-            Marks = new Dictionary<Label, Tuple<StackState, int>>();
+            Branches = new List<Tuple<Label, int>>();
+            Marks = new Dictionary<Label, int>();
 
             BranchPatches = new Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>>();
 
@@ -187,15 +183,6 @@ namespace Sigil
             CurrentVerifier = new VerifiableTracker();
             TrackersAtLabels = new Dictionary<Label, VerifiableTracker>();
             TrackersAtBranches = new Dictionary<Label, VerifiableTracker>();
-        }
-
-        /// <summary>
-        /// Returns the information currently on the stack, ignoring the top "skip" items; the types are returned
-        /// top-to-bottom, making this directly usable from MarkLabel.
-        /// </summary>
-        public IEnumerable<Type> GetStack(int skip = 0)
-        {
-            return Stack.GetTypes(skip);
         }
 
         /// <summary>
@@ -670,14 +657,15 @@ namespace Sigil
             IL.Insert(index, instr);
 
             // We need to update our state to account for the new insertion
-            foreach (var kv in Branches.Where(w => w.Value.Item2 >= index).ToList())
+            foreach (var v in Branches.Where(w => w.Item2 >= index).ToList())
             {
-                Branches[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+                Branches.Remove(v);
+                Branches.Add(Tuple.Create(v.Item1, v.Item2 + 1));
             }
 
-            foreach (var kv in Marks.Where(w => w.Value.Item2 >= index).ToList())
+            foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
             {
-                Marks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+                Marks[kv.Key] = kv.Value + 1;
             }
 
             var needUpdateKeys = BranchPatches.Keys.Where(k => k >= index).ToList();
@@ -728,24 +716,12 @@ namespace Sigil
             }
         }
 
-        private void UpdateStackAndInstrStream(OpCode instr, TransitionWrapper transitions, TypeOnStack addToStack, int pop, bool firstParamIsThis = false)
+        private void UpdateStackAndInstrStream(OpCode? instr, TransitionWrapper transitions, bool firstParamIsThis = false)
         {
             if (Invalidated)
             {
                 throw new InvalidOperationException("Cannot modify Emit after a delegate has been generated from it");
             }
-
-            // DEBUG
-            if (transitions.Transitions.Any(t => t.PoppedFromStack.Count() != pop))
-            {
-                throw new Exception("transitions do not match expected pop");
-            }
-
-            if (transitions.Transitions.Any(t => t.PushedToStack.Count() != (addToStack == null ? 0 : 1)))
-            {
-                throw new Exception("transitions do not match expected push");
-            }
-            // END DEBUG
 
             var verifyRes = CurrentVerifier.Transition(transitions.Transitions);
             if (!verifyRes.Success)
@@ -753,143 +729,141 @@ namespace Sigil
                 throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(LocalsByIndex));
             }
 
-            if (pop > 0)
+            MaxStackSize = Math.Max(verifyRes.StackSize, MaxStackSize);
+
+            if (instr.HasValue)
             {
-                Stack = Stack.Pop(instr, pop, firstParamIsThis);
+                InstructionStream.Add(instr.Value);
             }
-
-            if (addToStack != null)
-            {
-                Stack = Stack.Push(addToStack);
-            }
-
-            MaxStackSize = Math.Max(MaxStackSize, Stack.Count());
-
-            InstructionStream.Add(Tuple.Create(instr, Stack));
         }
 
-        private void UpdateState(OpCode instr, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(null, transitions);
+        }
+
+        private void UpdateState(OpCode instr, TransitionWrapper transitions)
+        {
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr);
         }
 
-        private void UpdateState(OpCode instr, byte param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, byte param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, short param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, short param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, int param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, int param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, uint param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, uint param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, long param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, long param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, ulong param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, ulong param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, float param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, float param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, double param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, double param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, Local param, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Local param, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, Label param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Label param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, Label[] param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Label[] param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, MethodInfo method, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0, bool firstParamIsThis = false)
+        private void UpdateState(OpCode instr, MethodInfo method, TransitionWrapper transitions, bool firstParamIsThis = false)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop, firstParamIsThis);
+            UpdateStackAndInstrStream(instr, transitions, firstParamIsThis);
 
             IL.Emit(instr, method);
         }
 
-        private void UpdateState(OpCode instr, ConstructorInfo cons, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, ConstructorInfo cons, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, cons);
         }
 
-        private void UpdateState(OpCode instr, Type type, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, Type type, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, type);
         }
 
-        private void UpdateState(OpCode instr, FieldInfo field, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, FieldInfo field, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, field);
         }
 
-        private void UpdateState(OpCode instr, string str, TransitionWrapper transitions, TypeOnStack addToStack = null, int pop = 0)
+        private void UpdateState(OpCode instr, string str, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, addToStack, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, str);
         }
 
-        private void UpdateState(OpCode instr, CallingConventions callConventions, Type returnType, Type[] parameterTypes, TransitionWrapper transitions, int pop = 0)
+        private void UpdateState(OpCode instr, CallingConventions callConventions, Type returnType, Type[] parameterTypes, TransitionWrapper transitions)
         {
-            UpdateStackAndInstrStream(instr, transitions, returnType != typeof(void) ? TypeOnStack.Get(returnType) : null, pop);
+            UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, callConventions, returnType, parameterTypes);
         }

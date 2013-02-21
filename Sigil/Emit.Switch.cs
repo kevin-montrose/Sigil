@@ -45,11 +45,11 @@ namespace Sigil
                 };
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), transitions.Wrap("Switch"), out update, pop: 1);
+            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), transitions.Wrap("Switch"), out update);
 
             foreach (var label in labels)
             {
-                Branches[Stack.Unique()] = Tuple.Create(label, IL.Index);
+                Branches.Add(Tuple.Create(label, IL.Index));
                 BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Switch);
             }
 

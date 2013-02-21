@@ -12,20 +12,6 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> CheckFinite()
         {
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var val = onStack[0];
-
-            if (val != TypeOnStack.Get<float>() && val != TypeOnStack.Get<double>())
-            {
-                throw new SigilVerificationException("CheckFinite expects a floating point value, found " + val, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
             var transitions =
                 new[]
                 {
@@ -34,7 +20,7 @@ namespace Sigil
                 };
 
             // ckfinite leaves the value on the stack, oddly enough
-            UpdateState(OpCodes.Ckfinite, transitions.Wrap("CheckFinite"), val, pop: 1);
+            UpdateState(OpCodes.Ckfinite, transitions.Wrap("CheckFinite"));
 
             return this;
         }

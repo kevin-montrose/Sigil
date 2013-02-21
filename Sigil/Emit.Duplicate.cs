@@ -10,14 +10,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Duplicate()
         {
-            var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            UpdateState(OpCodes.Dup, CurrentVerifier.DuplicateTop().Wrap("Duplicate"), onStack[0]);
+            UpdateState(OpCodes.Dup, CurrentVerifier.DuplicateTop().Wrap("Duplicate"));
 
             return this;
         }

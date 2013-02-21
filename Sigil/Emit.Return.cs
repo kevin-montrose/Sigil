@@ -17,17 +17,7 @@ namespace Sigil
         {
             if (ReturnType == TypeOnStack.Get(typeof(void)))
             {
-                if (!Stack.IsRoot)
-                {
-                    var stackSize = Stack.Count();
-                    var mark = new List<int>();
-                    for (var i = 0; i < stackSize; i++)
-                    {
-                        mark.Add(i);
-                    }
-
-                    throw new SigilVerificationException("Returning from a void method must leave the stack empty", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-                }
+                UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
 
                 UpdateState(OpCodes.Ret, StackTransition.None().Wrap("Return"));
 
@@ -36,31 +26,9 @@ namespace Sigil
                 return this;
             }
 
-            var retType = Stack.Top();
+            UpdateState(OpCodes.Ret, StackTransition.Pop(ReturnType).Wrap("Return"));
 
-            if(retType == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            if (!ReturnType.IsAssignableFrom(retType[0]))
-            {
-                throw new SigilVerificationException("Return expects a value assignable to " + ReturnType + " to be on the stack; found " + retType[0], IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            UpdateState(OpCodes.Ret, StackTransition.Pop(ReturnType).Wrap("Return"), pop: 1);
-
-            if (!Stack.IsRoot)
-            {
-                var stackSize = Stack.Count();
-                var mark = new List<int>();
-                for (var i = 0; i < stackSize; i++)
-                {
-                    mark.Add(i);
-                }
-
-                throw new SigilVerificationException("Return should leave the stack empty", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-            }
+            UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
 
             CurrentVerifier = new VerifiableTracker(baseless: true);
 

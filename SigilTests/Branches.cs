@@ -26,7 +26,7 @@ namespace SigilTests
             var skip = e1.DefineLabel("Skip");
 
             e1.Branch(skip);
-            e1.MarkLabel(skip, Type.EmptyTypes);
+            e1.MarkLabel(skip);
 
             e1.LoadArgument(0);
             e1.LoadConstant(0);
@@ -141,16 +141,16 @@ namespace SigilTests
             il.LoadConstant("abc");
             il.Branch(b0); // jump to b0 with "abc"
 
-            il.MarkLabel(b1, new [] { typeof(int) }); // incoming: 3
+            il.MarkLabel(b1); // incoming: 3
             il.LoadConstant(4);
             il.Call(typeof(Math).GetMethod("Max", new[] { typeof(int), typeof(int) }));
             il.Branch(b2); // jump to b2 with 4
 
-            il.MarkLabel(b0, new[] { typeof(string) }); // incoming: "abc"
+            il.MarkLabel(b0); // incoming: "abc"
             il.CallVirtual(typeof(string).GetProperty("Length").GetGetMethod());
             il.Branch(b1); // jump to b1 with 3
 
-            il.MarkLabel(b2, new[] { typeof(int) }); // incoming: 4
+            il.MarkLabel(b2); // incoming: 4
             il.Return();
             int i = il.CreateDelegate()();
             Assert.AreEqual(4, i);
@@ -194,7 +194,7 @@ namespace SigilTests
 
                     e1.Branch(end);
 
-                    e1.MarkLabel(dead, Type.EmptyTypes);
+                    e1.MarkLabel(dead);
 
                     for (var j = 0; j < i; j++)
                     {
@@ -293,7 +293,7 @@ namespace SigilTests
             var one = e1.DefineLabel("one");
             e1.Branch(one);
 
-            e1.MarkLabel(d1, new[] { typeof(int) });
+            e1.MarkLabel(d1);
 
             e1.LoadConstant(2);
             e1.Add();
@@ -302,7 +302,7 @@ namespace SigilTests
             var two = e1.DefineLabel("two");
             e1.Branch(two);
 
-            e1.MarkLabel(d2, new [] { typeof(int) });
+            e1.MarkLabel(d2);
 
             e1.LoadConstant(3);
             e1.Add();
@@ -325,7 +325,7 @@ namespace SigilTests
             e1.LoadConstant(456);
             e1.Branch(after);
 
-            e1.MarkLabel(dead, new[] { typeof(int) });
+            e1.MarkLabel(dead);
             
             e1.LoadConstant(111);
             e1.Add();
@@ -348,7 +348,7 @@ namespace SigilTests
             e1.LoadConstant(111);
             e1.Branch(after);
 
-            e1.MarkLabel(dead, new [] { typeof(int) });
+            e1.MarkLabel(dead);
             for (var i = 0; i < 1000; i++)
             {
                 e1.Nop();

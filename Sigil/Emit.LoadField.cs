@@ -49,7 +49,7 @@ namespace Sigil
                         new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType })
                     };
 
-                UpdateState(OpCodes.Ldfld, field, transitions.Wrap("LoadField"), TypeOnStack.Get(field.FieldType), pop: 1);
+                UpdateState(OpCodes.Ldfld, field, transitions.Wrap("LoadField"));
             }
             else
             {
@@ -58,7 +58,7 @@ namespace Sigil
                     UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("LoadField"));
                 }
 
-                UpdateState(OpCodes.Ldsfld, field, StackTransition.Push(field.FieldType).Wrap("LoadField"), TypeOnStack.Get(field.FieldType));
+                UpdateState(OpCodes.Ldsfld, field, StackTransition.Push(field.FieldType).Wrap("LoadField"));
             }
 
             return this;

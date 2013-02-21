@@ -19,10 +19,10 @@ namespace Sigil
         {
             if (expected == 1)
             {
-                throw new SigilVerificationException(method + " expects a value on the stack, but it was empty", IL.Instructions(LocalsByIndex), Stack);
+                throw new SigilVerificationException(method + " expects a value on the stack, but it was empty", IL.Instructions(LocalsByIndex));
             }
 
-            throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL.Instructions(LocalsByIndex), Stack);
+            throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL.Instructions(LocalsByIndex));
         }
 
         private void FailOwnership(IOwned obj)
@@ -41,30 +41,6 @@ namespace Sigil
             throw new InvalidOperationException(method + " isn't verifiable");
         }
 
-        private void ValidateBranches()
-        {
-            foreach (var kv in Branches)
-            {
-                var mark = Marks[kv.Value.Item1].Item1;
-
-                var branchLoc = kv.Value.Item2;
-                var markLoc = Marks[kv.Value.Item1].Item2;
-
-                if (!kv.Key.AreEquivalent(mark))
-                {
-                    throw 
-                        new SigilVerificationException(
-                            "Branch to " + kv.Value.Item1 + " has a stack that doesn't match the destination",
-                            IL.Instructions(LocalsByIndex),
-                            kv.Key,
-                            branchLoc,
-                            mark,
-                            markLoc
-                        );
-                }
-            }
-        }
-
         private void ValidateTryCatchFinallyBlocks()
         {
             foreach (var kv in TryBlocks)
@@ -74,8 +50,7 @@ namespace Sigil
                     throw 
                         new SigilVerificationException(
                             "Unended ExceptionBlock " + kv.Key,
-                            IL.Instructions(LocalsByIndex),
-                            Stack
+                            IL.Instructions(LocalsByIndex)
                         );
                 }
             }
@@ -101,12 +76,12 @@ namespace Sigil
         {
             foreach (var branch in Branches)
             {
-                var instr = BranchPatches[branch.Value.Item2];
+                var instr = BranchPatches[branch.Item2];
 
-                var toLabel = branch.Value.Item1;
-                var fromIndex = branch.Value.Item2;
+                var toLabel = branch.Item1;
+                var fromIndex = branch.Item2;
 
-                var toIndex = Marks[toLabel].Item2;
+                var toIndex = Marks[toLabel];
 
                 var fromTryBlocks = TryBlocks.Where(t => fromIndex >= t.Value.Item1 && fromIndex <= t.Value.Item2).ToList();
                 var fromCatchBlocks = CatchBlocks.Where(c => fromIndex >= c.Value.Item1 && fromIndex <= c.Value.Item2).ToList();
@@ -181,26 +156,12 @@ namespace Sigil
         /// </summary>
         private void Validate()
         {
-            if (!Stack.IsRoot)
-            {
-                var stackSize = Stack.Count();
-                var mark = new List<int>();
-                for (var i = 0; i < stackSize; i++)
-                {
-                    mark.Add(i);
-                }
-
-                throw new SigilVerificationException("Delegates must leave their stack empty when they end", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-            }
-
             var lastInstr = InstructionStream.LastOrDefault();
 
-            if (lastInstr == null || lastInstr.Item1 != OpCodes.Ret)
+            if (lastInstr != OpCodes.Ret)
             {
-                throw new SigilVerificationException("Delegate must end with Return", IL.Instructions(LocalsByIndex), Stack);
+                throw new SigilVerificationException("Delegate must end with Return", IL.Instructions(LocalsByIndex));
             }
-
-            ValidateBranches();
 
             ValidateTryCatchFinallyBlocks();
 

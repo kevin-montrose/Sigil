@@ -10,7 +10,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Pop()
         {
-            UpdateState(OpCodes.Pop, StackTransition.Pop<WildcardType>().Wrap("Pop"), pop: 1);
+            UpdateState(OpCodes.Pop, StackTransition.Pop<WildcardType>().Wrap("Pop"));
 
             return this;
         }

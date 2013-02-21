@@ -18,8 +18,6 @@ namespace Sigil
     [Serializable]
     public class SigilVerificationException : Exception, ISerializable
     {
-        private StackState Stack;
-        private StackState SecondStack;
         private string[] Instructions;
 
         private int[] BadValueLocation;
@@ -36,23 +34,6 @@ namespace Sigil
         internal SigilVerificationException(string message, string[] instructions) : base(message)
         {
             Instructions = instructions;
-        }
-
-        internal SigilVerificationException(string message, string[] instructions, StackState stack, params int[] locsOnStack)
-            : this(message, instructions)
-        {
-            BadValueLocation = locsOnStack;
-            Stack = stack;
-        }
-
-        internal SigilVerificationException(string message, string[] instructions, StackState atBranch, int branchLoc, StackState atLabel, int labelLoc)
-            : this(message, instructions)
-        {
-            Stack = atBranch;
-            SecondStack = atLabel;
-
-            BranchLoc = branchLoc;
-            LabelLoc = labelLoc;
         }
 
         private static string GetMessage(string method, VerificationResult failure)
@@ -83,6 +64,21 @@ namespace Sigil
                 return method + " stack doesn't match destination";
             }
 
+            if (failure.IsStackSizeFailure)
+            {
+                if (failure.ExpectedStackSize == 0)
+                {
+                    return method + " expected the stack of be empty";
+                }
+
+                if (failure.ExpectedStackSize == 1)
+                {
+                    return method + "expected the stack to have 1 value";
+                }
+
+                return method + " expected the stack to have " + failure.ExpectedStackSize + " values";
+            }
+
             throw new Exception("Shouldn't be possible!");
         }
 
@@ -93,55 +89,7 @@ namespace Sigil
         /// </summary>
         public string GetDebugInfo()
         {
-            var sb = new StringBuilder();
-
-            if (Stack == null)
-            {
-                return "";
-            }
-
-            if (SecondStack == null)
-            {
-                sb.AppendLine("Top of stack");
-                sb.AppendLine("------------");
-            }
-            else
-            {
-                sb.AppendLine("Top of stack at branch");
-                sb.AppendLine("----------------------");
-            }
-
-            EmitStack(sb, Stack, BadValueLocation);
-
-            if (SecondStack != null)
-            {
-                sb.AppendLine();
-                sb.AppendLine("Top of stack at label");
-                sb.AppendLine("---------------------");
-
-                EmitStack(sb, SecondStack, new int[0]);
-            }
-
-            if (Instructions.Length > 0)
-            {
-                sb.AppendLine();
-                sb.AppendLine("Instruction stream");
-                sb.AppendLine("------------------");
-
-                if (BranchLoc.HasValue && LabelLoc.HasValue)
-                {
-                    sb.AppendLine(AddBranchAndLabelMarkers());
-                }
-                else
-                {
-                    foreach (var line in Instructions)
-                    {
-                        sb.AppendLine(line);
-                    }
-                }
-            }
-
-            return sb.ToString();
+            throw new NotImplementedException();
         }
 
         private string AddBranchAndLabelMarkers()
@@ -159,31 +107,6 @@ namespace Sigil
             }
 
             return ret.ToString().Trim();
-        }
-
-        private static void EmitStack(StringBuilder sb, StackState stack, int[] highlightLocation)
-        {
-            if (stack.IsRoot)
-            {
-                sb.AppendLine("!!EMPTY!!");
-            }
-
-            int i = 0;
-
-            while (!stack.IsRoot)
-            {
-                var val = stack.Value.ToString();
-
-                if (highlightLocation != null && highlightLocation.Any(l => l == i))
-                {
-                    val += " // Bad value";
-                }
-
-                sb.AppendLine(val);
-                stack = stack.Pop();
-
-                i++;
-            }
         }
 
         /// <summary>

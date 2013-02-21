@@ -43,7 +43,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(byte).MakeByRefType() }, Type.EmptyTypes)
                 };
 
-            UpdateState(OpCodes.Initblk, transition.Wrap("InitializeBlock"), pop: 3);
+            UpdateState(OpCodes.Initblk, transition.Wrap("InitializeBlock"));
 
             return this;
         }

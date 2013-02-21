@@ -48,7 +48,7 @@ namespace Sigil
                     new StackTransition(new [] { method.DeclaringType }, new [] { typeof(NativeIntType) })
                 };
 
-            UpdateState(OpCodes.Ldvirtftn, method, transitions.Wrap("LoadVirtualFunctionPointer"), type, pop: 1);
+            UpdateState(OpCodes.Ldvirtftn, method, transitions.Wrap("LoadVirtualFunctionPointer"));
 
             return this;
         }

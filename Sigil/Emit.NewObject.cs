@@ -251,7 +251,7 @@ namespace Sigil
                     new StackTransition(expectedParams, new [] { makesType })
                 };
 
-            UpdateState(OpCodes.Newobj, constructor, transitions.Wrap("NewObject"), makesType, pop: expectedParams.Count);
+            UpdateState(OpCodes.Newobj, constructor, transitions.Wrap("NewObject"));
 
             return this;
         }

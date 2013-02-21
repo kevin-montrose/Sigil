@@ -13,6 +13,9 @@ namespace Sigil.Impl
     // Something that's *only* assignable from object
     internal class OnlyObjectType { }
 
+    // Something that means "pop the entire damn stack"
+    internal class PopAllType { }
+
     public class StackTransition
     {
         internal int PoppedCount { get { return PoppedFromStack.Count(); } }
@@ -23,6 +26,8 @@ namespace Sigil.Impl
         // pushed onto the stack, first item is first pushed (ends up lowest on the stack)
         internal IEnumerable<TypeOnStack> PushedToStack { get; private set; }
 
+        internal int? StackSizeMustBe { get; private set; }
+
         public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed)
             : this
             (
@@ -30,6 +35,12 @@ namespace Sigil.Impl
                 pushed.Select(s => TypeOnStack.Get(s))
             )
         { }
+
+        internal StackTransition(int sizeMustBe)
+            : this(new TypeOnStack[0], new TypeOnStack[0])
+        {
+            StackSizeMustBe = sizeMustBe;
+        }
 
         internal StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed)
         {
@@ -55,6 +66,7 @@ namespace Sigil.Impl
     public class VerificationResult
     {
         public bool Success { get; private set; }
+        public int StackSize { get; private set; }
 
         // Set when the stack is underflowed
         public bool IsStackUnderflow { get; private set; }
@@ -72,9 +84,12 @@ namespace Sigil.Impl
         internal IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
         internal Stack<IEnumerable<TypeOnStack>> Stack { get; private set; }
 
-        internal static VerificationResult Successful()
+        // Set when the stack was expected to be a certain size, but it wasn't
+        public bool IsStackSizeFailure {get; private set;}
+
+        internal static VerificationResult Successful(int stackSize)
         {
-            return new VerificationResult { Success = true };
+            return new VerificationResult { Success = true, StackSize = stackSize };
         }
 
         internal static VerificationResult FailureUnderflow(int expectedSize)
@@ -114,6 +129,18 @@ namespace Sigil.Impl
                     StackIndex = stackIndex,
                     ExpectedAtStackIndex = expectedTypes,
                     Stack = stack
+                };
+        }
+
+        internal static VerificationResult FailureStackSize(int expectedSize)
+        {
+            return 
+                new VerificationResult
+                {
+                    Success = false,
+
+                    IsStackSizeFailure = true,
+                    ExpectedStackSize = expectedSize
                 };
         }
     }
@@ -192,7 +219,7 @@ namespace Sigil.Impl
 
                 if (isEquivalent)
                 {
-                    return VerificationResult.Successful();
+                    return VerificationResult.Successful(GetStack(this).Count);
                 }
 
                 return VerificationResult.FailureStackMismatch(GetStack(this), GetStack(other));
@@ -223,11 +250,18 @@ namespace Sigil.Impl
 
         private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, IEnumerable<StackTransition> legal)
         {
-            var toPop = legal.First().PoppedCount;
-
-            for (var j = 0; j < toPop && stack.Count > 0; j++)
+            if (legal.Any(l => l.PoppedFromStack.Any(u => u == TypeOnStack.Get<PopAllType>())))
             {
-                stack.Pop();
+                stack.Clear();
+            }
+            else
+            {
+                var toPop = legal.First().PoppedCount;
+
+                for (var j = 0; j < toPop && stack.Count > 0; j++)
+                {
+                    stack.Pop();
+                }
             }
 
             var toPush = new List<TypeOnStack>();
@@ -251,10 +285,22 @@ namespace Sigil.Impl
             {
                 var ops = Transitions[i];
 
+                if(ops.Any(o => o.StackSizeMustBe.HasValue))
+                {
+                    if(ops.Count() > 1) throw new Exception("Shouldn't have multiple 'must be size' transitions at the same point");
+                    var doIt = ops.Single();
+
+                    if(doIt.StackSizeMustBe != runningStack.Count){
+                        return VerificationResult.FailureStackSize(doIt.StackSizeMustBe.Value);
+                    }
+                }
+
                 var legal =
                     ops.Where(
                         w =>
                         {
+                            if (w.PoppedFromStack.All(u => u == TypeOnStack.Get<PopAllType>())) return true;
+
                             var onStack = runningStack.Peek(Baseless, w.PoppedCount);
 
                             if (onStack == null)
@@ -279,9 +325,10 @@ namespace Sigil.Impl
 
                 if (legal.Count == 0)
                 {
-                    if (runningStack.Count == 0)
+                    var wouldPop = ops.GroupBy(g => g.PoppedFromStack.Count()).Single().Key;
+
+                    if (runningStack.Count < wouldPop)
                     {
-                        var wouldPop = ops.GroupBy(g => g.PoppedFromStack.Count()).Single().Key;
                         return VerificationResult.FailureUnderflow(wouldPop);
                     }
 
@@ -299,17 +346,26 @@ namespace Sigil.Impl
                 // No reason to do all this work again
                 Transitions[i] = legal;
 
-                var toPop = legal.First().PoppedCount;
-
-                if (toPop > runningStack.Count && !Baseless)
+                bool popAll = legal.Any(l => l.PoppedFromStack.Contains(TypeOnStack.Get<PopAllType>()));
+                if (popAll && legal.Count() != 1)
                 {
-                    return VerificationResult.FailureUnderflow(toPop);
+                    throw new Exception("PopAll cannot coexist with any other transitions");
+                }
+
+                if(!popAll)
+                {
+                    var toPop = legal.First().PoppedCount;
+
+                    if (toPop > runningStack.Count && !Baseless)
+                    {
+                        return VerificationResult.FailureUnderflow(toPop);
+                    }
                 }
 
                 UpdateStack(runningStack, legal);
             }
 
-            return VerificationResult.Successful();
+            return VerificationResult.Successful(runningStack.Count);
         }
 
         private int FindStackFailureIndex(Stack<IEnumerable<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)

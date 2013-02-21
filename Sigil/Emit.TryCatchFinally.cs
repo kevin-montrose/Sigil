@@ -12,17 +12,7 @@ namespace Sigil
         /// </summary>
         public ExceptionBlock BeginExceptionBlock()
         {
-            if (!Stack.IsRoot)
-            {
-                var stackSize = Stack.Count();
-                var mark = new List<int>();
-                for (var i = 0; i < stackSize; i++)
-                {
-                    mark.Add(i);
-                }
-
-                throw new SigilVerificationException("Stack should be empty when BeginExceptionBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-            }
+            UpdateState((new[] { new StackTransition(0) }).Wrap("BeginExceptionBlock"));
 
             var labelDel = IL.BeginExceptionBlock();
             var label = new Label(this, labelDel, "__exceptionBlockEnd");
@@ -106,9 +96,7 @@ namespace Sigil
 
             TryBlocks[forTry] = Tuple.Create(location.Item1, IL.Index);
 
-            Stack = new StackState();
-
-            Marks[forTry.Label] = Tuple.Create(Stack, IL.Index);
+            Marks[forTry.Label] = IL.Index;
 
             CurrentExceptionBlock.Pop();
 
@@ -201,28 +189,16 @@ namespace Sigil
                 throw new InvalidOperationException("Cannot start a new catch block, " + currentlyOpen + " has not been ended");
             }
 
-            if (!Stack.IsRoot)
-            {
-                var stackSize = Stack.Count();
-                var mark = new List<int>();
-                for (var i = 0; i < stackSize; i++)
-                {
-                    mark.Add(i);
-                }
-
-                throw new SigilVerificationException("Stack should be empty when BeginCatchBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-            }
+            UpdateState((new[] { new StackTransition(0) }).Wrap("BeginCatchBlock"));
 
             var tryBlock = TryBlocks[forTry];
 
             if (tryBlock.Item2 != -1)
             {
-                throw new SigilVerificationException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", IL.Instructions(LocalsByIndex), Stack);
+                throw new SigilVerificationException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", IL.Instructions(LocalsByIndex));
             }
 
             IL.BeginCatchBlock(exceptionType);
-            Stack = new StackState();
-            Stack = Stack.Push(TypeOnStack.Get(exceptionType));
 
             CurrentVerifier.Transition(StackTransition.Push(exceptionType));
 
@@ -260,23 +236,13 @@ namespace Sigil
                 FailOwnership(forCatch);
             }
 
-            if (!Stack.IsRoot)
-            {
-                var stackSize = Stack.Count();
-                var mark = new List<int>();
-                for (var i = 0; i < stackSize; i++)
-                {
-                    mark.Add(i);
-                }
-
-                throw new SigilVerificationException("Stack should be empty when EndCatchBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-            }
+            UpdateState((new[] { new StackTransition(0) }).Wrap("EndCatchBlock"));
 
             var location = CatchBlocks[forCatch];
 
             if (location.Item2 != -1)
             {
-                throw new InvalidOperationException("CatchBlock  has already been ended");
+                throw new InvalidOperationException("CatchBlock has already been ended");
             }
 
             IL.EndCatchBlock();
@@ -336,17 +302,7 @@ namespace Sigil
                 throw new InvalidOperationException("There can only be one finally block per ExceptionBlock, and one is already defined for " + forTry);
             }
 
-            if (!Stack.IsRoot)
-            {
-                var stackSize = Stack.Count();
-                var mark = new List<int>();
-                for (var i = 0; i < stackSize; i++)
-                {
-                    mark.Add(i);
-                }
-
-                throw new SigilVerificationException("Stack should be empty when BeginFinallyBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-            }
+            UpdateState((new[] { new StackTransition(0) }).Wrap("BeginFinallyBlock"));
 
             var ret = new FinallyBlock(forTry);
 
@@ -379,17 +335,7 @@ namespace Sigil
                 throw new InvalidOperationException("EndFinallyBlock expects an unclosed finally block, but " + forFinally + " is already closed");
             }
 
-            if (!Stack.IsRoot)
-            {
-                var stackSize = Stack.Count();
-                var mark = new List<int>();
-                for (var i = 0; i < stackSize; i++)
-                {
-                    mark.Add(i);
-                }
-
-                throw new SigilVerificationException("Stack should be empty when EndFinallyBlock is called", IL.Instructions(LocalsByIndex), Stack, mark.ToArray());
-            }
+            UpdateState((new[] { new StackTransition(0) }).Wrap("EndFinallyBlock"));
 
             IL.EndFinallyBlock();
 

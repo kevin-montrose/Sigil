@@ -24,7 +24,7 @@ namespace Sigil
                     throw new SigilVerificationException("Usage of unmarked label " + label, IL.Instructions(LocalsByIndex));
                 }
 
-                var stop = Marks[label].Item2;
+                var stop = Marks[label];
 
                 var distance = IL.ByteDistance(start, stop);
 
@@ -182,7 +182,7 @@ namespace Sigil
         /// 
         /// In the assertion, the top of the stack is the first (0-indexed, left-most) parameter.
         /// </summary>
-        public Emit<DelegateType> MarkLabel(Label label, IEnumerable<Type> stackAssertion = null)
+        public Emit<DelegateType> MarkLabel(Label label)
         {
             if (label == null)
             {
@@ -214,33 +214,11 @@ namespace Sigil
 
             TrackersAtLabels[label] = CurrentVerifier.Clone();
 
-            if (stackAssertion != null)
-            {
-                var onStack = Stack.Top(stackAssertion.Count());
-
-                if (onStack == null)
-                {
-                    FailStackUnderflow(onStack.Count());
-                }
-
-                for (var i = 0; i < onStack.Length; i++)
-                {
-                    var shouldBe = TypeOnStack.Get(stackAssertion.ElementAt(i).Alias());
-                    var actuallyIs = onStack[i];
-
-                    // strict equality, assignment clouds things for debugging
-                    if (shouldBe != actuallyIs)
-                    {
-                        throw new SigilVerificationException("Assertion failed expected " + shouldBe + ", but found " + actuallyIs, IL.Instructions(LocalsByIndex), Stack, i);
-                    }
-                }
-            }
-
             UnmarkedLabels.Remove(label);
 
             IL.MarkLabel(label);
 
-            Marks[label] = Tuple.Create(Stack, IL.Index);
+            Marks[label] = IL.Index;
 
             return this;
         }
@@ -259,11 +237,11 @@ namespace Sigil
         /// 
         /// In the assertion, the top of the stack is the first (0-indexed, left-most) parameter.
         /// </summary>
-        public Emit<DelegateType> MarkLabel(string name, IEnumerable<Type> stackAssertion = null)
+        public Emit<DelegateType> MarkLabel(string name)
         {
             if (name == null) throw new ArgumentNullException("name");
 
-            return MarkLabel(Labels[name], stackAssertion);
+            return MarkLabel(Labels[name]);
         }
     }
 }

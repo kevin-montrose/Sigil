@@ -18,7 +18,7 @@ namespace SigilTests
             var t = e1.BeginExceptionBlock();
             var l = e1.DefineLabel("dead_code");
             e1.Leave(t.Label);
-            e1.MarkLabel(l, Type.EmptyTypes);
+            e1.MarkLabel(l);
             e1.LoadArgument(0);
             e1.LoadConstant(1);
             e1.Add();

@@ -105,17 +105,17 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.MarkLabel(Sigil.Label, IEnumerable``1)" />
-        public EmitShorthand<DelegateType> MarkLabel(Label label, IEnumerable<Type> stackAssertion = null)
+        public EmitShorthand<DelegateType> MarkLabel(Label label)
         {
-            InnerEmit.MarkLabel(label, stackAssertion);
+            InnerEmit.MarkLabel(label);
 
             return this;
         }
 
         /// <summary cref="M:Sigil.Emit`1.MarkLabel(System.String, IEnumerable``1)" />
-        public EmitShorthand<DelegateType> MarkLabel(string name, IEnumerable<Type> stackAssertion = null)
+        public EmitShorthand<DelegateType> MarkLabel(string name)
         {
-            InnerEmit.MarkLabel(name, stackAssertion);
+            InnerEmit.MarkLabel(name);
 
             return this;
         }

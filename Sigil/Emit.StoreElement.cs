@@ -127,11 +127,11 @@ namespace Sigil
                         new StackTransition(new [] { elementType, typeof(int), arrayType }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stelem, elementType, transitions.Wrap("StoreElement"), pop: 3);
+                UpdateState(OpCodes.Stelem, elementType, transitions.Wrap("StoreElement"));
                 return this;
             }
 
-            UpdateState(instr.Value, transitions.Wrap("StoreElement"), pop: 3);
+            UpdateState(instr.Value, transitions.Wrap("StoreElement"));
 
             return this;
         }

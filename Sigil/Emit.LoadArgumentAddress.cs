@@ -29,7 +29,7 @@ namespace Sigil
                     asByte = (byte)index;
                 }
 
-                UpdateState(OpCodes.Ldarga_S, asByte, StackTransition.Push(ParameterTypes[index].MakePointerType()).Wrap("LoadArgumentAddress"), TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
+                UpdateState(OpCodes.Ldarga_S, asByte, StackTransition.Push(ParameterTypes[index].MakePointerType()).Wrap("LoadArgumentAddress"));
 
                 return this;
             }
@@ -40,7 +40,7 @@ namespace Sigil
                 asShort = (short)index;
             }
 
-            UpdateState(OpCodes.Ldarga, asShort, StackTransition.Push(ParameterTypes[index].MakePointerType()).Wrap("LoadArgumentAddress"), TypeOnStack.Get(ParameterTypes[index].MakePointerType()));
+            UpdateState(OpCodes.Ldarga, asShort, StackTransition.Push(ParameterTypes[index].MakePointerType()).Wrap("LoadArgumentAddress"));
 
             return this;
         }

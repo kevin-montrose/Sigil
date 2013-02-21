@@ -230,7 +230,6 @@
     <Compile Include="Local.cs" />
     <Compile Include="Impl\BufferedILGenerator.cs" />
     <Compile Include="Impl\ExtensionMethods.cs" />
-    <Compile Include="Impl\StackState.cs" />
     <Compile Include="Impl\TypeOnStack.cs" />
     <Compile Include="Emit.LoadLocal.cs">
       <DependentUpon>Emit.cs</DependentUpon>

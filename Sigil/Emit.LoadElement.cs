@@ -172,11 +172,11 @@ namespace Sigil
                         new StackTransition(new [] { typeof(int), arrType }, new [] { elementType }),
                     };
 
-                UpdateState(OpCodes.Ldelem, elementType, transitions.Wrap("LoadElement"), TypeOnStack.Get(elementType), pop: 2);
+                UpdateState(OpCodes.Ldelem, elementType, transitions.Wrap("LoadElement"));
                 return this;
             }
 
-            UpdateState(instr.Value, transitions.Wrap("LoadElement"), TypeOnStack.Get(elementType), pop: 2);
+            UpdateState(instr.Value, transitions.Wrap("LoadElement"));
 
             return this;
         }

@@ -76,7 +76,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
         }
 
@@ -113,7 +113,7 @@ namespace SigilTests
             emiter.BranchIfEqual(inputIsNull);
             emiter.Branch(tryCall);
 
-            emiter.MarkLabel(inputIsNull, Type.EmptyTypes);
+            emiter.MarkLabel(inputIsNull);
             emiter.LoadConstant(false);
             emiter.Return();
 
@@ -210,14 +210,14 @@ namespace SigilTests
             emiter.LoadConstant(1);
             emiter.Branch(label1);
 
-            emiter.MarkLabel(label2, new[] { typeof(int) });
+            emiter.MarkLabel(label2);
             emiter.LoadConstant(2);
             emiter.Branch(label3);
 
-            emiter.MarkLabel(label1, new[] { typeof(int) });
+            emiter.MarkLabel(label1);
             emiter.Branch(label2);
 
-            emiter.MarkLabel(label3, new[] { typeof(int), typeof(int) }); // the top of the stack is the first element
+            emiter.MarkLabel(label3); // the top of the stack is the first element
             emiter.Add();
             emiter.Return();
 

@@ -16,9 +16,9 @@ namespace Sigil
             var last = InstructionStream[InstructionStream.Count - 1];
             var nextToLast = InstructionStream[InstructionStream.Count - 2];
 
-            if (last.Item1 != OpCodes.Ret) return;
+            if (last != OpCodes.Ret) return;
 
-            if (!new[] { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt }.Contains(nextToLast.Item1)) return;
+            if (!new[] { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt }.Contains(nextToLast)) return;
 
             InsertInstruction(IL.Index - 2, OpCodes.Tailcall);
         }
@@ -71,7 +71,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Call, method, transitions.Wrap("Call"), resultType, pop: expectedParams.Count, firstParamIsThis: firstParamIsThis);
+            UpdateState(OpCodes.Call, method, transitions.Wrap("Call"), firstParamIsThis: firstParamIsThis);
 
             return this;
         }

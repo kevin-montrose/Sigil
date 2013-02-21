@@ -37,7 +37,7 @@ namespace Sigil
                     asByte = (byte)local.Index;
                 }
 
-                UpdateState(OpCodes.Ldloca_S, asByte, StackTransition.Push(ptrType).Wrap("LoadLocalAddress"), TypeOnStack.Get(ptrType));
+                UpdateState(OpCodes.Ldloca_S, asByte, StackTransition.Push(ptrType).Wrap("LoadLocalAddress"));
                 return this;
             }
 
@@ -47,7 +47,7 @@ namespace Sigil
                 asShort = (short)local.Index;
             }
 
-            UpdateState(OpCodes.Ldloca, asShort, StackTransition.Push(ptrType).Wrap("LoadLocalAddress"), TypeOnStack.Get(ptrType));
+            UpdateState(OpCodes.Ldloca, asShort, StackTransition.Push(ptrType).Wrap("LoadLocalAddress"));
 
             return this;
         }

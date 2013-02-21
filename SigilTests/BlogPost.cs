@@ -60,8 +60,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Return expects a value assignable to System.String to be on the stack; found int", e.Message);
-                Assert.AreEqual("Top of stack\r\n------------\r\nint // Bad value\r\n\r\nInstruction stream\r\n------------------\r\n\r\nldarg.0\r\nldnull\r\nbne.un not_null\r\nldnull\r\nret\r\n\r\nnot_null:\r\nldarg.1\r\nldarg.0\r\ncallvirt Int32 Invoke(System.String)\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Return expected a System.String; found int", e.Message);
             }
         }
     }

@@ -216,7 +216,7 @@ namespace Sigil
                 UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None().Wrap("LoadIndirect"));
             }
 
-            UpdateState(instr.Value, transitions.Wrap("LoadIndirect"), TypeOnStack.Get(type), pop: 1);
+            UpdateState(instr.Value, transitions.Wrap("LoadIndirect"));
 
             return this;
         }

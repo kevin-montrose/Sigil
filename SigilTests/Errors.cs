@@ -130,21 +130,6 @@ namespace SigilTests
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
                 e1.NewObject<object>();
-
-                try
-                {
-                    var d1 = e1.CreateDelegate();
-                    Assert.Fail();
-                }
-                catch (SigilVerificationException e)
-                {
-                    Assert.AreEqual("Delegates must leave their stack empty when they end", e.Message);
-                }
-            }
-
-            {
-                var e1 = Emit<Action>.NewDynamicMethod();
-                e1.NewObject<object>();
                 e1.Pop();
 
                 try
@@ -359,7 +344,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Stack should be empty when EndFinallyBlock is called", e.Message);
+                    Assert.AreEqual("EndFinallyBlock expected the stack of be empty", e.Message);
                 }
             }
         }
@@ -411,7 +396,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Stack should be empty when EndCatchBlock is called", e.Message);
+                    Assert.AreEqual("EndCatchBlock expected the stack of be empty", e.Message);
                 }
             }
 
@@ -429,7 +414,7 @@ namespace SigilTests
                 }
                 catch (InvalidOperationException e)
                 {
-                    Assert.AreEqual("CatchBlock  has already been ended", e.Message);
+                    Assert.AreEqual("CatchBlock has already been ended", e.Message);
                 }
             }
         }
@@ -1227,7 +1212,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Returning from a void method must leave the stack empty", e.Message);
+                    Assert.AreEqual("Return expected the stack of be empty", e.Message);
                 }
             }
 
@@ -1256,7 +1241,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Return expects a value assignable to int to be on the stack; found System.Object", e.Message);
+                    Assert.AreEqual("Return expected an int; found System.Object", e.Message);
                 }
             }
 
@@ -1272,7 +1257,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Return should leave the stack empty", e.Message);
+                    Assert.AreEqual("Return expected the stack of be empty", e.Message);
                 }
             }
         }
@@ -1521,7 +1506,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LocalAllocate expects a value on the stack, but it was empty", e.Message);
+                    Assert.AreEqual("LocalAllocateexpected the stack to have 1 value", e.Message);
                 }
             }
 
@@ -1536,7 +1521,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LocalAllocate expected an int or native int, found System.Object", e.Message);
+                    Assert.AreEqual("LocalAllocate expected an int, or native int; found System.Object", e.Message);
                 }
             }
 
@@ -1552,7 +1537,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LocalAllocate requires the stack only contain the size value", e.Message);
+                    Assert.AreEqual("LocalAllocateexpected the stack to have 1 value", e.Message);
                 }
             }
         }
@@ -2329,7 +2314,7 @@ namespace SigilTests
                 var l = e1.DefineLabel();
                 var d = e1.DefineLabel();
                 e1.Branch(l);
-                e1.MarkLabel(d, Type.EmptyTypes);
+                e1.MarkLabel(d);
                 e1.Return();
 
                 try
@@ -2452,7 +2437,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Jump expected the stack to be empty", e.Message);
+                    Assert.AreEqual("Jump expected the stack of be empty", e.Message);
                 }
             }
 
@@ -3217,7 +3202,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("CheckFinite expects a floating point value, found System.Object", e.Message);
+                Assert.AreEqual("CheckFinite expected a double, or float; found System.Object", e.Message);
             }
         }
 
@@ -3736,7 +3721,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Stack should be empty when BeginCatchBlock is called", e.Message);
+                Assert.AreEqual("BeginCatchBlock expected the stack of be empty", e.Message);
             }
         }
 
@@ -3829,7 +3814,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException s)
             {
-                Assert.AreEqual("Stack should be empty when BeginExceptionBlock is called", s.Message);
+                Assert.AreEqual("BeginExceptionBlock expected the stack of be empty", s.Message);
             }
         }
 
@@ -3863,7 +3848,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("ShiftLeft expects the value to be shifted to be an int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("ShiftLeft expected an int, long, or native int; found System.String", e.Message);
             }
 
             var e2 = Emit<Action>.NewDynamicMethod("E2");
@@ -3877,7 +3862,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("ShiftLeft expects the shift to be an int or native int; found System.String", e.Message);
+                Assert.AreEqual("ShiftLeft expected an int, or native int; found System.String", e.Message);
             }
         }
 
@@ -3895,7 +3880,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expects an int32, int64, native int, float, reference, or pointer as first value; found System.String", e.Message);
+                Assert.AreEqual("Add expected an int, or native int; found System.String", e.Message);
             }
 
             var e2 = Emit<Action>.NewDynamicMethod("E2");
@@ -3909,7 +3894,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
 
             var e3 = Emit<Action>.NewDynamicMethod("E3");
@@ -3923,7 +3908,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with to an int64 expects an in64 as second value; found System.String", e.Message);
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
 
             var e4 = Emit<Action>.NewDynamicMethod("E4");
@@ -3938,7 +3923,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with a native int expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
 
             var e5 = Emit<Action>.NewDynamicMethod("E5");
@@ -3952,7 +3937,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with a float expects a float as second value; found System.String", e.Message);
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
 
             var e6 = Emit<Action>.NewDynamicMethod("E6");
@@ -3966,7 +3951,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with a double expects a double as second value; found System.String", e.Message);
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
 
             var e7 = Emit<Action<int>>.NewDynamicMethod("E7");
@@ -3980,7 +3965,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with a reference or pointer expects an int32, or a native int as second value; found System.String", e.Message);
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
 
             var e8 = Emit<Action<int>>.NewDynamicMethod("E8");
@@ -4241,7 +4226,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Negate expects an int, long, float, double, or native int; found System.String", e.Message);
+                Assert.AreEqual("Negate expected a double, float, int, long, or native int; found System.String", e.Message);
             }
         }
 
@@ -4309,7 +4294,7 @@ namespace SigilTests
             var t = e1.BeginExceptionBlock();
             var f = e1.BeginFinallyBlock(t);
             e1.Branch(l);
-            e1.MarkLabel(dead, Type.EmptyTypes);
+            e1.MarkLabel(dead);
             e1.EndFinallyBlock(f);
             e1.EndExceptionBlock(t);
 
@@ -4335,7 +4320,7 @@ namespace SigilTests
             var dead = e1.DefineLabel();
 
             e1.Branch(l);
-            e1.MarkLabel(dead, Type.EmptyTypes);
+            e1.MarkLabel(dead);
 
             var t = e1.BeginExceptionBlock();
             var f = e1.BeginFinallyBlock(t);
@@ -4427,7 +4412,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Stack should be empty when BeginFinallyBlock is called", e.Message);
+                Assert.AreEqual("BeginFinallyBlock expected the stack of be empty", e.Message);
             }
 
             var e7 = Emit<Action>.NewDynamicMethod("E7");
@@ -4517,22 +4502,21 @@ namespace SigilTests
             e1.LoadConstant(1);
             e1.Branch(l);
 
-            e1.MarkLabel(dead, new[] { typeof(int) });
+            e1.MarkLabel(dead);
             e1.Pop();
             e1.Return();
 
             e1.MarkLabel(l);
-            e1.Return();
+            
 
             try
             {
-                var d1 = e1.CreateDelegate();
+                e1.Return();
                 Assert.Fail("Shouldn't be possible");
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Branch to l has a stack that doesn't match the destination", e.Message);
-                Assert.AreEqual("Top of stack at branch\r\n----------------------\r\nint\r\n\r\nTop of stack at label\r\n---------------------\r\n!!EMPTY!!\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nbr.s l // Failure branch\r\n\r\ndead_code:\r\npop\r\nret\r\n\r\nl: // Failure label\r\nret\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Return expected the stack of be empty", e.Message);
             }
         }
 
@@ -4550,8 +4534,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add with an int32 expects an int32, native int, reference, or pointer as a second value; found System.String", e.Message);
-                Assert.AreEqual("Top of stack\r\n------------\r\nSystem.String // Bad value\r\nint\r\n\r\nInstruction stream\r\n------------------\r\nldc.i4.1\r\nldstr '123'\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
             }
         }
     }

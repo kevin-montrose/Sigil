@@ -33,7 +33,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, new [] { typeof(int) })
                 };
 
-            UpdateState(OpCodes.Ceq, transitions.Wrap("CompareEqual"), TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Ceq, transitions.Wrap("CompareEqual"));
 
             return this;
         }
@@ -47,7 +47,7 @@ namespace Sigil
         {
             var transitions = ValidateComparable("CompareGreaterThan");
 
-            UpdateState(OpCodes.Cgt, transitions, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Cgt, transitions);
 
             return this;
         }
@@ -61,7 +61,7 @@ namespace Sigil
         {
             var transitions = ValidateComparable("UnsignedCompareGreaterThan");
 
-            UpdateState(OpCodes.Cgt_Un, transitions, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Cgt_Un, transitions);
 
             return this;
         }
@@ -75,7 +75,7 @@ namespace Sigil
         {
             var transitions = ValidateComparable("CompareLessThan");
 
-            UpdateState(OpCodes.Clt, transitions, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Clt, transitions);
 
             return this;
         }
@@ -89,7 +89,7 @@ namespace Sigil
         {
             var transitions = ValidateComparable("UnsignedCompareLessThan");
 
-            UpdateState(OpCodes.Clt_Un, transitions, TypeOnStack.Get<int>(), pop: 2);
+            UpdateState(OpCodes.Clt_Un, transitions);
 
             return this;
         }

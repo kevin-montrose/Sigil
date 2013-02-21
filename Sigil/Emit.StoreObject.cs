@@ -57,7 +57,7 @@ namespace Sigil
                         new StackTransition(new [] { valueType, valueType.MakeByRefType() }, Type.EmptyTypes)
                     };
 
-            UpdateState(OpCodes.Stobj, valueType, transitions.Wrap("StoreObject"), pop: 2);
+            UpdateState(OpCodes.Stobj, valueType, transitions.Wrap("StoreObject"));
 
             return this;
         }

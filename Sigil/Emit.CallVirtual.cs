@@ -62,7 +62,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Callvirt, method, transitions.Wrap("CallVirtual"), resultType, pop: expectedParams.Count);
+            UpdateState(OpCodes.Callvirt, method, transitions.Wrap("CallVirtual"));
 
             return this;
         }
