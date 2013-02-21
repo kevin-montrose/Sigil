@@ -73,19 +73,6 @@ namespace Sigil.Impl
 
         private List<OpCode> UsedBy { get; set; }
 
-        private List<TypeOnStack> ReplacedWithTypes { get; set; }
-
-        /// <summary>
-        /// When a type is replaced (without an opcode) on the stack, call this to keep
-        /// any mark tracking working.
-        /// </summary>
-        public void ReplacedWith(TypeOnStack newType)
-        {
-            if (!IsMarkable) return;
-
-            ReplacedWithTypes.Add(newType);
-        }
-
         /// <summary>
         /// Call to indicate that something on the stack was used
         /// as the #{index}'d (starting at 0) parameter to the {code} 
@@ -101,13 +88,11 @@ namespace Sigil.Impl
         /// <summary>
         /// Returns the # of times this value was used as the given #{index}'d parameter to the {code} instruction.
         /// </summary>
-        public int CountMarks(OpCode code, int index, bool isThis)
+        public int CountMarks(OpCode code)
         {
             if (UsedBy == null) throw new Exception(this + " is not markable");
 
-            var val = Tuple.Create(code, index, isThis);
-
-            return UsedBy.Count(c => c.Equals(val)) + ReplacedWithTypes.Sum(t => t.CountMarks(code, index, isThis));
+            return UsedBy.Count(c => c.Equals(code));
         }
 
         /// <summary>
@@ -117,7 +102,7 @@ namespace Sigil.Impl
         {
             if (UsedBy == null) throw new Exception(this + " is not markable");
 
-            return UsedBy.Count + ReplacedWithTypes.Sum(t => t.CountMarks());
+            return UsedBy.Count;
         }
 
         public static TypeOnStack Get<T>()
@@ -148,8 +133,7 @@ namespace Sigil.Impl
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
-                    UsedBy = new List<OpCode>(),
-                    ReplacedWithTypes = new List<TypeOnStack>()
+                    UsedBy = new List<OpCode>()
                 };
         }
 

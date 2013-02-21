@@ -16,27 +16,27 @@ namespace Sigil
                 var at = elem.Item1;
                 var value = elem.Item2;
 
-                var asObjToLdfd = value.CountMarks(OpCodes.Ldfld, 0, false);
-                var asObjToLdfda = value.CountMarks(OpCodes.Ldflda, 0, false);
-                var asObjToStfd = value.CountMarks(OpCodes.Stfld, 0, false);
+                var asObjToLdfd = value.CountMarks(OpCodes.Ldfld);
+                var asObjToLdfda = value.CountMarks(OpCodes.Ldflda);
+                var asObjToStfd = value.CountMarks(OpCodes.Stfld);
 
-                var asObjToCall = value.CountMarks(OpCodes.Call, 0, true);
+                var asObjToCall = value.CountMarks(OpCodes.Call);
 
-                var asPtrToLdobj = value.CountMarks(OpCodes.Ldobj, 0, false);
+                var asPtrToLdobj = value.CountMarks(OpCodes.Ldobj);
                 var asPtrToLdind =
-                    value.CountMarks(OpCodes.Ldind_I, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_I1, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_I2, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_I4, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_I8, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_R4, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_R8, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_Ref, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_U1, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_U2, 0, false) +
-                    value.CountMarks(OpCodes.Ldind_U4, 0, false);
+                    value.CountMarks(OpCodes.Ldind_I) +
+                    value.CountMarks(OpCodes.Ldind_I1) +
+                    value.CountMarks(OpCodes.Ldind_I2) +
+                    value.CountMarks(OpCodes.Ldind_I4) +
+                    value.CountMarks(OpCodes.Ldind_I8) +
+                    value.CountMarks(OpCodes.Ldind_R4) +
+                    value.CountMarks(OpCodes.Ldind_R8) +
+                    value.CountMarks(OpCodes.Ldind_Ref) +
+                    value.CountMarks(OpCodes.Ldind_U1) +
+                    value.CountMarks(OpCodes.Ldind_U2) +
+                    value.CountMarks(OpCodes.Ldind_U4);
 
-                var asSourceToCpobj = value.CountMarks(OpCodes.Cpobj, 1, false);
+                var asSourceToCpobj = value.CountMarks(OpCodes.Cpobj);
 
                 var totalAllowedUses =
                     asObjToLdfd +
@@ -87,13 +87,6 @@ namespace Sigil
 
             // Shove this away, later on we'll figure out if we can insert a readonly here
             ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
-
-            /*var transitions =
-                new[] 
-                {
-                    new StackTransition(new [] { typeof(NativeIntType), arrayType }, new [] { elementType.MakeByRefType() }),
-                    new StackTransition(new [] { typeof(int), arrayType }, new [] { elementType.MakeByRefType() })
-                };*/
 
             var transitions =
                 new[] 
