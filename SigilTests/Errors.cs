@@ -3984,34 +3984,6 @@ namespace SigilTests
         [TestMethod]
         public void Multiply()
         {
-            var e1 = Emit<Action<int>>.NewDynamicMethod("E1");
-            e1.LoadArgumentAddress(0);
-            e1.LoadConstant(1);
-
-            try
-            {
-                e1.Multiply();
-                Assert.Fail("Shouldn't be possible");
-            }
-            catch (SigilVerificationException e)
-            {
-                Assert.AreEqual("Multiply expects an int32, int64, native int, or float as a first value; found System.Int32*", e.Message);
-            }
-
-            var e2 = Emit<Action<int>>.NewDynamicMethod("E2");
-            e2.LoadConstant(1);
-            e2.LoadArgumentAddress(0);
-
-            try
-            {
-                e2.Multiply();
-                Assert.Fail("Shouldn't be possible");
-            }
-            catch (SigilVerificationException e)
-            {
-                Assert.AreEqual("Multiply with an int32 expects an int32 or native int as a second value; found System.Int32*", e.Message);
-            }
-
             var e3 = Emit<Action<int>>.NewDynamicMethod("E3");
 
             try
