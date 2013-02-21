@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace Sigil.Impl
 {
@@ -69,6 +70,18 @@ namespace Sigil.Impl
         public static StackTransition[] Pop<PopType>() { return Pop(typeof(PopType)); }
         public static StackTransition[] Pop(Type popType) { return Pop(TypeOnStack.Get(popType)); }
         internal static StackTransition[] Pop(TypeOnStack popType) { return new[] { new StackTransition(new[] { popType }, new TypeOnStack[0]) }; }
+    }
+
+    public class InstrAndTransitions
+    {
+        public IEnumerable<StackTransition> Transitions { get; private set; }
+        public OpCode? Instruction { get; private set; }
+
+        public InstrAndTransitions(OpCode? instr, IEnumerable<StackTransition> trans)
+        {
+            Instruction = instr;
+            Transitions = trans;
+        }
     }
 
     public class VerificationResult
@@ -158,11 +171,11 @@ namespace Sigil.Impl
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
         //   eventually they'll be fixed up to actual types
         private bool Baseless;
-        private List<IEnumerable<StackTransition>> Transitions = new List<IEnumerable<StackTransition>>();
+        private List<InstrAndTransitions> Transitions = new List<InstrAndTransitions>();
 
         public VerifiableTracker(bool baseless = false) { Baseless = baseless; }
 
-        public VerificationResult Transition(IEnumerable<StackTransition> legalTransitions)
+        public VerificationResult Transition(InstrAndTransitions legalTransitions)
         {
             Transitions.Add(legalTransitions);
             var ret = CollapseAndVerify();
@@ -224,7 +237,7 @@ namespace Sigil.Impl
 
             var old = Transitions;
 
-            Transitions = new List<IEnumerable<StackTransition>>();
+            Transitions = new List<InstrAndTransitions>();
             Transitions.AddRange(other.Transitions);
             Transitions.AddRange(old);
 
@@ -244,8 +257,10 @@ namespace Sigil.Impl
             return ret;
         }
 
-        private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, IEnumerable<StackTransition> legal)
+        private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, InstrAndTransitions wrapped)
         {
+            var legal = wrapped.Transitions;
+
             if (legal.Any(l => l.PoppedFromStack.Any(u => u == TypeOnStack.Get<PopAllType>())))
             {
                 stack.Clear();
@@ -278,14 +293,16 @@ namespace Sigil.Impl
 
             for (var i = 0; i < Transitions.Count; i++)
             {
-                var ops = Transitions[i];
+                var wrapped = Transitions[i];
+                var ops = wrapped.Transitions;
 
                 if(ops.Any(o => o.StackSizeMustBe.HasValue))
                 {
                     if(ops.Count() > 1) throw new Exception("Shouldn't have multiple 'must be size' transitions at the same point");
                     var doIt = ops.Single();
 
-                    if(doIt.StackSizeMustBe != runningStack.Count){
+                    if(doIt.StackSizeMustBe != runningStack.Count)
+                    {
                         return VerificationResult.FailureStackSize(doIt.StackSizeMustBe.Value);
                     }
                 }
@@ -339,7 +356,7 @@ namespace Sigil.Impl
                 }
 
                 // No reason to do all this work again
-                Transitions[i] = legal;
+                Transitions[i] = new InstrAndTransitions(wrapped.Instruction, legal);
 
                 bool popAll = legal.Any(l => l.PoppedFromStack.Contains(TypeOnStack.Get<PopAllType>()));
                 if (popAll && legal.Count() != 1)
@@ -369,11 +386,11 @@ namespace Sigil.Impl
 
                     IEnumerable<TypeOnStack> toPush = runningStack.Count > 0 ? runningStack.Peek() : new[] { TypeOnStack.Get<WildcardType>() };
 
-                    UpdateStack(runningStack, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) });
+                    UpdateStack(runningStack, new InstrAndTransitions(wrapped.Instruction, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }));
                 }
                 else
                 {
-                    UpdateStack(runningStack, legal);
+                    UpdateStack(runningStack, new InstrAndTransitions(wrapped.Instruction, legal));
                 }
             }
 

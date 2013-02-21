@@ -727,7 +727,9 @@ namespace Sigil
                 throw new InvalidOperationException("Cannot modify Emit after a delegate has been generated from it");
             }
 
-            var verifyRes = CurrentVerifier.Transition(transitions.Transitions);
+            var wrapped = new InstrAndTransitions(instr, transitions.Transitions);
+
+            var verifyRes = CurrentVerifier.Transition(wrapped);
             if (!verifyRes.Success)
             {
                 throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(LocalsByIndex));
