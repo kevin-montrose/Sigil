@@ -10,7 +10,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Duplicate()
         {
-            UpdateState(OpCodes.Dup, CurrentVerifier.DuplicateTop().Wrap("Duplicate"));
+            UpdateState(OpCodes.Dup, (new [] { new StackTransition(isDuplicate: true) }).Wrap("Duplicate"));
 
             return this;
         }

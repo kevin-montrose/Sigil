@@ -28,6 +28,8 @@ namespace Sigil.Impl
 
         internal int? StackSizeMustBe { get; private set; }
 
+        internal bool IsDuplicate { get; private set; }
+
         public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed)
             : this
             (
@@ -40,6 +42,12 @@ namespace Sigil.Impl
             : this(new TypeOnStack[0], new TypeOnStack[0])
         {
             StackSizeMustBe = sizeMustBe;
+        }
+
+        internal StackTransition(bool isDuplicate)
+            : this(new TypeOnStack[0], new [] { TypeOnStack.Get<WildcardType>() })
+        {
+            IsDuplicate = isDuplicate;
         }
 
         internal StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed)
@@ -154,17 +162,6 @@ namespace Sigil.Impl
 
         public VerifiableTracker(bool baseless = false) { Baseless = baseless; }
 
-        public IEnumerable<StackTransition> DuplicateTop()
-        {
-            // TODO: deal with the "empty" case
-            var last = Transitions[Transitions.Count - 1];
-
-            return
-                last.Select(
-                     l => new StackTransition(new TypeOnStack[0], l.PushedToStack)
-                );
-        }
-
         public VerificationResult Transition(IEnumerable<StackTransition> legalTransitions)
         {
             Transitions.Add(legalTransitions);
@@ -232,7 +229,6 @@ namespace Sigil.Impl
             Transitions.AddRange(old);
 
             var ret = CollapseAndVerify();
-
             
             if (!ret.Success)
             {
@@ -265,7 +261,6 @@ namespace Sigil.Impl
             }
 
             var toPush = new List<TypeOnStack>();
-
             foreach (var op in legal)
             {
                 toPush.AddRange(op.PushedToStack);
@@ -362,7 +357,24 @@ namespace Sigil.Impl
                     }
                 }
 
-                UpdateStack(runningStack, legal);
+                bool isDuplicate = legal.Any(l => l.IsDuplicate);
+                if (isDuplicate && legal.Count() > 1)
+                {
+                    throw new Exception("Duplicate must be only transition");
+                }
+
+                if (isDuplicate)
+                {
+                    if (!Baseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(1);
+
+                    IEnumerable<TypeOnStack> toPush = runningStack.Count > 0 ? runningStack.Peek() : new[] { TypeOnStack.Get<WildcardType>() };
+
+                    UpdateStack(runningStack, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) });
+                }
+                else
+                {
+                    UpdateStack(runningStack, legal);
+                }
             }
 
             return VerificationResult.Successful(runningStack.Count);
