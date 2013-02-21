@@ -200,7 +200,7 @@ namespace Sigil
 
             IL.BeginCatchBlock(exceptionType);
 
-            CurrentVerifier.Transition(StackTransition.Push(exceptionType));
+            UpdateState(StackTransition.Push(exceptionType).Wrap("BeginCatchBlock"));
 
             var ret = new CatchBlock(exceptionType, forTry);
 
