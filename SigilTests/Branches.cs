@@ -232,7 +232,7 @@ namespace SigilTests
 
                     e1.Branch(end);
 
-                    e1.MarkLabel(dead, Type.EmptyTypes);
+                    e1.MarkLabel(dead);
 
                     for (var j = 0; j < i; j++)
                     {
