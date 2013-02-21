@@ -88,11 +88,18 @@ namespace Sigil
             // Shove this away, later on we'll figure out if we can insert a readonly here
             ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
 
-            var transitions =
+            /*var transitions =
                 new[] 
                 {
                     new StackTransition(new [] { typeof(NativeIntType), arrayType }, new [] { elementType.MakeByRefType() }),
                     new StackTransition(new [] { typeof(int), arrayType }, new [] { elementType.MakeByRefType() })
+                };*/
+
+            var transitions =
+                new[] 
+                {
+                    new StackTransition(new [] { TypeOnStack.Get<NativeIntType>(), TypeOnStack.Get(arrayType) }, new [] { pushToStack }),
+                    new StackTransition(new [] { TypeOnStack.Get<int>(), TypeOnStack.Get(arrayType) }, new [] { pushToStack })
                 };
 
             UpdateState(OpCodes.Ldelema, elementType, transitions.Wrap("LoadElementAddress"));

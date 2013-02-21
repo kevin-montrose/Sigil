@@ -260,9 +260,15 @@ namespace Sigil.Impl
         private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, InstrAndTransitions wrapped)
         {
             var legal = wrapped.Transitions;
+            var instr = wrapped.Instruction;
 
             if (legal.Any(l => l.PoppedFromStack.Any(u => u == TypeOnStack.Get<PopAllType>())))
             {
+                if (instr.HasValue)
+                {
+                    stack.Each(x => x.Each(y => y.Mark(instr.Value)));
+                }
+
                 stack.Clear();
             }
             else
@@ -271,7 +277,12 @@ namespace Sigil.Impl
 
                 for (var j = 0; j < toPop && stack.Count > 0; j++)
                 {
-                    stack.Pop();
+                    var popped = stack.Pop();
+
+                    if (instr.HasValue)
+                    {
+                        popped.Each(y => y.Mark(instr.Value));
+                    }
                 }
             }
 

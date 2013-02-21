@@ -9,6 +9,14 @@ namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
+        public static void Each<T>(this IEnumerable<T> e, Action<T> a)
+        {
+            foreach (var x in e)
+            {
+                a(x);
+            }
+        }
+
         public static bool StartsWithVowel(this IEnumerable<char> str)
         {
             var c = char.ToLower(str.ElementAt(0));

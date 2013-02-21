@@ -71,7 +71,7 @@ namespace Sigil.Impl
 
         public bool IsMarkable { get { return UsedBy != null; } }
 
-        private List<Tuple<OpCode, int, bool>> UsedBy { get; set; }
+        private List<OpCode> UsedBy { get; set; }
 
         private List<TypeOnStack> ReplacedWithTypes { get; set; }
 
@@ -91,11 +91,11 @@ namespace Sigil.Impl
         /// as the #{index}'d (starting at 0) parameter to the {code} 
         /// opcode.
         /// </summary>
-        public void Mark(OpCode code, int index, bool isThis)
+        public void Mark(OpCode code)
         {
             if (UsedBy == null) return;
 
-            UsedBy.Add(Tuple.Create(code, index, isThis));
+            UsedBy.Add(code);
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Sigil.Impl
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
-                    UsedBy = new List<Tuple<OpCode, int, bool>>(),
+                    UsedBy = new List<OpCode>(),
                     ReplacedWithTypes = new List<TypeOnStack>()
                 };
         }
