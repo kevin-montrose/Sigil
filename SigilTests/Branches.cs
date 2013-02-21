@@ -219,6 +219,44 @@ namespace SigilTests
         }
 
         [TestMethod]
+        public void ShortFormNoOptimizations()
+        {
+            {
+                var hasNormalBranch = new Regex("^br ", RegexOptions.Multiline);
+
+                for (var i = 0; i < 127; i++)
+                {
+                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var dead = e1.DefineLabel();
+                    var end = e1.DefineLabel("end");
+
+                    e1.Branch(end);
+
+                    e1.MarkLabel(dead, Type.EmptyTypes);
+
+                    for (var j = 0; j < i; j++)
+                    {
+                        e1.Nop();
+                    }
+
+                    e1.MarkLabel(end);
+                    e1.Return();
+
+                    string instrs;
+                    var d1 = e1.CreateDelegate(out instrs, OptimizationOptions.None);
+
+                    d1();
+
+                    var shouldFail = !hasNormalBranch.IsMatch(instrs);
+                    if (shouldFail)
+                    {
+                        Assert.Fail();
+                    }
+                }
+            }
+        }
+
+        [TestMethod]
         public void BinaryInput()
         {
             var emit = typeof(Emit<Action>);

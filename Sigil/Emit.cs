@@ -228,11 +228,15 @@ namespace Sigil
             return IL.ByteDistance(0, IL.Index);
         }
 
-        private void Seal()
+        private void Seal(OptimizationOptions optimizationOptions)
         {
             InjectTailCall();
             InjectReadOnly();
-            PatchBranches();
+
+            if ((optimizationOptions & OptimizationOptions.EnableBranchPatching) != 0)
+            {
+                PatchBranches();
+            }
 
             Validate();
 
@@ -253,7 +257,7 @@ namespace Sigil
         /// the returned delegate fails validation (indicative of a bug in Sigil) or
         /// behaves unexpectedly (indicative of a logic bug in the consumer code).
         /// </summary>
-        public DelegateType CreateDelegate(out string instructions)
+        public DelegateType CreateDelegate(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             if (DynMethod == null)
             {
@@ -266,7 +270,7 @@ namespace Sigil
                 return CreatedDelegate;
             }
 
-            Seal();
+            Seal(optimizationOptions);
 
             var il = DynMethod.GetILGenerator();
             instructions = IL.UnBuffer(il);
@@ -286,10 +290,10 @@ namespace Sigil
         /// 
         /// Once this method is called the Emit may no longer be modified.
         /// </summary>
-        public DelegateType CreateDelegate()
+        public DelegateType CreateDelegate(OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             string ignored;
-            return CreateDelegate(out ignored);
+            return CreateDelegate(out ignored, optimizationOptions);
         }
 
         /// <summary>
@@ -308,7 +312,7 @@ namespace Sigil
         /// the returned method fails validation (indicative of a bug in Sigil) or
         /// behaves unexpectedly (indicative of a logic bug in the consumer code).
         /// </summary>
-        public MethodBuilder CreateMethod(out string instructions)
+        public MethodBuilder CreateMethod(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             if (MtdBuilder == null)
             {
@@ -321,7 +325,7 @@ namespace Sigil
                 return MtdBuilder;
             }
 
-            Seal();
+            Seal(optimizationOptions);
 
             MethodBuilt = true;
 
@@ -343,10 +347,10 @@ namespace Sigil
         /// 
         /// Returns a MethodBuilder, which can be used to define overrides or for further inspection.
         /// </summary>
-        public MethodBuilder CreateMethod()
+        public MethodBuilder CreateMethod(OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             string ignored;
-            return CreateMethod(out ignored);
+            return CreateMethod(out ignored, optimizationOptions);
         }
 
         /// <summary>
@@ -365,7 +369,7 @@ namespace Sigil
         /// the returned constructor fails validation (indicative of a bug in Sigil) or
         /// behaves unexpectedly (indicative of a logic bug in the consumer code).
         /// </summary>
-        public ConstructorBuilder CreateConstructor(out string instructions)
+        public ConstructorBuilder CreateConstructor(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             if (ConstrBuilder == null)
             {
@@ -380,7 +384,7 @@ namespace Sigil
 
             ConstructorBuilt = true;
 
-            Seal();
+            Seal(optimizationOptions);
 
             var il = ConstrBuilder.GetILGenerator();
             instructions = IL.UnBuffer(il);
@@ -400,10 +404,10 @@ namespace Sigil
         /// 
         /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
         /// </summary>
-        public ConstructorBuilder CreateConstructor()
+        public ConstructorBuilder CreateConstructor(OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             string ignored;
-            return CreateConstructor(out ignored);
+            return CreateConstructor(out ignored, optimizationOptions);
         }
 
         private static void CheckIsDelegate<CheckDelegateType>()

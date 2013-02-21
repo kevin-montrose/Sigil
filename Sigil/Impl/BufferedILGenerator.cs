@@ -40,20 +40,35 @@ namespace Sigil.Impl
             return log.ToString();
         }
 
-        private int LengthTo(int end, out string instructions)
-        {
-            var instrs = new StringBuilder();
+        private Dictionary<int, int> LengthCache = new Dictionary<int, int>();
 
-            foreach (var x in Buffer.Take(end))
+        private int LengthTo(int end)
+        {
+            if (end == 0)
             {
-                x(null, true, instrs);
+                return 0;
             }
 
-            instructions = instrs.ToString();
+            int cached;
+            if (LengthCache.TryGetValue(end, out cached))
+            {
+                return cached;
+            }
 
-            var instrSizes = InstructionSizes.Take(end).Select(s => s()).Sum();
+            int runningTotal = 0;
 
-            return instrSizes;
+            for (var i = 0; i < end; i++)
+            {
+                var s = InstructionSizes[i];
+
+                runningTotal += s();
+
+                LengthCache[i + 1] = runningTotal;
+            }
+
+            cached = LengthCache[end];
+
+            return cached;
         }
 
         internal string[] Instructions(Dictionary<int, Local> locals)
@@ -126,9 +141,8 @@ namespace Sigil.Impl
 
         public int ByteDistance(int start, int stop)
         {
-            string ignored;
-            var toStart = LengthTo(start, out ignored);
-            var toStop = LengthTo(stop, out ignored);
+            var toStart = LengthTo(start);
+            var toStop = LengthTo(stop);
 
             return toStop - toStart;
         }
@@ -139,6 +153,8 @@ namespace Sigil.Impl
             {
                 throw new ArgumentOutOfRangeException("ix", "Expected value between 0 and " + Buffer.Count);
             }
+
+            LengthCache.Clear();
 
             InstructionSizes.Insert(ix, () => InstructionSize.Get(op));
 
@@ -167,6 +183,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -190,6 +208,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, byte b)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) =>
@@ -215,6 +235,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) =>
                 {
@@ -238,6 +260,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, int i)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) => 
@@ -269,6 +293,8 @@ namespace Sigil.Impl
 
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -285,6 +311,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, long l)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) => 
@@ -309,6 +337,8 @@ namespace Sigil.Impl
 
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -325,6 +355,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, float f)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) => 
@@ -343,6 +375,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -358,6 +392,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, MethodInfo method)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) => 
@@ -376,6 +412,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -392,6 +430,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, Type type)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) => 
@@ -410,6 +450,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -426,6 +468,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, string str)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) => 
@@ -447,10 +491,14 @@ namespace Sigil.Impl
             update =
                 newOpcode =>
                 {
+                    LengthCache.Clear();
+
                     localOp = newOpcode;
                 };
 
             InstructionSizes.Add(() => InstructionSize.Get(localOp));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) => 
@@ -473,10 +521,14 @@ namespace Sigil.Impl
             update =
                 newOpcode =>
                 {
+                    LengthCache.Clear();
+
                     localOp = newOpcode;
                 };
 
             InstructionSizes.Add(() => InstructionSize.Get(localOp));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) =>
@@ -491,6 +543,7 @@ namespace Sigil.Impl
                 }
             );
         }
+
         internal static string Join<T>(string delimiter, IEnumerable<T> parts) where T: class
         {
             using (var iter = parts.GetEnumerator())
@@ -512,6 +565,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                     {
@@ -529,6 +584,8 @@ namespace Sigil.Impl
         public void Emit(OpCode op, CallingConventions callConventions, Type returnType, Type[] parameterTypes)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) =>
@@ -566,6 +623,8 @@ namespace Sigil.Impl
 
             InstructionSizes.Add(() => InstructionSize.BeginExceptionBlock());
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -585,6 +644,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.BeginCatchBlock());
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) =>
                 {
@@ -601,6 +662,8 @@ namespace Sigil.Impl
         public void EndExceptionBlock()
         {
             InstructionSizes.Add(() => InstructionSize.EndExceptionBlock());
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) =>
@@ -619,6 +682,8 @@ namespace Sigil.Impl
         {
             InstructionSizes.Add(() => InstructionSize.EndCatchBlock());
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) =>
                 {
@@ -630,6 +695,8 @@ namespace Sigil.Impl
         public void BeginFinallyBlock()
         {
             InstructionSizes.Add(() => InstructionSize.BeginFinallyBlock());
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) =>
@@ -647,6 +714,8 @@ namespace Sigil.Impl
         public void EndFinallyBlock()
         {
             InstructionSizes.Add(() => InstructionSize.EndFinallyBlock());
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) =>
@@ -679,6 +748,8 @@ namespace Sigil.Impl
 
             InstructionSizes.Add(() => InstructionSize.DefineLabel());
 
+            LengthCache.Clear();
+
             Buffer.Add(
                 (il, logOnly, log) => 
                 {
@@ -695,6 +766,8 @@ namespace Sigil.Impl
         public void MarkLabel(Sigil.Label label)
         {
             InstructionSizes.Add(() => InstructionSize.MarkLabel());
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly, log) =>
@@ -733,6 +806,8 @@ namespace Sigil.Impl
                 };
 
             InstructionSizes.Add(() => InstructionSize.DeclareLocal());
+
+            LengthCache.Clear();
 
             Buffer.Add(
                 (il, logOnly,log) => 
