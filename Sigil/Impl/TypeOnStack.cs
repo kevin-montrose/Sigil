@@ -71,28 +71,28 @@ namespace Sigil.Impl
 
         public bool IsMarkable { get { return UsedBy != null; } }
 
-        private List<OpCode> UsedBy { get; set; }
+        private HashSet<Tuple<OpCode, int>> UsedBy { get; set; }
 
         /// <summary>
         /// Call to indicate that something on the stack was used
         /// as the #{index}'d (starting at 0) parameter to the {code} 
         /// opcode.
         /// </summary>
-        public void Mark(OpCode code)
+        public void Mark(OpCode code, int index)
         {
             if (UsedBy == null) return;
 
-            UsedBy.Add(code);
+            UsedBy.Add(Tuple.Create(code, index));
         }
 
         /// <summary>
         /// Returns the # of times this value was used as the given #{index}'d parameter to the {code} instruction.
         /// </summary>
-        public int CountMarks(OpCode code)
+        public int CountMarks(OpCode code, int ix)
         {
             if (UsedBy == null) throw new Exception(this + " is not markable");
 
-            return UsedBy.Count(c => c.Equals(code));
+            return UsedBy.Count(c => c.Item1.Equals(code) && c.Item2 == ix);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace Sigil.Impl
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
-                    UsedBy = new List<OpCode>()
+                    UsedBy = new HashSet<Tuple<OpCode,int>>()
                 };
         }
 

@@ -266,7 +266,12 @@ namespace Sigil.Impl
             {
                 if (instr.HasValue)
                 {
-                    stack.Each(x => x.Each(y => y.Mark(instr.Value)));
+                    for (var i = 0; i < stack.Count; i++)
+                    {
+                        //stack.Each(x => x.Each(y => y.Mark(instr.Value)));
+                        var ix = stack.Count - i - 1;
+                        stack.ElementAt(i).Each(y => y.Mark(instr.Value, ix));
+                    }
                 }
 
                 stack.Clear();
@@ -281,7 +286,8 @@ namespace Sigil.Impl
 
                     if (instr.HasValue)
                     {
-                        popped.Each(y => y.Mark(instr.Value));
+                        var ix = toPop - j - 1;
+                        popped.Each(y => y.Mark(instr.Value, ix));
                     }
                 }
             }

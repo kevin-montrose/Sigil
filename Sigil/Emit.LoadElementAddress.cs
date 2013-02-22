@@ -16,27 +16,27 @@ namespace Sigil
                 var at = elem.Item1;
                 var value = elem.Item2;
 
-                var asObjToLdfd = value.CountMarks(OpCodes.Ldfld);
-                var asObjToLdfda = value.CountMarks(OpCodes.Ldflda);
-                var asObjToStfd = value.CountMarks(OpCodes.Stfld);
+                var asObjToLdfd = value.CountMarks(OpCodes.Ldfld, 0);
+                var asObjToLdfda = value.CountMarks(OpCodes.Ldflda, 0);
+                var asObjToStfd = value.CountMarks(OpCodes.Stfld, 0);
 
-                var asObjToCall = value.CountMarks(OpCodes.Call);
+                var asObjToCall = value.CountMarks(OpCodes.Call, 0);
 
-                var asPtrToLdobj = value.CountMarks(OpCodes.Ldobj);
+                var asPtrToLdobj = value.CountMarks(OpCodes.Ldobj, 0);
                 var asPtrToLdind =
-                    value.CountMarks(OpCodes.Ldind_I) +
-                    value.CountMarks(OpCodes.Ldind_I1) +
-                    value.CountMarks(OpCodes.Ldind_I2) +
-                    value.CountMarks(OpCodes.Ldind_I4) +
-                    value.CountMarks(OpCodes.Ldind_I8) +
-                    value.CountMarks(OpCodes.Ldind_R4) +
-                    value.CountMarks(OpCodes.Ldind_R8) +
-                    value.CountMarks(OpCodes.Ldind_Ref) +
-                    value.CountMarks(OpCodes.Ldind_U1) +
-                    value.CountMarks(OpCodes.Ldind_U2) +
-                    value.CountMarks(OpCodes.Ldind_U4);
+                    value.CountMarks(OpCodes.Ldind_I, 0) +
+                    value.CountMarks(OpCodes.Ldind_I1, 0) +
+                    value.CountMarks(OpCodes.Ldind_I2, 0) +
+                    value.CountMarks(OpCodes.Ldind_I4, 0) +
+                    value.CountMarks(OpCodes.Ldind_I8, 0) +
+                    value.CountMarks(OpCodes.Ldind_R4, 0) +
+                    value.CountMarks(OpCodes.Ldind_R8, 0) +
+                    value.CountMarks(OpCodes.Ldind_Ref, 0) +
+                    value.CountMarks(OpCodes.Ldind_U1, 0) +
+                    value.CountMarks(OpCodes.Ldind_U2, 0) +
+                    value.CountMarks(OpCodes.Ldind_U4, 0);
 
-                var asSourceToCpobj = value.CountMarks(OpCodes.Cpobj);
+                var asSourceToCpobj = value.CountMarks(OpCodes.Cpobj, 0);
 
                 var totalAllowedUses =
                     asObjToLdfd +
