@@ -17,19 +17,19 @@ namespace Sigil.Impl
     // Something that means "pop the entire damn stack"
     internal class PopAllType { }
 
-    public class StackTransition
+    internal class StackTransition
     {
-        internal int PoppedCount { get { return PoppedFromStack.Count(); } }
+        public int PoppedCount { get { return PoppedFromStack.Count(); } }
 
         // on the stack, first item is on the top of the stack
-        internal IEnumerable<TypeOnStack> PoppedFromStack { get; private set; }
+        public IEnumerable<TypeOnStack> PoppedFromStack { get; private set; }
 
         // pushed onto the stack, first item is first pushed (ends up lowest on the stack)
-        internal IEnumerable<TypeOnStack> PushedToStack { get; private set; }
+        public IEnumerable<TypeOnStack> PushedToStack { get; private set; }
 
-        internal int? StackSizeMustBe { get; private set; }
+        public int? StackSizeMustBe { get; private set; }
 
-        internal bool IsDuplicate { get; private set; }
+        public bool IsDuplicate { get; private set; }
 
         public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed)
             : this
@@ -39,19 +39,19 @@ namespace Sigil.Impl
             )
         { }
 
-        internal StackTransition(int sizeMustBe)
+        public StackTransition(int sizeMustBe)
             : this(new TypeOnStack[0], new TypeOnStack[0])
         {
             StackSizeMustBe = sizeMustBe;
         }
 
-        internal StackTransition(bool isDuplicate)
+        public StackTransition(bool isDuplicate)
             : this(new TypeOnStack[0], new [] { TypeOnStack.Get<WildcardType>() })
         {
             IsDuplicate = isDuplicate;
         }
 
-        internal StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed)
+        public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed)
         {
             PoppedFromStack = popped.ToList().AsReadOnly();
             PushedToStack = pushed.ToList().AsReadOnly();
@@ -65,14 +65,14 @@ namespace Sigil.Impl
         public static StackTransition[] None() { return new[] { new StackTransition(Type.EmptyTypes, Type.EmptyTypes) }; }
         public static StackTransition[] Push<PushType>() { return Push(typeof(PushType)); }
         public static StackTransition[] Push(Type pushType) { return Push(TypeOnStack.Get(pushType)); }
-        internal static StackTransition[] Push(TypeOnStack pushType) { return new[] { new StackTransition(new TypeOnStack[0], new[] { pushType }) }; }
+        public static StackTransition[] Push(TypeOnStack pushType) { return new[] { new StackTransition(new TypeOnStack[0], new[] { pushType }) }; }
 
         public static StackTransition[] Pop<PopType>() { return Pop(typeof(PopType)); }
         public static StackTransition[] Pop(Type popType) { return Pop(TypeOnStack.Get(popType)); }
-        internal static StackTransition[] Pop(TypeOnStack popType) { return new[] { new StackTransition(new[] { popType }, new TypeOnStack[0]) }; }
+        public static StackTransition[] Pop(TypeOnStack popType) { return new[] { new StackTransition(new[] { popType }, new TypeOnStack[0]) }; }
     }
 
-    public class InstrAndTransitions
+    internal class InstrAndTransitions
     {
         public IEnumerable<StackTransition> Transitions { get; private set; }
         public OpCode? Instruction { get; private set; }
@@ -84,10 +84,10 @@ namespace Sigil.Impl
         }
     }
 
-    public class VerificationResult
+    internal class VerificationResult
     {
         public bool Success { get; private set; }
-        internal Stack<IEnumerable<TypeOnStack>> Stack { get; private set; }
+        public Stack<IEnumerable<TypeOnStack>> Stack { get; private set; }
         public int StackSize { get { return Stack.Count(); } }
 
         // Set when the stack is underflowed
@@ -96,24 +96,24 @@ namespace Sigil.Impl
 
         // Set when stacks don't match during an incoming
         public bool IsStackMismatch { get; private set; }
-        internal Stack<IEnumerable<TypeOnStack>> ExpectedStack { get; private set; }
-        internal Stack<IEnumerable<TypeOnStack>> IncomingStack { get; private set; }
+        public Stack<IEnumerable<TypeOnStack>> ExpectedStack { get; private set; }
+        public Stack<IEnumerable<TypeOnStack>> IncomingStack { get; private set; }
 
         // Set when types are dodge
         public bool IsTypeMismatch { get; private set; }
         public int TransitionIndex { get; private set; }
         public int StackIndex { get; private set; }
-        internal IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
+        public IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
 
         // Set when the stack was expected to be a certain size, but it wasn't
         public bool IsStackSizeFailure {get; private set;}
 
-        internal static VerificationResult Successful(Stack<IEnumerable<TypeOnStack>> stack)
+        public static VerificationResult Successful(Stack<IEnumerable<TypeOnStack>> stack)
         {
             return new VerificationResult { Success = true, Stack = stack };
         }
 
-        internal static VerificationResult FailureUnderflow(int expectedSize)
+        public static VerificationResult FailureUnderflow(int expectedSize)
         {
             return
                 new VerificationResult
@@ -125,7 +125,7 @@ namespace Sigil.Impl
                 };
         }
 
-        internal static VerificationResult FailureStackMismatch(Stack<IEnumerable<TypeOnStack>> expected, Stack<IEnumerable<TypeOnStack>> incoming)
+        public static VerificationResult FailureStackMismatch(Stack<IEnumerable<TypeOnStack>> expected, Stack<IEnumerable<TypeOnStack>> incoming)
         {
             return
                 new VerificationResult
@@ -138,7 +138,7 @@ namespace Sigil.Impl
                 };
         }
 
-        internal static VerificationResult FailureTypeMismatch(int transitionIndex, int stackIndex, IEnumerable<TypeOnStack> expectedTypes, Stack<IEnumerable<TypeOnStack>> stack)
+        public static VerificationResult FailureTypeMismatch(int transitionIndex, int stackIndex, IEnumerable<TypeOnStack> expectedTypes, Stack<IEnumerable<TypeOnStack>> stack)
         {
             return
                 new VerificationResult
@@ -153,7 +153,7 @@ namespace Sigil.Impl
                 };
         }
 
-        internal static VerificationResult FailureStackSize(int expectedSize)
+        public static VerificationResult FailureStackSize(int expectedSize)
         {
             return 
                 new VerificationResult
@@ -166,7 +166,7 @@ namespace Sigil.Impl
         }
     }
 
-    public class VerifiableTracker
+    internal class VerifiableTracker
     {
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
         //   eventually they'll be fixed up to actual types
@@ -304,7 +304,7 @@ namespace Sigil.Impl
             }
         }
 
-        public VerificationResult CollapseAndVerify()
+        private VerificationResult CollapseAndVerify()
         {
             var runningStack = new Stack<IEnumerable<TypeOnStack>>();
 
@@ -447,7 +447,7 @@ namespace Sigil.Impl
         }
 
         // Returns the current stack *if* it can be inferred down to single types *and* is either based or verifiable to the given depth
-        internal Stack<TypeOnStack> InferStack(int ofDepth)
+        public Stack<TypeOnStack> InferStack(int ofDepth)
         {
             var res = CollapseAndVerify();
 
