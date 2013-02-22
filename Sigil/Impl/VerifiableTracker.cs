@@ -5,18 +5,6 @@ using System.Reflection.Emit;
 
 namespace Sigil.Impl
 {
-    // Represents a type that *could be* anything
-    internal class WildcardType { }
-
-    // Represents *any* pointer
-    internal class AnyPointerType { }
-
-    // Something that's *only* assignable from object
-    internal class OnlyObjectType { }
-
-    // Something that means "pop the entire damn stack"
-    internal class PopAllType { }
-
     internal class StackTransition
     {
         public int PoppedCount { get { return PoppedFromStack.Count(); } }

@@ -204,13 +204,12 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Impl\SpecialTypes.cs" />
     <Compile Include="Impl\VerifiableTracker.cs" />
     <Compile Include="LabelLookup.cs" />
-    <Compile Include="NativeIntType.cs" />
-    <Compile Include="NullType.cs" />
     <Compile Include="LocalLookup.cs" />
     <Compile Include="OptimizationOptions.cs" />
-    <Compile Include="Tuple.cs" />
+    <Compile Include="Impl\Tuple.cs" />
     <Compile Include="Emit.Unbox.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

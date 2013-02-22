@@ -1,15 +1,15 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
-namespace Sigil
+
+namespace Sigil.Impl
 {
 #if NET35
-        static class Tuple {
+        internal static class Tuple {
             public static Tuple<T1,T2> Create<T1,T2>(T1 item1, T2 item2) { return new Tuple<T1,T2>(item1, item2); }
             public static Tuple<T1,T2,T3> Create<T1,T2,T3>(T1 item1, T2 item2, T3 item3) { return new Tuple<T1,T2,T3>(item1, item2, item3); }
             public static Tuple<T1,T2,T3,T4> Create<T1,T2,T3,T4>(T1 item1, T2 item2, T3 item3, T4 item4) { return new Tuple<T1,T2,T3,T4>(item1, item2, item3, item4); }
         }
-        class Tuple<T1,T2> : IEquatable<Tuple<T1,T2>> {
+        internal class Tuple<T1,T2> : IEquatable<Tuple<T1,T2>> {
             private readonly T1 item1;
             private readonly T2 item2;
             public T1 Item1 { get { return item1; } }
@@ -41,7 +41,7 @@ namespace Sigil
                 return "(" + this.item1 + "," + this.item2 + ")";
             }
         }
-        class Tuple<T1,T2, T3>  : IEquatable<Tuple<T1,T2,T3>> {
+        internal class Tuple<T1,T2, T3>  : IEquatable<Tuple<T1,T2,T3>> {
             private readonly T1 item1;
             private readonly T2 item2;
             private readonly T3 item3;
@@ -78,7 +78,7 @@ namespace Sigil
                 return "(" + this.item1 + "," + this.item2 + "," + this.item3 + ")";
             }
         }
-        class Tuple<T1,T2, T3, T4>  : IEquatable<Tuple<T1,T2,T3,T4>>{
+        internal class Tuple<T1,T2, T3, T4>  : IEquatable<Tuple<T1,T2,T3,T4>>{
             private readonly T1 item1;
             private readonly T2 item2;
             private readonly T3 item3;

@@ -8,6 +8,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Expects a reference to an array and an index on the stack.
+        /// 
+        /// Pops both, and pushes the element in the array at the index onto the stack.
+        /// </summary>
         public Emit<DelegateType> LoadElement<ElementType>()
         {
             return LoadElement(typeof(ElementType));

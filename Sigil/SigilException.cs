@@ -20,11 +20,6 @@ namespace Sigil
     {
         private string[] Instructions;
 
-        private int[] BadValueLocation;
-
-        private int? BranchLoc;
-        private int? LabelLoc;
-
         internal SigilVerificationException(string method, VerificationResult failure, string[] instructions)
             : this(GetMessage(method, failure), instructions)
         {
@@ -90,23 +85,6 @@ namespace Sigil
         public string GetDebugInfo()
         {
             throw new NotImplementedException();
-        }
-
-        private string AddBranchAndLabelMarkers()
-        {
-            var ret = new StringBuilder();
-
-            for (var i = 0; i < Instructions.Length; i++)
-            {
-                var line = Instructions[i];
-
-                if (i == LabelLoc - 1) line = line + " // Failure label";
-                if (i == BranchLoc - 1) line = line + " // Failure branch";
-
-                ret.AppendLine(line);
-            }
-
-            return ret.ToString().Trim();
         }
 
         /// <summary>
