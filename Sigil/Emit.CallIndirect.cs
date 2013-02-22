@@ -301,10 +301,7 @@ namespace Sigil
                 takeExtra++;
             }
 
-            // TODO: Restore checking for known-bad pointers when possible
-
             IEnumerable<StackTransition> transitions;
-
             if (HasFlag(callConventions, CallingConventions.HasThis))
             {
                 var p = new List<Type>();
@@ -350,6 +347,35 @@ namespace Sigil
                         {
                             new StackTransition(p, Type.EmptyTypes)
                         };
+                }
+            }
+
+            var onStack = CurrentVerifier.InferStack(transitions.ElementAt(0).PoppedFromStack.Count());
+            if (onStack != null)
+            {
+                var funcPtr = onStack.First();
+
+                if (funcPtr == TypeOnStack.Get<NativeIntType>() && funcPtr.HasAttachedMethodInfo)
+                {
+                    if (funcPtr.CallingConvention != callConventions)
+                    {
+                        throw new SigilVerificationException("CallIndirect expects method calling conventions to match, found " + funcPtr.CallingConvention + " on the stack", IL.Instructions(LocalsByIndex));
+                    }
+
+                    if (HasFlag(callConventions, CallingConventions.HasThis))
+                    {
+                        var thisRef = onStack.Last();
+
+                        if (!funcPtr.InstanceType.IsAssignableFrom(thisRef))
+                        {
+                            throw new SigilVerificationException("CallIndirect expects a 'this' value assignable to "+funcPtr.InstanceType+", found "+thisRef, IL.Instructions(LocalsByIndex));
+                        }
+                    }
+
+                    if (funcPtr.ReturnType != returnType)
+                    {
+                        throw new SigilVerificationException("CallIndirect expects method return types to match, found " + funcPtr.ReturnType + " on the stack", IL.Instructions(LocalsByIndex));
+                    }
                 }
             }
 

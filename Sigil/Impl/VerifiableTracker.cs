@@ -87,7 +87,8 @@ namespace Sigil.Impl
     public class VerificationResult
     {
         public bool Success { get; private set; }
-        public int StackSize { get; private set; }
+        internal Stack<IEnumerable<TypeOnStack>> Stack { get; private set; }
+        public int StackSize { get { return Stack.Count(); } }
 
         // Set when the stack is underflowed
         public bool IsStackUnderflow { get; private set; }
@@ -103,14 +104,13 @@ namespace Sigil.Impl
         public int TransitionIndex { get; private set; }
         public int StackIndex { get; private set; }
         internal IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
-        internal Stack<IEnumerable<TypeOnStack>> Stack { get; private set; }
 
         // Set when the stack was expected to be a certain size, but it wasn't
         public bool IsStackSizeFailure {get; private set;}
 
-        internal static VerificationResult Successful(int stackSize)
+        internal static VerificationResult Successful(Stack<IEnumerable<TypeOnStack>> stack)
         {
-            return new VerificationResult { Success = true, StackSize = stackSize };
+            return new VerificationResult { Success = true, Stack = stack };
         }
 
         internal static VerificationResult FailureUnderflow(int expectedSize)
@@ -229,7 +229,7 @@ namespace Sigil.Impl
 
                 if (isEquivalent)
                 {
-                    return VerificationResult.Successful(GetStack(this).Count);
+                    return VerificationResult.Successful(GetStack(this));
                 }
 
                 return VerificationResult.FailureStackMismatch(GetStack(this), GetStack(other));
@@ -411,7 +411,7 @@ namespace Sigil.Impl
                 }
             }
 
-            return VerificationResult.Successful(runningStack.Count);
+            return VerificationResult.Successful(runningStack);
         }
 
         private int FindStackFailureIndex(Stack<IEnumerable<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)
@@ -444,6 +444,26 @@ namespace Sigil.Impl
                     Baseless = Baseless,
                     Transitions = Transitions.ToList()
                 };
+        }
+
+        // Returns the current stack *if* it can be inferred down to single types *and* is either based or verifiable to the given depth
+        internal Stack<TypeOnStack> InferStack(int ofDepth)
+        {
+            var res = CollapseAndVerify();
+
+            if(res.Stack.Count < ofDepth) return null;
+
+            var ret = new Stack<TypeOnStack>();
+            for (var i = ofDepth - 1; i >= 0; i--)
+            {
+                var couldBe = res.Stack.ElementAt(i);
+
+                if (couldBe.Count() > 1) return null;
+
+                ret.Push(couldBe.Single());
+            }
+
+            return ret;
         }
     }
 }

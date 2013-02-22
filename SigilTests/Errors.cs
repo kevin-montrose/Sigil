@@ -3395,7 +3395,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CallIndirect expected a value assignable to System.Int32, found double", e.Message);
+                    Assert.AreEqual("CallIndirect expected an int; found double", e.Message);
                 }
             }
         }
