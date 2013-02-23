@@ -13,6 +13,54 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void WriteLine()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.WriteLine(null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("line", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+
+                try
+                {
+                    e1.WriteLine("foo", null);
+                    Assert.Fail();
+                }
+                catch (ArgumentNullException e)
+                {
+                    Assert.AreEqual("locals", e.ParamName);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var e2 = Emit<Action>.NewDynamicMethod();
+                var a = e2.DeclareLocal<int>();
+
+                try
+                {
+                    e1.WriteLine("foo", a);
+                    Assert.Fail();
+                }
+                catch (ArgumentException e)
+                {
+                    Assert.AreEqual("System.Int32 _local0 is not owned by this Emit, and thus cannot be used", e.Message);
+                }
+            }
+        }
+
+        [TestMethod]
         public void DoubleLabelDeclaration()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

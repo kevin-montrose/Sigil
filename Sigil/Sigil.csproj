@@ -206,6 +206,9 @@
     </Compile>
     <Compile Include="Impl\SpecialTypes.cs" />
     <Compile Include="Impl\VerifiableTracker.cs" />
+    <Compile Include="Emit.WriteLine.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="LabelLookup.cs" />
     <Compile Include="LocalLookup.cs" />
     <Compile Include="OptimizationOptions.cs" />
