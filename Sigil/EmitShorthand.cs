@@ -1288,9 +1288,9 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.WriteLine(System.String)" />
-        public EmitShorthand<DelegateType> WriteLine(string line)
+        public EmitShorthand<DelegateType> WriteLine(string line, params Local[] locals)
         {
-            InnerEmit.WriteLine(line);
+            InnerEmit.WriteLine(line, locals);
 
             return this;
         }
