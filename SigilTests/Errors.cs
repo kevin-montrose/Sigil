@@ -13,6 +13,49 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void LabelDiffStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            var l = e1.DefineLabel();
+
+            e1.LoadConstant(1);
+            e1.BranchIfFalse(l);
+            e1.LoadConstant(4);
+
+            try
+            {
+                e1.MarkLabel(l);
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("MarkLabel stack doesn't match destination", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void BranchDiffStack()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            var l = e1.DefineLabel();
+
+            e1.LoadConstant(1);
+            e1.MarkLabel(l);
+            e1.Pop();
+            e1.LoadConstant("123");
+
+            try
+            {
+                e1.Branch(l);
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Branch stack doesn't match destination", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void Unreachable()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

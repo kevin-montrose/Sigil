@@ -207,8 +207,7 @@ namespace Sigil
 
                 if (!verifyRes.Success)
                 {
-                    // TODO: Gotta do better than this, needs "what the hell happened" messaging
-                    throw new Exception("Control flow violates stack");
+                    throw new SigilVerificationException("MarkLabel", verifyRes, IL.Instructions(LocalsByIndex));
                 }
             }
 
