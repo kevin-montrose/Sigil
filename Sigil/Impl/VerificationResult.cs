@@ -32,7 +32,7 @@ namespace Sigil.Impl
             return new VerificationResult { Success = true, Stack = stack };
         }
 
-        public static VerificationResult FailureUnderflow(int expectedSize)
+        public static VerificationResult FailureUnderflow(int expectedSize, Stack<IEnumerable<TypeOnStack>> stack)
         {
             return
                 new VerificationResult
@@ -40,7 +40,8 @@ namespace Sigil.Impl
                     Success = false,
 
                     IsStackUnderflow = true,
-                    ExpectedStackSize = expectedSize
+                    ExpectedStackSize = expectedSize,
+                    Stack = stack
                 };
         }
 

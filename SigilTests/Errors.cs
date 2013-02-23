@@ -13,6 +13,101 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void BadStackVals()
+        {
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant(1);
+                e1.LoadConstant("foo");
+
+                try
+                {
+                    e1.Add();
+                    Assert.Fail();
+                }
+                catch (SigilVerificationException e)
+                {
+                    var debug = e.GetDebugInfo();
+                    Assert.AreEqual("Stack\r\n=====\r\nSystem.String  // bad value\r\nint\r\n\r\nInstructions\r\n============\r\nldc.i4.1\r\nldstr 'foo'\r\n", debug);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                e1.LoadConstant("foo");
+                e1.LoadConstant(1);
+
+                try
+                {
+                    e1.Add();
+                    Assert.Fail();
+                }
+                catch (SigilVerificationException e)
+                {
+                    var debug = e.GetDebugInfo();
+                    Assert.AreEqual("Stack\r\n=====\r\nint\r\nSystem.String  // bad value\r\n\r\nInstructions\r\n============\r\nldstr 'foo'\r\nldc.i4.1\r\n", debug);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var substring = typeof(string).GetMethod("Substring", new[] { typeof(int), typeof(int) });
+                e1.LoadConstant("foo");
+                e1.LoadConstant(1);
+                e1.LoadConstant(2.0);
+
+                try
+                {
+                    e1.Call(substring);
+                    Assert.Fail();
+                }
+                catch (SigilVerificationException e)
+                {
+                    var debug = e.GetDebugInfo();
+                    Assert.AreEqual("Stack\r\n=====\r\ndouble  // bad value\r\nint\r\nSystem.String\r\n\r\nInstructions\r\n============\r\nldstr 'foo'\r\nldc.i4.1\r\nldc.r8 2\r\n", debug);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var substring = typeof(string).GetMethod("Substring", new[] { typeof(int), typeof(int) });
+                e1.LoadConstant("foo");
+                e1.LoadConstant(1f);
+                e1.LoadConstant(2);
+
+                try
+                {
+                    e1.Call(substring);
+                    Assert.Fail();
+                }
+                catch (SigilVerificationException e)
+                {
+                    var debug = e.GetDebugInfo();
+                    Assert.AreEqual("Stack\r\n=====\r\nint\r\nfloat  // bad value\r\nSystem.String\r\n\r\nInstructions\r\n============\r\nldstr 'foo'\r\nldc.r4 1\r\nldc.i4.2\r\n", debug);
+                }
+            }
+
+            {
+                var e1 = Emit<Action>.NewDynamicMethod();
+                var substring = typeof(string).GetMethod("Substring", new[] { typeof(int), typeof(int) });
+                e1.NewObject<object>();
+                e1.LoadConstant(1);
+                e1.LoadConstant(2);
+
+                try
+                {
+                    e1.Call(substring);
+                    Assert.Fail();
+                }
+                catch (SigilVerificationException e)
+                {
+                    var debug = e.GetDebugInfo();
+                    Assert.AreEqual("Stack\r\n=====\r\nint\r\nint\r\nSystem.Object  // bad value\r\n\r\nInstructions\r\n============\r\nnewobj Void .ctor()\r\nldc.i4.1\r\nldc.i4.2\r\n", debug);
+                }
+            }
+        }
+
+        [TestMethod]
         public void LabelDiffStack()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
@@ -29,7 +124,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("MarkLabel stack doesn't match destination", e.Message);
+                Assert.AreEqual("MarkLabel resulted in stack mismatches", e.Message);
             }
         }
 
@@ -51,7 +146,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Branch stack doesn't match destination", e.Message);
+                Assert.AreEqual("Branch resulted in stack mismatches", e.Message);
             }
         }
 

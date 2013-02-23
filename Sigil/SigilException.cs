@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -19,11 +20,12 @@ namespace Sigil
     public class SigilVerificationException : Exception, ISerializable
     {
         private string[] Instructions;
+        private VerificationResult Failure;
 
         internal SigilVerificationException(string method, VerificationResult failure, string[] instructions)
             : this(GetMessage(method, failure), instructions)
         {
-            
+            Failure = failure;
         }
 
         internal SigilVerificationException(string message, string[] instructions) : base(message)
@@ -55,8 +57,7 @@ namespace Sigil
 
             if (failure.IsStackMismatch)
             {
-                // TODO: oh, so much better than this is needed
-                return method + " stack doesn't match destination";
+                return method + " resulted in stack mismatches";
             }
 
             if (failure.IsStackSizeFailure)
@@ -84,7 +85,67 @@ namespace Sigil
         /// </summary>
         public string GetDebugInfo()
         {
-            throw new NotImplementedException();
+            var ret = new StringBuilder();
+
+            if (Failure.IsStackMismatch)
+            {
+                ret.AppendLine("Expected Stack");
+                ret.AppendLine("==============");
+                PrintStack(Failure.ExpectedStack, ret);
+
+                ret.AppendLine();
+                ret.AppendLine("Incoming Stack");
+                ret.AppendLine("==============");
+                PrintStack(Failure.IncomingStack, ret);
+            }
+
+            if (Failure.IsTypeMismatch)
+            {
+                ret.AppendLine("Stack");
+                ret.AppendLine("=====");
+                PrintStack(Failure.Stack, ret, "// bad value", Failure.StackIndex);
+            }
+
+            if (Failure.IsStackUnderflow || Failure.IsStackSizeFailure)
+            {
+                ret.AppendLine("Stack");
+                ret.AppendLine("=====");
+                PrintStack(Failure.Stack, ret);
+            }
+
+            ret.AppendLine();
+            ret.AppendLine("Instructions");
+            ret.AppendLine("============");
+            foreach (var line in Instructions)
+            {
+                ret.AppendLine(line);
+            }
+
+            return ret.ToString();
+        }
+
+        private static void PrintStack(Stack<IEnumerable<TypeOnStack>> stack, StringBuilder sb, string mark = null, int? markAt = null)
+        {
+            if (stack.Count == 0)
+            {
+                sb.AppendLine("--empty--");
+                return;
+            }
+
+            for (var i = 0; i < stack.Count; i++)
+            {
+                var asStr =
+                    string.Join(", or",
+                        stack.ElementAt(i).Select(s => s.ToString()).ToArray()
+                    );
+
+                if (i == markAt)
+                {
+                    asStr += "  " + mark;
+                }
+
+                sb.AppendLine(asStr);
+            }
         }
 
         /// <summary>

@@ -204,7 +204,7 @@ namespace Sigil.Impl
 
                     if (runningStack.Count < wouldPop)
                     {
-                        return VerificationResult.FailureUnderflow(wouldPop);
+                        return VerificationResult.FailureUnderflow(wouldPop, runningStack);
                     }
 
                     IEnumerable<TypeOnStack> expected;
@@ -233,7 +233,7 @@ namespace Sigil.Impl
 
                     if (toPop > runningStack.Count && !Baseless)
                     {
-                        return VerificationResult.FailureUnderflow(toPop);
+                        return VerificationResult.FailureUnderflow(toPop, runningStack);
                     }
                 }
 
@@ -245,7 +245,7 @@ namespace Sigil.Impl
 
                 if (isDuplicate)
                 {
-                    if (!Baseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(1);
+                    if (!Baseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(1, runningStack);
 
                     IEnumerable<TypeOnStack> toPush = runningStack.Count > 0 ? runningStack.Peek() : new[] { TypeOnStack.Get<WildcardType>() };
 
