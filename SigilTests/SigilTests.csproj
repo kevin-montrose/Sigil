@@ -117,6 +117,7 @@
     <Compile Include="Unbox.cs" />
     <Compile Include="Verifiability.cs" />
     <Compile Include="Volatile.cs" />
+    <Compile Include="WriteLine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sigil\Sigil.csproj">
