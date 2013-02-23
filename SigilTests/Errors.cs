@@ -13,6 +13,22 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void WriteLine()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            try
+            {
+                e1.WriteLine(null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("line", e.ParamName);
+            }
+        }
+
+        [TestMethod]
         public void DoubleLabelDeclaration()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

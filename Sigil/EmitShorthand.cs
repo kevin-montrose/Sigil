@@ -1287,6 +1287,14 @@ namespace Sigil
             return this;
         }
 
+        /// <summary cref="M:Sigil.Emit`1.WriteLine(System.String)" />
+        public EmitShorthand<DelegateType> WriteLine(string line)
+        {
+            InnerEmit.WriteLine(line);
+
+            return this;
+        }
+
         /// <summary cref="M:Sigil.Emit`1.Xor" />
         public EmitShorthand<DelegateType> Xor()
         {
