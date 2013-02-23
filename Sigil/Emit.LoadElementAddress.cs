@@ -73,8 +73,6 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> LoadElementAddress(Type elementType)
         {
-            // TODO: Another may-not-be-able to infer case, deal with it
-
             if (!AllowsUnverifiableCIL)
             {
                 FailUnverifiable();
