@@ -22,6 +22,7 @@ namespace Sigil
                 UpdateState(OpCodes.Ret, StackTransition.None().Wrap("Return"));
 
                 CurrentVerifier = new VerifiableTracker(baseless: true);
+                MustMark = true;
 
                 return this;
             }
@@ -31,6 +32,7 @@ namespace Sigil
             UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
 
             CurrentVerifier = new VerifiableTracker(baseless: true);
+            MustMark = true;
 
             return this;
         }

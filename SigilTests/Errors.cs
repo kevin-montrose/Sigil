@@ -13,6 +13,25 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void Unreachable()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            var l = e1.DefineLabel();
+
+            e1.Branch(l);
+
+            try
+            {
+                e1.Pop();
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Unreachable code detected", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void WriteLine()
         {
             {

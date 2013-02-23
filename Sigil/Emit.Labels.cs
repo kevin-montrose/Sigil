@@ -220,6 +220,8 @@ namespace Sigil
 
             Marks[label] = IL.Index;
 
+            MustMark = false;
+
             return this;
         }
 

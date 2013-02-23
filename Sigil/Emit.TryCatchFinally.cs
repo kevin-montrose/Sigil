@@ -12,6 +12,8 @@ namespace Sigil
         /// </summary>
         public ExceptionBlock BeginExceptionBlock()
         {
+            MustMark = false;
+
             UpdateState((new[] { new StackTransition(0) }).Wrap("BeginExceptionBlock"));
 
             var labelDel = IL.BeginExceptionBlock();
@@ -99,6 +101,8 @@ namespace Sigil
             Marks[forTry.Label] = IL.Index;
 
             CurrentExceptionBlock.Pop();
+
+            MustMark = false;
 
             return this;
         }
@@ -189,6 +193,8 @@ namespace Sigil
                 throw new InvalidOperationException("Cannot start a new catch block, " + currentlyOpen + " has not been ended");
             }
 
+            MustMark = false;
+
             UpdateState((new[] { new StackTransition(0) }).Wrap("BeginCatchBlock"));
 
             var tryBlock = TryBlocks[forTry];
@@ -235,6 +241,8 @@ namespace Sigil
             {
                 FailOwnership(forCatch);
             }
+
+            MustMark = false;
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("EndCatchBlock"));
 
@@ -302,6 +310,8 @@ namespace Sigil
                 throw new InvalidOperationException("There can only be one finally block per ExceptionBlock, and one is already defined for " + forTry);
             }
 
+            MustMark = false;
+
             UpdateState((new[] { new StackTransition(0) }).Wrap("BeginFinallyBlock"));
 
             var ret = new FinallyBlock(forTry);
@@ -334,6 +344,8 @@ namespace Sigil
             {
                 throw new InvalidOperationException("EndFinallyBlock expects an unclosed finally block, but " + forFinally + " is already closed");
             }
+
+            MustMark = false;
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("EndFinallyBlock"));
 

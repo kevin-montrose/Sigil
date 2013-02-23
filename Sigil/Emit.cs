@@ -118,6 +118,8 @@ namespace Sigil
         private Dictionary<Label, VerifiableTracker> TrackersAtLabels;
         private Dictionary<Label, VerifiableTracker> TrackersAtBranches;
 
+        private bool MustMark;
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -725,6 +727,11 @@ namespace Sigil
             if (Invalidated)
             {
                 throw new InvalidOperationException("Cannot modify Emit after a delegate has been generated from it");
+            }
+
+            if (MustMark)
+            {
+                throw new SigilVerificationException("Unreachable code detected", IL.Instructions(LocalsByIndex));
             }
 
             var wrapped = new InstrAndTransitions(instr, transitions.Transitions);
