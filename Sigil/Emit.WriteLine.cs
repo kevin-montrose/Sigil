@@ -53,7 +53,7 @@ namespace Sigil
                     Box(locals[i].LocalType);
                 }
 
-                StoreElement();
+                StoreElement<object>();
             }
 
             return Call(typeof(Console).GetMethod("WriteLine", new [] { typeof(string), typeof(object[]) }));
