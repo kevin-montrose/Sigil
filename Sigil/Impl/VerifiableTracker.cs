@@ -61,6 +61,10 @@ namespace Sigil.Impl
 
         public VerificationResult Incoming(VerifiableTracker other)
         {
+            // We need to reverify the whole thing if we're seeing a branch in
+            CachedVerifyIndex = null;
+            CachedVerifyStack = null;
+
             // If we're not baseless, we can't modify ourselves; but we have to make sure the other one is equivalent
             if (!Baseless)
             {
@@ -107,7 +111,6 @@ namespace Sigil.Impl
                 {
                     for (var i = 0; i < stack.Count; i++)
                     {
-                        //stack.Each(x => x.Each(y => y.Mark(instr.Value)));
                         var ix = stack.Count - i - 1;
                         stack.ElementAt(i).Each(y => y.Mark(instr.Value, ix));
                     }
@@ -143,11 +146,15 @@ namespace Sigil.Impl
             }
         }
 
+        private Stack<IEnumerable<TypeOnStack>> CachedVerifyStack;
+        private int? CachedVerifyIndex;
         private VerificationResult CollapseAndVerify()
         {
-            var runningStack = new Stack<IEnumerable<TypeOnStack>>();
+            var runningStack = CachedVerifyStack ?? new Stack<IEnumerable<TypeOnStack>>();
 
-            for (var i = 0; i < Transitions.Count; i++)
+            int i = CachedVerifyIndex ?? 0;
+
+            for (; i < Transitions.Count; i++)
             {
                 var wrapped = Transitions[i];
                 var ops = wrapped.Transitions;
@@ -249,6 +256,9 @@ namespace Sigil.Impl
                     UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, legal));
                 }
             }
+
+            CachedVerifyIndex = i;
+            CachedVerifyStack = runningStack;
 
             return VerificationResult.Successful(runningStack);
         }
