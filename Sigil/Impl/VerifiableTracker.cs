@@ -5,165 +5,16 @@ using System.Reflection.Emit;
 
 namespace Sigil.Impl
 {
-    internal class StackTransition
-    {
-        public int PoppedCount { get { return PoppedFromStack.Count(); } }
-
-        // on the stack, first item is on the top of the stack
-        public IEnumerable<TypeOnStack> PoppedFromStack { get; private set; }
-
-        // pushed onto the stack, first item is first pushed (ends up lowest on the stack)
-        public IEnumerable<TypeOnStack> PushedToStack { get; private set; }
-
-        public int? StackSizeMustBe { get; private set; }
-
-        public bool IsDuplicate { get; private set; }
-
-        public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed)
-            : this
-            (
-                popped.Select(s => TypeOnStack.Get(s)),
-                pushed.Select(s => TypeOnStack.Get(s))
-            )
-        { }
-
-        public StackTransition(int sizeMustBe)
-            : this(new TypeOnStack[0], new TypeOnStack[0])
-        {
-            StackSizeMustBe = sizeMustBe;
-        }
-
-        public StackTransition(bool isDuplicate)
-            : this(new TypeOnStack[0], new [] { TypeOnStack.Get<WildcardType>() })
-        {
-            IsDuplicate = isDuplicate;
-        }
-
-        public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed)
-        {
-            PoppedFromStack = popped.ToList().AsReadOnly();
-            PushedToStack = pushed.ToList().AsReadOnly();
-        }
-
-        public override string ToString()
-        {
-            return "(" + string.Join(", ", PoppedFromStack.Select(p => p.ToString()).ToArray()) + ") => (" + string.Join(", ", PushedToStack.Select(p => p.ToString()).ToArray()) + ")";
-        }
-
-        public static StackTransition[] None() { return new[] { new StackTransition(Type.EmptyTypes, Type.EmptyTypes) }; }
-        public static StackTransition[] Push<PushType>() { return Push(typeof(PushType)); }
-        public static StackTransition[] Push(Type pushType) { return Push(TypeOnStack.Get(pushType)); }
-        public static StackTransition[] Push(TypeOnStack pushType) { return new[] { new StackTransition(new TypeOnStack[0], new[] { pushType }) }; }
-
-        public static StackTransition[] Pop<PopType>() { return Pop(typeof(PopType)); }
-        public static StackTransition[] Pop(Type popType) { return Pop(TypeOnStack.Get(popType)); }
-        public static StackTransition[] Pop(TypeOnStack popType) { return new[] { new StackTransition(new[] { popType }, new TypeOnStack[0]) }; }
-    }
-
-    internal class InstrAndTransitions
-    {
-        public IEnumerable<StackTransition> Transitions { get; private set; }
-        public OpCode? Instruction { get; private set; }
-
-        public InstrAndTransitions(OpCode? instr, IEnumerable<StackTransition> trans)
-        {
-            Instruction = instr;
-            Transitions = trans;
-        }
-    }
-
-    internal class VerificationResult
-    {
-        public bool Success { get; private set; }
-        public Stack<IEnumerable<TypeOnStack>> Stack { get; private set; }
-        public int StackSize { get { return Stack.Count(); } }
-
-        // Set when the stack is underflowed
-        public bool IsStackUnderflow { get; private set; }
-        public int ExpectedStackSize { get; private set; }
-
-        // Set when stacks don't match during an incoming
-        public bool IsStackMismatch { get; private set; }
-        public Stack<IEnumerable<TypeOnStack>> ExpectedStack { get; private set; }
-        public Stack<IEnumerable<TypeOnStack>> IncomingStack { get; private set; }
-
-        // Set when types are dodge
-        public bool IsTypeMismatch { get; private set; }
-        public int TransitionIndex { get; private set; }
-        public int StackIndex { get; private set; }
-        public IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
-
-        // Set when the stack was expected to be a certain size, but it wasn't
-        public bool IsStackSizeFailure {get; private set;}
-
-        public static VerificationResult Successful(Stack<IEnumerable<TypeOnStack>> stack)
-        {
-            return new VerificationResult { Success = true, Stack = stack };
-        }
-
-        public static VerificationResult FailureUnderflow(int expectedSize)
-        {
-            return
-                new VerificationResult
-                {
-                    Success = false,
-
-                    IsStackUnderflow = true,
-                    ExpectedStackSize = expectedSize
-                };
-        }
-
-        public static VerificationResult FailureStackMismatch(Stack<IEnumerable<TypeOnStack>> expected, Stack<IEnumerable<TypeOnStack>> incoming)
-        {
-            return
-                new VerificationResult
-                {
-                    Success = false,
-
-                    IsStackMismatch = true,
-                    ExpectedStack = expected,
-                    IncomingStack = incoming
-                };
-        }
-
-        public static VerificationResult FailureTypeMismatch(int transitionIndex, int stackIndex, IEnumerable<TypeOnStack> expectedTypes, Stack<IEnumerable<TypeOnStack>> stack)
-        {
-            return
-                new VerificationResult
-                {
-                    Success = false,
-
-                    IsTypeMismatch = true,
-                    TransitionIndex =transitionIndex,
-                    StackIndex = stackIndex,
-                    ExpectedAtStackIndex = expectedTypes,
-                    Stack = stack
-                };
-        }
-
-        public static VerificationResult FailureStackSize(int expectedSize)
-        {
-            return 
-                new VerificationResult
-                {
-                    Success = false,
-
-                    IsStackSizeFailure = true,
-                    ExpectedStackSize = expectedSize
-                };
-        }
-    }
-
     internal class VerifiableTracker
     {
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
         //   eventually they'll be fixed up to actual types
         private bool Baseless;
-        private List<InstrAndTransitions> Transitions = new List<InstrAndTransitions>();
+        private List<InstructionAndTransitions> Transitions = new List<InstructionAndTransitions>();
 
         public VerifiableTracker(bool baseless = false) { Baseless = baseless; }
 
-        public VerificationResult Transition(InstrAndTransitions legalTransitions)
+        public VerificationResult Transition(InstructionAndTransitions legalTransitions)
         {
             Transitions.Add(legalTransitions);
             var ret = CollapseAndVerify();
@@ -225,7 +76,7 @@ namespace Sigil.Impl
 
             var old = Transitions;
 
-            Transitions = new List<InstrAndTransitions>();
+            Transitions = new List<InstructionAndTransitions>();
             Transitions.AddRange(other.Transitions);
             Transitions.AddRange(old);
 
@@ -245,7 +96,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, InstrAndTransitions wrapped)
+        private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, InstructionAndTransitions wrapped)
         {
             var legal = wrapped.Transitions;
             var instr = wrapped.Instruction;
@@ -361,7 +212,7 @@ namespace Sigil.Impl
                 }
 
                 // No reason to do all this work again
-                Transitions[i] = new InstrAndTransitions(wrapped.Instruction, legal);
+                Transitions[i] = new InstructionAndTransitions(wrapped.Instruction, legal);
 
                 bool popAll = legal.Any(l => l.PoppedFromStack.Contains(TypeOnStack.Get<PopAllType>()));
                 if (popAll && legal.Count() != 1)
@@ -391,11 +242,11 @@ namespace Sigil.Impl
 
                     IEnumerable<TypeOnStack> toPush = runningStack.Count > 0 ? runningStack.Peek() : new[] { TypeOnStack.Get<WildcardType>() };
 
-                    UpdateStack(runningStack, new InstrAndTransitions(wrapped.Instruction, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }));
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }));
                 }
                 else
                 {
-                    UpdateStack(runningStack, new InstrAndTransitions(wrapped.Instruction, legal));
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, legal));
                 }
             }
 

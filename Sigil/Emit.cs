@@ -734,7 +734,7 @@ namespace Sigil
                 throw new SigilVerificationException("Unreachable code detected", IL.Instructions(LocalsByIndex));
             }
 
-            var wrapped = new InstrAndTransitions(instr, transitions.Transitions);
+            var wrapped = new InstructionAndTransitions(instr, transitions.Transitions);
 
             var verifyRes = CurrentVerifier.Transition(wrapped);
             if (!verifyRes.Success)
