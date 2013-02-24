@@ -439,6 +439,17 @@ namespace Sigil.Impl
         public override string ToString()
         {
             var ret = new StringBuilder();
+
+            if (StartingStack.Count > 0)
+            {
+                ret.AppendLine(
+                    "starts with: " +
+                        string.Join(", ",
+                            StartingStack.Select(s => "[" + string.Join(", or", s.Select(x => x.ToString()).ToArray()) + "]").ToArray()
+                        )
+                );
+            }
+
             for(var i = 0; i < Transitions.Count; i++)
             {
                 var label = MarkedLabelsAtTransitions.Where(kv => kv.Value == i).Select(kv => kv.Key).SingleOrDefault();
