@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Linq;
-
-using Sigil.Impl;
 
 namespace Sigil
 {

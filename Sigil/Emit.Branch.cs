@@ -1,6 +1,5 @@
 ﻿using Sigil.Impl;
 using System;
-using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Sigil
