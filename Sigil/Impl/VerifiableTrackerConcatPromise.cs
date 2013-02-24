@@ -60,5 +60,12 @@ namespace Sigil.Impl
                 Inner.ToString() +
                 (Next != null ? "\r\n" + Next.ToString() : "");
         }
+
+        public bool ContainsUsageOf(Label label)
+        {
+            return
+                Inner.ContainsUsageOf(label) ||
+                (Next != null ? Next.ContainsUsageOf(label) : false);
+        }
     }
 }

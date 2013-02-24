@@ -33,6 +33,11 @@ namespace Sigil.Impl
             }
         }
 
+        public bool ContainsUsageOf(Label label)
+        {
+            return MarkedLabelsAtTransitions.ContainsKey(label) || BranchesAtTransitions.ContainsKey(label);
+        }
+
         public void Mark(Label label)
         {
             MarkedLabelsAtTransitions[label] = Transitions.Count;
@@ -99,15 +104,20 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public static VerificationResult Verify(IEnumerable<VerifiableTracker> all)
+        public static VerificationResult Verify(Label modified, IEnumerable<VerifiableTracker> all)
         {
             var allStreams = new List<VerifiableTrackerConcatPromise>();
 
             var asPromise = all.Select(a => new VerifiableTrackerConcatPromise(a)).ToList();
 
-            for(var i = 0; i < asPromise.Count; i++)
+            var involvingLabel = 
+                modified != null ? 
+                    asPromise.Where(p => p.ContainsUsageOf(modified) || !p.Inner.IsBaseless).ToList() : 
+                    asPromise;
+
+            for(var i = 0; i < involvingLabel.Count; i++)
             {
-                var root = asPromise[i];
+                var root = involvingLabel[i];
 
                 var streams = BuildStreams(root, asPromise);
 

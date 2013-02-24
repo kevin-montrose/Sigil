@@ -20,7 +20,7 @@ namespace Sigil
 
                 UpdateState(OpCodes.Ret, StackTransition.None().Wrap("Return"));
 
-                CheckBranchesAndLabels("Return");
+                CheckBranchesAndLabels("Return", null);
 
                 CurrentVerifier = null;
                 MustMark = true;
@@ -32,7 +32,7 @@ namespace Sigil
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
 
-            CheckBranchesAndLabels("Return");
+            CheckBranchesAndLabels("Return", null);
 
             CurrentVerifier = null;
             MustMark = true;

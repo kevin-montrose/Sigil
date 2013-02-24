@@ -35,7 +35,7 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Leave, label, new[] { new StackTransition(new [] { typeof(PopAllType) }, Type.EmptyTypes) }.Wrap("Leave"), out update);
 
-            CheckBranchesAndLabels("Leave");
+            CheckBranchesAndLabels("Leave", label);
 
             Branches.Add(Tuple.Create(label, IL.Index));
 

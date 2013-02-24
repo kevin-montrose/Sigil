@@ -258,7 +258,7 @@ namespace Sigil
 
             Marks[label] = IL.Index;
 
-            CheckBranchesAndLabels("MarkLabel");
+            CheckBranchesAndLabels("MarkLabel", label);
 
             return this;
         }

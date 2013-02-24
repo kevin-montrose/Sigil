@@ -788,9 +788,9 @@ namespace Sigil
             }
         }
 
-        private void CheckBranchesAndLabels(string method)
+        private void CheckBranchesAndLabels(string method, Label modifiedLabel)
         {
-            var res = VerifiableTracker.Verify(AllTrackers);
+            var res = VerifiableTracker.Verify(modifiedLabel, AllTrackers);
             if (res != null)
             {
                 throw new SigilVerificationException(method, res, IL.Instructions(LocalsByIndex));
