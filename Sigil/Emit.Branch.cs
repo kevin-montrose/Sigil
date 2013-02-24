@@ -24,8 +24,6 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
-
             CurrentVerifier.Branch(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
@@ -34,18 +32,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
-
-            if (TrackersAtLabels.ContainsKey(label))
-            {
-                var partial = TrackersAtLabels[label];
-
-                var verifyRes = partial.Incoming(CurrentVerifier);
-
-                if (!verifyRes.Success)
-                {
-                    throw new SigilVerificationException("Branch", verifyRes, IL.Instructions(LocalsByIndex));
-                }
-            }
 
             CurrentVerifier = null;
             MustMark = true;
@@ -91,12 +77,9 @@ namespace Sigil
             BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Beq, label, transitions.Wrap("BranchIfEqual"), out update);
             
-
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
-
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }
@@ -142,8 +125,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bne_Un);
-
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }
@@ -199,7 +180,6 @@ namespace Sigil
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge);
 
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }
@@ -240,8 +220,6 @@ namespace Sigil
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge_Un);
 
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
-
             return this;
         }
 
@@ -280,8 +258,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt);
-
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }
@@ -322,8 +298,6 @@ namespace Sigil
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt_Un);
 
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
-
             return this;
         }
 
@@ -362,8 +336,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble);
-
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }
@@ -404,8 +376,6 @@ namespace Sigil
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble_Un);
 
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
-
             return this;
         }
 
@@ -445,8 +415,6 @@ namespace Sigil
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt);
 
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
-
             return this;
         }
 
@@ -485,8 +453,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
-
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }
@@ -534,8 +500,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brfalse);
-
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }
@@ -585,8 +549,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brtrue);
-
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
 
             return this;
         }

@@ -213,20 +213,6 @@ namespace Sigil
 
             CurrentVerifier.Mark(label);
 
-            if (TrackersAtBranches.ContainsKey(label))
-            {
-                var incoming = TrackersAtBranches[label];
-
-                var verifyRes = CurrentVerifier.Incoming(incoming);
-
-                if (!verifyRes.Success)
-                {
-                    throw new SigilVerificationException("MarkLabel", verifyRes, IL.Instructions(LocalsByIndex));
-                }
-            }
-
-            TrackersAtLabels[label] = CurrentVerifier.Clone();
-
             UnmarkedLabels.Remove(label);
 
             IL.MarkLabel(label);

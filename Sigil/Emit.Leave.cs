@@ -30,8 +30,6 @@ namespace Sigil
                 throw new InvalidOperationException("Leave can only be used within an exception or catch block");
             }
 
-            TrackersAtBranches[label] = CurrentVerifier.Clone();
-
             CurrentVerifier.Branch(label);
 
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
@@ -41,18 +39,6 @@ namespace Sigil
             Branches.Add(Tuple.Create(label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Leave);
-
-            if (TrackersAtLabels.ContainsKey(label))
-            {
-                var partial = TrackersAtLabels[label];
-
-                var verifyRes = partial.Incoming(CurrentVerifier);
-
-                if (!verifyRes.Success)
-                {
-                    throw new SigilVerificationException("Leave", verifyRes, IL.Instructions(LocalsByIndex));
-                }
-            }
 
             CurrentVerifier = null;
             MustMark = true;

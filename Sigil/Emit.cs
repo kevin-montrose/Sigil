@@ -115,8 +115,6 @@ namespace Sigil
         public LabelLookup Labels { get; private set; }
 
         private VerifiableTracker CurrentVerifier;
-        private Dictionary<Label, VerifiableTracker> TrackersAtLabels;
-        private Dictionary<Label, VerifiableTracker> TrackersAtBranches;
 
         private bool MustMark;
 
@@ -185,9 +183,6 @@ namespace Sigil
 
             CurrentLabels = new Dictionary<string, Label>();
             Labels = new LabelLookup(CurrentLabels);
-
-            TrackersAtLabels = new Dictionary<Label, VerifiableTracker>();
-            TrackersAtBranches = new Dictionary<Label, VerifiableTracker>();
 
             ElidableCasts = new List<int>();
 

@@ -164,47 +164,6 @@ namespace Sigil.Impl
             return true;
         }
 
-        public VerificationResult Incoming(VerifiableTracker other)
-        {
-            return VerificationResult.Successful(this, new Stack<IEnumerable<TypeOnStack>>());
-
-            // We need to reverify the whole thing if we're seeing a branch in
-            CachedVerifyIndex = null;
-            CachedVerifyStack = null;
-
-            // If we're not baseless, we can't modify ourselves; but we have to make sure the other one is equivalent
-            if (!IsBaseless)
-            {
-                var isEquivalent = IsEquivalent(other);
-
-                if (isEquivalent)
-                {
-                    return VerificationResult.Successful(this, GetStack(this));
-                }
-
-                return VerificationResult.FailureStackMismatch(this, GetStack(this), GetStack(other));
-            }
-
-            var old = Transitions;
-            var oldBase = IsBaseless;
-
-            Transitions = new List<InstructionAndTransitions>();
-            Transitions.AddRange(other.Transitions);
-            Transitions.AddRange(old);
-            this.IsBaseless = other.IsBaseless;
-
-            var ret = CollapseAndVerify();
-            
-            if (!ret.Success)
-            {
-                // revert!
-                Transitions = old;
-                this.IsBaseless = oldBase;
-            }
-
-            return ret;
-        }
-
         private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, InstructionAndTransitions wrapped, bool isBaseless)
         {
             var legal = wrapped.Transitions;
