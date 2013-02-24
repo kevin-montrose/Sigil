@@ -12,6 +12,44 @@ namespace SigilTests
     public class Local
     {
         [TestMethod]
+        public void ReuseLabels()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            e1.DeclareLocal<int>("a");
+            e1.DeclareLocal<int>("b");
+
+            e1.LoadLocal("a");
+            e1.LoadLocal("b");
+
+            using (e1.DeclareLocal<int>("c"))
+            {
+                e1.LoadLocal("c");
+            }
+
+            using (e1.DeclareLocal<int>("d"))
+            {
+                e1.LoadLocal("d");
+            }
+
+            e1.StoreLocal("a");
+            e1.StoreLocal("a");
+            e1.StoreLocal("b");
+            e1.StoreLocal("b");
+
+            try
+            {
+                e1.Pop();
+
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                var debug = e.GetDebugInfo();
+                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldloc.0 // System.Int32 a\r\nldloc.1 // System.Int32 b\r\nldloc.2 // System.Int32 c\r\nldloc.2 // System.Int32 d\r\nstloc.0 // System.Int32 a\r\nstloc.0 // System.Int32 a\r\nstloc.1 // System.Int32 b\r\nstloc.1 // System.Int32 b\r\n", debug);
+            }
+        }
+
+        [TestMethod]
         public void Instructions()
         {
             var e1 = Emit<Action>.NewDynamicMethod("E1");

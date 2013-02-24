@@ -209,7 +209,7 @@ namespace Sigil
 
             if (tryBlock.Item2 != -1)
             {
-                throw new SigilVerificationException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", IL.Instructions(LocalsByIndex));
+                throw new SigilVerificationException("BeginCatchBlock expects an unclosed exception block, but " + forTry + " is already closed", IL.Instructions(AllLocals));
             }
 
             IL.BeginCatchBlock(exceptionType);

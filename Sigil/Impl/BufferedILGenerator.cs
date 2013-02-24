@@ -68,7 +68,7 @@ namespace Sigil.Impl
             return cached;
         }
 
-        internal string[] Instructions(Dictionary<int, Local> locals)
+        internal string[] Instructions(List<Local> locals)
         {
             var ret = new List<string>();
 
@@ -81,39 +81,41 @@ namespace Sigil.Impl
 
             var instrs = new StringBuilder();
 
-            foreach (var x in Buffer)
+            for(var i = 0; i < Buffer.Count; i++)
             {
+                var x = Buffer[i];
+
                 x(il, true, instrs);
                 var line = instrs.ToString().TrimEnd();
 
                 if (line.StartsWith(OpCodes.Ldloc_0.ToString()) ||
                     line.StartsWith(OpCodes.Stloc_0.ToString()))
                 {
-                    line += " // " + locals[0];
+                    line += " // " + GetInScopeAt(locals, i)[0];
                 }
 
                 if (line.StartsWith(OpCodes.Ldloc_1.ToString()) ||
                     line.StartsWith(OpCodes.Stloc_1.ToString()))
                 {
-                    line += " // " + locals[1];
+                    line += " // " + GetInScopeAt(locals, i)[1];
                 }
 
                 if (line.StartsWith(OpCodes.Ldloc_2.ToString()) ||
                     line.StartsWith(OpCodes.Stloc_2.ToString()))
                 {
-                    line += " // " + locals[2];
+                    line += " // " + GetInScopeAt(locals, i)[2];
                 }
 
                 if (line.StartsWith(OpCodes.Ldloc_3.ToString()) ||
                     line.StartsWith(OpCodes.Stloc_3.ToString()))
                 {
-                    line += " // " + locals[3];
+                    line += " // " + GetInScopeAt(locals, i)[3];
                 }
 
                 if (line.StartsWith(OpCodes.Ldloc_S.ToString()) ||
                     line.StartsWith(OpCodes.Stloc_S.ToString()))
                 {
-                    line += " // " + ExtractLocal(line, locals);
+                    line += " // " + ExtractLocal(line, locals, i);
                 }
 
                 ret.Add(line);
@@ -123,9 +125,20 @@ namespace Sigil.Impl
             return ret.ToArray();
         }
 
+        private static Dictionary<int, Local> GetInScopeAt(List<Local> allLocals, int ix)
+        {
+            return
+                allLocals
+                    .Where(
+                        l =>
+                            l.DeclaredAtIndex <= ix &&
+                            (l.ReleasedAtIndex == null || l.ReleasedAtIndex > ix)
+                    ).ToDictionary(d => (int)d.Index, d => d);
+        }
+
         private static Regex _ExtractLocal = new Regex(@"\s+(?<locId>\d+)", RegexOptions.Compiled);
 
-        private static Local ExtractLocal(string from, Dictionary<int, Local> locals)
+        private static Local ExtractLocal(string from, List<Local> locals, int ix)
         {
             var match = _ExtractLocal.Match(from);
 
@@ -133,7 +146,7 @@ namespace Sigil.Impl
 
             var lid = int.Parse(locId);
 
-            return locals[lid];
+            return GetInScopeAt(locals, ix)[lid];
         }
 
         public int ByteDistance(int start, int stop)

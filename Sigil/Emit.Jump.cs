@@ -65,7 +65,7 @@ namespace Sigil
 
                 if (!shouldBe.IsAssignableFrom(actuallyIs))
                 {
-                    throw new SigilVerificationException("Jump expected the #" + i + " parameter to be assignable from " + actuallyIs + ", but found " + shouldBe, IL.Instructions(LocalsByIndex));
+                    throw new SigilVerificationException("Jump expected the #" + i + " parameter to be assignable from " + actuallyIs + ", but found " + shouldBe, IL.Instructions(AllLocals));
                 }
             }
 

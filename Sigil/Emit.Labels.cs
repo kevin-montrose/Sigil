@@ -21,7 +21,7 @@ namespace Sigil
 
                 if (!Marks.ContainsKey(label))
                 {
-                    throw new SigilVerificationException("Usage of unmarked label " + label, IL.Instructions(LocalsByIndex));
+                    throw new SigilVerificationException("Usage of unmarked label " + label, IL.Instructions(AllLocals));
                 }
 
                 var stop = Marks[label];
@@ -143,7 +143,7 @@ namespace Sigil
 
                 if (res != null)
                 {
-                    throw new SigilVerificationException(method+" at "+labelBranchedTo, res, IL.Instructions(LocalsByIndex));
+                    throw new SigilVerificationException(method + " at " + labelBranchedTo, res, IL.Instructions(AllLocals));
                 }
             }
         }

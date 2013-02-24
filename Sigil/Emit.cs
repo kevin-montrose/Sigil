@@ -35,7 +35,7 @@ namespace Sigil
 
         private ushort NextLocalIndex = 0;
 
-        private Dictionary<int, Local> LocalsByIndex;
+        private List<Local> AllLocals;
 
         private HashSet<Local> UnusedLocals;
         private HashSet<Label> UnusedLabels;
@@ -143,7 +143,7 @@ namespace Sigil
             InstructionStream = new List<OpCode>();
             Trackers = new List<VerifiableTracker>();
 
-            LocalsByIndex = new Dictionary<int, Local>();
+            AllLocals = new List<Local>();
 
             UnusedLocals = new HashSet<Local>();
             UnusedLabels = new HashSet<Label>();
@@ -199,7 +199,7 @@ namespace Sigil
         {
             var ret = new StringBuilder();
 
-            foreach (var line in IL.Instructions(LocalsByIndex).Skip(2))
+            foreach (var line in IL.Instructions(AllLocals).Skip(2))
             {
                 ret.AppendLine(line);
             }
@@ -793,7 +793,7 @@ namespace Sigil
             var res = VerifiableTracker.Verify(modifiedLabel, AllTrackers);
             if (res != null)
             {
-                throw new SigilVerificationException(method, res, IL.Instructions(LocalsByIndex));
+                throw new SigilVerificationException(method, res, IL.Instructions(AllLocals));
             }
         }
 
@@ -806,7 +806,7 @@ namespace Sigil
 
             if (MustMark)
             {
-                throw new SigilVerificationException("Unreachable code detected", IL.Instructions(LocalsByIndex));
+                throw new SigilVerificationException("Unreachable code detected", IL.Instructions(AllLocals));
             }
 
             var wrapped = new InstructionAndTransitions(instr, instr.HasValue ? (int?)IL.Index : null, transitions.Transitions);
@@ -814,7 +814,7 @@ namespace Sigil
             var verifyRes = CurrentVerifier.Transition(wrapped);
             if (!verifyRes.Success)
             {
-                throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(LocalsByIndex));
+                throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(AllLocals));
             }
 
             MaxStackSize = Math.Max(verifyRes.StackSize, MaxStackSize);

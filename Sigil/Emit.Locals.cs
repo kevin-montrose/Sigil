@@ -11,6 +11,8 @@ namespace Sigil
             FreedLocals.Add(local);
 
             CurrentLocals.Remove(local.Name);
+
+            local.SetReleasedAt(IL.Index);
         }
 
         /// <summary>
@@ -70,11 +72,11 @@ namespace Sigil
                 FreedLocals.Remove(existingLocal);
             }
 
-            var ret = new Local(this, localIndex, type, local, name, LocalReleased);
+            var ret = new Local(this, localIndex, type, local, name, LocalReleased, IL.Index);
 
             UnusedLocals.Add(ret);
 
-            LocalsByIndex[localIndex] = ret;
+            AllLocals.Add(ret);
 
             CurrentLocals[ret.Name] = ret;
 

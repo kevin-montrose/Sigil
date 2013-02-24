@@ -18,10 +18,10 @@ namespace Sigil
         {
             if (expected == 1)
             {
-                throw new SigilVerificationException(method + " expects a value on the stack, but it was empty", IL.Instructions(LocalsByIndex));
+                throw new SigilVerificationException(method + " expects a value on the stack, but it was empty", IL.Instructions(AllLocals));
             }
 
-            throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL.Instructions(LocalsByIndex));
+            throw new SigilVerificationException(method + " expects " + expected + " values on the stack", IL.Instructions(AllLocals));
         }
 
         private void FailOwnership(IOwned obj)
@@ -49,7 +49,7 @@ namespace Sigil
                     throw 
                         new SigilVerificationException(
                             "Unended ExceptionBlock " + kv.Key,
-                            IL.Instructions(LocalsByIndex)
+                            IL.Instructions(AllLocals)
                         );
                 }
             }
@@ -111,7 +111,7 @@ namespace Sigil
                         throw 
                             new SigilVerificationException(
                                 "Cannot branch from inside " + fromCatchBlock + " to outside, exit the ExceptionBlock first",
-                                IL.Instructions(LocalsByIndex)
+                                IL.Instructions(AllLocals)
                             );
                     }
                 }
@@ -121,7 +121,7 @@ namespace Sigil
                     throw 
                         new SigilVerificationException(
                             "Cannot branch from inside " + fromFinallyBlock + " to outside, exit the ExceptionBlock first",
-                            IL.Instructions(LocalsByIndex)
+                            IL.Instructions(AllLocals)
                         );
                 }
 
@@ -130,7 +130,7 @@ namespace Sigil
                     throw 
                         new SigilVerificationException(
                             "Cannot branch into a FinallyBlock",
-                            IL.Instructions(LocalsByIndex)
+                            IL.Instructions(AllLocals)
                         );
                 }
 
@@ -141,7 +141,7 @@ namespace Sigil
                         throw 
                             new SigilVerificationException(
                                 "Cannot branch from inside " + fromTryBlock + " to outside, exit the ExceptionBlock first",
-                                IL.Instructions(LocalsByIndex)
+                                IL.Instructions(AllLocals)
                             );
                     }
                 }
@@ -159,7 +159,7 @@ namespace Sigil
 
             if (lastInstr != OpCodes.Ret)
             {
-                throw new SigilVerificationException("Delegate must end with Return", IL.Instructions(LocalsByIndex));
+                throw new SigilVerificationException("Delegate must end with Return", IL.Instructions(AllLocals));
             }
 
             ValidateTryCatchFinallyBlocks();

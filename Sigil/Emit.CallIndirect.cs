@@ -359,7 +359,7 @@ namespace Sigil
                 {
                     if (funcPtr.CallingConvention != callConventions)
                     {
-                        throw new SigilVerificationException("CallIndirect expects method calling conventions to match, found " + funcPtr.CallingConvention + " on the stack", IL.Instructions(LocalsByIndex));
+                        throw new SigilVerificationException("CallIndirect expects method calling conventions to match, found " + funcPtr.CallingConvention + " on the stack", IL.Instructions(AllLocals));
                     }
 
                     if (HasFlag(callConventions, CallingConventions.HasThis))
@@ -368,13 +368,13 @@ namespace Sigil
 
                         if (!funcPtr.InstanceType.IsAssignableFrom(thisRef))
                         {
-                            throw new SigilVerificationException("CallIndirect expects a 'this' value assignable to "+funcPtr.InstanceType+", found "+thisRef, IL.Instructions(LocalsByIndex));
+                            throw new SigilVerificationException("CallIndirect expects a 'this' value assignable to " + funcPtr.InstanceType + ", found " + thisRef, IL.Instructions(AllLocals));
                         }
                     }
 
                     if (funcPtr.ReturnType != returnType)
                     {
-                        throw new SigilVerificationException("CallIndirect expects method return types to match, found " + funcPtr.ReturnType + " on the stack", IL.Instructions(LocalsByIndex));
+                        throw new SigilVerificationException("CallIndirect expects method return types to match, found " + funcPtr.ReturnType + " on the stack", IL.Instructions(AllLocals));
                     }
                 }
             }

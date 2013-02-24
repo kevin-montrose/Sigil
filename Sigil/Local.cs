@@ -34,7 +34,10 @@ namespace Sigil
         private object _Owner;
         object IOwned.Owner { get { return _Owner; } }
 
-        internal Local(object owner, ushort index, Type localType, DeclareLocallDelegate local, string name, LocalReusableDelegate reusable)
+        internal int DeclaredAtIndex { get; private set; }
+        internal int? ReleasedAtIndex { get; private set; }
+
+        internal Local(object owner, ushort index, Type localType, DeclareLocallDelegate local, string name, LocalReusableDelegate reusable, int declaredAt)
         {
             _Owner = owner;
             LocalDel = local;
@@ -45,6 +48,15 @@ namespace Sigil
             StackType = TypeOnStack.Get(localType);
 
             Reusable = reusable;
+
+            DeclaredAtIndex = declaredAt;
+        }
+
+        internal void SetReleasedAt(int index)
+        {
+            if (ReleasedAtIndex.HasValue) throw new Exception("Can't call this method twice");
+
+            ReleasedAtIndex = index;
         }
 
         /// <summary>
