@@ -209,7 +209,12 @@ namespace Sigil.Impl
             trans.AddRange(Transitions);
             trans.AddRange(other.Transitions);
 
-            var lookup = new Dictionary<InstructionAndTransitions, int>(TransitionLookup);
+            var lookup = new Dictionary<InstructionAndTransitions, int>(TransitionLookup.Count + other.TransitionLookup.Count);
+            foreach (var kv in TransitionLookup)
+            {
+                lookup[kv.Key] = kv.Value;
+            }
+
             int offset = lookup.Count;
 
             foreach (var kv in other.TransitionLookup)
