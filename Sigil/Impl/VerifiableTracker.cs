@@ -136,16 +136,10 @@ namespace Sigil.Impl
                 new VerifiableTracker(BeganAt, IsBaseless)
                 {
                     StartingStack = IsBaseless ? new Stack<IEnumerable<TypeOnStack>>(StartingStack) : new Stack<IEnumerable<TypeOnStack>>(),
-                    Transitions = trans
+                    Transitions = trans,
+                    CachedVerifyStack = IsBaseless && CachedVerifyStack != null ? new Stack<IEnumerable<TypeOnStack>>(CachedVerifyStack) : null,
+                    CachedVerifyIndex = IsBaseless ? CachedVerifyIndex : null
                 };
-
-            if (BeganAt == other.BeganAt)
-            {
-                if (!IsEquivalent(ret) || !other.IsEquivalent(ret))
-                {
-                    throw new Exception("Uhhhh");
-                }
-            }
 
             return ret;
         }
