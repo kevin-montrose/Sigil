@@ -149,8 +149,10 @@ namespace Sigil.Impl
 
             var asPromise = all.Select(a => new VerifiableTrackerConcatPromise(a)).ToList();
 
-            foreach (var root in asPromise)
+            for(var i = 0; i < asPromise.Count; i++)
             {
+                var root = asPromise[i];
+
                 var streams = BuildStreams(root, asPromise);
 
                 var dePromised = streams.Select(s => s.DePromise()).ToList();
@@ -160,8 +162,10 @@ namespace Sigil.Impl
 
             var culled = RemoveOverlapping(allStreams);
 
-            foreach (var s in culled)
+            for(var i = 0; i < culled.Count; i++)
             {
+                var s = culled[i];
+
                 var res = s.CollapseAndVerify();
 
                 if (!res.Success)
@@ -188,8 +192,10 @@ namespace Sigil.Impl
 
                 var sub = BuildStreams(startingAt, exceptSelf);
 
-                foreach (var s in sub)
+                for(var i = 0; i < sub.Count; i++)
                 {
+                    var s = sub[i];
+
                     ret.Add(root.Concat(s));
                 }
             }
@@ -205,6 +211,7 @@ namespace Sigil.Impl
 
             var lookup = new Dictionary<InstructionAndTransitions, int>(TransitionLookup);
             int offset = lookup.Count;
+
             foreach (var kv in other.TransitionLookup)
             {
                 lookup[kv.Key] = kv.Value + offset;
