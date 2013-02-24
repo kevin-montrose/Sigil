@@ -210,7 +210,9 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("MarkLabel resulted in stack mismatches", e.Message);
+                    var f = e.GetDebugInfo();
+                    Assert.AreEqual("MarkLabel at _label0 resulted in stack mismatches", e.Message);
+                    Assert.AreEqual("Expected Stack\r\n==============\r\n--empty--\r\n\r\nIncoming Stack\r\n==============\r\nint\r\n\r\nInstructions\r\n============\r\nldc.i4.1\r\nbrfalse _label0\r\nldc.i4.4\r\n", f);
                 }
             }
         }
@@ -234,7 +236,8 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 var f = e.GetDebugInfo();
-                Assert.AreEqual("Branch resulted in stack mismatches", e.Message);
+                Assert.AreEqual("Branch expects a value on the stack, but it was empty", e.Message);
+                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldc.i4.1\r\n\r\n_label0:\r\npop  // relevant instruction\r\nldstr '123'\r\n", f);
             }
         }
 

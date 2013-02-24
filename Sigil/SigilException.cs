@@ -117,7 +117,7 @@ namespace Sigil
             ret.AppendLine("Instructions");
             ret.AppendLine("============");
 
-            var instrIx = Failure.Verifier.GetInstructionIndex(Failure.TransitionIndex);
+            var instrIx = Failure.TransitionIndex != null ? Failure.Verifier.GetInstructionIndex(Failure.TransitionIndex.Value) : -1;
 
             for(var i = 2; i < Instructions.Length; i++)
             {

@@ -22,7 +22,7 @@ namespace Sigil.Impl
 
         // Set when types are dodge
         public bool IsTypeMismatch { get; private set; }
-        public int TransitionIndex { get; private set; }
+        public int? TransitionIndex { get; private set; }
         public int StackIndex { get; private set; }
         public IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
 

@@ -42,6 +42,47 @@ namespace Sigil.Impl
             BranchesAtTransitions[label] = Transitions.Count;
         }
 
+        private static bool CompareOnStack(IEnumerable<TypeOnStack> a, IEnumerable<TypeOnStack> b, bool mustBeExact)
+        {
+            if (mustBeExact)
+            {
+                if (a.Count() != b.Count()) return false;
+
+                return !a.Any(x => !b.Any(y => x == y));
+            }
+
+            return a.Any(x => b.Any(y => x == y)) || b.Any(y => a.Any(x => x == y));
+        }
+
+        public VerificationResult AreCompatible(VerifiableTracker other)
+        {
+            var thisStack = GetStack(this);
+            var otherStack = GetStack(other);
+
+            if (!IsBaseless && !other.IsBaseless)
+            {
+                if (thisStack.Count != otherStack.Count)
+                {
+                    return VerificationResult.FailureStackMismatch(this, thisStack, otherStack);
+                }
+            }
+
+            var literalCheck = Math.Min(thisStack.Count, otherStack.Count);
+
+            for (var i = 0; i < literalCheck; i++)
+            {
+                var onThis = thisStack.ElementAt(i);
+                var onOther = otherStack.ElementAt(i);
+
+                if (!CompareOnStack(onThis, onOther, !(IsBaseless || other.IsBaseless)))
+                {
+                    return VerificationResult.FailureStackMismatch(this, thisStack, otherStack);
+                }
+            }
+
+            return null;
+        }
+
         public static VerificationResult Verify(Label startFrom, IEnumerable<VerifiableTracker> all)
         {
             //var root = all.Single(a => a.BeganAt == startFrom);
@@ -135,7 +176,8 @@ namespace Sigil.Impl
 
         private static Stack<IEnumerable<TypeOnStack>> GetStack(VerifiableTracker tracker)
         {
-            var retStack = new Stack<IEnumerable<TypeOnStack>>();
+            var retStack = new Stack<IEnumerable<TypeOnStack>>(tracker.StartingStack);
+
             foreach (var t in tracker.Transitions)
             {
                 UpdateStack(retStack, t, tracker.IsBaseless);

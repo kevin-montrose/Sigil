@@ -122,6 +122,10 @@ namespace Sigil
 
         private HashSet<VerifiableTracker> AllTrackers = new HashSet<VerifiableTracker>();
 
+        // Stores the stack during a BranchIf*; knowing that when the label is marked it'll need to be verified
+        private Dictionary<Label, List<VerifiableTracker>> StateAtConditionalBranchToLabel = new Dictionary<Label, List<VerifiableTracker>>();
+        private Dictionary<Label, VerifiableTracker> StateAtLabel = new Dictionary<Label, VerifiableTracker>();
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
