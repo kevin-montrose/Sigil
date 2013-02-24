@@ -79,7 +79,7 @@ namespace SigilTests
             {
                 Assert.AreEqual("Branch expects a value on the stack, but it was empty", e.Message);
                 var debug = e.GetDebugInfo();
-                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\n\r\n__start:\r\nldarg.0\r\nbr l1\r\n\r\nl2:\r\npop\r\ncallvirt System.String ToString()  // relevant instruction\r\nbr l3\r\n\r\nl1:\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldarg.0\r\nbr l1\r\n\r\nl2:\r\npop\r\ncallvirt System.String ToString()  // relevant instruction\r\nbr l3\r\n\r\nl1:\r\n", e.GetDebugInfo());
             }
         }
 

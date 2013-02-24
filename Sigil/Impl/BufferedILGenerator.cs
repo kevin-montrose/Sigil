@@ -30,7 +30,8 @@ namespace Sigil.Impl
         {
             var log = new StringBuilder();
 
-            for(var i = 0; i < Buffer.Count; i++)
+            // First thing will always be a Mark for tracing purposes; no reason to actually do it
+            for(var i = 2; i < Buffer.Count; i++)
             {
                 var x = Buffer[i];
 

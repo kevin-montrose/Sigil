@@ -217,7 +217,7 @@ namespace Sigil
         {
             var ret = new StringBuilder();
 
-            foreach (var line in IL.Instructions(LocalsByIndex))
+            foreach (var line in IL.Instructions(LocalsByIndex).Skip(2))
             {
                 ret.AppendLine(line);
             }

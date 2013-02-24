@@ -119,7 +119,7 @@ namespace Sigil
 
             var instrIx = Failure.Verifier.GetInstructionIndex(Failure.TransitionIndex);
 
-            for(var i = 0; i < Instructions.Length; i++)
+            for(var i = 2; i < Instructions.Length; i++)
             {
                 var line = Instructions[i];
 
