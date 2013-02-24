@@ -159,7 +159,7 @@ namespace Sigil.Impl
 
                 if (startingAt == null) continue;
 
-                var exceptSelf = all.Where(a => a != startingAt);
+                var exceptSelf = all.Where(a => a != startingAt).ToList();
 
                 var sub = BuildStreams(startingAt, exceptSelf);
 
