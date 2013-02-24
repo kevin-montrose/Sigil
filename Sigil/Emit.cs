@@ -176,7 +176,6 @@ namespace Sigil
 
             var start = DefineLabel("__start");
             CurrentVerifier = new VerifiableTracker(start);
-            AllTrackers.Add(CurrentVerifier);
             MarkLabel(start);
         }
 
@@ -791,7 +790,7 @@ namespace Sigil
 
         private void CheckBranchesAndLabels(string method)
         {
-            var res = VerifiableTracker.Verify(Labels["__start"], AllTrackers);
+            var res = VerifiableTracker.Verify(AllTrackers);
             if (res != null)
             {
                 throw new SigilVerificationException(method, res, IL.Instructions(LocalsByIndex));

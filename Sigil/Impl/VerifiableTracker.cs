@@ -82,10 +82,8 @@ namespace Sigil.Impl
             return null;
         }
 
-        public static VerificationResult Verify(Label startFrom, IEnumerable<VerifiableTracker> all)
+        public static VerificationResult Verify(IEnumerable<VerifiableTracker> all)
         {
-            //var root = all.Single(a => a.BeganAt == startFrom);
-
             foreach (var root in all)
             {
                 var streams = BuildStreams(root, all);
