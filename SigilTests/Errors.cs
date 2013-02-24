@@ -12,14 +12,14 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Errors
     {
-       /* [TestMethod]
+        [TestMethod]
         public void BadManyBranch()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();
 
             e1.LoadArgument(0);
 
-            for (var i = 0; i < 100; i++)
+            for (var i = 0; i < 5; i++)
             {
                 var l1 = e1.DefineLabel();
                 var l2 = e1.DefineLabel();
@@ -47,9 +47,9 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("", e.Message);
+                Assert.AreEqual("Return expects a value on the stack, but it was empty", e.Message);
             }
-        }*/
+        }
 
         [TestMethod]
         public void BadDoubleBranch()
