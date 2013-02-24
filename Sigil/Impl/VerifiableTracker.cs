@@ -13,6 +13,8 @@ namespace Sigil.Impl
         //   eventually they'll be fixed up to actual types
         public bool IsBaseless { get; private set; }
         private List<InstructionAndTransitions> Transitions = new List<InstructionAndTransitions>();
+        private Dictionary<InstructionAndTransitions, int> TransitionLookup = new Dictionary<InstructionAndTransitions, int>();
+
         private Dictionary<Label, int> MarkedLabelsAtTransitions = new Dictionary<Label, int>();
         private Dictionary<Label, int> BranchesAtTransitions = new Dictionary<Label, int>();
 
@@ -82,20 +84,64 @@ namespace Sigil.Impl
             return null;
         }
 
+        private bool Contains(VerifiableTracker other)
+        {
+            if (other.Transitions.Count == 0) return true;
+
+            var start = other.Transitions.First();
+            int inThisIx;
+            if (!TransitionLookup.TryGetValue(start, out inThisIx)) return false;
+
+            for (var i = 0; i < other.Transitions.Count; i++)
+            {
+                if (inThisIx + i >= this.Transitions.Count) return false;
+
+                var otherTran = other.Transitions[i];
+                var thisTran = this.Transitions[i + inThisIx];
+
+                if (otherTran != thisTran) return false;
+            }
+
+            return true;
+        }
+
+        // Cuts out any sequence that is wholy contained within another
+        private static List<VerifiableTracker> RemoveOverlapping(List<VerifiableTracker> all)
+        {
+            var ret = new List<VerifiableTracker>();
+
+            foreach (var a in all)
+            {
+                if (all.Any(x => x != a && x.Contains(a))) continue;
+
+                ret.Add(a);
+            }
+
+            return ret;
+        }
+
         public static VerificationResult Verify(IEnumerable<VerifiableTracker> all)
         {
+            var allStreams = new List<VerifiableTracker>();
+
             foreach (var root in all)
             {
                 var streams = BuildStreams(root, all);
 
-                foreach (var s in streams)
-                {
-                    var res = s.CollapseAndVerify();
+                var longest = RemoveOverlapping(streams);
 
-                    if (!res.Success)
-                    {
-                        return res;
-                    }
+                allStreams.AddRange(longest);
+            }
+
+            var culled = RemoveOverlapping(allStreams);
+
+            foreach (var s in culled)
+            {
+                var res = s.CollapseAndVerify();
+
+                if (!res.Success)
+                {
+                    return res;
                 }
             }
 
@@ -132,13 +178,21 @@ namespace Sigil.Impl
             trans.AddRange(Transitions);
             trans.AddRange(other.Transitions);
 
+            var lookup = new Dictionary<InstructionAndTransitions, int>(TransitionLookup);
+            int offset = lookup.Count;
+            foreach (var kv in other.TransitionLookup)
+            {
+                lookup[kv.Key] = kv.Value + offset;
+            }
+
             var ret =
                 new VerifiableTracker(BeganAt, IsBaseless)
                 {
                     StartingStack = IsBaseless ? new Stack<IEnumerable<TypeOnStack>>(StartingStack) : new Stack<IEnumerable<TypeOnStack>>(),
                     Transitions = trans,
                     CachedVerifyStack = IsBaseless && CachedVerifyStack != null ? new Stack<IEnumerable<TypeOnStack>>(CachedVerifyStack) : null,
-                    CachedVerifyIndex = IsBaseless ? CachedVerifyIndex : null
+                    CachedVerifyIndex = IsBaseless ? CachedVerifyIndex : null,
+                    TransitionLookup = lookup
                 };
 
             return ret;
@@ -154,6 +208,8 @@ namespace Sigil.Impl
             {
                 Transitions.RemoveAt(Transitions.Count - 1);
             }
+
+            TransitionLookup[legalTransitions] = Transitions.Count - 1;
 
             return ret;
         }
@@ -331,6 +387,8 @@ namespace Sigil.Impl
 
                 // No reason to do all this work again
                 Transitions[i] = new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, legal);
+                TransitionLookup.Remove(wrapped);
+                TransitionLookup[Transitions[i]] = i;
 
                 bool popAll = legal.Any(l => l.PoppedFromStack.Contains(TypeOnStack.Get<PopAllType>()));
                 if (popAll && legal.Count() != 1)
@@ -404,7 +462,8 @@ namespace Sigil.Impl
                     IsBaseless = IsBaseless,
                     MarkedLabelsAtTransitions = new Dictionary<Label,int>(MarkedLabelsAtTransitions),
                     BranchesAtTransitions = new Dictionary<Label,int>(BranchesAtTransitions),
-                    Transitions = Transitions.ToList()
+                    Transitions = Transitions.ToList(),
+                    TransitionLookup = new Dictionary<InstructionAndTransitions,int>(TransitionLookup)
                 };
         }
 
