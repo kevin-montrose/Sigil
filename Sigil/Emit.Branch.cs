@@ -26,7 +26,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Br, label, StackTransition.None().Wrap("Branch"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -74,7 +74,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Beq, label, transitions.Wrap("BranchIfEqual"), out update);
 
             RecordConditionalBranchState("BranchIfEqual", label);
@@ -121,7 +121,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bne_Un, label, transitions.Wrap("UnsignedBranchIfNotEqual"), out update);
 
             RecordConditionalBranchState("UnsignedBranchIfNotEqual", label);
@@ -177,7 +177,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bge, label, BranchComparableTransitions("BranchIfGreaterOrEqual"), out update);
 
             RecordConditionalBranchState("BranchIfGreaterOrEqual", label);
@@ -219,7 +219,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bge_Un, label, BranchComparableTransitions("UnsignedBranchIfGreaterOrEqual"), out update);
 
             RecordConditionalBranchState("UnsignedBranchIfGreaterOrEqual", label);
@@ -260,7 +260,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bgt, label, BranchComparableTransitions("BranchIfGreater"), out update);
 
             RecordConditionalBranchState("BranchIfGreater", label);
@@ -301,7 +301,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bgt_Un, label, BranchComparableTransitions("UnsignedBranchIfGreater"), out update);
 
             RecordConditionalBranchState("UnsignedBranchIfGreater", label);
@@ -342,7 +342,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Ble, label, BranchComparableTransitions("BranchIfLessOrEqual"), out update);
 
             RecordConditionalBranchState("BranchIfLessOrEqual", label);
@@ -383,7 +383,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Ble_Un, label, BranchComparableTransitions("UnsignedBranchIfLessOrEqual"), out update);
 
             RecordConditionalBranchState("UnsignedBranchIfLessOrEqual", label);
@@ -424,7 +424,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Blt, label, BranchComparableTransitions("BranchIfLess"), out update);
 
             RecordConditionalBranchState("BranchIfLess", label);
@@ -465,7 +465,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Blt_Un, label, BranchComparableTransitions("UnsignedBranchIfLess"), out update);
 
             RecordConditionalBranchState("UnsignedBranchIfLess", label);
@@ -514,7 +514,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Brfalse, label, transitions.Wrap("BranchIfFalse"), out update);
 
             RecordConditionalBranchState("BranchIfFalse", label);
@@ -565,7 +565,7 @@ namespace Sigil
 
             CurrentVerifier.Branch(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Brtrue, label, transitions.Wrap("BranchIfTrue"), out update);
 
             RecordConditionalBranchState("BranchIfTrue", label);

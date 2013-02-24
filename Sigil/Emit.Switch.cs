@@ -44,7 +44,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(NativeIntType) }, Type.EmptyTypes),
                 };
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), transitions.Wrap("Switch"), out update);
 
             foreach (var label in labels)

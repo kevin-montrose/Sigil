@@ -9,21 +9,6 @@ using System.Text;
 
 namespace Sigil
 {
-    internal delegate void LocalReusableDelegate(Local local);
-
-    internal class TransitionWrapper
-    {
-        public IEnumerable<StackTransition> Transitions { get; private set; }
-        public string MethodName { get; private set; }
-
-        private TransitionWrapper() { }
-
-        public static TransitionWrapper Get(string name, IEnumerable<StackTransition> transitions)
-        {
-            return new TransitionWrapper { MethodName = name, Transitions = transitions };
-        }
-    }
-
     /// <summary>
     /// Helper for CIL generation that fails as soon as a sequence of instructions
     /// can be shown to be invalid.
@@ -60,7 +45,7 @@ namespace Sigil
         private List<Tuple<Label, int>> Branches;
         private Dictionary<Label, int> Marks;
 
-        private Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>> BranchPatches;
+        private Dictionary<int, Tuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
         private Stack<ExceptionBlock> CurrentExceptionBlock;
 
@@ -168,7 +153,7 @@ namespace Sigil
             Branches = new List<Tuple<Label, int>>();
             Marks = new Dictionary<Label, int>();
 
-            BranchPatches = new Dictionary<int, Tuple<Label, BufferedILGenerator.UpdateOpCodeDelegate, OpCode>>();
+            BranchPatches = new Dictionary<int, Tuple<Label, UpdateOpCodeDelegate, OpCode>>();
 
             CurrentExceptionBlock = new Stack<ExceptionBlock>();
 
@@ -911,14 +896,14 @@ namespace Sigil
             IL.Emit(instr, param);
         }
 
-        private void UpdateState(OpCode instr, Label param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update)
+        private void UpdateState(OpCode instr, Label param, TransitionWrapper transitions, out UpdateOpCodeDelegate update)
         {
             UpdateStackAndInstrStream(instr, transitions);
 
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, Label[] param, TransitionWrapper transitions, out BufferedILGenerator.UpdateOpCodeDelegate update)
+        private void UpdateState(OpCode instr, Label[] param, TransitionWrapper transitions, out UpdateOpCodeDelegate update)
         {
             UpdateStackAndInstrStream(instr, transitions);
 

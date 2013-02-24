@@ -20,12 +20,12 @@ namespace Sigil
         /// </summary>
         public string Name { get; private set; }
 
-        internal BufferedILGenerator.DefineLabelDelegate LabelDel { get; private set; }
+        internal DefineLabelDelegate LabelDel { get; private set; }
 
         private object _Owner;
         object IOwned.Owner { get { return _Owner; } }
 
-        internal Label(object owner, BufferedILGenerator.DefineLabelDelegate label, string name)
+        internal Label(object owner, DefineLabelDelegate label, string name)
         {
             _Owner = owner;
             Name = name;

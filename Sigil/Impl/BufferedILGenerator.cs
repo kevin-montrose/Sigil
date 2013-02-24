@@ -10,10 +10,6 @@ namespace Sigil.Impl
 {
     internal class BufferedILGenerator
     {
-        public delegate void UpdateOpCodeDelegate(OpCode newOpcode);
-        public delegate System.Reflection.Emit.Label DefineLabelDelegate(ILGenerator il);
-        public delegate LocalBuilder DeclareLocallDelegate(ILGenerator il);
-
         public int Index { get { return Buffer.Count; } }
 
         private List<Action<ILGenerator, bool, StringBuilder>> Buffer = new List<Action<ILGenerator, bool, StringBuilder>>();

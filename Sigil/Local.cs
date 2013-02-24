@@ -27,14 +27,14 @@ namespace Sigil
         internal TypeOnStack StackType { get; private set; }
         internal ushort Index { get; private set; }
 
-        internal BufferedILGenerator.DeclareLocallDelegate LocalDel { get; private set; }
+        internal DeclareLocallDelegate LocalDel { get; private set; }
 
         internal LocalReusableDelegate Reusable { get; private set; }
 
         private object _Owner;
         object IOwned.Owner { get { return _Owner; } }
 
-        internal Local(object owner, ushort index, Type localType, BufferedILGenerator.DeclareLocallDelegate local, string name, LocalReusableDelegate reusable)
+        internal Local(object owner, ushort index, Type localType, DeclareLocallDelegate local, string name, LocalReusableDelegate reusable)
         {
             _Owner = owner;
             LocalDel = local;

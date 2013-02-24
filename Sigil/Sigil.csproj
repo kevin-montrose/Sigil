@@ -204,9 +204,11 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Impl\Delegates.cs" />
     <Compile Include="Impl\InstructionAndTransitions.cs" />
     <Compile Include="Impl\SpecialTypes.cs" />
     <Compile Include="Impl\StackTransition.cs" />
+    <Compile Include="Impl\TransitionWrapper.cs" />
     <Compile Include="Impl\VerifiableTracker.cs" />
     <Compile Include="Emit.WriteLine.cs">
       <DependentUpon>Emit.cs</DependentUpon>

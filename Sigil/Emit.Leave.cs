@@ -33,7 +33,7 @@ namespace Sigil
             CurrentVerifier.Branch(label);
 
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
-            Sigil.Impl.BufferedILGenerator.UpdateOpCodeDelegate update;
+            UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Leave, label, new[] { new StackTransition(new [] { typeof(PopAllType) }, Type.EmptyTypes) }.Wrap("Leave"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));

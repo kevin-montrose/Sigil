@@ -52,7 +52,7 @@ namespace Sigil
 
             var existingLocal = FreedLocals.FirstOrDefault(l => l.LocalType == type);
 
-            BufferedILGenerator.DeclareLocallDelegate local;
+            DeclareLocallDelegate local;
             ushort localIndex;
 
             if (existingLocal == null)
