@@ -122,6 +122,8 @@ namespace Sigil
 
         private List<int> ElidableCasts;
 
+        private HashSet<VerifiableTracker> AllTrackers = new HashSet<VerifiableTracker>();
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -189,7 +191,10 @@ namespace Sigil
 
             ElidableCasts = new List<int>();
 
-            CurrentVerifier = new VerifiableTracker(DefineLabel("__start"));
+            var start = DefineLabel("__start");
+            CurrentVerifier = new VerifiableTracker(start);
+            AllTrackers.Add(CurrentVerifier);
+            MarkLabel(start);
         }
 
         /// <summary>
@@ -793,6 +798,15 @@ namespace Sigil
             }
         }
 
+        private void CheckBranchesAndLabels(string method)
+        {
+            var res = VerifiableTracker.Verify(Labels["__start"], AllTrackers);
+            if (res != null)
+            {
+                throw new SigilVerificationException(method, res, IL.Instructions(LocalsByIndex));
+            }
+        }
+
         private void UpdateStackAndInstrStream(OpCode? instr, TransitionWrapper transitions, bool firstParamIsThis = false)
         {
             if (Invalidated)
@@ -812,6 +826,8 @@ namespace Sigil
             {
                 throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(LocalsByIndex));
             }
+
+            CheckBranchesAndLabels(transitions.MethodName);
 
             MaxStackSize = Math.Max(verifyRes.StackSize, MaxStackSize);
 

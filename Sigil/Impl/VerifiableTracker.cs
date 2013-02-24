@@ -14,11 +14,102 @@ namespace Sigil.Impl
         //   eventually they'll be fixed up to actual types
         public bool IsBaseless { get; private set; }
         private List<InstructionAndTransitions> Transitions = new List<InstructionAndTransitions>();
+        private Dictionary<Label, int> MarkedLabelsAtTransitions = new Dictionary<Label, int>();
+        private Dictionary<Label, int> BranchesAtTransitions = new Dictionary<Label, int>();
 
-        public VerifiableTracker(Label beganAt, bool baseless = false) 
+        private Stack<IEnumerable<TypeOnStack>> StartingStack = new Stack<IEnumerable<TypeOnStack>>();
+
+        public VerifiableTracker(Label beganAt, bool baseless = false, VerifiableTracker createdFrom = null) 
         {
             IsBaseless = baseless;
             BeganAt = beganAt;
+
+            MarkedLabelsAtTransitions[beganAt] = 0;
+
+            if (createdFrom != null)
+            {
+                StartingStack = GetStack(createdFrom);
+            }
+        }
+
+        public void Mark(Label label)
+        {
+            MarkedLabelsAtTransitions[label] = Transitions.Count;
+        }
+
+        public void Branch(Label label)
+        {
+            BranchesAtTransitions[label] = Transitions.Count;
+        }
+
+        public static VerificationResult Verify(Label startFrom, IEnumerable<VerifiableTracker> all)
+        {
+            //var root = all.Single(a => a.BeganAt == startFrom);
+
+            foreach (var root in all)
+            {
+                var streams = BuildStreams(root, all);
+
+                foreach (var s in streams)
+                {
+                    var res = s.CollapseAndVerify();
+
+                    if (!res.Success)
+                    {
+                        return res;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static List<VerifiableTracker> BuildStreams(VerifiableTracker root, IEnumerable<VerifiableTracker> all)
+        {
+            var ret = new List<VerifiableTracker>();
+            ret.Add(root);
+
+            foreach (var mark in root.BranchesAtTransitions)
+            {
+                var startingAt = all.SingleOrDefault(a => a.BeganAt == mark.Key);
+
+                if (startingAt == null) continue;
+
+                var exceptSelf = all.Where(a => a != startingAt);
+
+                var sub = BuildStreams(startingAt, exceptSelf);
+
+                foreach (var s in sub)
+                {
+                    ret.Add(root.Concat(s));
+                }
+            }
+
+            return ret;
+        }
+
+        private VerifiableTracker Concat(VerifiableTracker other)
+        {
+            var trans = new List<InstructionAndTransitions>();
+            trans.AddRange(Transitions);
+            trans.AddRange(other.Transitions);
+
+            var ret =
+                new VerifiableTracker(BeganAt, IsBaseless)
+                {
+                    StartingStack = IsBaseless ? new Stack<IEnumerable<TypeOnStack>>(StartingStack) : new Stack<IEnumerable<TypeOnStack>>(),
+                    Transitions = trans
+                };
+
+            if (BeganAt == other.BeganAt)
+            {
+                if (!IsEquivalent(ret) || !other.IsEquivalent(ret))
+                {
+                    throw new Exception("Uhhhh");
+                }
+            }
+
+            return ret;
         }
 
         public VerificationResult Transition(InstructionAndTransitions legalTransitions)
@@ -75,6 +166,8 @@ namespace Sigil.Impl
 
         public VerificationResult Incoming(VerifiableTracker other)
         {
+            return VerificationResult.Successful(this, new Stack<IEnumerable<TypeOnStack>>());
+
             // We need to reverify the whole thing if we're seeing a branch in
             CachedVerifyIndex = null;
             CachedVerifyStack = null;
@@ -176,7 +269,7 @@ namespace Sigil.Impl
         private int? CachedVerifyIndex;
         private VerificationResult CollapseAndVerify()
         {
-            var runningStack = CachedVerifyStack ?? new Stack<IEnumerable<TypeOnStack>>();
+            var runningStack = CachedVerifyStack ?? new Stack<IEnumerable<TypeOnStack>>(StartingStack);
 
             int i = CachedVerifyIndex ?? 0;
 
@@ -317,6 +410,8 @@ namespace Sigil.Impl
                 new VerifiableTracker(BeganAt)
                 {
                     IsBaseless = IsBaseless,
+                    MarkedLabelsAtTransitions = new Dictionary<Label,int>(MarkedLabelsAtTransitions),
+                    BranchesAtTransitions = new Dictionary<Label,int>(BranchesAtTransitions),
                     Transitions = Transitions.ToList()
                 };
         }
@@ -344,8 +439,17 @@ namespace Sigil.Impl
         public override string ToString()
         {
             var ret = new StringBuilder();
-            foreach (var tran in Transitions)
+            for(var i = 0; i < Transitions.Count; i++)
             {
+                var label = MarkedLabelsAtTransitions.Where(kv => kv.Value == i).Select(kv => kv.Key).SingleOrDefault();
+
+                if (label != null)
+                {
+                    ret.AppendLine(label.Name + ":");
+                }
+
+                var tran = Transitions[i];
+
                 ret.AppendLine(tran.ToString());
             }
 

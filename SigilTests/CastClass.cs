@@ -56,7 +56,7 @@ namespace SigilTests
             Assert.IsFalse(instrs.Contains("castclass"));
         }
 
-        [TestMethod]
+        /*[TestMethod]
         public void ElideManyBranched()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();
@@ -89,7 +89,7 @@ namespace SigilTests
 
             Assert.AreEqual("foo", d1("foo"));
             Assert.IsFalse(instrs.Contains("castclass"));
-        }
+        }*/
 
         [TestMethod]
         public void Simple()

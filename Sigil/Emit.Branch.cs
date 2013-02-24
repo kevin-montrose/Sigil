@@ -26,6 +26,8 @@ namespace Sigil
 
             TrackersAtBranches[label] = CurrentVerifier.Clone();
 
+            CurrentVerifier.Branch(label);
+
             BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Br, label, StackTransition.None().Wrap("Branch"), out update);
 
@@ -84,8 +86,11 @@ namespace Sigil
                     new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, Type.EmptyTypes)
                 };
 
+            CurrentVerifier.Branch(label);
+
             BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Beq, label, transitions.Wrap("BranchIfEqual"), out update);
+            
 
             Branches.Add(Tuple.Create(label, IL.Index));
 
@@ -128,6 +133,8 @@ namespace Sigil
                 {
                     new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, Type.EmptyTypes)
                 };
+
+            CurrentVerifier.Branch(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bne_Un, label, transitions.Wrap("UnsignedBranchIfNotEqual"), out update);
@@ -182,8 +189,10 @@ namespace Sigil
             }
 
             UnusedLabels.Remove(label);
-            BufferedILGenerator.UpdateOpCodeDelegate update;
 
+            CurrentVerifier.Branch(label);
+
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bge, label, BranchComparableTransitions("BranchIfGreaterOrEqual"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -222,8 +231,9 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            CurrentVerifier.Branch(label);
 
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bge_Un, label, BranchComparableTransitions("UnsignedBranchIfGreaterOrEqual"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -262,8 +272,9 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            CurrentVerifier.Branch(label);
 
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bgt, label, BranchComparableTransitions("BranchIfGreater"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -302,8 +313,9 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            CurrentVerifier.Branch(label);
 
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bgt_Un, label, BranchComparableTransitions("UnsignedBranchIfGreater"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -342,8 +354,9 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            CurrentVerifier.Branch(label);
 
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Ble, label, BranchComparableTransitions("BranchIfLessOrEqual"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -382,8 +395,9 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            CurrentVerifier.Branch(label);
 
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Ble_Un, label, BranchComparableTransitions("UnsignedBranchIfLessOrEqual"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -422,8 +436,9 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            CurrentVerifier.Branch(label);
 
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Blt, label, BranchComparableTransitions("BranchIfLess"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -462,8 +477,9 @@ namespace Sigil
 
             UnusedLabels.Remove(label);
 
-            BufferedILGenerator.UpdateOpCodeDelegate update;
+            CurrentVerifier.Branch(label);
 
+            BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Blt_Un, label, BranchComparableTransitions("UnsignedBranchIfLess"), out update);
 
             Branches.Add(Tuple.Create(label, IL.Index));
@@ -509,6 +525,8 @@ namespace Sigil
                 {
                     new StackTransition(new [] { typeof(WildcardType) }, Type.EmptyTypes)
                 };
+
+            CurrentVerifier.Branch(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Brfalse, label, transitions.Wrap("BranchIfFalse"), out update);
@@ -558,6 +576,8 @@ namespace Sigil
                 {
                     new StackTransition(new [] { typeof(WildcardType) }, Type.EmptyTypes)
                 };
+
+            CurrentVerifier.Branch(label);
 
             BufferedILGenerator.UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Brtrue, label, transitions.Wrap("BranchIfTrue"), out update);

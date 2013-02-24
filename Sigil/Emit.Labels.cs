@@ -199,14 +199,19 @@ namespace Sigil
                 throw new InvalidOperationException("label [" + label.Name + "] has already been marked, and cannot be marked a second time");
             }
 
-            var oldVerifier = CurrentVerifier;
-            CurrentVerifier = new VerifiableTracker(label, baseless: true);
-            if (!MustMark)
+            if (MustMark)
             {
-                CurrentVerifier.Incoming(oldVerifier);
+                CurrentVerifier = new VerifiableTracker(label, baseless: true);
+                AllTrackers.Add(CurrentVerifier);
+                MustMark = false;
+            }
+            else
+            {
+                CurrentVerifier = new VerifiableTracker(label, baseless: CurrentVerifier.IsBaseless, createdFrom: CurrentVerifier);
+                AllTrackers.Add(CurrentVerifier);
             }
 
-            MustMark = false;
+            CurrentVerifier.Mark(label);
 
             if (TrackersAtBranches.ContainsKey(label))
             {
@@ -227,6 +232,8 @@ namespace Sigil
             IL.MarkLabel(label);
 
             Marks[label] = IL.Index;
+
+            CheckBranchesAndLabels("MarkLabel");
 
             return this;
         }

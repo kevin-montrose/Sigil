@@ -12,7 +12,7 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Errors
     {
-        [TestMethod]
+       /* [TestMethod]
         public void BadManyBranch()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();
@@ -49,15 +49,15 @@ namespace SigilTests
             {
                 Assert.AreEqual("", e.Message);
             }
-        }
+        }*/
 
         [TestMethod]
         public void BadDoubleBranch()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();
-            var l1 = e1.DefineLabel();
-            var l2 = e1.DefineLabel();
-            var l3 = e1.DefineLabel();
+            var l1 = e1.DefineLabel("l1");
+            var l2 = e1.DefineLabel("l2");
+            var l3 = e1.DefineLabel("l3");
 
             e1.LoadArgument(0);
             e1.Branch(l1);
@@ -79,7 +79,7 @@ namespace SigilTests
             {
                 Assert.AreEqual("Branch expects a value on the stack, but it was empty", e.Message);
                 var debug = e.GetDebugInfo();
-                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\n\r\n\r\n\r\nldarg.0\r\nbr _label0\r\n\r\n_label1:\r\npop\r\ncallvirt System.String ToString()  // relevant instruction\r\nbr _label2\r\n\r\n_label0:\r\nbr _label1\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\n\r\n__start:\r\nldarg.0\r\nbr l1\r\n\r\nl2:\r\npop\r\ncallvirt System.String ToString()  // relevant instruction\r\nbr l3\r\n\r\nl1:\r\n", e.GetDebugInfo());
             }
         }
 
@@ -217,6 +217,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
+                var f = e.GetDebugInfo();
                 Assert.AreEqual("Branch resulted in stack mismatches", e.Message);
             }
         }

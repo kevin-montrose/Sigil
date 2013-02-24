@@ -387,6 +387,7 @@ namespace SigilTests
             e1.Branch(after);
 
             e1.MarkLabel(dead);
+            e1.LoadConstant(123);   // Have to load something, or stacks are bogus
             for (var i = 0; i < 1000; i++)
             {
                 e1.Nop();
