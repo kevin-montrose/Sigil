@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace Sigil.Impl
 {
+    internal delegate void VerificationCallback(Stack<IEnumerable<TypeOnStack>> currentStack, bool isBaseless);
+
     internal class StackTransition
     {
         public int PoppedCount { get { return PoppedFromStack.Count(); } }
@@ -18,30 +20,39 @@ namespace Sigil.Impl
 
         public bool IsDuplicate { get; private set; }
 
-        public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed)
+        public VerificationCallback Before { get; private set; }
+
+        public VerificationCallback After { get; private set; }
+
+        public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed, VerificationCallback before = null, VerificationCallback after = null)
             : this
             (
                 popped.Select(s => TypeOnStack.Get(s)),
-                pushed.Select(s => TypeOnStack.Get(s))
+                pushed.Select(s => TypeOnStack.Get(s)),
+                before, 
+                after
             )
         { }
 
         public StackTransition(int sizeMustBe)
-            : this(new TypeOnStack[0], new TypeOnStack[0])
+            : this(new TypeOnStack[0], new TypeOnStack[0], null, null)
         {
             StackSizeMustBe = sizeMustBe;
         }
 
         public StackTransition(bool isDuplicate)
-            : this(new TypeOnStack[0], new[] { TypeOnStack.Get<WildcardType>() })
+            : this(new TypeOnStack[0], new[] { TypeOnStack.Get<WildcardType>() }, null, null)
         {
             IsDuplicate = isDuplicate;
         }
 
-        public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed)
+        public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed, VerificationCallback before = null, VerificationCallback after = null)
         {
             PoppedFromStack = popped.ToList().AsReadOnly();
             PushedToStack = pushed.ToList().AsReadOnly();
+            
+            Before = before;
+            After = after;
         }
 
         public override string ToString()

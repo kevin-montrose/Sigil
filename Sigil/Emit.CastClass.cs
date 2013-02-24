@@ -1,11 +1,20 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Linq;
 using System.Reflection.Emit;
 
 namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private void ElideCasts()
+        {
+            foreach (var ix in ElidableCasts.OrderByDescending(_ => _))
+            {
+                RemoveInstruction(ix);
+            }
+        }
+
         /// <summary>
         /// Cast a reference on the stack to the given reference type.
         /// 
@@ -34,14 +43,30 @@ namespace Sigil
                 throw new ArgumentException("Can only cast to ReferenceTypes, found " + referenceType);
             }
 
-            // TODO: Restore trivial cast elliding
+            var curIndex = IL.Index;
+            bool elided = false;
+
+            VerificationCallback before =
+                (stack, baseless) =>
+                {
+                    // Can't reason about stack unless it's completely known
+                    if (baseless || elided) return;
+
+                    var onStack = stack.First();
+
+                    if (onStack.All(a => referenceType.IsAssignableFrom(a)))
+                    {
+                        ElidableCasts.Add(curIndex);
+                        elided = true;
+                    }
+                };
 
             var newType = TypeOnStack.Get(referenceType);
 
             var transitions =
                     new[] 
                     {
-                        new StackTransition(new [] { typeof(object) }, new [] { referenceType })
+                        new StackTransition(new [] { typeof(object) }, new [] { referenceType }, before: before)
                     };
 
             UpdateState(OpCodes.Castclass, referenceType, transitions.Wrap("CastClass"));

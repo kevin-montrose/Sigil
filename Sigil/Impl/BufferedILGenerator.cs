@@ -147,6 +147,20 @@ namespace Sigil.Impl
             return toStop - toStart;
         }
 
+        public void Remove(int ix)
+        {
+            if (ix < 0 || ix >= Buffer.Count)
+            {
+                throw new ArgumentOutOfRangeException("ix", "Expected value between 0 and " + Buffer.Count);
+            }
+
+            LengthCache.Clear();
+
+            InstructionSizes.RemoveAt(ix);
+
+            Buffer.RemoveAt(ix);
+        }
+
         public void Insert(int ix, OpCode op)
         {
             if (ix < 0 || ix > Buffer.Count)

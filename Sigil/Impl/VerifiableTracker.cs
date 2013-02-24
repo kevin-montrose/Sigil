@@ -28,12 +28,19 @@ namespace Sigil.Impl
             return ret;
         }
 
+        public int? GetInstructionIndex(int ix)
+        {
+            if (ix < 0 || ix >= Transitions.Count) throw new Exception("ix must be between 0 and " + (Transitions.Count - 1) + "; found " + ix);
+
+            return Transitions[ix].InstructionIndex;
+        }
+
         private static Stack<IEnumerable<TypeOnStack>> GetStack(VerifiableTracker tracker)
         {
             var retStack = new Stack<IEnumerable<TypeOnStack>>();
             foreach (var t in tracker.Transitions)
             {
-                UpdateStack(retStack, t);
+                UpdateStack(retStack, t, tracker.Baseless);
             }
 
             return retStack;
@@ -72,17 +79,19 @@ namespace Sigil.Impl
 
                 if (isEquivalent)
                 {
-                    return VerificationResult.Successful(GetStack(this));
+                    return VerificationResult.Successful(this, GetStack(this));
                 }
 
-                return VerificationResult.FailureStackMismatch(GetStack(this), GetStack(other));
+                return VerificationResult.FailureStackMismatch(this, GetStack(this), GetStack(other));
             }
 
             var old = Transitions;
+            var oldBase = Baseless;
 
             Transitions = new List<InstructionAndTransitions>();
             Transitions.AddRange(other.Transitions);
             Transitions.AddRange(old);
+            this.Baseless = other.Baseless;
 
             var ret = CollapseAndVerify();
             
@@ -90,20 +99,23 @@ namespace Sigil.Impl
             {
                 // revert!
                 Transitions = old;
-            }
-            else
-            {
-                // we're no longer baseless if the other guy isn't
-                this.Baseless = other.Baseless;
+                this.Baseless = oldBase;
             }
 
             return ret;
         }
 
-        private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, InstructionAndTransitions wrapped)
+        private static void UpdateStack(Stack<IEnumerable<TypeOnStack>> stack, InstructionAndTransitions wrapped, bool isBaseless)
         {
             var legal = wrapped.Transitions;
             var instr = wrapped.Instruction;
+
+            legal.Each(
+                t =>
+                {
+                    if (t.Before != null) t.Before(stack, isBaseless);
+                }
+            );
 
             if (legal.Any(l => l.PoppedFromStack.Any(u => u == TypeOnStack.Get<PopAllType>())))
             {
@@ -144,6 +156,13 @@ namespace Sigil.Impl
             {
                 stack.Push(toPush.Distinct().ToList());
             }
+
+            legal.Each(
+                t =>
+                {
+                    if (t.After != null) t.After(stack, isBaseless);
+                }
+            );
         }
 
         private Stack<IEnumerable<TypeOnStack>> CachedVerifyStack;
@@ -166,7 +185,7 @@ namespace Sigil.Impl
 
                     if(doIt.StackSizeMustBe != runningStack.Count)
                     {
-                        return VerificationResult.FailureStackSize(doIt.StackSizeMustBe.Value);
+                        return VerificationResult.FailureStackSize(this, i, doIt.StackSizeMustBe.Value);
                     }
                 }
 
@@ -204,13 +223,13 @@ namespace Sigil.Impl
 
                     if (runningStack.Count < wouldPop)
                     {
-                        return VerificationResult.FailureUnderflow(wouldPop, runningStack);
+                        return VerificationResult.FailureUnderflow(this, i, wouldPop, runningStack);
                     }
 
                     IEnumerable<TypeOnStack> expected;
                     var stackI = FindStackFailureIndex(runningStack, ops, out expected);
 
-                    return VerificationResult.FailureTypeMismatch(i, stackI, expected, runningStack);
+                    return VerificationResult.FailureTypeMismatch(this, i, stackI, expected, runningStack);
                 }
 
                 if (legal.GroupBy(g => new { a = g.PoppedCount, b = g.PushedToStack.Count() }).Count() > 1)
@@ -219,7 +238,7 @@ namespace Sigil.Impl
                 }
 
                 // No reason to do all this work again
-                Transitions[i] = new InstructionAndTransitions(wrapped.Instruction, legal);
+                Transitions[i] = new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, legal);
 
                 bool popAll = legal.Any(l => l.PoppedFromStack.Contains(TypeOnStack.Get<PopAllType>()));
                 if (popAll && legal.Count() != 1)
@@ -233,7 +252,7 @@ namespace Sigil.Impl
 
                     if (toPop > runningStack.Count && !Baseless)
                     {
-                        return VerificationResult.FailureUnderflow(toPop, runningStack);
+                        return VerificationResult.FailureUnderflow(this, i, toPop, runningStack);
                     }
                 }
 
@@ -245,22 +264,22 @@ namespace Sigil.Impl
 
                 if (isDuplicate)
                 {
-                    if (!Baseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(1, runningStack);
+                    if (!Baseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(this, i, 1, runningStack);
 
                     IEnumerable<TypeOnStack> toPush = runningStack.Count > 0 ? runningStack.Peek() : new[] { TypeOnStack.Get<WildcardType>() };
 
-                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }));
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }), Baseless);
                 }
                 else
                 {
-                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, legal));
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, legal), Baseless);
                 }
             }
 
             CachedVerifyIndex = i;
             CachedVerifyStack = runningStack;
 
-            return VerificationResult.Successful(runningStack);
+            return VerificationResult.Successful(this, runningStack);
         }
 
         private int FindStackFailureIndex(Stack<IEnumerable<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)

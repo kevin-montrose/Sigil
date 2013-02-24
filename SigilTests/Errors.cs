@@ -13,6 +13,38 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void BadDoubleBranch()
+        {
+            var e1 = Emit<Func<string, string>>.NewDynamicMethod();
+            var l1 = e1.DefineLabel();
+            var l2 = e1.DefineLabel();
+            var l3 = e1.DefineLabel();
+
+            e1.LoadArgument(0);
+            e1.Branch(l1);
+
+            e1.MarkLabel(l2);
+            e1.Pop();
+            e1.CallVirtual(typeof(object).GetMethod("ToString"));
+            e1.Branch(l3);
+
+            e1.MarkLabel(l1);
+
+            try
+            {
+                e1.Branch(l2);
+
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Branch expects a value on the stack, but it was empty", e.Message);
+                var debug = e.GetDebugInfo();
+                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\n\r\n\r\n\r\nldarg.0\r\nbr _label0\r\n\r\n_label1:\r\npop\r\ncallvirt System.String ToString()  // relevant instruction\r\nbr _label2\r\n\r\n_label0:\r\nbr _label1\r\n", e.GetDebugInfo());
+            }
+        }
+
+        [TestMethod]
         public void BadStackVals()
         {
             {

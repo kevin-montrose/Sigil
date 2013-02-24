@@ -120,6 +120,8 @@ namespace Sigil
 
         private bool MustMark;
 
+        private List<int> ElidableCasts;
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
         {
             CallingConventions = callConvention;
@@ -185,6 +187,8 @@ namespace Sigil
             CurrentVerifier = new VerifiableTracker();
             TrackersAtLabels = new Dictionary<Label, VerifiableTracker>();
             TrackersAtBranches = new Dictionary<Label, VerifiableTracker>();
+
+            ElidableCasts = new List<int>();
         }
 
         /// <summary>
@@ -232,6 +236,8 @@ namespace Sigil
 
         private void Seal(OptimizationOptions optimizationOptions)
         {
+            ElideCasts();
+
             InjectTailCall();
             InjectReadOnly();
 
@@ -658,6 +664,70 @@ namespace Sigil
             return ret;
         }
 
+        private void RemoveInstruction(int index)
+        {
+            IL.Remove(index);
+
+            // We need to update our state to account for the new insertion
+            foreach (var v in Branches.Where(w => w.Item2 >= index).ToList())
+            {
+                Branches.Remove(v);
+                Branches.Add(Tuple.Create(v.Item1, v.Item2 - 1));
+            }
+
+            foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
+            {
+                Marks[kv.Key] = kv.Value - 1;
+            }
+
+            var needUpdateKeys = BranchPatches.Keys.Where(k => k >= index).ToList();
+
+            foreach (var key in needUpdateKeys)
+            {
+                var cur = BranchPatches[key];
+                BranchPatches.Remove(key);
+                BranchPatches[key - 1] = cur;
+            }
+
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            {
+                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
+            }
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+            {
+                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
+            }
+
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            {
+                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
+            }
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+            {
+                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
+            }
+
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            {
+                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
+            }
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+            {
+                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
+            }
+
+            foreach (var elem in ReadonlyPatches.ToList())
+            {
+                if (elem.Item1 >= index)
+                {
+                    var update = Tuple.Create(elem.Item1 - 1, elem.Item2);
+
+                    ReadonlyPatches.Remove(elem);
+                    ReadonlyPatches.Add(elem);
+                }
+            }
+        }
+
         private void InsertInstruction(int index, OpCode instr)
         {
             IL.Insert(index, instr);
@@ -734,7 +804,7 @@ namespace Sigil
                 throw new SigilVerificationException("Unreachable code detected", IL.Instructions(LocalsByIndex));
             }
 
-            var wrapped = new InstructionAndTransitions(instr, transitions.Transitions);
+            var wrapped = new InstructionAndTransitions(instr, instr.HasValue ? (int?)IL.Index : null, transitions.Transitions);
 
             var verifyRes = CurrentVerifier.Transition(wrapped);
             if (!verifyRes.Success)

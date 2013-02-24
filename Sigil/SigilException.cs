@@ -116,8 +116,15 @@ namespace Sigil
             ret.AppendLine();
             ret.AppendLine("Instructions");
             ret.AppendLine("============");
-            foreach (var line in Instructions)
+
+            var instrIx = Failure.Verifier.GetInstructionIndex(Failure.TransitionIndex);
+
+            for(var i = 0; i < Instructions.Length; i++)
             {
+                var line = Instructions[i];
+
+                if (i == instrIx) line = line + "  // relevant instruction";
+
                 ret.AppendLine(line);
             }
 
