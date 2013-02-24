@@ -13,6 +13,45 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void BadManyBranch()
+        {
+            var e1 = Emit<Func<string, string>>.NewDynamicMethod();
+
+            e1.LoadArgument(0);
+
+            for (var i = 0; i < 100; i++)
+            {
+                var l1 = e1.DefineLabel();
+                var l2 = e1.DefineLabel();
+                var l3 = e1.DefineLabel();
+                e1.Branch(l1);
+
+                e1.MarkLabel(l2);
+                e1.Duplicate();
+                e1.Pop();
+                e1.Branch(l3);
+
+                e1.MarkLabel(l1);
+                e1.Branch(l2);
+
+                e1.MarkLabel(l3);
+            }
+
+            e1.Pop();
+
+            try
+            {
+                e1.Return();
+
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void BadDoubleBranch()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();

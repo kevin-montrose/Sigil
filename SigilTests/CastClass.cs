@@ -57,6 +57,41 @@ namespace SigilTests
         }
 
         [TestMethod]
+        public void ElideManyBranched()
+        {
+            var e1 = Emit<Func<string, string>>.NewDynamicMethod();
+
+            e1.LoadArgument(0);
+
+            for (var i = 0; i < 100; i++)
+            {
+                var l1 = e1.DefineLabel();
+                var l2 = e1.DefineLabel();
+                var l3 = e1.DefineLabel();
+                e1.Branch(l1);
+                
+                e1.MarkLabel(l2);
+                e1.Duplicate();
+                e1.Pop();
+                e1.Branch(l3);
+
+                e1.MarkLabel(l1);
+                e1.Branch(l2);
+
+                e1.MarkLabel(l3);
+            }
+
+            e1.CastClass<object>();
+            e1.Return();
+
+            string instrs;
+            var d1 = e1.CreateDelegate(out instrs);
+
+            Assert.AreEqual("foo", d1("foo"));
+            Assert.IsFalse(instrs.Contains("castclass"));
+        }
+
+        [TestMethod]
         public void Simple()
         {
             var e1 = Emit<Func<object, string>>.NewDynamicMethod();

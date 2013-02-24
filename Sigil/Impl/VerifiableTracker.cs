@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Text;
 
 namespace Sigil.Impl
 {
@@ -9,10 +10,10 @@ namespace Sigil.Impl
     {
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
         //   eventually they'll be fixed up to actual types
-        private bool Baseless;
+        public bool IsBaseless { get; private set; }
         private List<InstructionAndTransitions> Transitions = new List<InstructionAndTransitions>();
 
-        public VerifiableTracker(bool baseless = false) { Baseless = baseless; }
+        public VerifiableTracker(bool baseless = false) { IsBaseless = baseless; }
 
         public VerificationResult Transition(InstructionAndTransitions legalTransitions)
         {
@@ -40,7 +41,7 @@ namespace Sigil.Impl
             var retStack = new Stack<IEnumerable<TypeOnStack>>();
             foreach (var t in tracker.Transitions)
             {
-                UpdateStack(retStack, t, tracker.Baseless);
+                UpdateStack(retStack, t, tracker.IsBaseless);
             }
 
             return retStack;
@@ -73,7 +74,7 @@ namespace Sigil.Impl
             CachedVerifyStack = null;
 
             // If we're not baseless, we can't modify ourselves; but we have to make sure the other one is equivalent
-            if (!Baseless)
+            if (!IsBaseless)
             {
                 var isEquivalent = IsEquivalent(other);
 
@@ -86,12 +87,12 @@ namespace Sigil.Impl
             }
 
             var old = Transitions;
-            var oldBase = Baseless;
+            var oldBase = IsBaseless;
 
             Transitions = new List<InstructionAndTransitions>();
             Transitions.AddRange(other.Transitions);
             Transitions.AddRange(old);
-            this.Baseless = other.Baseless;
+            this.IsBaseless = other.IsBaseless;
 
             var ret = CollapseAndVerify();
             
@@ -99,7 +100,7 @@ namespace Sigil.Impl
             {
                 // revert!
                 Transitions = old;
-                this.Baseless = oldBase;
+                this.IsBaseless = oldBase;
             }
 
             return ret;
@@ -195,7 +196,7 @@ namespace Sigil.Impl
                         {
                             if (w.PoppedFromStack.All(u => u == TypeOnStack.Get<PopAllType>())) return true;
 
-                            var onStack = runningStack.Peek(Baseless, w.PoppedCount);
+                            var onStack = runningStack.Peek(IsBaseless, w.PoppedCount);
 
                             if (onStack == null)
                             {
@@ -250,7 +251,7 @@ namespace Sigil.Impl
                 {
                     var toPop = legal.First().PoppedCount;
 
-                    if (toPop > runningStack.Count && !Baseless)
+                    if (toPop > runningStack.Count && !IsBaseless)
                     {
                         return VerificationResult.FailureUnderflow(this, i, toPop, runningStack);
                     }
@@ -264,15 +265,15 @@ namespace Sigil.Impl
 
                 if (isDuplicate)
                 {
-                    if (!Baseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(this, i, 1, runningStack);
+                    if (!IsBaseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(this, i, 1, runningStack);
 
                     IEnumerable<TypeOnStack> toPush = runningStack.Count > 0 ? runningStack.Peek() : new[] { TypeOnStack.Get<WildcardType>() };
 
-                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }), Baseless);
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }), IsBaseless);
                 }
                 else
                 {
-                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, legal), Baseless);
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, legal), IsBaseless);
                 }
             }
 
@@ -309,7 +310,7 @@ namespace Sigil.Impl
             return
                 new VerifiableTracker
                 {
-                    Baseless = Baseless,
+                    IsBaseless = IsBaseless,
                     Transitions = Transitions.ToList()
                 };
         }
@@ -332,6 +333,17 @@ namespace Sigil.Impl
             }
 
             return ret;
+        }
+
+        public override string ToString()
+        {
+            var ret = new StringBuilder();
+            foreach (var tran in Transitions)
+            {
+                ret.AppendLine(tran.ToString());
+            }
+
+            return ret.ToString();
         }
     }
 }

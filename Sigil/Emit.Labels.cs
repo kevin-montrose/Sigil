@@ -211,7 +211,7 @@ namespace Sigil
                 }
             }
 
-            TrackersAtLabels[label] = CurrentVerifier;//.Clone();
+            TrackersAtLabels[label] = CurrentVerifier.Clone();
 
             UnmarkedLabels.Remove(label);
 

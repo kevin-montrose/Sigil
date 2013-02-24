@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
@@ -15,6 +16,13 @@ namespace Sigil.Impl
             Instruction = instr;
             Transitions = trans;
             InstructionIndex = ix;
+        }
+
+        public override string ToString()
+        {
+            if (!Instruction.HasValue) return string.Join(", ", Transitions.Select(t => t.ToString()).ToArray());
+
+            return "[" + Instruction + " @" + InstructionIndex + "] " + string.Join(", ", Transitions.Select(t => t.ToString()).ToArray());
         }
     }
 }
