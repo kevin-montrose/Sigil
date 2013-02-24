@@ -21,6 +21,8 @@ namespace Sigil
 
                 UpdateState(OpCodes.Ret, StackTransition.None().Wrap("Return"));
 
+                CheckBranchesAndLabels("Return");
+
                 CurrentVerifier = null;
                 MustMark = true;
 
@@ -30,6 +32,8 @@ namespace Sigil
             UpdateState(OpCodes.Ret, StackTransition.Pop(ReturnType).Wrap("Return"));
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
+
+            CheckBranchesAndLabels("Return");
 
             CurrentVerifier = null;
             MustMark = true;

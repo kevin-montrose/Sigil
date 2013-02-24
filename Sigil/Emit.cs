@@ -811,8 +811,6 @@ namespace Sigil
                 throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(LocalsByIndex));
             }
 
-            CheckBranchesAndLabels(transitions.MethodName);
-
             MaxStackSize = Math.Max(verifyRes.StackSize, MaxStackSize);
 
             if (instr.HasValue)
