@@ -213,6 +213,7 @@
     <Compile Include="Emit.WriteLine.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Impl\VerifiableTrackerConcatPromise.cs" />
     <Compile Include="Impl\VerificationResult.cs" />
     <Compile Include="LabelLookup.cs" />
     <Compile Include="LocalLookup.cs" />

@@ -5,29 +5,6 @@ using System.Text;
 
 namespace Sigil.Impl
 {
-    internal class VerifiableTrackerConcatPromise
-    {
-        public VerifiableTracker Inner { get; private set; }
-        private VerifiableTrackerConcatPromise Next;
-
-        public VerifiableTrackerConcatPromise(VerifiableTracker a)
-        {
-            Inner = a;
-        }
-
-        public VerifiableTrackerConcatPromise Concat(VerifiableTrackerConcatPromise next)
-        {
-            return new VerifiableTrackerConcatPromise(Inner) { Next = next };
-        }
-
-        public VerifiableTracker DePromise()
-        {
-            if (Next == null) return Inner;
-
-            return Inner.Concat(Next.DePromise());
-        }
-    }
-
     internal class VerifiableTracker
     {
         public Label BeganAt { get; private set; }
@@ -107,31 +84,10 @@ namespace Sigil.Impl
             return null;
         }
 
-        private bool Contains(VerifiableTracker other)
-        {
-            if (other.Transitions.Count == 0) return true;
-
-            var start = other.Transitions.First();
-            int inThisIx;
-            if (!TransitionLookup.TryGetValue(start, out inThisIx)) return false;
-
-            for (var i = 0; i < other.Transitions.Count; i++)
-            {
-                if (inThisIx + i >= this.Transitions.Count) return false;
-
-                var otherTran = other.Transitions[i];
-                var thisTran = this.Transitions[i + inThisIx];
-
-                if (otherTran != thisTran) return false;
-            }
-
-            return true;
-        }
-
         // Cuts out any sequence that is wholy contained within another
-        private static List<VerifiableTracker> RemoveOverlapping(List<VerifiableTracker> all)
+        private static List<VerifiableTrackerConcatPromise> RemoveOverlapping(List<VerifiableTrackerConcatPromise> all)
         {
-            var ret = new List<VerifiableTracker>();
+            var ret = new List<VerifiableTrackerConcatPromise>();
 
             foreach (var a in all)
             {
@@ -145,7 +101,7 @@ namespace Sigil.Impl
 
         public static VerificationResult Verify(IEnumerable<VerifiableTracker> all)
         {
-            var allStreams = new List<VerifiableTracker>();
+            var allStreams = new List<VerifiableTrackerConcatPromise>();
 
             var asPromise = all.Select(a => new VerifiableTrackerConcatPromise(a)).ToList();
 
@@ -155,16 +111,18 @@ namespace Sigil.Impl
 
                 var streams = BuildStreams(root, asPromise);
 
-                var dePromised = streams.Select(s => s.DePromise()).ToList();
+                var unique = RemoveOverlapping(streams);
 
-                allStreams.AddRange(RemoveOverlapping(dePromised));
+                allStreams.AddRange(unique);
             }
 
             var culled = RemoveOverlapping(allStreams);
 
-            for(var i = 0; i < culled.Count; i++)
+            var depromised = culled.Select(s => s.DePromise()).ToList();
+
+            for (var i = 0; i < depromised.Count; i++)
             {
-                var s = culled[i];
+                var s = depromised[i];
 
                 var res = s.CollapseAndVerify();
 
