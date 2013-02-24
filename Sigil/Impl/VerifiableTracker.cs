@@ -5,6 +5,29 @@ using System.Text;
 
 namespace Sigil.Impl
 {
+    internal class VerifiableTrackerConcatPromise
+    {
+        public VerifiableTracker Inner { get; private set; }
+        private VerifiableTrackerConcatPromise Next;
+
+        public VerifiableTrackerConcatPromise(VerifiableTracker a)
+        {
+            Inner = a;
+        }
+
+        public VerifiableTrackerConcatPromise Concat(VerifiableTrackerConcatPromise next)
+        {
+            return new VerifiableTrackerConcatPromise(Inner) { Next = next };
+        }
+
+        public VerifiableTracker DePromise()
+        {
+            if (Next == null) return Inner;
+
+            return Inner.Concat(Next.DePromise());
+        }
+    }
+
     internal class VerifiableTracker
     {
         public Label BeganAt { get; private set; }
@@ -124,13 +147,15 @@ namespace Sigil.Impl
         {
             var allStreams = new List<VerifiableTracker>();
 
-            foreach (var root in all)
+            var asPromise = all.Select(a => new VerifiableTrackerConcatPromise(a)).ToList();
+
+            foreach (var root in asPromise)
             {
-                var streams = BuildStreams(root, all);
+                var streams = BuildStreams(root, asPromise);
 
-                var longest = RemoveOverlapping(streams);
+                var dePromised = streams.Select(s => s.DePromise()).ToList();
 
-                allStreams.AddRange(longest);
+                allStreams.AddRange(RemoveOverlapping(dePromised));
             }
 
             var culled = RemoveOverlapping(allStreams);
@@ -148,14 +173,14 @@ namespace Sigil.Impl
             return null;
         }
 
-        private static List<VerifiableTracker> BuildStreams(VerifiableTracker root, IEnumerable<VerifiableTracker> all)
+        private static List<VerifiableTrackerConcatPromise> BuildStreams(VerifiableTrackerConcatPromise root, IEnumerable<VerifiableTrackerConcatPromise> all)
         {
-            var ret = new List<VerifiableTracker>();
+            var ret = new List<VerifiableTrackerConcatPromise>();
             ret.Add(root);
 
-            foreach (var mark in root.BranchesAtTransitions)
+            foreach (var mark in root.Inner.BranchesAtTransitions)
             {
-                var startingAt = all.SingleOrDefault(a => a.BeganAt == mark.Key);
+                var startingAt = all.SingleOrDefault(a => a.Inner.BeganAt == mark.Key);
 
                 if (startingAt == null) continue;
 
@@ -172,7 +197,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        private VerifiableTracker Concat(VerifiableTracker other)
+        internal VerifiableTracker Concat(VerifiableTracker other)
         {
             var trans = new List<InstructionAndTransitions>();
             trans.AddRange(Transitions);
