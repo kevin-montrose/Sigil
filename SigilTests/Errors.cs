@@ -13,6 +13,23 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void BadOptimizationOptions()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            e1.Return();
+
+            try
+            {
+                e1.CreateDelegate((OptimizationOptions)123);
+                Assert.Fail();
+            }
+            catch (ArgumentException e)
+            {
+                Assert.AreEqual("optimizationOptions contained unknown flags, found 123", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void BadManyBranch()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();

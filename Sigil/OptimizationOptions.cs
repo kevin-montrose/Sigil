@@ -14,13 +14,18 @@ namespace Sigil
         None = 0,
 
         /// <summary>
-        /// Tells Sigil to choose optimal branch instructions.
+        /// Choose optimal branch instructions.
         /// </summary>
-        EnableBranchPatching = 1 << 0,
+        EnableBranchPatching = 1,
+
+        /// <summary>
+        /// Elide CastClass instructions which are no-ops, such as casting a System.String to a System.Object.
+        /// </summary>
+        EnableTrivialCastEliding = 2,
 
         /// <summary>
         /// Perform all optimizations.
         /// </summary>
-        All = ~0
+        All = EnableBranchPatching | EnableTrivialCastEliding
     }
 }

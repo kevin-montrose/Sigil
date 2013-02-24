@@ -226,7 +226,15 @@ namespace Sigil
 
         private void Seal(OptimizationOptions optimizationOptions)
         {
-            ElideCasts();
+            if ((optimizationOptions & ~OptimizationOptions.All) != 0)
+            {
+                throw new ArgumentException("optimizationOptions contained unknown flags, found " + optimizationOptions);
+            }
+
+            if ((optimizationOptions & OptimizationOptions.EnableTrivialCastEliding) != 0)
+            {
+                ElideCasts();
+            }
 
             InjectTailCall();
             InjectReadOnly();
