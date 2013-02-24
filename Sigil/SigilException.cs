@@ -125,7 +125,10 @@ namespace Sigil
 
                 if (i == instrIx) line = line + "  // relevant instruction";
 
-                ret.AppendLine(line);
+                if (!string.IsNullOrEmpty(line))
+                {
+                    ret.AppendLine(line);
+                }
             }
 
             return ret.ToString();

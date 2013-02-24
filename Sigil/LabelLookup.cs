@@ -30,12 +30,12 @@ namespace Sigil
         /// <summary>
         /// Returns the number of labels declared
         /// </summary>
-        public int Count { get { return InnerLookup.Count; } }
+        public int Count { get { return Names.Count(); } }
 
         /// <summary>
         /// Returns the names of all the declared labels
         /// </summary>
-        public IEnumerable<string> Names { get { return InnerLookup.Keys.ToList(); } }
+        public IEnumerable<string> Names { get { return InnerLookup.Keys.Where(k => !k.StartsWith("__")).ToList(); } }
 
         private Dictionary<string, Label> InnerLookup;
 

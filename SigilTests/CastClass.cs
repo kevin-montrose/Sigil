@@ -81,7 +81,7 @@ namespace SigilTests
                 e1.MarkLabel(l3);
             }
 
-            e1.CastClass<object>();
+            e1.CastClass<string>();
             e1.Return();
 
             string instrs;

@@ -30,12 +30,12 @@ namespace Sigil
         /// <summary>
         /// Returns the number of locals in scope
         /// </summary>
-        public int Count { get { return InnerLookup.Count; } }
+        public int Count { get { return Names.Count(); } }
 
         /// <summary>
         /// Returns the names of all the locals in scope
         /// </summary>
-        public IEnumerable<string> Names { get { return InnerLookup.Keys.ToList(); } }
+        public IEnumerable<string> Names { get { return InnerLookup.Keys.Where(k => !k.StartsWith("__")).ToList(); } }
 
         private Dictionary<string, Local> InnerLookup;
 

@@ -8,12 +8,18 @@ namespace Sigil.Impl
 {
     internal class VerifiableTracker
     {
+        public Label BeganAt { get; private set; }
+
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
         //   eventually they'll be fixed up to actual types
         public bool IsBaseless { get; private set; }
         private List<InstructionAndTransitions> Transitions = new List<InstructionAndTransitions>();
 
-        public VerifiableTracker(bool baseless = false) { IsBaseless = baseless; }
+        public VerifiableTracker(Label beganAt, bool baseless = false) 
+        {
+            IsBaseless = baseless;
+            BeganAt = beganAt;
+        }
 
         public VerificationResult Transition(InstructionAndTransitions legalTransitions)
         {
@@ -308,7 +314,7 @@ namespace Sigil.Impl
         public VerifiableTracker Clone()
         {
             return
-                new VerifiableTracker
+                new VerifiableTracker(BeganAt)
                 {
                     IsBaseless = IsBaseless,
                     Transitions = Transitions.ToList()

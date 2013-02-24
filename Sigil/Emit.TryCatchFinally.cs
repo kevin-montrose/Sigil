@@ -12,7 +12,10 @@ namespace Sigil
         /// </summary>
         public ExceptionBlock BeginExceptionBlock()
         {
-            MustMark = false;
+            if (MustMark)
+            {
+                MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
+            }
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("BeginExceptionBlock"));
 
@@ -102,7 +105,10 @@ namespace Sigil
 
             CurrentExceptionBlock.Pop();
 
-            MustMark = false;
+            if (MustMark)
+            {
+                MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
+            }
 
             return this;
         }
@@ -193,7 +199,10 @@ namespace Sigil
                 throw new InvalidOperationException("Cannot start a new catch block, " + currentlyOpen + " has not been ended");
             }
 
-            MustMark = false;
+            if (MustMark)
+            {
+                MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
+            }
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("BeginCatchBlock"));
 
@@ -242,7 +251,10 @@ namespace Sigil
                 FailOwnership(forCatch);
             }
 
-            MustMark = false;
+            if (MustMark)
+            {
+                MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
+            }
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("EndCatchBlock"));
 
@@ -310,7 +322,10 @@ namespace Sigil
                 throw new InvalidOperationException("There can only be one finally block per ExceptionBlock, and one is already defined for " + forTry);
             }
 
-            MustMark = false;
+            if (MustMark)
+            {
+                MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
+            }
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("BeginFinallyBlock"));
 
@@ -345,7 +360,10 @@ namespace Sigil
                 throw new InvalidOperationException("EndFinallyBlock expects an unclosed finally block, but " + forFinally + " is already closed");
             }
 
-            MustMark = false;
+            if (MustMark)
+            {
+                MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
+            }
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("EndFinallyBlock"));
 

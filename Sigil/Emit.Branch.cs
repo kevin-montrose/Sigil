@@ -45,7 +45,7 @@ namespace Sigil
                 }
             }
 
-            CurrentVerifier = new VerifiableTracker(baseless: true);
+            CurrentVerifier = null;
             MustMark = true;
 
             return this;

@@ -184,11 +184,12 @@ namespace Sigil
             CurrentLabels = new Dictionary<string, Label>();
             Labels = new LabelLookup(CurrentLabels);
 
-            CurrentVerifier = new VerifiableTracker();
             TrackersAtLabels = new Dictionary<Label, VerifiableTracker>();
             TrackersAtBranches = new Dictionary<Label, VerifiableTracker>();
 
             ElidableCasts = new List<int>();
+
+            CurrentVerifier = new VerifiableTracker(DefineLabel("__start"));
         }
 
         /// <summary>
