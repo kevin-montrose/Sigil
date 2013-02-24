@@ -65,24 +65,6 @@ namespace SigilTests
             var d1 = e1.CreateDelegate();
 
             Assert.AreEqual("I'm Virtual!", d1());
-
-            /*var toString = typeof(object).GetMethod("ToString");
-
-            var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
-            var mod = asm.DefineDynamicModule("Bar");
-
-            var dynMethod = new DynamicMethod("E1", typeof(string), Type.EmptyTypes, mod, skipVisibility: true);
-            var il = dynMethod.GetILGenerator();
-
-            il.Emit(OpCodes.Newobj, typeof(VirtualClass).GetConstructor(Type.EmptyTypes));
-            il.Emit(OpCodes.Dup);
-            il.Emit(OpCodes.Ldvirtftn, toString);
-            il.EmitCalli(OpCodes.Calli, toString.CallingConvention, typeof(string), Type.EmptyTypes, null);
-            il.Emit(OpCodes.Ret);
-
-            var d1 = (Func<string>)dynMethod.CreateDelegate(typeof(Func<string>));
-
-            d1();*/
         }
     }
 }

@@ -181,20 +181,6 @@ namespace SigilTests
         [TestMethod]
         public void LabelDiffStack()
         {
-            /*{
-                var dyn = new System.Reflection.Emit.DynamicMethod("Foo", typeof(void), Type.EmptyTypes);
-                var il = dyn.GetILGenerator();
-                var l = il.DefineLabel();
-                il.Emit(System.Reflection.Emit.OpCodes.Ldc_I4_1);
-                il.Emit(System.Reflection.Emit.OpCodes.Brfalse, l);
-                il.Emit(System.Reflection.Emit.OpCodes.Ldc_I4_4);
-                il.MarkLabel(l);
-                il.Emit(System.Reflection.Emit.OpCodes.Ret);
-
-                var d1 = (Action)dyn.CreateDelegate(typeof(Action));
-                d1();
-            }*/
-
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
                 var l = e1.DefineLabel();

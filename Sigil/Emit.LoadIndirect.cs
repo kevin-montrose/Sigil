@@ -30,28 +30,6 @@ namespace Sigil
                 throw new ArgumentException("unaligned must be null, 1, 2, or 4");
             }
 
-            /*var onStack = Stack.Top();
-
-            if (onStack == null)
-            {
-                FailStackUnderflow(1);
-            }
-
-            var ptr = onStack[0];
-
-            if (!ptr.IsPointer && !ptr.IsReference && ptr != TypeOnStack.Get<NativeIntType>())
-            {
-                throw new SigilVerificationException("LoadIndirect expects a pointer, reference, or native int on the stack, found " + ptr, IL.Instructions(LocalsByIndex), Stack, 0);
-            }
-
-            if (ptr.IsPointer || ptr.IsReference)
-            {
-                if (!type.IsAssignableFrom(TypeOnStack.Get(ptr.Type.GetElementType())))
-                {
-                    throw new SigilVerificationException("LoadIndirect expected a pointer or reference to type " + type + ", but found " + ptr, IL.Instructions(LocalsByIndex), Stack, 0);
-                }
-            }*/
-
             OpCode? instr = null;
             IEnumerable<StackTransition> transitions = null;
 
