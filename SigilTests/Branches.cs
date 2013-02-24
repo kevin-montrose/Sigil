@@ -15,6 +15,34 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
+        public void ManyConditional()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            for (var i = 0; i < 10; i++)
+            {
+                var l1 = e1.DefineLabel();
+                var l2 = e1.DefineLabel();
+
+                e1.LoadConstant(0);
+                e1.LoadConstant(1);
+                e1.BranchIfGreater(l1);
+
+                e1.LoadConstant(2);
+                e1.LoadConstant(3);
+                e1.BranchIfLess(l2);
+
+                e1.MarkLabel(l1);
+                e1.MarkLabel(l2);
+            }
+
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+            d1();
+        }
+
+        [TestMethod]
         public void InMethod()
         {
             var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);

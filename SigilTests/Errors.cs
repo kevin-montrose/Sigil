@@ -13,6 +13,41 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void BadBracnhManyConditional()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+
+            for (var i = 0; i < 10; i++)
+            {
+                var l1 = e1.DefineLabel();
+                var l2 = e1.DefineLabel();
+
+                e1.LoadConstant(0);
+                e1.LoadConstant(1);
+                e1.BranchIfGreater(l1);
+
+                e1.LoadConstant(2);
+                e1.LoadConstant(3);
+                e1.BranchIfLess(l2);
+
+                e1.MarkLabel(l1);
+                e1.MarkLabel(l2);
+            }
+
+            try
+            {
+                e1.Pop();
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                var f = e.GetDebugInfo();
+                Assert.AreEqual("Pop expects a value on the stack, but it was empty", e.Message);
+                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label0\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label1\r\n\r\n_label0:\r\n\r\n_label1:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label2\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label3\r\n\r\n_label2:\r\n\r\n_label3:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label4\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label5\r\n\r\n_label4:\r\n\r\n_label5:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label6\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label7\r\n\r\n_label6:\r\n\r\n_label7:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label8\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label9\r\n\r\n_label8:\r\n\r\n_label9:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label10\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label11\r\n\r\n_label10:\r\n\r\n_label11:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label12\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label13\r\n\r\n_label12:\r\n\r\n_label13:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label14\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label15\r\n\r\n_label14:\r\n\r\n_label15:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label16\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label17\r\n\r\n_label16:\r\n\r\n_label17:\r\nldc.i4.0\r\nldc.i4.1\r\nbgt _label18\r\nldc.i4.2\r\nldc.i4.3\r\nblt _label19\r\n\r\n_label18:\r\n\r\n_label19:\r\n", f);
+            }
+        }
+
+        [TestMethod]
         public void BadOptimizationOptions()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
