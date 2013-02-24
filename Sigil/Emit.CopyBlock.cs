@@ -30,7 +30,7 @@ namespace Sigil
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None().Wrap("CopyBlock"));
+                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, StackTransition.None().Wrap("CopyBlock"));
             }
 
             var transition =

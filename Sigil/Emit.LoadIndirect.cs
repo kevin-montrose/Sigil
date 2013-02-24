@@ -191,7 +191,7 @@ namespace Sigil
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None().Wrap("LoadIndirect"));
+                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, StackTransition.None().Wrap("LoadIndirect"));
             }
 
             UpdateState(instr.Value, transitions.Wrap("LoadIndirect"));

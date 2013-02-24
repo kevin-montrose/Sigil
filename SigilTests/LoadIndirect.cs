@@ -12,6 +12,20 @@ namespace SigilTests
     public class LoadIndirect
     {
         [TestMethod]
+        public void Unaligned()
+        {
+            {
+                var e1 = Emit<Func<byte, byte>>.NewDynamicMethod();
+                e1.LoadArgumentAddress(0);
+                e1.LoadIndirect<byte>(unaligned: 2);
+                e1.Return();
+
+                var d1 = e1.CreateDelegate();
+                Assert.AreEqual(111, d1(111));
+            }
+        }
+
+        [TestMethod]
         public unsafe void All()
         {
             {

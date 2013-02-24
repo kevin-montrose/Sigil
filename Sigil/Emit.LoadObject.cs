@@ -46,7 +46,7 @@ namespace Sigil
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, unaligned.Value, StackTransition.None().Wrap("LoadObject"));
+                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, StackTransition.None().Wrap("LoadObject"));
             }
 
             var transitions =
