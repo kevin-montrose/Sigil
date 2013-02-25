@@ -13,6 +13,34 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void BadNonTerminalReturn()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod();
+            var l1 = e1.DefineLabel("l1");
+            var l2 = e1.DefineLabel("l2");
+
+            e1.Branch(l1);
+
+            e1.MarkLabel(l2);
+            e1.Return();
+
+            e1.MarkLabel(l1);
+            e1.LoadConstant(1);
+            e1.BranchIfTrue(l2);
+
+            try
+            {
+                e1.CreateDelegate();
+
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void BadBracnhManyConditional()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
