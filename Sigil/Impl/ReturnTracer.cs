@@ -7,6 +7,46 @@ namespace Sigil.Impl
 {
     internal class ReturnTracerResult
     {
+        private class LabelEnumerableComparer : IEqualityComparer<IEnumerable<Label>>
+        {
+            public static readonly LabelEnumerableComparer Singleton = new LabelEnumerableComparer();
+
+            private LabelEnumerableComparer() { }
+
+            public bool Equals(IEnumerable<Label> x, IEnumerable<Label> y)
+            {
+                if (x == y) return true;
+                if (x == null || y == null) return false;
+
+                if (x.Count() != y.Count()) return false;
+
+                using(var eX = x.GetEnumerator())
+                using (var eY = y.GetEnumerator())
+                {
+                    while (eX.MoveNext() && eY.MoveNext())
+                    {
+                        if (eX.Current != eY.Current) return false;
+                    }
+                }
+
+                return true;
+            }
+
+            public int GetHashCode(IEnumerable<Label> obj)
+            {
+                if (obj == null) return 0;
+
+                var ret = 0;
+
+                foreach (var label in obj)
+                {
+                    ret ^= label.GetHashCode();
+                }
+
+                return ret;
+            }
+        }
+
         public bool IsSuccess { get; private set; }
         public IEnumerable<IEnumerable<Label>> FailingPaths { get; private set; }
 
@@ -37,6 +77,8 @@ namespace Sigil.Impl
             if (other.All(r => r.IsSuccess)) return Success();
 
             var badPaths = other.Where(r => !r.IsSuccess).SelectMany(r => r.FailingPaths);
+
+            badPaths = badPaths.Distinct(LabelEnumerableComparer.Singleton);
 
             return
                 new ReturnTracerResult
@@ -80,8 +122,8 @@ namespace Sigil.Impl
                 return cached;
             }
 
-            var nextBranch = Branches.Where(b => b.Item3 >= startAt).OrderBy(x => x.Item3).FirstOrDefault();
-            var orReturn = Returns.Where(ix => ix >= startAt && (nextBranch != null ? ix < nextBranch.Item3 : true)).Count();
+            var nextBranches = Branches.Where(b => b.Item3 >= startAt).GroupBy(g => g.Item3).OrderBy(x => x.Key).FirstOrDefault();
+            var orReturn = Returns.Where(ix => ix >= startAt && (nextBranches != null ? ix < nextBranches.Key : true)).Count();
 
             if (orReturn != 0)
             {
@@ -89,37 +131,54 @@ namespace Sigil.Impl
                 return cached;
             }
 
-            if (nextBranch == null)
+            if (nextBranches == null)
             {
                 Cache[startAt] = cached = ReturnTracerResult.Failure(path);
                 return cached;
             }
 
-            if (pathLookup.Contains(nextBranch.Item2)) return ReturnTracerResult.Success();
+            var ret = new List<ReturnTracerResult>();
 
-            var branchOp = nextBranch.Item1;
-
-            var branchTo = Marks[nextBranch.Item2];
-
-            var removeFromPathAt = path.Count;
-            path.Add(nextBranch.Item2);
-            pathLookup.Add(nextBranch.Item2);
-
-            var fromFollowingBranch = TraceFrom(branchTo, path, pathLookup);
-
-            path.RemoveAt(removeFromPathAt);
-            pathLookup.Remove(nextBranch.Item2);
-
-            if (IsUnconditionalBranch(branchOp))
+            foreach (var nextBranch in nextBranches)
             {
-                Cache[startAt] = cached = fromFollowingBranch;
-                return cached;
+
+                if (pathLookup.Contains(nextBranch.Item2))
+                {
+                    //return ReturnTracerResult.Success();
+                    Cache[startAt] = cached = ReturnTracerResult.Success();
+                    ret.Add(cached);
+                    continue;
+                }
+
+                var branchOp = nextBranch.Item1;
+
+                var branchTo = Marks[nextBranch.Item2];
+
+                var removeFromPathAt = path.Count;
+                path.Add(nextBranch.Item2);
+                pathLookup.Add(nextBranch.Item2);
+
+                var fromFollowingBranch = TraceFrom(branchTo, path, pathLookup);
+
+                path.RemoveAt(removeFromPathAt);
+                pathLookup.Remove(nextBranch.Item2);
+
+                if (IsUnconditionalBranch(branchOp))
+                {
+                    Cache[startAt] = cached = fromFollowingBranch;
+                    //return cached;
+                    ret.Add(cached);
+                    continue;
+                }
+
+                var fromFallingThrough = TraceFrom(startAt + 1, path, pathLookup);
+
+                Cache[startAt] = cached = ReturnTracerResult.Combo(fromFallingThrough, fromFollowingBranch);
+
+                ret.Add(cached);
             }
 
-            var fromFallingThrough = TraceFrom(startAt + 1, path, pathLookup);
-
-            Cache[startAt] = cached = ReturnTracerResult.Combo(fromFallingThrough, fromFollowingBranch);
-
+            Cache[startAt] = cached = ReturnTracerResult.Combo(ret.ToArray());
             return cached;
         }
 
