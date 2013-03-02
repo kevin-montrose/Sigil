@@ -42,8 +42,6 @@ namespace Sigil
 
         private static string GetMessage(string method, VerificationResult failure)
         {
-            if (failure.Success) throw new Exception("What?!");
-
             if (failure.IsStackUnderflow)
             {
                 if (failure.ExpectedStackSize == 1)
@@ -76,7 +74,7 @@ namespace Sigil
 
                 if (failure.ExpectedStackSize == 1)
                 {
-                    return method + "expected the stack to have 1 value";
+                    return method + " expected the stack to have 1 value";
                 }
 
                 return method + " expected the stack to have " + failure.ExpectedStackSize + " values";

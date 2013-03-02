@@ -1869,7 +1869,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LocalAllocateexpected the stack to have 1 value", e.Message);
+                    Assert.AreEqual("LocalAllocate expected the stack to have 1 value", e.Message);
                 }
             }
 
@@ -1900,7 +1900,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LocalAllocateexpected the stack to have 1 value", e.Message);
+                    Assert.AreEqual("LocalAllocate expected the stack to have 1 value", e.Message);
                 }
             }
         }
