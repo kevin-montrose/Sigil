@@ -29,7 +29,7 @@ namespace Sigil
             CurrentVerifier.Branch(label);
             CheckBranchesAndLabels("Branch", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Br, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
 
@@ -82,7 +82,7 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfEqual", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Beq, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
 
@@ -130,7 +130,7 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfNotEqual", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Bne_Un, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bne_Un);
 
@@ -187,7 +187,7 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfGreaterOrEqual", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Bge, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge);
 
@@ -230,7 +230,7 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfGreaterOrEqual", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Bge_Un, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge_Un);
 
@@ -272,7 +272,7 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfGreater", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Bgt, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt);
 
@@ -314,7 +314,7 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfGreater", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Bgt_Un, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt_Un);
 
@@ -356,7 +356,7 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfLessOrEqual", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Ble, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble);
 
@@ -398,7 +398,7 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfLessOrEqual", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Ble_Un, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble_Un);
 
@@ -440,7 +440,7 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfLess", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Blt, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt);
 
@@ -482,7 +482,7 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfLess", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Blt_Un, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
 
@@ -532,7 +532,7 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfFalse", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Brfalse, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brfalse);
 
@@ -584,7 +584,7 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfTrue", label);
 
-            Branches.Add(Tuple.Create(label, IL.Index));
+            Branches.Add(Tuple.Create(OpCodes.Brtrue, label, IL.Index));
 
             BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brtrue);
 

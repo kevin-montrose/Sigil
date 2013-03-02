@@ -20,12 +20,19 @@ namespace Sigil
     public class SigilVerificationException : Exception, ISerializable
     {
         private string[] Instructions;
-        private VerificationResult Failure;
+        private VerificationResult VerificationFailure;
+        private ReturnTracerResult ReturnFailure;
+
+        internal SigilVerificationException(string message, ReturnTracerResult failure, string[] instructions)
+            : this(message, instructions)
+        {
+            ReturnFailure = failure;
+        }
 
         internal SigilVerificationException(string method, VerificationResult failure, string[] instructions)
             : this(GetMessage(method, failure), instructions)
         {
-            Failure = failure;
+            VerificationFailure = failure;
         }
 
         internal SigilVerificationException(string message, string[] instructions) : base(message)
@@ -87,47 +94,66 @@ namespace Sigil
         {
             var ret = new StringBuilder();
 
-            if (Failure.IsStackMismatch)
+            if (VerificationFailure != null)
             {
-                ret.AppendLine("Expected Stack");
-                ret.AppendLine("==============");
-                PrintStack(Failure.ExpectedStack, ret);
+
+                if (VerificationFailure.IsStackMismatch)
+                {
+                    ret.AppendLine("Expected Stack");
+                    ret.AppendLine("==============");
+                    PrintStack(VerificationFailure.ExpectedStack, ret);
+
+                    ret.AppendLine();
+                    ret.AppendLine("Incoming Stack");
+                    ret.AppendLine("==============");
+                    PrintStack(VerificationFailure.IncomingStack, ret);
+                }
+
+                if (VerificationFailure.IsTypeMismatch)
+                {
+                    ret.AppendLine("Stack");
+                    ret.AppendLine("=====");
+                    PrintStack(VerificationFailure.Stack, ret, "// bad value", VerificationFailure.StackIndex);
+                }
+
+                if (VerificationFailure.IsStackUnderflow || VerificationFailure.IsStackSizeFailure)
+                {
+                    ret.AppendLine("Stack");
+                    ret.AppendLine("=====");
+                    PrintStack(VerificationFailure.Stack, ret);
+                }
 
                 ret.AppendLine();
-                ret.AppendLine("Incoming Stack");
-                ret.AppendLine("==============");
-                PrintStack(Failure.IncomingStack, ret);
-            }
+                ret.AppendLine("Instructions");
+                ret.AppendLine("============");
 
-            if (Failure.IsTypeMismatch)
-            {
-                ret.AppendLine("Stack");
-                ret.AppendLine("=====");
-                PrintStack(Failure.Stack, ret, "// bad value", Failure.StackIndex);
-            }
+                var instrIx = VerificationFailure.TransitionIndex != null ? VerificationFailure.Verifier.GetInstructionIndex(VerificationFailure.TransitionIndex.Value) : -1;
 
-            if (Failure.IsStackUnderflow || Failure.IsStackSizeFailure)
-            {
-                ret.AppendLine("Stack");
-                ret.AppendLine("=====");
-                PrintStack(Failure.Stack, ret);
-            }
-
-            ret.AppendLine();
-            ret.AppendLine("Instructions");
-            ret.AppendLine("============");
-
-            var instrIx = Failure.TransitionIndex != null ? Failure.Verifier.GetInstructionIndex(Failure.TransitionIndex.Value) : -1;
-
-            for(var i = 2; i < Instructions.Length; i++)
-            {
-                var line = Instructions[i];
-
-                if (i == instrIx) line = line + "  // relevant instruction";
-
-                if (!string.IsNullOrEmpty(line))
+                for (var i = 2; i < Instructions.Length; i++)
                 {
-                    ret.AppendLine(line);
+                    var line = Instructions[i];
+
+                    if (i == instrIx) line = line + "  // relevant instruction";
+
+                    if (!string.IsNullOrEmpty(line))
+                    {
+                        ret.AppendLine(line);
+                    }
+                }
+            }
+
+            if (ReturnFailure != null)
+            {
+                foreach (var path in ReturnFailure.FailingPaths)
+                {
+                    ret.AppendLine("Bad Path");
+                    ret.AppendLine("========");
+                    foreach (var label in path)
+                    {
+                        ret.AppendLine(label.Name);
+                    }
+
+                    ret.AppendLine();
                 }
             }
 

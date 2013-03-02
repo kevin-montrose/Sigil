@@ -41,8 +41,9 @@ namespace Sigil
         private HashSet<Label> UnusedLabels;
         private HashSet<Label> UnmarkedLabels;
 
-        private List<Tuple<Label, int>> Branches;
+        private List<Tuple<OpCode, Label, int>> Branches;
         private Dictionary<Label, int> Marks;
+        private List<int> Returns;
 
         private Dictionary<int, Tuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
@@ -149,8 +150,9 @@ namespace Sigil
             UnusedLabels = new HashSet<Label>();
             UnmarkedLabels = new HashSet<Label>();
 
-            Branches = new List<Tuple<Label, int>>();
+            Branches = new List<Tuple<OpCode, Label, int>>();
             Marks = new Dictionary<Label, int>();
+            Returns = new List<int>();
 
             BranchPatches = new Dictionary<int, Tuple<Label, UpdateOpCodeDelegate, OpCode>>();
 
@@ -665,15 +667,23 @@ namespace Sigil
             IL.Remove(index);
 
             // We need to update our state to account for the new insertion
-            foreach (var v in Branches.Where(w => w.Item2 >= index).ToList())
+            foreach (var v in Branches.Where(w => w.Item3 >= index).ToList())
             {
                 Branches.Remove(v);
-                Branches.Add(Tuple.Create(v.Item1, v.Item2 - 1));
+                Branches.Add(Tuple.Create(v.Item1, v.Item2, v.Item3 - 1));
             }
 
             foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
             {
                 Marks[kv.Key] = kv.Value - 1;
+            }
+
+            for (var i = 0; i < Returns.Count; i++)
+            {
+                if (Returns[i] >= index)
+                {
+                    Returns[i] = Returns[i] - 1;
+                }
             }
 
             var needUpdateKeys = BranchPatches.Keys.Where(k => k >= index).ToList();
@@ -729,15 +739,23 @@ namespace Sigil
             IL.Insert(index, instr);
 
             // We need to update our state to account for the new insertion
-            foreach (var v in Branches.Where(w => w.Item2 >= index).ToList())
+            foreach (var v in Branches.Where(w => w.Item3 >= index).ToList())
             {
                 Branches.Remove(v);
-                Branches.Add(Tuple.Create(v.Item1, v.Item2 + 1));
+                Branches.Add(Tuple.Create(v.Item1, v.Item2, v.Item3 + 1));
             }
 
             foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
             {
                 Marks[kv.Key] = kv.Value + 1;
+            }
+
+            for (var i = 0; i < Returns.Count; i++)
+            {
+                if (Returns[i] >= index)
+                {
+                    Returns[i] = Returns[i] + 1;
+                }
             }
 
             var needUpdateKeys = BranchPatches.Keys.Where(k => k >= index).ToList();

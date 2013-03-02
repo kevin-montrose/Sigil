@@ -75,10 +75,10 @@ namespace Sigil
         {
             foreach (var branch in Branches)
             {
-                var instr = BranchPatches[branch.Item2];
+                var instr = BranchPatches[branch.Item3];
 
-                var toLabel = branch.Item1;
-                var fromIndex = branch.Item2;
+                var toLabel = branch.Item2;
+                var fromIndex = branch.Item3;
 
                 var toIndex = Marks[toLabel];
 
@@ -155,11 +155,13 @@ namespace Sigil
         /// </summary>
         private void Validate()
         {
-            var lastInstr = InstructionStream.LastOrDefault();
+            var tracer = new ReturnTracer(Branches, Marks, Returns);
 
-            if (lastInstr != OpCodes.Ret)
+            var result = tracer.Verify();
+
+            if (!result.IsSuccess)
             {
-                throw new SigilVerificationException("Delegate must end with Return", IL.Instructions(AllLocals));
+                throw new SigilVerificationException("All execution paths must end with Return", result, IL.Instructions(AllLocals));
             }
 
             ValidateTryCatchFinallyBlocks();
