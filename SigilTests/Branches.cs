@@ -15,6 +15,36 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
+        public void ConditionalBranchOver()
+        {
+            var e1 = Emit<Func<int>>.NewDynamicMethod();
+            var a = e1.DeclareLocal<int>("a");
+
+            var l1 = e1.DefineLabel("l1");
+
+            e1.LoadConstant("123");
+            e1.LoadConstant(456);
+
+            e1.LoadConstant(1);
+            e1.BranchIfTrue(l1);
+
+            e1.Pop();
+            e1.LoadConstant(789);
+
+            e1.MarkLabel(l1);
+            e1.StoreLocal(a);
+            e1.Call(typeof(int).GetMethod("Parse", new[] { typeof(string) }));
+            e1.LoadLocal(a);
+            e1.Add();
+
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual(123 + 456, d1());
+        }
+
+        [TestMethod]
         public void ManyConditional()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

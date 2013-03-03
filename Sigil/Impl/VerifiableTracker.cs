@@ -228,7 +228,7 @@ namespace Sigil.Impl
 
         private static Stack<IEnumerable<TypeOnStack>> GetStack(VerifiableTracker tracker)
         {
-            var retStack = new Stack<IEnumerable<TypeOnStack>>(tracker.StartingStack);
+            var retStack = new Stack<IEnumerable<TypeOnStack>>(tracker.StartingStack.Reverse());
 
             foreach (var t in tracker.Transitions)
             {
@@ -322,7 +322,7 @@ namespace Sigil.Impl
         private int? CachedVerifyIndex;
         private VerificationResult CollapseAndVerify()
         {
-            var runningStack = CachedVerifyStack ?? new Stack<IEnumerable<TypeOnStack>>(StartingStack);
+            var runningStack = CachedVerifyStack ?? new Stack<IEnumerable<TypeOnStack>>(StartingStack.Reverse());
 
             int i = CachedVerifyIndex ?? 0;
 
