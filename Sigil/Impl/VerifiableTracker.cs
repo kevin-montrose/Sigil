@@ -13,7 +13,6 @@ namespace Sigil.Impl
         //   eventually they'll be fixed up to actual types
         public bool IsBaseless { get; private set; }
         private List<InstructionAndTransitions> Transitions = new List<InstructionAndTransitions>();
-        private Dictionary<InstructionAndTransitions, int> TransitionLookup = new Dictionary<InstructionAndTransitions, int>();
 
         private Dictionary<Label, int> MarkedLabelsAtTransitions = new Dictionary<Label, int>();
         private Dictionary<Label, int> BranchesAtTransitions = new Dictionary<Label, int>();
@@ -177,27 +176,13 @@ namespace Sigil.Impl
             trans.AddRange(Transitions);
             trans.AddRange(other.Transitions);
 
-            var lookup = new Dictionary<InstructionAndTransitions, int>(TransitionLookup.Count + other.TransitionLookup.Count);
-            foreach (var kv in TransitionLookup)
-            {
-                lookup[kv.Key] = kv.Value;
-            }
-
-            int offset = lookup.Count;
-
-            foreach (var kv in other.TransitionLookup)
-            {
-                lookup[kv.Key] = kv.Value + offset;
-            }
-
             var ret =
                 new VerifiableTracker(BeganAt, IsBaseless)
                 {
                     StartingStack = IsBaseless ? new Stack<IEnumerable<TypeOnStack>>(StartingStack) : new Stack<IEnumerable<TypeOnStack>>(),
                     Transitions = trans,
                     CachedVerifyStack = IsBaseless && CachedVerifyStack != null ? new Stack<IEnumerable<TypeOnStack>>(CachedVerifyStack) : null,
-                    CachedVerifyIndex = IsBaseless ? CachedVerifyIndex : null,
-                    TransitionLookup = lookup
+                    CachedVerifyIndex = IsBaseless ? CachedVerifyIndex : null
                 };
 
             return ret;
@@ -213,8 +198,6 @@ namespace Sigil.Impl
             {
                 Transitions.RemoveAt(Transitions.Count - 1);
             }
-
-            TransitionLookup[legalTransitions] = Transitions.Count - 1;
 
             return ret;
         }
@@ -392,8 +375,6 @@ namespace Sigil.Impl
 
                 // No reason to do all this work again
                 Transitions[i] = new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, legal);
-                TransitionLookup.Remove(wrapped);
-                TransitionLookup[Transitions[i]] = i;
 
                 bool popAll = legal.Any(l => l.PoppedFromStack.Contains(TypeOnStack.Get<PopAllType>()));
                 if (popAll && legal.Count() != 1)
@@ -467,8 +448,7 @@ namespace Sigil.Impl
                     IsBaseless = IsBaseless,
                     MarkedLabelsAtTransitions = new Dictionary<Label,int>(MarkedLabelsAtTransitions),
                     BranchesAtTransitions = new Dictionary<Label,int>(BranchesAtTransitions),
-                    Transitions = Transitions.ToList(),
-                    TransitionLookup = new Dictionary<InstructionAndTransitions,int>(TransitionLookup)
+                    Transitions = Transitions.ToList()
                 };
         }
 
