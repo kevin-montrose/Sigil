@@ -11,6 +11,34 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class NewObject
     {
+        class ThreeClass
+        {
+            public string Value;
+
+            public ThreeClass(string a, int b, List<double> c)
+            {
+                Value = a + " @" + b + " ==> " + string.Join(", ", c);
+            }
+        }
+
+        [TestMethod]
+        public void MultiParam()
+        {
+            var e1 = Emit<Func<string, int, List<double>, string>>.NewDynamicMethod();
+            var val = typeof(ThreeClass).GetField("Value");
+
+            e1.LoadArgument(0);
+            e1.LoadArgument(1);
+            e1.LoadArgument(2);
+            e1.NewObject<ThreeClass, string, int, List<double>>();
+            e1.LoadField(val);
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual("hello @10 ==> 1, 2.5, 5.1", d1("hello", 10, new List<double> { 1.0, 2.5, 5.1 }));
+        }
+
         class Foo
         {
             int _i;

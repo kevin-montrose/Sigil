@@ -241,7 +241,7 @@ namespace Sigil
                 throw new ArgumentNullException("constructor");
             }
 
-            var expectedParams = constructor.GetParameters().Select(p => TypeOnStack.Get(p.ParameterType)).ToList();
+            var expectedParams = constructor.GetParameters().Select(p => TypeOnStack.Get(p.ParameterType)).Reverse().ToList();
 
             var makesType = TypeOnStack.Get(constructor.DeclaringType);
 

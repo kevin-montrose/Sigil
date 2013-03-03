@@ -180,5 +180,27 @@ namespace SigilTests
 
             Assert.AreEqual("8675309", del());
         }
+
+        public static int MultiParamFunc(string a, int b, double c)
+        {
+            return int.Parse(a) + b + (int)c;
+        }
+
+        [TestMethod]
+        public void MultiParam()
+        {
+            var func = typeof(Calls).GetMethod("MultiParamFunc");
+            var e1 = Emit<Func<string, int, double, int>>.NewDynamicMethod();
+
+            e1.LoadArgument(0);
+            e1.LoadArgument(1);
+            e1.LoadArgument(2);
+            e1.Call(func);
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual(123 + 456 + 7, d1("123", 456, 7.89));
+        }
     }
 }
