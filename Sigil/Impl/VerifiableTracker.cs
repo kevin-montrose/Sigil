@@ -172,17 +172,22 @@ namespace Sigil.Impl
 
         internal VerifiableTracker Concat(VerifiableTracker other)
         {
-            var trans = new List<InstructionAndTransitions>();
-            trans.AddRange(Transitions);
+            var branchTo = BranchesAtTransitions.ContainsKey(other.BeganAt) ? BranchesAtTransitions[other.BeganAt] : Transitions.Count;
+            var shouldTake = branchTo != Transitions.Count;
+
+            var trans = new List<InstructionAndTransitions>(branchTo + other.Transitions.Count);
+            trans.AddRange(shouldTake ? Transitions.Take(branchTo) : Transitions);
             trans.AddRange(other.Transitions);
+
+            var canReuseCache = branchTo == Transitions.Count && IsBaseless && CachedVerifyStack != null;
 
             var ret =
                 new VerifiableTracker(BeganAt, IsBaseless)
                 {
                     StartingStack = IsBaseless ? new Stack<IEnumerable<TypeOnStack>>(StartingStack) : new Stack<IEnumerable<TypeOnStack>>(),
                     Transitions = trans,
-                    CachedVerifyStack = IsBaseless && CachedVerifyStack != null ? new Stack<IEnumerable<TypeOnStack>>(CachedVerifyStack) : null,
-                    CachedVerifyIndex = IsBaseless ? CachedVerifyIndex : null
+                    CachedVerifyStack = canReuseCache ? new Stack<IEnumerable<TypeOnStack>>(CachedVerifyStack) : null,
+                    CachedVerifyIndex = canReuseCache ? CachedVerifyIndex : null
                 };
 
             return ret;

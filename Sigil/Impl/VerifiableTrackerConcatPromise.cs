@@ -51,6 +51,8 @@ namespace Sigil.Impl
         {
             if (Next == null) return Inner;
 
+            var tail = Next.DePromise();
+
             return Inner.Concat(Next.DePromise());
         }
 
