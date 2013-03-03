@@ -176,7 +176,20 @@ namespace Sigil.Impl
             var shouldTake = branchTo != Transitions.Count;
 
             var trans = new List<InstructionAndTransitions>(branchTo + other.Transitions.Count);
-            trans.AddRange(shouldTake ? Transitions.Take(branchTo) : Transitions);
+            //trans.AddRange(shouldTake ? Transitions.Take(branchTo) : Transitions);
+
+            if (shouldTake)
+            {
+                for (var i = 0; i < branchTo; i++)
+                {
+                    trans.Add(Transitions[i]);
+                }
+            }
+            else
+            {
+                trans.AddRange(Transitions);
+            }
+
             trans.AddRange(other.Transitions);
 
             var canReuseCache = branchTo == Transitions.Count && IsBaseless && CachedVerifyStack != null;
