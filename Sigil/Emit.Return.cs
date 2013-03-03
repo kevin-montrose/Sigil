@@ -22,7 +22,7 @@ namespace Sigil
 
                 Returns.Add(IL.Index);
 
-                CheckBranchesAndLabels("Return", null);
+                CheckBranchesAndLabels("Return", Labels["__start"]);
 
                 CurrentVerifier = null;
                 MustMark = true;
@@ -36,7 +36,7 @@ namespace Sigil
 
             UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
 
-            CheckBranchesAndLabels("Return", null);
+            CheckBranchesAndLabels("Return", Labels["__start"]);
 
             CurrentVerifier = null;
             MustMark = true;
