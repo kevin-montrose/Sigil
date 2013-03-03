@@ -7,7 +7,7 @@ A fail-fast, validating helper for [DynamicMethod](http://msdn.microsoft.com/en-
 The latest versions of Sigil remove type assertions, making it so unconditional branches can be used without manually indicating the types
 on the stack.  The optional type assertion parameters to MarkLabel has been removed as a consequence.
 
-A related change requires types to be passed along with the StoreElement and LoadElement instructions.
+A related change requires types to be passed to the StoreElement, LoadElement, and LoadLength instructions.
 
 Because Sigil can no longer guarantee that all types on the stack are known after each call, the GetStack method and related types have been
 removed.
