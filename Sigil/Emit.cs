@@ -806,9 +806,10 @@ namespace Sigil
             }
         }
 
+        private HashSet<TrackerDescriber> VerificationCache = new HashSet<TrackerDescriber>();
         private void CheckBranchesAndLabels(string method, Label modifiedLabel)
         {
-            var res = VerifiableTracker.Verify(modifiedLabel, AllTrackers);
+            var res = VerifiableTracker.Verify(modifiedLabel, AllTrackers, VerificationCache);
             if (res != null)
             {
                 throw new SigilVerificationException(method, res, IL.Instructions(AllLocals));

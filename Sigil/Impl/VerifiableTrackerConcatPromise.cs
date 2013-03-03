@@ -3,10 +3,69 @@ using System.Collections.Generic;
 
 namespace Sigil.Impl
 {
+    internal class TrackerDescriber
+    {
+        private List<Tuple<VerifiableTracker, int>> Tokens;
+
+        private TrackerDescriber(IEnumerable<VerifiableTracker> trackers)
+        {
+            Tokens = new List<Tuple<VerifiableTracker, int>>();
+
+            foreach (var tracker in trackers)
+            {
+                Tokens.Add(Tuple.Create(tracker, tracker.Iteration));
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            var ret = 0;
+
+            for (var i = 0; i < Tokens.Count; i++)
+            {
+                ret ^= Tokens[i].Item1.GetHashCode() + Tokens[i].Item2.GetHashCode();
+            }
+
+            return ret;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as TrackerDescriber;
+            if (other == null) return false;
+
+            if (other.Tokens.Count != Tokens.Count) return false;
+
+            for (var i = 0; i < other.Tokens.Count; i++)
+            {
+                if (other.Tokens[i].Item1 != Tokens[i].Item1 || other.Tokens[i].Item2 != Tokens[i].Item2) return false;
+            }
+
+            return true;
+        }
+
+        private static IEnumerable<VerifiableTracker> Enumerate(VerifiableTrackerConcatPromise promise)
+        {
+            while (promise != null)
+            {
+                yield return promise.Inner;
+
+                promise = promise.Next;
+            }
+        }
+
+        public static TrackerDescriber Get(VerifiableTrackerConcatPromise promise)
+        {
+            return new TrackerDescriber(Enumerate(promise));
+        }
+    }
+
     internal class VerifiableTrackerConcatPromise
     {
-        public VerifiableTracker Inner { get; private set; }
-        private VerifiableTrackerConcatPromise Next;
+        public TrackerDescriber Description { get { return TrackerDescriber.Get(this); } }
+
+        internal VerifiableTracker Inner;
+        internal VerifiableTrackerConcatPromise Next;
         private HashSet<VerifiableTracker> ContainsLookup = new HashSet<VerifiableTracker>();
 
         public VerifiableTrackerConcatPromise(VerifiableTracker a)

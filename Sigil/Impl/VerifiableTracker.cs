@@ -7,6 +7,8 @@ namespace Sigil.Impl
 {
     internal class VerifiableTracker
     {
+        public int Iteration { get { return Transitions.Count; } }
+
         public Label BeganAt { get; private set; }
 
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
@@ -103,7 +105,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public static VerificationResult Verify(Label modified, IEnumerable<VerifiableTracker> all)
+        public static VerificationResult Verify(Label modified, IEnumerable<VerifiableTracker> all, HashSet<TrackerDescriber> verificationCache)
         {
             var allStreams = new List<VerifiableTrackerConcatPromise>();
 
@@ -127,11 +129,16 @@ namespace Sigil.Impl
 
             var culled = RemoveOverlapping(allStreams);
 
-            var depromised = culled.Select(s => s.DePromise()).ToList();
-
-            for (var i = 0; i < depromised.Count; i++)
+            for(var i = 0; i < culled.Count; i++)
             {
-                var s = depromised[i];
+                var describer = culled[i].Description;
+
+                if (verificationCache.Contains(describer))
+                {
+                    continue;
+                }
+
+                var s = culled[i].DePromise();
 
                 var res = s.CollapseAndVerify();
 
@@ -139,6 +146,8 @@ namespace Sigil.Impl
                 {
                     return res;
                 }
+
+                verificationCache.Add(describer);
             }
 
             return null;
