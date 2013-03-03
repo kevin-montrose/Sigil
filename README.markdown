@@ -291,4 +291,4 @@ Sigil may be too slow for practical use if you need:
   - More than ~100 labels and branches
   - Methods with more than ~10,000 instructions
 
-Some costly optimizations can be disabled via the OptimizationOptions enumeration.
+Some costly optimizations can be disabled via the OptimizationOptions enumeration, and some validation steps can be deferred via the ValidationOptions enumeration.
