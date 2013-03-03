@@ -11,10 +11,10 @@ namespace Sigil.Impl
         public int PoppedCount { get { return PoppedFromStack.Count(); } }
 
         // on the stack, first item is on the top of the stack
-        public IEnumerable<TypeOnStack> PoppedFromStack { get; private set; }
+        public TypeOnStack[] PoppedFromStack { get; private set; }
 
         // pushed onto the stack, first item is first pushed (ends up lowest on the stack)
-        public IEnumerable<TypeOnStack> PushedToStack { get; private set; }
+        public TypeOnStack[] PushedToStack { get; private set; }
 
         public int? StackSizeMustBe { get; private set; }
 
@@ -45,8 +45,8 @@ namespace Sigil.Impl
 
         public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed, VerificationCallback before = null)
         {
-            PoppedFromStack = popped.ToList().AsReadOnly();
-            PushedToStack = pushed.ToList().AsReadOnly();
+            PoppedFromStack = popped.ToArray();
+            PushedToStack = pushed.ToArray();
             
             Before = before;
         }
