@@ -25,6 +25,16 @@ namespace Sigil.Impl
             }
         }
 
+        public static bool Any<T>(this List<T> e, Func<T, bool> p)
+        {
+            for (var i = 0; i < e.Count; i++)
+            {
+                if (p(e[i])) return true;
+            }
+
+            return false;
+        }
+
         public static bool StartsWithVowel(this IEnumerable<char> str)
         {
             var c = char.ToLower(str.ElementAt(0));
@@ -73,6 +83,19 @@ namespace Sigil.Impl
                 op == OpCodes.Unaligned;
         }
 
+        private static Dictionary<Type, Type> _AliasCache = new Dictionary<Type, Type>
+        {
+            { typeof(bool), typeof(int) },
+            { typeof(sbyte), typeof(int) },
+            { typeof(byte), typeof(int) },
+            { typeof(short), typeof(int) },
+            { typeof(ushort), typeof(int) },
+            { typeof(uint), typeof(int) },
+            { typeof(ulong), typeof(long) },
+            { typeof(IntPtr), typeof(NativeIntType) },
+            { typeof(UIntPtr), typeof(NativeIntType) }
+        };
+
         public static Type Alias(this Type t)
         {
             if (t.IsValueType && t.IsEnum)
@@ -80,24 +103,10 @@ namespace Sigil.Impl
                 return Alias(Enum.GetUnderlyingType(t));
             }
 
-            if (t == typeof(bool) || t == typeof(sbyte) || t == typeof(byte) || t == typeof(short) || t == typeof(ushort) || t == typeof(uint))
-            {
-                // Nothing smaller than Int32 exists in CLR land
-                return typeof(int);
-            }
+            Type ret;
+            if (!_AliasCache.TryGetValue(t, out ret)) ret = t;
 
-            if (t == typeof(long) || t == typeof(ulong))
-            {
-                // long/ulong are interchangable on the stack
-                return typeof(long);
-            }
-
-            if (t == typeof(IntPtr) || t == typeof(UIntPtr))
-            {
-                return typeof(NativeIntType);
-            }
-
-            return t;
+            return ret;
         }
 
         public static bool IsAssignableFrom(this Type type1, TypeOnStack type2)
@@ -208,11 +217,12 @@ namespace Sigil.Impl
             }
         }
 
-        public static IEnumerable<TypeOnStack>[] Peek(this Stack<List<TypeOnStack>> stack, bool baseless, int n)
+        private static List<TypeOnStack> _PeekWildcard = new List<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
+        public static List<TypeOnStack>[] Peek(this Stack<List<TypeOnStack>> stack, bool baseless, int n)
         {
             if (stack.Count < n && !baseless) return null;
 
-            var ret = new IEnumerable<TypeOnStack>[n];
+            var ret = new List<TypeOnStack>[n];
 
             int i;
             for (i = 0; i < n && i < stack.Count; i++)
@@ -220,10 +230,9 @@ namespace Sigil.Impl
                 ret[i] = stack.ElementAt(i);
             }
 
-            var wild = new[] { TypeOnStack.Get<WildcardType>() }; 
             while (i < n)
             {
-                ret[i] = wild;
+                ret[i] = _PeekWildcard;
                 i++;
             }
 
