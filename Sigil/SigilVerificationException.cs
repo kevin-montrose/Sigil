@@ -122,22 +122,6 @@ namespace Sigil
                 }
 
                 ret.AppendLine();
-                ret.AppendLine("Instructions");
-                ret.AppendLine("============");
-
-                var instrIx = VerificationFailure.TransitionIndex != null ? VerificationFailure.Verifier.GetInstructionIndex(VerificationFailure.TransitionIndex.Value) : -1;
-
-                for (var i = 2; i < Instructions.Length; i++)
-                {
-                    var line = Instructions[i];
-
-                    if (i == instrIx) line = line + "  // relevant instruction";
-
-                    if (!string.IsNullOrEmpty(line))
-                    {
-                        ret.AppendLine(line);
-                    }
-                }
             }
 
             if (ReturnFailure != null)
@@ -152,6 +136,23 @@ namespace Sigil
                     }
 
                     ret.AppendLine();
+                }
+            }
+
+            ret.AppendLine("Instructions");
+            ret.AppendLine("============");
+
+            var instrIx = VerificationFailure != null && VerificationFailure.TransitionIndex != null ? VerificationFailure.Verifier.GetInstructionIndex(VerificationFailure.TransitionIndex.Value) : -1;
+
+            for (var i = 2; i < Instructions.Length; i++)
+            {
+                var line = Instructions[i];
+
+                if (i == instrIx) line = line + "  // relevant instruction";
+
+                if (!string.IsNullOrEmpty(line))
+                {
+                    ret.AppendLine(line);
                 }
             }
 

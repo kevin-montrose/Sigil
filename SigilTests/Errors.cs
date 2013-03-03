@@ -37,7 +37,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("All execution paths must end with Return", e.Message);
-                Assert.AreEqual("Bad Path\r\n========\r\n__start\r\nl1\r\n\r\n", e.GetDebugInfo());
+                Assert.AreEqual("Bad Path\r\n========\r\n__start\r\nl1\r\n\r\nInstructions\r\n============\r\nbr.s l1\r\n\r\nl2:\r\nret\r\n\r\nl1:\r\nldc.i4.1\r\nbrtrue.s l2\r\n", e.GetDebugInfo());
             }
         }
 

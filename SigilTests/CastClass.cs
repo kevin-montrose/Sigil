@@ -12,6 +12,32 @@ namespace SigilTests
     public class CastClass
     {
         [TestMethod]
+        public void VeryLongMethod()
+        {
+            var e1 = Emit<Func<List<string>, List<string>>>.NewDynamicMethod();
+
+            e1.LoadArgument(0);
+
+            for (var i = 0; i < 10000; i++)
+            {
+                e1.CastClass<IEnumerable<string>>();
+                e1.CastClass<System.Collections.IEnumerable>();
+                e1.CastClass<object>();
+                e1.CastClass<System.Collections.IEnumerable>();
+                e1.CastClass<IEnumerable<string>>();
+                e1.CastClass<List<string>>();
+            }
+
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            var x = new List<string> { "hello", "world" };
+
+            Assert.AreEqual(x, d1(x));
+        }
+
+        [TestMethod]
         public void DisableEliding()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();

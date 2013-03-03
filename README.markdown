@@ -2,6 +2,16 @@
 
 A fail-fast, validating helper for [DynamicMethod](http://msdn.microsoft.com/en-us/library/system.reflection.emit.dynamicmethod.aspx) and [ILGenerator](http://msdn.microsoft.com/en-us/library/system.reflection.emit.ilgenerator.aspx).
 
+##Changes From Versions 1.X to 2.X
+
+The latest versions of Sigil remove type assertions, making it so unconditional branches can be used without manually indicating the types
+on the stack.  The optional type assertion parameters to MarkLabel has been removed as a consequence.
+
+A related change requires types to be passed along with the StoreElement and LoadElement instructions.
+
+Because Sigil can no longer guarantee that all types on the stack are known after each call, the GetStack method and related types have been
+removed.
+
 ##Usage
 
 Sigil is a roughly 1-to-1 replacement for ILGenerator.  Rather than calling ILGenerator.Emit(OpCode, ...), you call Emit<DelegateType>.OpCode(...).
@@ -95,10 +105,7 @@ using (var b = e1.DeclareLocal<int>("b"))
 
 ###Labels and Branches
 
-The methods `DefineLabel` and `MarkLabel`, and the instruction family `Branch*` and `Leave` are provided to specify control flow.  Sigil will verify that control transfer is legal, with one important caveat.
-
-At this time Sigil *does not* infer the state of the stack after an unconditional control flow transfer (which are `Branch()` and `Leave()`).
-Immediately one of these instructions, you must mark a label with a "stack assertion" to continue.
+The methods `DefineLabel` and `MarkLabel`, and the instruction family `Branch*` and `Leave` are provided to specify control flow.
 
 For example:
 ```
@@ -111,23 +118,20 @@ var label3 = emiter.DefineLabel("label3");
 emiter.LoadConstant(1);
 emiter.Branch(label1);
 
-emiter.MarkLabel(label2, new[] { typeof(int) });
+emiter.MarkLabel(label2);
 emiter.LoadConstant(2);
 emiter.Branch(label3);
 
-emiter.MarkLabel(label1, new[] { typeof(int) });
+emiter.MarkLabel(label1);
 emiter.Branch(label2);
 
-emiter.MarkLabel(label3, new[] { typeof(int), typeof(int) }); // the top of the stack is the first element
+emiter.MarkLabel(label3); // the top of the stack is the first element
 emiter.Add();
 emiter.Return();
 
 var d = emiter.CreateDelegate();
 d();  // returns 3
 ```
-
-When an assertion is *not necessary* it's used to validate the inferred state of the stack, and a SigilVerificationException will be thrown
-when that validation fails.
 
 ###Try, Catch, and Finally
 
@@ -250,17 +254,26 @@ While generally 1-to-1, Sigil does provide single methods for "families" of opco
  - `LoadArgument(int)` -&gt; Ldarg_0 through Ldarg_3, and Ldarg_S are used if possible  
  - `LoadArgumentAddress(int)` -&gt; Ldarga_S is used if possible  
  - `LoadConstant(...)` -&gt; Ldc_I4_M1 through Ldc_I4_8 are used if possible; Ldstr, Ldc_R4, Ldc_R8, and Ldtoken are used depending on the override  
- - `LoadElement(...)` -&gt; Ldelem_*, depending on the array on the stack  
+ - `LoadElement(...)` -&gt; Ldelem_*, depending on the passed type  
  - `LoadField(FieldInfo)` -&gt; Ldfld or Ldsfld depending on the FieldInfo  
  - `LoadFieldAddress(FieldInfo)` -&gt; Ldflda or Ldsflda depending on the FieldIfno  
  - `LoadIndirect(...)` -&gt; Ldind_* depending on the passed type  
  - `LoadLocal(Local)` -&gt; Ldloc_0 through Ldloc_3, and Ldloc_S are used if possible  
  - `LoadLocalAddress(...)` -&gt; Ldloca_S is used if possible  
  - `StoreArgument(...)` -&gt; Starg_S is used if possible  
- - `StoreElement()` -&gt; Stelem or Stelem_* depending on the array on the stack  
+ - `StoreElement(...)` -&gt; Stelem or Stelem_* depending on the passed type  
  - `StoreField(FieldInfo)` -&gt; Stfld or Stsfld depending on the FieldInfo  
  - `StoreIndirect(...)` -&gt; Stind_* depending on the type  
  - `StoreLocal(Local)` -&gt; Stloc_0 through Stloc_3, and Stloc_S are used if possible  
+
+###Debugging
+
+In addition to failing fast, Sigil also exposes some additional information to aid in debugging.
+
+Emit exposes an Instructions method which returns a string represention of the IL stream.  SigilVerificationException, in addition to a useful
+Message property, also has a GetDebugInfo method which returns additional details (like the state of the stack, or an invalid code path).
+
+Be aware that these features are meant as debugging aids, and their contents and the formatting of said contents may change at any time.
 
 ###Unsupported Operations
 
@@ -269,6 +282,13 @@ While not impossible to support, the unusualness of `VarArgs` methods in .NET ma
 
 Fault blocks are also not supported because of their rarity (there is no C# equivalent) and because they are forbidden in dynamic methods.
 
-#Sigil is a WORK IN PROGRESS
+###Performance
 
-Use at your own risk, there are almost certainly serious bugs at the moment.
+Since Sigil performs a great deal of verification it is necessarily slower than using ILGenerator directly.  That being said, Sigil should be adequately performant for most purposes.
+
+Sigil may be too slow for practical use if you need:
+
+  - More than ~100 labels and branches
+  - Methods with more than ~10,000 instructions
+
+Some costly optimization options can be disabled via the OptimizationOptions enumeration.

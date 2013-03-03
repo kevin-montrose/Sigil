@@ -245,7 +245,7 @@
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SigilException.cs" />
+    <Compile Include="SigilVerificationException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Sigil.snk" />
