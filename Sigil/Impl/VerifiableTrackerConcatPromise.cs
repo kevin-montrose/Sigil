@@ -53,7 +53,7 @@ namespace Sigil.Impl
 
             var tail = Next.DePromise();
 
-            return Inner.Concat(Next.DePromise());
+            return Inner.Concat(tail);
         }
 
         public override string ToString()
