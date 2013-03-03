@@ -80,6 +80,13 @@ namespace Sigil
         /// </summary>
         public int MaxStackSize { get; private set; }
 
+        /// <summary>
+        /// Returns the validation options that were used when creating this emit.
+        /// 
+        /// These control when certain validation steps are run.
+        /// </summary>
+        public ValidationOptions ValidationOptions { get; private set; }
+
         private List<Local> FreedLocals { get; set; }
 
         private Dictionary<string, Local> CurrentLocals;
@@ -111,8 +118,10 @@ namespace Sigil
         private Dictionary<Label, List<VerifiableTracker>> StateAtConditionalBranchToLabel = new Dictionary<Label, List<VerifiableTracker>>();
         private Dictionary<Label, VerifiableTracker> StateAtLabel = new Dictionary<Label, VerifiableTracker>();
 
-        private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
+        private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, ValidationOptions opts)
         {
+            ValidationOptions = opts;
+
             CallingConventions = callConvention;
 
             AllowsUnverifiableCIL = allowUnverifiable;
@@ -229,6 +238,11 @@ namespace Sigil
             if ((optimizationOptions & ~OptimizationOptions.All) != 0)
             {
                 throw new ArgumentException("optimizationOptions contained unknown flags, found " + optimizationOptions);
+            }
+
+            if (!HasFlag(ValidationOptions, ValidationOptions.ControlFlowImmediately))
+            {
+                CheckBranchesAndLabels("Deferred Validation", Labels["__start"], overrideOpts: true);
             }
 
             if ((optimizationOptions & OptimizationOptions.EnableTrivialCastEliding) != 0)
@@ -470,7 +484,7 @@ namespace Sigil
         /// 
         /// If module is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null)
+        public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null, ValidationOptions validationOpts = ValidationOptions.All)
         {
             module = module ?? Module;
 
@@ -486,7 +500,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module));
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module), validationOpts);
             ret.DynMethod = dynMethod;
 
             return ret;
@@ -499,9 +513,13 @@ namespace Sigil
         /// 
         /// If owner is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null)
+        public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null, ValidationOptions validationOpts = ValidationOptions.All)
         {
-            if (owner == null) return NewDynamicMethod(name: name, module: null);
+            if (owner == null)
+            {
+                return NewDynamicMethod(name: name, module: null, validationOpts: validationOpts);
+            }
+
             name = name ?? AutoNamer.Next("_DynamicMethod");
 
             CheckIsDelegate<DelegateType>();
@@ -514,7 +532,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, owner, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module));
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module), validationOpts);
             ret.DynMethod = dynMethod;
 
             return ret;
@@ -548,6 +566,11 @@ namespace Sigil
             return (value & flag) != 0;
         }
 
+        private static bool HasFlag(ValidationOptions value, ValidationOptions flag)
+        {
+            return (value & flag) != 0;
+        }
+
         /// <summary>
         /// Creates a new Emit, suitable for building a method on the given TypeBuilder.
         /// 
@@ -555,7 +578,7 @@ namespace Sigil
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
         {
             if (type == null)
             {
@@ -588,7 +611,7 @@ namespace Sigil
                 parameterTypes = pList.ToArray();
             }
 
-            var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode);
+            var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode, validationOpts);
             ret.MtdBuilder = methodBuilder;
 
             return ret;
@@ -599,9 +622,9 @@ namespace Sigil
         /// 
         /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
         /// </summary>
-        public static Emit<DelegateType> BuildStaticMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildStaticMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
         {
-            return BuildMethod(type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode);
+            return BuildMethod(type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode, validationOpts);
         }
 
         /// <summary>
@@ -609,9 +632,9 @@ namespace Sigil
         /// 
         /// Equivalent to calling to BuildMethod, but with CallingConventions.HasThis.
         /// </summary>
-        public static Emit<DelegateType> BuildInstanceMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildInstanceMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
         {
-            return BuildMethod(type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode);
+            return BuildMethod(type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode, validationOpts);
         }
 
         /// <summary>
@@ -621,7 +644,7 @@ namespace Sigil
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
         {
             if (type == null)
             {
@@ -656,7 +679,7 @@ namespace Sigil
 
             parameterTypes = pList.ToArray();
 
-            var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode);
+            var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, validationOpts);
             ret.ConstrBuilder = constructorBuilder;
 
             return ret;
@@ -807,8 +830,13 @@ namespace Sigil
         }
 
         private HashSet<TrackerDescriber> VerificationCache = new HashSet<TrackerDescriber>();
-        private void CheckBranchesAndLabels(string method, Label modifiedLabel)
+        private void CheckBranchesAndLabels(string method, Label modifiedLabel, bool overrideOpts = false)
         {
+            if (!overrideOpts)
+            {
+                if (!HasFlag(ValidationOptions, ValidationOptions.ControlFlowImmediately)) return;
+            }
+
             var res = VerifiableTracker.Verify(modifiedLabel, AllTrackers, VerificationCache);
             if (res != null)
             {

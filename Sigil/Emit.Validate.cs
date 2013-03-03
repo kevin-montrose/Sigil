@@ -158,7 +158,6 @@ namespace Sigil
             var tracer = new ReturnTracer(Branches, Marks, Returns);
 
             var result = tracer.Verify();
-
             if (!result.IsSuccess)
             {
                 throw new SigilVerificationException("All execution paths must end with Return", result, IL.Instructions(AllLocals));
