@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Sigil.Impl
 {
@@ -6,19 +7,34 @@ namespace Sigil.Impl
     {
         public VerifiableTracker Inner { get; private set; }
         private VerifiableTrackerConcatPromise Next;
+        private HashSet<VerifiableTracker> ContainsLookup = new HashSet<VerifiableTracker>();
 
         public VerifiableTrackerConcatPromise(VerifiableTracker a)
         {
             Inner = a;
+            ContainsLookup.Add(Inner);
+        }
+
+        private VerifiableTrackerConcatPromise(VerifiableTracker a, VerifiableTrackerConcatPromise next)
+            : this(a)
+        {
+            Next = next;
+
+            foreach(var x in Next.ContainsLookup)
+            {
+                ContainsLookup.Add(x);
+            }
         }
 
         public VerifiableTrackerConcatPromise Concat(VerifiableTrackerConcatPromise next)
         {
-            return new VerifiableTrackerConcatPromise(Inner) { Next = next };
+            return new VerifiableTrackerConcatPromise(Inner, next);
         }
 
         public bool Contains(VerifiableTrackerConcatPromise v)
         {
+            if (!ContainsLookup.Contains(Inner)) return false;
+
             var thisHead = this;
             var otherHead = v;
 
