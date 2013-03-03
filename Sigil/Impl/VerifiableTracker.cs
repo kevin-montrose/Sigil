@@ -297,13 +297,6 @@ namespace Sigil.Impl
             {
                 stack.Push(toPush.Distinct().ToList());
             }
-
-            legal.Each(
-                t =>
-                {
-                    if (t.After != null) t.After(stack, isBaseless);
-                }
-            );
         }
 
         private Stack<IEnumerable<TypeOnStack>> CachedVerifyStack;

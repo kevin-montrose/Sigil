@@ -17,6 +17,14 @@ namespace Sigil.Impl
             }
         }
 
+        public static void Each<T>(this T[] e, Action<T> a)
+        {
+            for (var i = 0; i < e.Length; i++)
+            {
+                a(e[i]);
+            }
+        }
+
         public static bool StartsWithVowel(this IEnumerable<char> str)
         {
             var c = char.ToLower(str.ElementAt(0));

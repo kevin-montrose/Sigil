@@ -22,37 +22,33 @@ namespace Sigil.Impl
 
         public VerificationCallback Before { get; private set; }
 
-        public VerificationCallback After { get; private set; }
-
-        public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed, VerificationCallback before = null, VerificationCallback after = null)
+        public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed, VerificationCallback before = null)
             : this
             (
                 popped.Select(s => TypeOnStack.Get(s)),
                 pushed.Select(s => TypeOnStack.Get(s)),
-                before, 
-                after
+                before
             )
         { }
 
         public StackTransition(int sizeMustBe)
-            : this(new TypeOnStack[0], new TypeOnStack[0], null, null)
+            : this(new TypeOnStack[0], new TypeOnStack[0], null)
         {
             StackSizeMustBe = sizeMustBe;
         }
 
         public StackTransition(bool isDuplicate)
-            : this(new TypeOnStack[0], new[] { TypeOnStack.Get<WildcardType>() }, null, null)
+            : this(new TypeOnStack[0], new[] { TypeOnStack.Get<WildcardType>() }, null)
         {
             IsDuplicate = isDuplicate;
         }
 
-        public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed, VerificationCallback before = null, VerificationCallback after = null)
+        public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed, VerificationCallback before = null)
         {
             PoppedFromStack = popped.ToList().AsReadOnly();
             PushedToStack = pushed.ToList().AsReadOnly();
             
             Before = before;
-            After = after;
         }
 
         public override string ToString()
