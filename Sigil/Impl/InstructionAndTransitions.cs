@@ -6,14 +6,14 @@ namespace Sigil.Impl
 {
     internal class InstructionAndTransitions
     {
-        public StackTransition[] Transitions { get; private set; }
+        public List<StackTransition> Transitions { get; private set; }
         public OpCode? Instruction { get; private set; }
         public int? InstructionIndex { get; private set; }
 
-        public InstructionAndTransitions(OpCode? instr, int? ix, IEnumerable<StackTransition> trans)
+        public InstructionAndTransitions(OpCode? instr, int? ix, List<StackTransition> trans)
         {
             Instruction = instr;
-            Transitions = trans is StackTransition[] ? (StackTransition[])trans : trans.ToArray();
+            Transitions = trans;
             InstructionIndex = ix;
         }
 

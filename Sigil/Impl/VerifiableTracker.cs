@@ -315,8 +315,7 @@ namespace Sigil.Impl
 
             var toPush = new List<TypeOnStack>(legalSize);
             var pushed = new HashSet<TypeOnStack>();
-            //foreach (var op in legal)
-            for(var i = 0; i < legal.Length; i++)
+            for(var i = 0; i < legal.Count; i++)
             {
                 foreach (var p in legal[i].PushedToStack)
                 {
@@ -333,11 +332,11 @@ namespace Sigil.Impl
             }
         }
 
-        private List<StackTransition> GetLegalTransitions(StackTransition[] ops, Stack<List<TypeOnStack>> runningStack)
+        private List<StackTransition> GetLegalTransitions(List<StackTransition> ops, Stack<List<TypeOnStack>> runningStack)
         {
-            var ret = new List<StackTransition>(ops.Length);
-            
-            for (var i = 0; i < ops.Length; i++)
+            var ret = new List<StackTransition>(ops.Count);
+
+            for (var i = 0; i < ops.Count; i++)
             {
                 var w = ops[i];
 
@@ -391,7 +390,7 @@ namespace Sigil.Impl
 
                 if(ops.Any(o => o.StackSizeMustBe.HasValue))
                 {
-                    if (ops.Length > 1)
+                    if (ops.Count > 1)
                     {
                         throw new Exception("Shouldn't have multiple 'must be size' transitions at the same point");
                     }
@@ -457,7 +456,7 @@ namespace Sigil.Impl
 
                     var toPush = runningStack.Count > 0 ? runningStack.Peek() : new List<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
 
-                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, new StackTransition[] { new StackTransition(new TypeOnStack[0], toPush) }), IsBaseless);
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, new List<StackTransition>(new [] { new StackTransition(new TypeOnStack[0], toPush) })), IsBaseless);
                 }
                 else
                 {
