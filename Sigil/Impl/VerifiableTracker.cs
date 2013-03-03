@@ -299,6 +299,49 @@ namespace Sigil.Impl
             }
         }
 
+        private List<StackTransition> GetLegalTransitions(StackTransition[] ops, Stack<IEnumerable<TypeOnStack>> runningStack)
+        {
+            var ret = new List<StackTransition>(ops.Length);
+            
+            for (var i = 0; i < ops.Length; i++)
+            {
+                var w = ops[i];
+
+                if (w.PoppedFromStack.All(u => u == TypeOnStack.Get<PopAllType>()))
+                {
+                    ret.Add(w);
+                    continue;
+                }
+
+                var onStack = runningStack.Peek(IsBaseless, w.PoppedCount);
+
+                if (onStack == null)
+                {
+                    continue;
+                }
+
+                bool outerContinue = false;
+
+                for (var j = 0; j < w.PoppedCount; j++)
+                {
+                    var shouldBe = w.PoppedFromStack.ElementAt(j);
+                    var actuallyIs = onStack[j];
+
+                    if (!actuallyIs.Any(a => shouldBe.IsAssignableFrom(a)))
+                    {
+                        outerContinue = true;
+                        break;
+                    }
+                }
+
+                if (outerContinue) continue;
+
+                ret.Add(w);
+            }
+
+            return ret;
+        }
+
         private Stack<IEnumerable<TypeOnStack>> CachedVerifyStack;
         private int? CachedVerifyIndex;
         private VerificationResult CollapseAndVerify()
@@ -327,7 +370,7 @@ namespace Sigil.Impl
                     }
                 }
 
-                var legal =
+                /*var legal =
                     ops.Where(
                         w =>
                         {
@@ -353,7 +396,9 @@ namespace Sigil.Impl
 
                             return true;
                         }
-                    ).ToList();
+                    ).ToList();*/
+
+                var legal = GetLegalTransitions(ops, runningStack);
 
                 if (legal.Count == 0)
                 {
