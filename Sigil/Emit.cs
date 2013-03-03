@@ -430,7 +430,7 @@ namespace Sigil
             return CreateConstructor(out ignored, optimizationOptions);
         }
 
-        private static void CheckIsDelegate<CheckDelegateType>()
+        private static void ValidateNewParameters<CheckDelegateType>(ValidationOptions validationOptions)
         {
             var delType = typeof(CheckDelegateType);
 
@@ -446,6 +446,11 @@ namespace Sigil
             if (!baseTypes.Contains(typeof(Delegate)))
             {
                 throw new ArgumentException("DelegateType must be a delegate, found " + delType.FullName);
+            }
+
+            if ((validationOptions & ~ValidationOptions.All) != 0)
+            {
+                throw new ArgumentException("validationOptions contained unknown flags, found " + validationOptions);
             }
         }
 
@@ -484,13 +489,13 @@ namespace Sigil
         /// 
         /// If module is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null, ValidationOptions validationOpts = ValidationOptions.All)
+        public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             module = module ?? Module;
 
             name = name ?? AutoNamer.Next("_DynamicMethod");
 
-            CheckIsDelegate<DelegateType>();
+            ValidateNewParameters<DelegateType>(validationOptions);
 
             var delType = typeof(DelegateType);
 
@@ -500,7 +505,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module), validationOpts);
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module), validationOptions);
             ret.DynMethod = dynMethod;
 
             return ret;
@@ -513,16 +518,16 @@ namespace Sigil
         /// 
         /// If owner is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null, ValidationOptions validationOpts = ValidationOptions.All)
+        public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             if (owner == null)
             {
-                return NewDynamicMethod(name: name, module: null, validationOpts: validationOpts);
+                return NewDynamicMethod(name: name, module: null, validationOptions: validationOptions);
             }
 
             name = name ?? AutoNamer.Next("_DynamicMethod");
 
-            CheckIsDelegate<DelegateType>();
+            ValidateNewParameters<DelegateType>(validationOptions);
 
             var delType = typeof(DelegateType);
 
@@ -532,7 +537,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, owner, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module), validationOpts);
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module), validationOptions);
             ret.DynMethod = dynMethod;
 
             return ret;
@@ -578,7 +583,7 @@ namespace Sigil
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
+        public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
         {
             if (type == null)
             {
@@ -592,7 +597,7 @@ namespace Sigil
 
             CheckAttributesAndConventions(attributes, callingConvention);
 
-            CheckIsDelegate<DelegateType>();
+            ValidateNewParameters<DelegateType>(validationOptions);
 
             var delType = typeof(DelegateType);
 
@@ -611,7 +616,7 @@ namespace Sigil
                 parameterTypes = pList.ToArray();
             }
 
-            var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode, validationOpts);
+            var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode, validationOptions);
             ret.MtdBuilder = methodBuilder;
 
             return ret;
@@ -622,9 +627,9 @@ namespace Sigil
         /// 
         /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
         /// </summary>
-        public static Emit<DelegateType> BuildStaticMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
+        public static Emit<DelegateType> BuildStaticMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
         {
-            return BuildMethod(type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode, validationOpts);
+            return BuildMethod(type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode, validationOptions);
         }
 
         /// <summary>
@@ -632,9 +637,9 @@ namespace Sigil
         /// 
         /// Equivalent to calling to BuildMethod, but with CallingConventions.HasThis.
         /// </summary>
-        public static Emit<DelegateType> BuildInstanceMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
+        public static Emit<DelegateType> BuildInstanceMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
         {
-            return BuildMethod(type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode, validationOpts);
+            return BuildMethod(type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode, validationOptions);
         }
 
         /// <summary>
@@ -644,7 +649,7 @@ namespace Sigil
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, ValidationOptions validationOpts = ValidationOptions.All)
+        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
         {
             if (type == null)
             {
@@ -658,7 +663,7 @@ namespace Sigil
                 throw new ArgumentException("Constructors always have a this reference");
             }
 
-            CheckIsDelegate<DelegateType>();
+            ValidateNewParameters<DelegateType>(validationOptions);
 
             var delType = typeof(DelegateType);
 
@@ -679,7 +684,7 @@ namespace Sigil
 
             parameterTypes = pList.ToArray();
 
-            var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, validationOpts);
+            var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, validationOptions);
             ret.ConstrBuilder = constructorBuilder;
 
             return ret;

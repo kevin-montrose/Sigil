@@ -17,7 +17,7 @@ namespace SigilTests
         [TestMethod]
         public void ManyConditionalDeferredValidation()
         {
-            var e1 = Emit<Action>.NewDynamicMethod(validationOpts: ValidationOptions.None);
+            var e1 = Emit<Action>.NewDynamicMethod(validationOptions: ValidationOptions.None);
 
             for (var i = 0; i < 50; i++)
             {

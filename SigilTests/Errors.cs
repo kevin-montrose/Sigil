@@ -13,6 +13,21 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void BadValidationOptions()
+        {
+            try
+            {
+                Emit<Action>.NewDynamicMethod(validationOptions: (ValidationOptions)123);
+
+                Assert.Fail();
+            }
+            catch (ArgumentException e)
+            {
+                Assert.AreEqual("validationOptions contained unknown flags, found 123", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void BadNonTerminalReturn()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
@@ -96,7 +111,7 @@ namespace SigilTests
         [TestMethod]
         public void BadManyBranchDeferredValidation()
         {
-            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOpts: ValidationOptions.None);
+            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
 
             e1.LoadArgument(0);
 
@@ -210,7 +225,7 @@ namespace SigilTests
         [TestMethod]
         public void BadDoubleBranchDeferredValidation()
         {
-            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOpts: ValidationOptions.None);
+            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
             var l1 = e1.DefineLabel("l1");
             var l2 = e1.DefineLabel("l2");
             var l3 = e1.DefineLabel("l3");

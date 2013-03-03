@@ -101,7 +101,7 @@ namespace SigilTests
         [TestMethod]
         public void ElideManyBranchedDeferredValidation()
         {
-            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOpts: ValidationOptions.None);
+            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
 
             e1.LoadArgument(0);
 
@@ -171,7 +171,7 @@ namespace SigilTests
         [TestMethod]
         public void ManyBranchedDeferredValidation()
         {
-            var e1 = Emit<Func<object, string>>.NewDynamicMethod(validationOpts: ValidationOptions.None);
+            var e1 = Emit<Func<object, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
 
             e1.LoadArgument(0);
 
