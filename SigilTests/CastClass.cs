@@ -105,7 +105,7 @@ namespace SigilTests
 
             e1.LoadArgument(0);
 
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 50; i++)
             {
                 var l1 = e1.DefineLabel();
                 var l2 = e1.DefineLabel();
@@ -140,7 +140,7 @@ namespace SigilTests
 
             e1.LoadArgument(0);
 
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 50; i++)
             {
                 var l1 = e1.DefineLabel();
                 var l2 = e1.DefineLabel();
