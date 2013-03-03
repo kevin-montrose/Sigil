@@ -15,6 +15,49 @@ namespace SigilTests
     public class Branches
     {
         [TestMethod]
+        public void Scan()
+        {
+            var terms = new[] { "hello", "world", "fizz", "buzz" };
+            var strEq = typeof(string).GetMethod("Equals", new[] { typeof(object) });
+
+            var e1 = Emit<Func<string, int>>.NewDynamicMethod();
+
+            var done = e1.DefineLabel("done");
+
+            e1.LoadArgument(0);                     // string
+
+            for (var i = 0; i < terms.Length; i++)
+            {
+                var next = e1.DefineLabel("next_" + i);
+
+                e1.Duplicate();                     // string string
+                e1.LoadConstant(terms[i]);          // string string string
+                e1.Call(strEq);                     // int string
+                e1.BranchIfFalse(next);             // string
+
+                e1.Pop();                           // --empty--
+                e1.LoadConstant(i);                 // int
+                e1.Branch(done);                    // int
+
+                e1.MarkLabel(next);                 // string
+            }
+
+            e1.Pop();                               // --empty--
+            e1.LoadConstant(-1);                    // int
+           
+            e1.MarkLabel(done);                     // int
+            e1.Return();                            // --empty--
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual(-1, d1("whatever"));
+            Assert.AreEqual(0, d1("hello"));
+            Assert.AreEqual(1, d1("world"));
+            Assert.AreEqual(2, d1("fizz"));
+            Assert.AreEqual(3, d1("buzz"));
+        }
+
+        [TestMethod]
         public void ConditionalBranchOver()
         {
             var e1 = Emit<Func<int>>.NewDynamicMethod();
