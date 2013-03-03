@@ -321,8 +321,12 @@ namespace Sigil.Impl
 
                 if(ops.Any(o => o.StackSizeMustBe.HasValue))
                 {
-                    if(ops.Count() > 1) throw new Exception("Shouldn't have multiple 'must be size' transitions at the same point");
-                    var doIt = ops.Single();
+                    if (ops.Length > 1)
+                    {
+                        throw new Exception("Shouldn't have multiple 'must be size' transitions at the same point");
+                    }
+
+                    var doIt = ops[0];
 
                     if(doIt.StackSizeMustBe != runningStack.Count)
                     {
