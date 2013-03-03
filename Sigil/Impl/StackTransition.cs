@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Sigil.Impl
 {
-    internal delegate void VerificationCallback(Stack<IEnumerable<TypeOnStack>> currentStack, bool isBaseless);
+    internal delegate void VerificationCallback(Stack<List<TypeOnStack>> currentStack, bool isBaseless);
 
     internal class StackTransition
     {

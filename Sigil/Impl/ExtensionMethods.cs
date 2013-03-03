@@ -208,7 +208,7 @@ namespace Sigil.Impl
             }
         }
 
-        public static IEnumerable<TypeOnStack>[] Peek(this Stack<IEnumerable<TypeOnStack>> stack, bool baseless, int n)
+        public static IEnumerable<TypeOnStack>[] Peek(this Stack<List<TypeOnStack>> stack, bool baseless, int n)
         {
             if (stack.Count < n && !baseless) return null;
 

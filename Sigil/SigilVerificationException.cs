@@ -159,7 +159,7 @@ namespace Sigil
             return ret.ToString();
         }
 
-        private static void PrintStack(Stack<IEnumerable<TypeOnStack>> stack, StringBuilder sb, string mark = null, int? markAt = null)
+        private static void PrintStack(Stack<List<TypeOnStack>> stack, StringBuilder sb, string mark = null, int? markAt = null)
         {
             if (stack.Count == 0)
             {
