@@ -11,16 +11,40 @@ namespace Sigil
     {
         private void InjectTailCall()
         {
-            if (InstructionStream.Count < 2) return;
+            for (var i = 0; i < IL.Index; i++)
+            {
+                var instr = IL[i];
 
-            var last = InstructionStream[InstructionStream.Count - 1];
-            var nextToLast = InstructionStream[InstructionStream.Count - 2];
+                if (instr.IsInstruction == OpCodes.Ret)
+                {
+                    int callIx = -1;
 
-            if (last != OpCodes.Ret) return;
+                    for (var j = i - 1; j >= 0; j--)
+                    {
+                        var atJ = IL[j];
 
-            if (!new[] { OpCodes.Call, OpCodes.Calli, OpCodes.Callvirt }.Contains(nextToLast)) return;
+                        if (atJ.MarksLabel != null)
+                        {
+                            break;
+                        }
 
-            InsertInstruction(IL.Index - 2, OpCodes.Tailcall);
+                        if (atJ.IsInstruction.HasValue)
+                        {
+                            if (atJ.IsInstruction.Value.IsCall())
+                            {
+                                callIx = j;
+                            }
+
+                            break;
+                        }
+                    }
+
+                    if (callIx == -1) continue;
+
+                    InsertInstruction(callIx, OpCodes.Tailcall);
+                    i++;
+                }
+            }
         }
 
         /// <summary>

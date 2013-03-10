@@ -9,6 +9,14 @@ namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
+        public static bool IsCall(this OpCode op)
+        {
+            return
+                op == OpCodes.Call ||
+                op == OpCodes.Calli ||
+                op == OpCodes.Callvirt;
+        }
+
         public static void Each<T>(this IEnumerable<T> e, Action<T> a)
         {
             foreach (var x in e)

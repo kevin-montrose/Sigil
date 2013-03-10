@@ -14,6 +14,60 @@ namespace SigilTests
     public class Calls
     {
         [TestMethod]
+        public void MultipleTailcalls()
+        {
+            var toString = typeof(object).GetMethod("ToString");
+
+            var e1 = Emit<Func<int, string>>.NewDynamicMethod();
+            var l1 = e1.DefineLabel("l1");
+            var l2 = e1.DefineLabel("l2");
+            var l3 = e1.DefineLabel("l3");
+
+            e1.LoadArgument(0);
+            e1.LoadConstant(0);
+            e1.BranchIfEqual(l1);
+
+            e1.LoadArgument(0);
+            e1.LoadConstant(1);
+            e1.BranchIfEqual(l2);
+
+            e1.LoadArgument(0);
+            e1.LoadConstant(2);
+            e1.BranchIfEqual(l3);
+
+            e1.LoadConstant("Foo");
+            e1.Call(toString);
+            e1.Return();
+
+            e1.MarkLabel(l1);
+            e1.LoadConstant(123);
+            e1.Box<int>();
+            e1.CallVirtual(toString);
+            e1.Return();
+
+            e1.MarkLabel(l2);
+            e1.NewObject<object>();
+            e1.Duplicate();
+            e1.LoadVirtualFunctionPointer(toString);
+            e1.CallIndirect<string>(toString.CallingConvention);
+            e1.Return();
+
+            e1.MarkLabel(l3);
+            e1.LoadConstant("");
+            e1.Return();
+
+            string instrs;
+            var d1 = e1.CreateDelegate(out instrs);
+
+            Assert.AreEqual("123", d1(0));
+            Assert.AreEqual("System.Object", d1(1));
+            Assert.AreEqual("", d1(2));
+            Assert.AreEqual("System.String", d1(314));
+
+            Assert.AreEqual("ldarg.0\r\nldc.i4.0\r\nbeq.s l1\r\nldarg.0\r\nldc.i4.1\r\nbeq.s l2\r\nldarg.0\r\nldc.i4.2\r\nbeq.s l3\r\nldstr 'Foo'\r\ntail.call System.String ToString()\r\nret\r\n\r\nl1:\r\nldc.i4.s 123\r\nbox System.Int32\r\ntail.callvirt System.String ToString()\r\nret\r\n\r\nl2:\r\nnewobj Void .ctor()\r\ndup\r\nldvirtftn System.String ToString()\r\ntail.calli Standard, HasThis System.String \r\nret\r\n\r\nl3:\r\nldstr ''\r\nret\r\n", instrs);
+        }
+
+        [TestMethod]
         public void PartialTypeMapping2()
         {
             {

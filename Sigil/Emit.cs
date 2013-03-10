@@ -30,7 +30,6 @@ namespace Sigil
         private Type[] ParameterTypes;
         private CallingConventions CallingConventions;
 
-        private List<OpCode> InstructionStream;
         private List<VerifiableTracker> Trackers;
 
         private ushort NextLocalIndex = 0;
@@ -150,7 +149,6 @@ namespace Sigil
 
             IL = new BufferedILGenerator(typeof(DelegateType));
             
-            InstructionStream = new List<OpCode>();
             Trackers = new List<VerifiableTracker>();
 
             AllLocals = new List<Local>();
@@ -870,11 +868,6 @@ namespace Sigil
             }
 
             MaxStackSize = Math.Max(verifyRes.StackSize, MaxStackSize);
-
-            if (instr.HasValue)
-            {
-                InstructionStream.Add(instr.Value);
-            }
         }
 
         private void UpdateState(TransitionWrapper transitions)
