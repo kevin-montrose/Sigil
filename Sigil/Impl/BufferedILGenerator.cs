@@ -8,11 +8,39 @@ using System.Text.RegularExpressions;
 
 namespace Sigil.Impl
 {
+    internal class BufferedILInstruction
+    {
+        public bool DefinesLabel { get; internal set; }
+        public Sigil.Label MarksLabel { get; internal set; }
+
+        public bool StartsExceptionBlock { get; internal set; }
+        public bool EndsExceptionBlock { get; internal set; }
+        
+        public bool StartsCatchBlock { get; internal set; }
+        public bool EndsCatchBlock { get; internal set; }
+        
+        public bool StartsFinallyBlock { get; internal set; }
+        public bool EndsFinallyBlock { get; internal set; }
+        
+        public bool DeclaresLocal { get; internal set; }
+
+        public OpCode? IsInstruction { get; internal set; }
+    }
+
     internal class BufferedILGenerator
     {
+        public BufferedILInstruction this[int ix]
+        {
+            get
+            {
+                return TraversableBuffer[ix];
+            }
+        }
+
         public int Index { get { return Buffer.Count; } }
 
         private List<Action<ILGenerator, bool, StringBuilder>> Buffer = new List<Action<ILGenerator, bool, StringBuilder>>();
+        private List<BufferedILInstruction> TraversableBuffer = new List<BufferedILInstruction>();
         private List<Func<int>> InstructionSizes = new List<Func<int>>();
 
         private Type DelegateType;
@@ -169,6 +197,8 @@ namespace Sigil.Impl
             InstructionSizes.RemoveAt(ix);
 
             Buffer.RemoveAt(ix);
+
+            TraversableBuffer.RemoveAt(ix);
         }
 
         public void Insert(int ix, OpCode op)
@@ -201,6 +231,14 @@ namespace Sigil.Impl
                     }
                 }
             );
+
+            TraversableBuffer.Insert(
+                ix,
+                new BufferedILInstruction
+                {
+                    IsInstruction = op
+                }
+            );
         }
 
         public void Emit(OpCode op)
@@ -227,6 +265,8 @@ namespace Sigil.Impl
                     }
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, byte b)
@@ -253,6 +293,8 @@ namespace Sigil.Impl
                     }
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, short s)
@@ -279,6 +321,8 @@ namespace Sigil.Impl
                     }
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, int i)
@@ -305,6 +349,8 @@ namespace Sigil.Impl
                     }
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, uint ui)
@@ -330,6 +376,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + ui);
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, long l)
@@ -349,6 +397,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + l); 
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, ulong ul)
@@ -374,6 +424,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + ul); 
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, float f)
@@ -393,6 +445,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + f); 
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, double d)
@@ -411,6 +465,8 @@ namespace Sigil.Impl
                     
                     log.AppendLine(op + " " + d);
                 });
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, MethodInfo method)
@@ -430,6 +486,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + method); 
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, ConstructorInfo cons)
@@ -449,6 +507,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + cons); 
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, Type type)
@@ -468,6 +528,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + type); 
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, FieldInfo field)
@@ -487,6 +549,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + field); 
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, string str)
@@ -506,6 +570,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " '" + str.Replace("'", @"\'") + "'");
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, Sigil.Label label, out UpdateOpCodeDelegate update)
@@ -536,6 +602,8 @@ namespace Sigil.Impl
                     log.AppendLine(localOp + " " + label);
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, Sigil.Label[] labels, out UpdateOpCodeDelegate update)
@@ -566,6 +634,8 @@ namespace Sigil.Impl
                     log.AppendLine(localOp + " " + Join(", ", labels.AsEnumerable()));
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         internal static string Join<T>(string delimiter, IEnumerable<T> parts) where T: class
@@ -603,6 +673,8 @@ namespace Sigil.Impl
                         log.AppendLine(op + " " + local);
                     }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public void Emit(OpCode op, CallingConventions callConventions, Type returnType, Type[] parameterTypes)
@@ -622,6 +694,8 @@ namespace Sigil.Impl
                     log.AppendLine(op + " " + callConventions + " " + returnType + " " + Join(" ", (IEnumerable<Type>)parameterTypes));
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
         }
 
         public DefineLabelDelegate BeginExceptionBlock()
@@ -661,6 +735,8 @@ namespace Sigil.Impl
                 }
             );
 
+            TraversableBuffer.Add(new BufferedILInstruction { StartsExceptionBlock = true });
+
             return ret;
         }
 
@@ -681,6 +757,8 @@ namespace Sigil.Impl
                     log.AppendLine("--BeginCatchBlock(" + exception + ")--");
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { StartsCatchBlock = true });
         }
 
         public void EndExceptionBlock()
@@ -700,6 +778,8 @@ namespace Sigil.Impl
                     log.AppendLine("--EndExceptionBlock--");
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { EndsExceptionBlock = true });
         }
 
         public void EndCatchBlock()
@@ -714,6 +794,8 @@ namespace Sigil.Impl
                     log.AppendLine("--EndCatchBlock--");
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { EndsCatchBlock = true });
         }
 
         public void BeginFinallyBlock()
@@ -733,6 +815,8 @@ namespace Sigil.Impl
                     log.AppendLine("--BeginFinallyBlock--");
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { StartsFinallyBlock = true });
         }
 
         public void EndFinallyBlock()
@@ -747,6 +831,8 @@ namespace Sigil.Impl
                     log.AppendLine("--EndFinallyBlock--");
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { EndsFinallyBlock = true });
         }
 
         public DefineLabelDelegate DefineLabel()
@@ -784,6 +870,8 @@ namespace Sigil.Impl
                 }
             );
 
+            TraversableBuffer.Add(new BufferedILInstruction { DefinesLabel = true });
+
             return ret;
         }
 
@@ -806,6 +894,8 @@ namespace Sigil.Impl
                     log.AppendLine(label + ":");
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { MarksLabel = label });
         }
 
         public DeclareLocallDelegate DeclareLocal(Type type)
@@ -842,6 +932,8 @@ namespace Sigil.Impl
                     }
                 }
             );
+
+            TraversableBuffer.Add(new BufferedILInstruction { DeclaresLocal = true });
 
             return ret;
         }
