@@ -14,6 +14,7 @@ namespace Sigil
             for (var i = 0; i < IL.Index; i++)
             {
                 var instr = IL[i];
+                BufferedILInstruction call = null;
 
                 if (instr.IsInstruction == OpCodes.Ret)
                 {
@@ -33,6 +34,7 @@ namespace Sigil
                             if (atJ.IsInstruction.Value.IsCall())
                             {
                                 callIx = j;
+                                call = atJ;
                             }
 
                             break;
@@ -40,6 +42,7 @@ namespace Sigil
                     }
 
                     if (callIx == -1) continue;
+                    if (call.TakesManagedPointer()) continue;
 
                     InsertInstruction(callIx, OpCodes.Tailcall);
                     i++;
@@ -68,7 +71,14 @@ namespace Sigil
             // Instance methods expect this to preceed parameters
             if (HasFlag(method.CallingConvention, CallingConventions.HasThis))
             {
-                expectedParams.Insert(0, TypeOnStack.Get(method.DeclaringType));
+                var declaring = method.DeclaringType;
+
+                if (declaring.IsValueType)
+                {
+                    declaring = declaring.MakePointerType();
+                }
+
+                expectedParams.Insert(0, TypeOnStack.Get(declaring));
             }
 
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);

@@ -14,6 +14,25 @@ namespace SigilTests
     public class Calls
     {
         [TestMethod]
+        public void ValueTypeCall()
+        {
+            var hasValue = typeof(int?).GetProperty("HasValue");
+            var getHasValue = hasValue.GetGetMethod();
+
+            var e1 = Emit<Func<int?, bool>>.NewDynamicMethod();
+            e1.LoadArgumentAddress(0);
+            e1.Call(getHasValue);
+            e1.Return();
+
+            string instrs;
+
+            var d1 = e1.CreateDelegate(out instrs);
+
+            Assert.IsTrue(d1(1));
+            Assert.IsFalse(d1(null));
+        }
+
+        [TestMethod]
         public void MultipleTailcalls()
         {
             var toString = typeof(object).GetMethod("ToString");

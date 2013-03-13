@@ -9,6 +9,13 @@ namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
+        public static bool TakesManagedPointer(this BufferedILInstruction instr)
+        {
+            if (instr.MethodReturnType.IsPointer) return true;
+
+            return instr.MethodParameterTypes.Any(p => p.IsPointer);
+        }
+
         public static bool IsCall(this OpCode op)
         {
             return

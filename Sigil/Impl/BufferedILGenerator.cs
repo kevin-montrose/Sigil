@@ -25,6 +25,9 @@ namespace Sigil.Impl
         public bool DeclaresLocal { get; internal set; }
 
         public OpCode? IsInstruction { get; internal set; }
+
+        public Type MethodReturnType { get; internal set; }
+        public IEnumerable<Type> MethodParameterTypes { get; internal set; }
     }
 
     internal class BufferedILGenerator
@@ -487,7 +490,20 @@ namespace Sigil.Impl
                 }
             );
 
-            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
+            var parameters = method.GetParameters().Select(p => p.ParameterType).ToList();
+            if(!method.IsStatic)
+            {
+                var declaring = method.DeclaringType;
+
+                if (declaring.IsValueType)
+                {
+                    declaring = declaring.MakePointerType();
+                }
+
+                parameters.Insert(0, declaring);
+            }
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = method.ReturnType, MethodParameterTypes = parameters });
         }
 
         public void Emit(OpCode op, ConstructorInfo cons)
@@ -695,7 +711,7 @@ namespace Sigil.Impl
                 }
             );
 
-            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = returnType, MethodParameterTypes = parameterTypes  });
         }
 
         public DefineLabelDelegate BeginExceptionBlock()
