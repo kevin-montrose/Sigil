@@ -32,7 +32,15 @@ namespace Sigil
 
             var parameters = method.GetParameters();
             var paramList = parameters.Select(p => p.ParameterType).ToList();
-            paramList.Insert(0, method.DeclaringType);
+
+            var declaring = method.DeclaringType;
+
+            if (declaring.IsValueType)
+            {
+                declaring = declaring.MakePointerType();
+            }
+
+            paramList.Insert(0, declaring);
 
             var type =
                 TypeOnStack.GetKnownFunctionPointer(
@@ -45,7 +53,7 @@ namespace Sigil
             var transitions = 
                 new[]
                 {
-                    new StackTransition(new [] { method.DeclaringType }, new [] { typeof(NativeIntType) })
+                    new StackTransition(new [] { declaring }, new [] { typeof(NativeIntType) })
                 };
 
             UpdateState(OpCodes.Ldvirtftn, method, transitions.Wrap("LoadVirtualFunctionPointer"));

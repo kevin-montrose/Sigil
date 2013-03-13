@@ -31,7 +31,7 @@ namespace Sigil
 
                         if (atJ.IsInstruction.HasValue)
                         {
-                            if (atJ.IsInstruction.Value.IsCall())
+                            if (atJ.IsInstruction.Value.IsTailableCall())
                             {
                                 callIx = j;
                                 call = atJ;

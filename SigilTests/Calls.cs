@@ -14,6 +14,42 @@ namespace SigilTests
     public class Calls
     {
         [TestMethod]
+        public void ValueTypeCallIndirect()
+        {
+            var hasValue = typeof(int?).GetProperty("HasValue");
+            var getHasValue = hasValue.GetGetMethod();
+
+            var e1 = Emit<Func<int?, bool>>.NewDynamicMethod();
+            e1.LoadArgumentAddress(0);
+            e1.Duplicate();
+            e1.LoadVirtualFunctionPointer(getHasValue);
+            e1.CallIndirect(getHasValue.CallingConvention, typeof(bool));
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.IsTrue(d1(1));
+            Assert.IsFalse(d1(null));
+        }
+
+        [TestMethod]
+        public void ValueTypeCallVirtual()
+        {
+            var hasValue = typeof(int?).GetProperty("HasValue");
+            var getHasValue = hasValue.GetGetMethod();
+
+            var e1 = Emit<Func<int?, bool>>.NewDynamicMethod();
+            e1.LoadArgumentAddress(0);
+            e1.CallVirtual(getHasValue);
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.IsTrue(d1(1));
+            Assert.IsFalse(d1(null));
+        }
+
+        [TestMethod]
         public void ValueTypeCall()
         {
             var hasValue = typeof(int?).GetProperty("HasValue");
@@ -24,9 +60,7 @@ namespace SigilTests
             e1.Call(getHasValue);
             e1.Return();
 
-            string instrs;
-
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate();
 
             Assert.IsTrue(d1(1));
             Assert.IsFalse(d1(null));
@@ -83,7 +117,7 @@ namespace SigilTests
             Assert.AreEqual("", d1(2));
             Assert.AreEqual("System.String", d1(314));
 
-            Assert.AreEqual("ldarg.0\r\nldc.i4.0\r\nbeq.s l1\r\nldarg.0\r\nldc.i4.1\r\nbeq.s l2\r\nldarg.0\r\nldc.i4.2\r\nbeq.s l3\r\nldstr 'Foo'\r\ntail.call System.String ToString()\r\nret\r\n\r\nl1:\r\nldc.i4.s 123\r\nbox System.Int32\r\ntail.callvirt System.String ToString()\r\nret\r\n\r\nl2:\r\nnewobj Void .ctor()\r\ndup\r\nldvirtftn System.String ToString()\r\ntail.calli Standard, HasThis System.String \r\nret\r\n\r\nl3:\r\nldstr ''\r\nret\r\n", instrs);
+            Assert.AreEqual("ldarg.0\r\nldc.i4.0\r\nbeq.s l1\r\nldarg.0\r\nldc.i4.1\r\nbeq.s l2\r\nldarg.0\r\nldc.i4.2\r\nbeq.s l3\r\nldstr 'Foo'\r\ntail.call System.String ToString()\r\nret\r\n\r\nl1:\r\nldc.i4.s 123\r\nbox System.Int32\r\ntail.callvirt System.String ToString()\r\nret\r\n\r\nl2:\r\nnewobj Void .ctor()\r\ndup\r\nldvirtftn System.String ToString()\r\ncalli Standard, HasThis System.String \r\nret\r\n\r\nl3:\r\nldstr ''\r\nret\r\n", instrs);
         }
 
         [TestMethod]

@@ -32,8 +32,15 @@ namespace Sigil
 
             var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
 
+            var declaring = method.DeclaringType;
+
+            if (declaring.IsValueType)
+            {
+                declaring = declaring.MakePointerType();
+            }
+
             // "this" parameter
-            expectedParams.Insert(0, TypeOnStack.Get(method.DeclaringType));
+            expectedParams.Insert(0, TypeOnStack.Get(declaring));
 
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);
 

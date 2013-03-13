@@ -307,7 +307,7 @@ namespace Sigil
                 var p = new List<Type>();
                 p.Add(typeof(NativeIntType));
                 p.AddRange(parameterTypes.Reverse());
-                p.Add(typeof(object));
+                p.Add(typeof(WildcardType));
 
                 if (returnType != typeof(void))
                 {
