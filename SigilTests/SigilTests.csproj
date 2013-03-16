@@ -55,6 +55,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Add.cs" />
+    <Compile Include="Arglist.cs" />
     <Compile Include="AutoNamer.cs" />
     <Compile Include="Bitwise.cs" />
     <Compile Include="BlogPost.cs" />

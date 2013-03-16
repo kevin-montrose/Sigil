@@ -714,6 +714,42 @@ namespace Sigil.Impl
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = returnType, MethodParameterTypes = parameterTypes  });
         }
 
+        public void EmitCall(OpCode op, MethodInfo method, Type[] arglist)
+        {
+            InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
+
+            Buffer.Add(
+                (il, logOnly, log) =>
+                {
+                    if (!logOnly)
+                    {
+                        il.EmitCall(op, method, arglist);
+                    }
+
+                    log.AppendLine(op + " " + method + " __arglist(" + Join(", ", arglist) + ")");
+                }
+            );
+
+            var parameters = method.GetParameters().Select(p => p.ParameterType).ToList();
+            if (!method.IsStatic)
+            {
+                var declaring = method.DeclaringType;
+
+                if (declaring.IsValueType)
+                {
+                    declaring = declaring.MakePointerType();
+                }
+
+                parameters.Insert(0, declaring);
+            }
+
+            parameters.AddRange(arglist);
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = method.ReturnType, MethodParameterTypes = parameters });
+        }
+
         public DefineLabelDelegate BeginExceptionBlock()
         {
             ILGenerator forIl = null;

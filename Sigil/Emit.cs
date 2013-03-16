@@ -959,11 +959,18 @@ namespace Sigil
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, MethodInfo method, TransitionWrapper transitions, bool firstParamIsThis = false)
+        private void UpdateState(OpCode instr, MethodInfo method, TransitionWrapper transitions, bool firstParamIsThis = false, Type[] arglist = null)
         {
             UpdateStackAndInstrStream(instr, transitions, firstParamIsThis);
 
-            IL.Emit(instr, method);
+            if (arglist == null)
+            {
+                IL.Emit(instr, method);
+            }
+            else
+            {
+                IL.EmitCall(instr, method, arglist);
+            }
         }
 
         private void UpdateState(OpCode instr, ConstructorInfo cons, TransitionWrapper transitions)

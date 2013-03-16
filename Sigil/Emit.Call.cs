@@ -59,14 +59,27 @@ namespace Sigil
         /// 
         /// To call overrides of instance methods, use CallVirtual.
         /// </summary>
-        public Emit<DelegateType> Call(MethodInfo method)
+        public Emit<DelegateType> Call(MethodInfo method, Type[] arglist = null)
         {
             if (method == null)
             {
                 throw new ArgumentNullException("method");
             }
 
+            if (arglist != null)
+            {
+                if (!HasFlag(method.CallingConvention, System.Reflection.CallingConventions.VarArgs))
+                {
+                    throw new InvalidOperationException("Only VarArgs methods can be called with an arglist");
+                }
+            }
+
             var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
+
+            if (arglist != null)
+            {
+                expectedParams.AddRange(arglist.Select(t => TypeOnStack.Get(t)));
+            }
 
             // Instance methods expect this to preceed parameters
             if (HasFlag(method.CallingConvention, CallingConventions.HasThis))
@@ -105,7 +118,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Call, method, transitions.Wrap("Call"), firstParamIsThis: firstParamIsThis);
+            UpdateState(OpCodes.Call, method, transitions.Wrap("Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
 
             return this;
         }
