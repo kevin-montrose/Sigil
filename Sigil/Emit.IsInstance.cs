@@ -1,6 +1,7 @@
 ﻿using Sigil.Impl;
 using System;
 using System.Reflection.Emit;
+using System.Linq;
 
 namespace Sigil
 {
@@ -28,10 +29,28 @@ namespace Sigil
                 throw new ArgumentNullException("type");
             }
 
+            var curIndex = IL.Index;
+            bool elided = false;
+
+            VerificationCallback before =
+                (stack, baseless) =>
+                {
+                    // Can't reason about stack unless it's completely known
+                    if (baseless || elided) return;
+
+                    var onStack = stack.First();
+
+                    if (onStack.All(a => type.IsAssignableFrom(a)))
+                    {
+                        ElidableCasts.Add(curIndex);
+                        elided = true;
+                    }
+                };
+
             var transitions =
                 new[] 
                 {
-                    new StackTransition(new[] { typeof(WildcardType) }, new [] { type })
+                    new StackTransition(new[] { typeof(WildcardType) }, new [] { type }, before)
                 };
 
             UpdateState(OpCodes.Isinst, type, transitions.Wrap("IsInstance"));

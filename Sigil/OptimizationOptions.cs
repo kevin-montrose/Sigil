@@ -19,7 +19,7 @@ namespace Sigil
         EnableBranchPatching = 1,
 
         /// <summary>
-        /// Elide CastClass instructions which are no-ops, such as casting a System.String to a System.Object.
+        /// Elide CastClass and IsInstance instructions which are no-ops, such as casting a System.String to a System.Object.
         /// </summary>
         EnableTrivialCastEliding = 2,
 
