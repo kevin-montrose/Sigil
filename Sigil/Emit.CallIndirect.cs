@@ -268,8 +268,10 @@ namespace Sigil
         /// <summary>
         /// Pops a pointer to a method, and then all it's arguments (in reverse order, left-most parameter is deepest on the stack) and calls
         /// invokes the method pointer.  If the method returns a non-void result, it is pushed onto the stack.
+        /// 
+        /// This override allows an arglist to be passed for calling VarArgs methods.
         /// </summary>
-        public Emit<DelegateType> CallIndirect(CallingConventions callConventions, Type returnType, params Type[] parameterTypes)
+        public Emit<DelegateType> CallIndirect(CallingConventions callConventions, Type returnType, Type[] parameterTypes, Type[] arglist = null)
         {
             if (returnType == null)
             {
@@ -292,6 +294,14 @@ namespace Sigil
             if (!AllowsUnverifiableCIL)
             {
                 FailUnverifiable();
+            }
+
+            if (HasFlag(callConventions, CallingConventions.VarArgs) && !HasFlag(callConventions, CallingConventions.Standard))
+            {
+                if (arglist == null)
+                {
+                    throw new InvalidOperationException("When calling a VarArgs method, arglist must be set");
+                }
             }
 
             var takeExtra = 1;
@@ -379,9 +389,18 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions.Wrap("CallIndirect"));
+            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions.Wrap("CallIndirect"), arglist);
 
             return this;
+        }
+
+        /// <summary>
+        /// Pops a pointer to a method, and then all it's arguments (in reverse order, left-most parameter is deepest on the stack) and calls
+        /// invokes the method pointer.  If the method returns a non-void result, it is pushed onto the stack.
+        /// </summary>
+        public Emit<DelegateType> CallIndirect(CallingConventions callConventions, Type returnType, params Type[] parameterTypes)
+        {
+            return CallIndirect(callConventions, returnType, parameterTypes, arglist: null);
         }
     }
 }

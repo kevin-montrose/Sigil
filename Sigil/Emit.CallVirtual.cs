@@ -18,7 +18,7 @@ namespace Sigil
         /// 
         /// If the method invoked shouldn't vary (or if the method is static), use Call instead.
         /// </summary>
-        public Emit<DelegateType> CallVirtual(MethodInfo method, Type constrained = null)
+        public Emit<DelegateType> CallVirtual(MethodInfo method, Type constrained = null, Type[] arglist = null)
         {
             if (method == null)
             {
@@ -28,6 +28,14 @@ namespace Sigil
             if (method.IsStatic)
             {
                 throw new ArgumentException("Only non-static methods can be called using CallVirtual, found " + method);
+            }
+
+            if (HasFlag(method.CallingConvention, CallingConventions.VarArgs) && !HasFlag(method.CallingConvention, CallingConventions.Standard))
+            {
+                if (arglist == null)
+                {
+                    throw new InvalidOperationException("When calling a VarArgs method, arglist must be set");
+                }
             }
 
             var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
@@ -41,6 +49,11 @@ namespace Sigil
 
             // "this" parameter
             expectedParams.Insert(0, TypeOnStack.Get(declaring));
+
+            if (arglist != null)
+            {
+                expectedParams.AddRange(arglist.Select(t => TypeOnStack.Get(t)));
+            }
 
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);
 
@@ -69,7 +82,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Callvirt, method, transitions.Wrap("CallVirtual"));
+            UpdateState(OpCodes.Callvirt, method, transitions.Wrap("CallVirtual"), arglist: arglist);
 
             return this;
         }

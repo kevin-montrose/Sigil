@@ -3796,7 +3796,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.CallIndirect(CallingConventions.VarArgs);
+                    e1.CallIndirect(CallingConventions.VarArgs, typeof(string), Type.EmptyTypes, Type.EmptyTypes);
                     Assert.Fail();
                 }
                 catch (SigilVerificationException e)

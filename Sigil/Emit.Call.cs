@@ -58,6 +58,8 @@ namespace Sigil
         /// Call does not respect overrides, the implementation defined by the given MethodInfo is what will be called at runtime.
         /// 
         /// To call overrides of instance methods, use CallVirtual.
+        /// 
+        /// When calling VarArgs methods, arglist should be set to the types of the extra parameters to be passed.
         /// </summary>
         public Emit<DelegateType> Call(MethodInfo method, Type[] arglist = null)
         {
@@ -66,11 +68,11 @@ namespace Sigil
                 throw new ArgumentNullException("method");
             }
 
-            if (arglist != null)
+            if (HasFlag(method.CallingConvention, CallingConventions.VarArgs) && !HasFlag(method.CallingConvention, CallingConventions.Standard))
             {
-                if (!HasFlag(method.CallingConvention, System.Reflection.CallingConventions.VarArgs))
+                if (arglist == null)
                 {
-                    throw new InvalidOperationException("Only VarArgs methods can be called with an arglist");
+                    throw new InvalidOperationException("When calling a VarArgs method, arglist must be set");
                 }
             }
 

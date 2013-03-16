@@ -1001,11 +1001,18 @@ namespace Sigil
             IL.Emit(instr, str);
         }
 
-        private void UpdateState(OpCode instr, CallingConventions callConventions, Type returnType, Type[] parameterTypes, TransitionWrapper transitions)
+        private void UpdateState(OpCode instr, CallingConventions callConventions, Type returnType, Type[] parameterTypes, TransitionWrapper transitions, Type[] arglist)
         {
             UpdateStackAndInstrStream(instr, transitions);
 
-            IL.Emit(instr, callConventions, returnType, parameterTypes);
+            if (arglist == null)
+            {
+                IL.Emit(instr, callConventions, returnType, parameterTypes);
+            }
+            else
+            {
+                IL.EmitCalli(callConventions, returnType, parameterTypes, arglist);
+            }
         }
     }
 }
