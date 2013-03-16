@@ -6,6 +6,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Pushes a pointer to the current argument list onto the stack.
+        /// 
+        /// This instruction can only be used in VarArgs methods.
+        /// </summary>
         public Emit<DelegateType> ArgumentList()
         {
             if (!AllowsUnverifiableCIL)

@@ -6,6 +6,11 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Converts a TypedReference on the stack into a RuntimeTypeHandle for the type contained with it.
+        /// 
+        /// __makeref(int) on the stack would become the RuntimeTypeHandle for typeof(int), for example.
+        /// </summary>
         public Emit<DelegateType> ReferenceAnyType()
         {
             var transitions =

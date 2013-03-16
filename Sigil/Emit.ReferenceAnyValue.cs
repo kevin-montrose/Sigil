@@ -6,11 +6,21 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        /// <summary>
+        /// Converts a TypedReference on the stack into a reference to the contained object, given the type contained in the TypedReference.
+        /// 
+        /// __makeref(int) on the stack would become an int&amp;, for example.
+        /// </summary>
         public Emit<DelegateType> ReferenceAnyValue<Type>()
         {
             return ReferenceAnyValue(typeof(Type));
         }
 
+        /// <summary>
+        /// Converts a TypedReference on the stack into a reference to the contained object, given the type contained in the TypedReference.
+        /// 
+        /// __makeref(int) on the stack would become an int&amp;, for example.
+        /// </summary>
         public Emit<DelegateType> ReferenceAnyValue(Type type)
         {
             if (type == null)
