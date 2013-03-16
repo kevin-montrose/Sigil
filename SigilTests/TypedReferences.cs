@@ -59,5 +59,27 @@ namespace SigilTests
 
             Assert.AreEqual(123, x);
         }
+
+        [TestMethod]
+        public void RefType()
+        {
+            var e1 = Emit<Func<Type>>.NewDynamicMethod();
+            var a = e1.DeclareLocal<int?>("a");
+            e1.LoadConstant(123);
+            e1.NewObject<int?, int>();
+            e1.StoreLocal(a);
+            e1.LoadLocalAddress(a);
+            e1.MakeReferenceAny<int?>();
+            e1.ReferenceAnyType();
+            e1.Call(typeof(Type).GetMethod("GetTypeFromHandle"));
+            e1.Return();
+
+            string instrs;
+            var d1 = e1.CreateDelegate(out instrs);
+
+            var x = d1();
+
+            Assert.AreEqual(typeof(int?), x);
+        }
     }
 }
