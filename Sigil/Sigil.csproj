@@ -159,6 +159,9 @@
     <Compile Include="Emit.Locals.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Emit.MakeReferenceAny.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Emit.NewArray.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
@@ -169,6 +172,12 @@
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.Pop.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Emit.ReferenceAnyType.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Emit.ReferenceAnyValue.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Emit.ReThrow.cs">

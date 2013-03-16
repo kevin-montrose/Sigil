@@ -10,7 +10,7 @@ namespace Sigil.Impl
     /// 
     /// This type is exposed to allow for stack assertions containing null via Emit.MarkLabel.
     /// </summary>
-    internal class NullType
+    internal sealed class NullType
     {
         private NullType() { }
     }
@@ -23,20 +23,23 @@ namespace Sigil.Impl
     /// 
     /// This type is exposed to allow for stack assertions containing native int via Emit.MarkLabel.
     /// </summary>
-    internal class NativeIntType
+    internal sealed class NativeIntType
     {
         private NativeIntType() { }
     }
 
     // Represents a type that *could be* anything
-    internal class WildcardType { }
+    internal sealed class WildcardType { }
 
     // Represents *any* pointer
-    internal class AnyPointerType { }
+    internal sealed class AnyPointerType { }
+
+    // Represents *any* & type
+    internal sealed class AnyByRefType { }
 
     // Something that's *only* assignable from object
-    internal class OnlyObjectType { }
+    internal sealed class OnlyObjectType { }
 
     // Something that means "pop the entire damn stack" when encountered by the verifier
-    internal class PopAllType { }
+    internal sealed class PopAllType { }
 }

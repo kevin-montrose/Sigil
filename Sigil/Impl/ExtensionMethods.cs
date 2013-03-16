@@ -9,6 +9,13 @@ namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
+        public static bool TakesTypedReference(this BufferedILInstruction instr)
+        {
+            if (instr.MethodReturnType == typeof(TypedReference)) return true;
+
+            return instr.MethodParameterTypes.Any(p => p == typeof(TypedReference));
+        }
+
         public static bool TakesManagedPointer(this BufferedILInstruction instr)
         {
             if (instr.MethodReturnType.IsPointer) return true;
@@ -136,6 +143,9 @@ namespace Sigil.Impl
 
             if (type1.Type == typeof(AnyPointerType) && type2.IsPointer) return true;
             if (type2.Type == typeof(AnyPointerType) && type1.IsPointer) return true;
+
+            if (type1.Type == typeof(AnyByRefType) && type2.IsReference) return true;
+            if (type2.Type == typeof(AnyByRefType) && type1.IsReference) return true;
 
             // Native int can be convereted to any pointer type
             if (type1.IsPointer && type2 == TypeOnStack.Get<NativeIntType>()) return true;

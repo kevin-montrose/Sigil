@@ -43,6 +43,7 @@ namespace Sigil
 
                     if (callIx == -1) continue;
                     if (call.TakesManagedPointer()) continue;
+                    if (call.TakesTypedReference()) continue;
 
                     InsertInstruction(callIx, OpCodes.Tailcall);
                     i++;

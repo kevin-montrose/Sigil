@@ -115,6 +115,7 @@
     <Compile Include="Switch.cs" />
     <Compile Include="Throw.cs" />
     <Compile Include="TryCatchFinally.cs" />
+    <Compile Include="TypedReferences.cs" />
     <Compile Include="Unbox.cs" />
     <Compile Include="Verifiability.cs" />
     <Compile Include="Volatile.cs" />
