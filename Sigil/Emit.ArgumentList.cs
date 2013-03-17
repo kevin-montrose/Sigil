@@ -15,7 +15,7 @@ namespace Sigil
         {
             if (!AllowsUnverifiableCIL)
             {
-                FailUnverifiable();
+                FailUnverifiable("ArgumentList");
             }
 
             if (MtdBuilder == null || MtdBuilder.CallingConvention != System.Reflection.CallingConventions.VarArgs)

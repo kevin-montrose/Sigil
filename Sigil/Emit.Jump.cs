@@ -38,7 +38,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                FailUnverifiable();
+                FailUnverifiable("Jump");
             }
 
             if (CatchBlocks.Any(t => t.Value.Item2 == -1))

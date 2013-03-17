@@ -28,7 +28,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                FailUnverifiable();
+                FailUnverifiable("LocalAllocate");
             }
 
             UpdateState(new[] { new StackTransition(1) }.Wrap("LocalAllocate"));

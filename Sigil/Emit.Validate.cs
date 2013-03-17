@@ -8,13 +8,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-        private void FailStackUnderflow(int expected
-#if NET35
-            , string method = "caller"
-#else
-            , [CallerMemberName]string method = null
-#endif
-)
+        private void FailStackUnderflow(int expected, string method)
         {
             if (expected == 1)
             {
@@ -29,13 +23,7 @@ namespace Sigil
             throw new ArgumentException(obj + " is not owned by this Emit, and thus cannot be used");
         }
 
-        private void FailUnverifiable(
-#if NET35
-            string method = "caller"
-#else
-            [CallerMemberName]string method = null
-#endif
-            )
+        private void FailUnverifiable(string method)
         {
             throw new InvalidOperationException(method + " isn't verifiable");
         }

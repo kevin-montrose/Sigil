@@ -20,7 +20,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                FailUnverifiable();
+                FailUnverifiable("InitializeBlock");
             }
 
             if(isVolatile)

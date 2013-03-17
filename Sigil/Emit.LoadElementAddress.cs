@@ -75,7 +75,7 @@ namespace Sigil
         {
             if (!AllowsUnverifiableCIL)
             {
-                FailUnverifiable();
+                FailUnverifiable("LoadElementAddress");
             }
 
             var arrayType = elementType.MakeArrayType();

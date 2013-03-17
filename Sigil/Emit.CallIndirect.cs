@@ -293,7 +293,7 @@ namespace Sigil
 
             if (!AllowsUnverifiableCIL)
             {
-                FailUnverifiable();
+                FailUnverifiable("CallIndirect");
             }
 
             if (HasFlag(callConventions, CallingConventions.VarArgs) && !HasFlag(callConventions, CallingConventions.Standard))
