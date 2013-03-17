@@ -593,10 +593,10 @@ namespace Sigil.Impl
 
         private static IEnumerable<T> _QuickSort<T, V>(T[] data, int[] ixs, V[] keys, IComparer<V> c)
         {
-            var nextYield = 0; 
+            var nextYield = 0;
 
-            var stack = new Stack<Tuple<int, int>>();
-            stack.Push(Tuple.Create(0, ixs.Length - 1));
+            var stack = new Stack<SigilTuple<int, int>>();
+            stack.Push(SigilTuple.Create(0, ixs.Length - 1));
             while (stack.Count > 0)
             {
                 var leftRight = stack.Pop();
@@ -606,8 +606,8 @@ namespace Sigil.Impl
                 {
                     int pivot = left + (right - left) / 2;
                     int pivotPosition = _Partition(ixs, keys, left, right, pivot, c);
-                    stack.Push(Tuple.Create(pivotPosition + 1, right));
-                    stack.Push(Tuple.Create(left, pivotPosition - 1));
+                    stack.Push(SigilTuple.Create(pivotPosition + 1, right));
+                    stack.Push(SigilTuple.Create(left, pivotPosition - 1));
                 }
                 else
                 {

@@ -39,19 +39,19 @@ namespace Sigil
         private HashSet<Label> UnusedLabels;
         private HashSet<Label> UnmarkedLabels;
 
-        private List<Tuple<OpCode, Label, int>> Branches;
+        private List<SigilTuple<OpCode, Label, int>> Branches;
         private Dictionary<Label, int> Marks;
         private List<int> Returns;
 
-        private Dictionary<int, Tuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
+        private Dictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
         private Stack<ExceptionBlock> CurrentExceptionBlock;
 
-        private Dictionary<ExceptionBlock, Tuple<int, int>> TryBlocks;
-        private Dictionary<CatchBlock, Tuple<int, int>> CatchBlocks;
-        private Dictionary<FinallyBlock, Tuple<int, int>> FinallyBlocks;
+        private Dictionary<ExceptionBlock, SigilTuple<int, int>> TryBlocks;
+        private Dictionary<CatchBlock, SigilTuple<int, int>> CatchBlocks;
+        private Dictionary<FinallyBlock, SigilTuple<int, int>> FinallyBlocks;
 
-        private List<Tuple<int, TypeOnStack>> ReadonlyPatches;
+        private List<SigilTuple<int, TypeOnStack>> ReadonlyPatches;
 
         private EmitShorthand<DelegateType> Shorthand;
 
@@ -156,19 +156,19 @@ namespace Sigil
             UnusedLabels = new HashSet<Label>();
             UnmarkedLabels = new HashSet<Label>();
 
-            Branches = new List<Tuple<OpCode, Label, int>>();
+            Branches = new List<SigilTuple<OpCode, Label, int>>();
             Marks = new Dictionary<Label, int>();
             Returns = new List<int>();
 
-            BranchPatches = new Dictionary<int, Tuple<Label, UpdateOpCodeDelegate, OpCode>>();
+            BranchPatches = new Dictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>>();
 
             CurrentExceptionBlock = new Stack<ExceptionBlock>();
 
-            TryBlocks = new Dictionary<ExceptionBlock, Tuple<int, int>>();
-            CatchBlocks = new Dictionary<CatchBlock, Tuple<int, int>>();
-            FinallyBlocks = new Dictionary<FinallyBlock, Tuple<int, int>>();
+            TryBlocks = new Dictionary<ExceptionBlock, SigilTuple<int, int>>();
+            CatchBlocks = new Dictionary<CatchBlock, SigilTuple<int, int>>();
+            FinallyBlocks = new Dictionary<FinallyBlock, SigilTuple<int, int>>();
 
-            ReadonlyPatches = new List<Tuple<int, TypeOnStack>>();
+            ReadonlyPatches = new List<SigilTuple<int, TypeOnStack>>();
 
             Shorthand = new EmitShorthand<DelegateType>(this);
 
@@ -695,7 +695,7 @@ namespace Sigil
             foreach (var v in Branches.Where(w => w.Item3 >= index).ToList())
             {
                 Branches.Remove(v);
-                Branches.Add(Tuple.Create(v.Item1, v.Item2, v.Item3 - 1));
+                Branches.Add(SigilTuple.Create(v.Item1, v.Item2, v.Item3 - 1));
             }
 
             foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
@@ -722,36 +722,36 @@ namespace Sigil
 
             foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
             {
-                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
+                TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
             }
             foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
             {
-                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
+                TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
             }
 
             foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
             {
-                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
+                CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
             }
             foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
             {
-                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
+                CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
             }
 
             foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
             {
-                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
+                FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
             }
             foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
             {
-                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
+                FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
             }
 
             foreach (var elem in ReadonlyPatches.ToList())
             {
                 if (elem.Item1 >= index)
                 {
-                    var update = Tuple.Create(elem.Item1 - 1, elem.Item2);
+                    var update = SigilTuple.Create(elem.Item1 - 1, elem.Item2);
 
                     ReadonlyPatches.Remove(elem);
                     ReadonlyPatches.Add(elem);
@@ -767,7 +767,7 @@ namespace Sigil
             foreach (var v in Branches.Where(w => w.Item3 >= index).ToList())
             {
                 Branches.Remove(v);
-                Branches.Add(Tuple.Create(v.Item1, v.Item2, v.Item3 + 1));
+                Branches.Add(SigilTuple.Create(v.Item1, v.Item2, v.Item3 + 1));
             }
 
             foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
@@ -794,36 +794,36 @@ namespace Sigil
 
             foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
             {
-                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
+                TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
             }
             foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
             {
-                TryBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+                TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
             }
 
             foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
             {
-                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
+                CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
             }
             foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
             {
-                CatchBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+                CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
             }
 
             foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
             {
-                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
+                FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
             }
             foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
             {
-                FinallyBlocks[kv.Key] = Tuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
+                FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
             }
 
             foreach (var elem in ReadonlyPatches.ToList())
             {
                 if (elem.Item1 >= index)
                 {
-                    var update = Tuple.Create(elem.Item1 + 1, elem.Item2);
+                    var update = SigilTuple.Create(elem.Item1 + 1, elem.Item2);
 
                     ReadonlyPatches.Remove(elem);
                     ReadonlyPatches.Add(elem);

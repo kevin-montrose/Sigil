@@ -84,7 +84,7 @@ namespace Sigil
             var pushToStack = TypeOnStack.Get(elementType.MakeByRefType(), makeMarkable: true);
 
             // Shove this away, later on we'll figure out if we can insert a readonly here
-            ReadonlyPatches.Add(Tuple.Create(IL.Index, pushToStack));
+            ReadonlyPatches.Add(SigilTuple.Create(IL.Index, pushToStack));
 
             var transitions =
                 new[] 

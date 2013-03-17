@@ -22,7 +22,7 @@ namespace Sigil
 
             var ret = new ExceptionBlock(label);
 
-            TryBlocks[ret] = Tuple.Create(IL.Index, -1);
+            TryBlocks[ret] = SigilTuple.Create(IL.Index, -1);
 
             CurrentExceptionBlock.Push(ret);
 
@@ -97,7 +97,7 @@ namespace Sigil
 
             IL.EndExceptionBlock();
 
-            TryBlocks[forTry] = Tuple.Create(location.Item1, IL.Index);
+            TryBlocks[forTry] = SigilTuple.Create(location.Item1, IL.Index);
 
             Marks[forTry.Label] = IL.Index;
 
@@ -217,7 +217,7 @@ namespace Sigil
 
             var ret = new CatchBlock(exceptionType, forTry);
 
-            CatchBlocks[ret] = Tuple.Create(IL.Index, -1);
+            CatchBlocks[ret] = SigilTuple.Create(IL.Index, -1);
 
             return ret;
         }
@@ -265,7 +265,7 @@ namespace Sigil
 
             IL.EndCatchBlock();
 
-            CatchBlocks[forCatch] = Tuple.Create(location.Item1, IL.Index);
+            CatchBlocks[forCatch] = SigilTuple.Create(location.Item1, IL.Index);
 
             return this;
         }
@@ -331,7 +331,7 @@ namespace Sigil
 
             IL.BeginFinallyBlock();
 
-            FinallyBlocks[ret] = Tuple.Create(IL.Index, -1);
+            FinallyBlocks[ret] = SigilTuple.Create(IL.Index, -1);
 
             return ret;
         }
@@ -367,7 +367,7 @@ namespace Sigil
 
             IL.EndFinallyBlock();
 
-            FinallyBlocks[forFinally] = Tuple.Create(finallyBlock.Item1, IL.Index);
+            FinallyBlocks[forFinally] = SigilTuple.Create(finallyBlock.Item1, IL.Index);
 
             return this;
         }

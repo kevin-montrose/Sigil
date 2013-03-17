@@ -55,7 +55,7 @@ namespace Sigil.Impl
             return !(a == b);
         }
 
-        private static readonly Dictionary<Tuple<CallingConventions, Type, Type, Type[]>, TypeOnStack> KnownFunctionPointerCache = new Dictionary<Tuple<CallingConventions, Type, Type, Type[]>, TypeOnStack>();
+        private static readonly Dictionary<SigilTuple<CallingConventions, Type, Type, Type[]>, TypeOnStack> KnownFunctionPointerCache = new Dictionary<SigilTuple<CallingConventions, Type, Type, Type[]>, TypeOnStack>();
 
         public Type Type { get; private set; }
 
@@ -70,7 +70,7 @@ namespace Sigil.Impl
 
         public bool IsMarkable { get { return UsedBy != null; } }
 
-        private HashSet<Tuple<OpCode, int>> UsedBy { get; set; }
+        private HashSet<SigilTuple<OpCode, int>> UsedBy { get; set; }
 
         /// <summary>
         /// Call to indicate that something on the stack was used
@@ -81,7 +81,7 @@ namespace Sigil.Impl
         {
             if (UsedBy == null) return;
 
-            UsedBy.Add(Tuple.Create(code, index));
+            UsedBy.Add(SigilTuple.Create(code, index));
         }
 
         /// <summary>
@@ -132,13 +132,13 @@ namespace Sigil.Impl
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
-                    UsedBy = new HashSet<Tuple<OpCode,int>>()
+                    UsedBy = new HashSet<SigilTuple<OpCode, int>>()
                 };
         }
 
         public static TypeOnStack GetKnownFunctionPointer(CallingConventions conv, Type instanceType, Type returnType, Type[] parameterTypes)
         {
-            var key = Tuple.Create(conv, instanceType, returnType, parameterTypes);
+            var key = SigilTuple.Create(conv, instanceType, returnType, parameterTypes);
 
             TypeOnStack ret;
 

@@ -91,11 +91,11 @@ namespace Sigil.Impl
 
     internal class ReturnTracer
     {
-        private List<Tuple<OpCode, Label, int>> Branches;
+        private List<SigilTuple<OpCode, Label, int>> Branches;
         private Dictionary<Label, int> Marks;
         private List<int> Returns;
 
-        public ReturnTracer(List<Tuple<OpCode, Label, int>> branches, Dictionary<Label, int> marks, List<int> returns) 
+        public ReturnTracer(List<SigilTuple<OpCode, Label, int>> branches, Dictionary<Label, int> marks, List<int> returns) 
         {
             Branches = branches;
             Marks = marks;
@@ -143,7 +143,6 @@ namespace Sigil.Impl
 
                 if (pathLookup.Contains(nextBranch.Item2))
                 {
-                    //return ReturnTracerResult.Success();
                     Cache[startAt] = cached = ReturnTracerResult.Success();
                     ret.Add(cached);
                     continue;

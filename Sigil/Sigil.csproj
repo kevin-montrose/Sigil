@@ -232,7 +232,7 @@
     <Compile Include="LabelLookup.cs" />
     <Compile Include="LocalLookup.cs" />
     <Compile Include="OptimizationOptions.cs" />
-    <Compile Include="Impl\Tuple.cs" />
+    <Compile Include="Impl\SigilTuple.cs" />
     <Compile Include="Emit.Unbox.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

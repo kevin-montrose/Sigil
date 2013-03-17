@@ -5,15 +5,15 @@ namespace Sigil.Impl
 {
     internal class TrackerDescriber
     {
-        private List<Tuple<VerifiableTracker, int>> Tokens;
+        private List<SigilTuple<VerifiableTracker, int>> Tokens;
 
         private TrackerDescriber(IEnumerable<VerifiableTracker> trackers)
         {
-            Tokens = new List<Tuple<VerifiableTracker, int>>();
+            Tokens = new List<SigilTuple<VerifiableTracker, int>>();
 
             foreach (var tracker in trackers)
             {
-                Tokens.Add(Tuple.Create(tracker, tracker.Iteration));
+                Tokens.Add(SigilTuple.Create(tracker, tracker.Iteration));
             }
         }
 

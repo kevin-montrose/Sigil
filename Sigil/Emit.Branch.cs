@@ -29,9 +29,9 @@ namespace Sigil
             CurrentVerifier.Branch(label);
             CheckBranchesAndLabels("Branch", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Br, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Br, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Br);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Br);
 
             CurrentVerifier = null;
             MustMark = true;
@@ -82,9 +82,9 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfEqual", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Beq, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Beq, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Beq);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Beq);
 
             return this;
         }
@@ -130,9 +130,9 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfNotEqual", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Bne_Un, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Bne_Un, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bne_Un);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Bne_Un);
 
             return this;
         }
@@ -187,9 +187,9 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfGreaterOrEqual", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Bge, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Bge, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Bge);
 
 
             return this;
@@ -230,9 +230,9 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfGreaterOrEqual", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Bge_Un, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Bge_Un, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bge_Un);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Bge_Un);
 
             return this;
         }
@@ -272,9 +272,9 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfGreater", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Bgt, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Bgt, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Bgt);
 
             return this;
         }
@@ -314,9 +314,9 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfGreater", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Bgt_Un, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Bgt_Un, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Bgt_Un);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Bgt_Un);
 
             return this;
         }
@@ -356,9 +356,9 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfLessOrEqual", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Ble, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Ble, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Ble);
 
             return this;
         }
@@ -398,9 +398,9 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfLessOrEqual", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Ble_Un, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Ble_Un, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Ble_Un);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Ble_Un);
 
             return this;
         }
@@ -440,9 +440,9 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfLess", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Blt, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Blt, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Blt);
 
             return this;
         }
@@ -482,9 +482,9 @@ namespace Sigil
 
             RecordConditionalBranchState("UnsignedBranchIfLess", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Blt_Un, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Blt_Un, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Blt_Un);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Blt_Un);
 
             return this;
         }
@@ -532,9 +532,9 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfFalse", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Brfalse, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Brfalse, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brfalse);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Brfalse);
 
             return this;
         }
@@ -584,9 +584,9 @@ namespace Sigil
 
             RecordConditionalBranchState("BranchIfTrue", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Brtrue, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Brtrue, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Brtrue);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Brtrue);
 
             return this;
         }

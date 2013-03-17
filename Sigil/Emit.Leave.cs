@@ -36,9 +36,9 @@ namespace Sigil
 
             CheckBranchesAndLabels("Leave", label);
 
-            Branches.Add(Tuple.Create(OpCodes.Leave, label, IL.Index));
+            Branches.Add(SigilTuple.Create(OpCodes.Leave, label, IL.Index));
 
-            BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Leave);
+            BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Leave);
 
             CurrentVerifier = null;
             MustMark = true;

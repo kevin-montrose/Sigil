@@ -7,7 +7,7 @@ namespace Sigil.Impl
     internal static class AutoNamer
     {
         private static readonly object NullKey = new object();
-        private static readonly Dictionary<Tuple<object, string>, int> State = new Dictionary<Tuple<object, string>, int>();
+        private static readonly Dictionary<SigilTuple<object, string>, int> State = new Dictionary<SigilTuple<object, string>, int>();
 
         public static string Next(string root)
         {
@@ -16,7 +16,7 @@ namespace Sigil.Impl
 
         public static string Next(object on, string root, params IEnumerable<string>[] inUse)
         {
-            var key = Tuple.Create(on, root);
+            var key = SigilTuple.Create(on, root);
 
             lock (State)
             {

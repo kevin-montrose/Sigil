@@ -48,8 +48,8 @@ namespace Sigil
 
             foreach (var label in labels)
             {
-                Branches.Add(Tuple.Create(OpCodes.Switch, label, IL.Index));
-                BranchPatches[IL.Index] = Tuple.Create(label, update, OpCodes.Switch);
+                Branches.Add(SigilTuple.Create(OpCodes.Switch, label, IL.Index));
+                BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Switch);
             }
 
             return this;
