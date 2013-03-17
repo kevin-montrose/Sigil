@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET35", "Sigil NET35\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET40", "Sigil NET40\Sigil NET40.csproj", "{D422375C-6C71-4569-A63E-3FA875070BB3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET30", "Sigil NET30\Sigil NET30.csproj", "{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{D422375C-6C71-4569-A63E-3FA875070BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D422375C-6C71-4569-A63E-3FA875070BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D422375C-6C71-4569-A63E-3FA875070BB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
