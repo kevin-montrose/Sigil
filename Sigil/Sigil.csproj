@@ -218,6 +218,7 @@
     </Compile>
     <Compile Include="Impl\Delegates.cs" />
     <Compile Include="Impl\InstructionAndTransitions.cs" />
+    <Compile Include="Impl\LinqAlternative.cs" />
     <Compile Include="Impl\ReturnTracer.cs" />
     <Compile Include="Impl\SpecialTypes.cs" />
     <Compile Include="Impl\StackTransition.cs" />
