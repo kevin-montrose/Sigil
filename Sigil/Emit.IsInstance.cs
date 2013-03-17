@@ -1,7 +1,7 @@
 ﻿using Sigil.Impl;
 using System;
-using System.Reflection.Emit;
 using System.Linq;
+using System.Reflection.Emit;
 
 namespace Sigil
 {
