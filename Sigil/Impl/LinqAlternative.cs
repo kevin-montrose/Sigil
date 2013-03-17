@@ -603,24 +603,12 @@ namespace Sigil.Impl
             return ret;
         }
 
-        private static IEnumerable<T> _OrderBy<T, V>(this IEnumerable<Tuple<T, V>> e)
-        {
-            var arr = e.ToArray();
-
-            Array.Sort(arr, AscendingOrderComparer<T, V>.Singleton);
-
-            for (var i = 0; i < arr.Length; i++)
-            {
-                yield return arr[i].Item1;
-            }
-        }
-
         public static IEnumerable<T> OrderBy<T, V>(this IEnumerable<T> e, Func<T, V> p)
         {
             if (e == null) throw new ArgumentNullException("e");
             if (p == null) throw new ArgumentNullException("p");
 
-            return _OrderBy(e.Select(x => Tuple.Create(x, p(x))));
+            return _Order(e, p, Comparer<V>.Default);
         }
 
         private static IEnumerable<T> _OrderByDescending<T, V>(this IEnumerable<Tuple<T, V>> e)
@@ -641,6 +629,73 @@ namespace Sigil.Impl
             if (p == null) throw new ArgumentNullException("p");
 
             return _OrderByDescending(e.Select(x => Tuple.Create(x, p(x))));
+        }
+
+        private static void QuickSort<V>(int[] ixs, V[] keys, int left, int right, Comparer<V> c)
+        {
+            if (right > left)
+            {
+                int pivot = left + (right - left) / 2;
+                int pivotPosition = Partition(ixs, keys, left, right, pivot, c);
+                QuickSort(ixs, keys, left, pivotPosition - 1, c);
+                QuickSort(ixs, keys, pivotPosition + 1, right, c);
+            }
+        }
+
+        private static int Partition<V>(int[] ixs, V[] keys, int left, int right, int pivot, Comparer<V> c)
+        {
+            var pivotIndex = ixs[pivot];
+            var pivotKey = keys[pivotIndex];
+
+            ixs[pivot] = ixs[right];
+            ixs[right] = pivotIndex;
+
+            var storeIndex = left;
+
+            for (var i = left; i < right; i++)
+            {
+                var candidateIndex = ixs[i];
+                var candidateKey = keys[candidateIndex];
+                var comparison = c.Compare(candidateKey, pivotKey);
+                if (comparison < 0 || (comparison == 0 && candidateIndex < pivotIndex))
+                {
+                    ixs[i] = ixs[storeIndex];
+                    ixs[storeIndex] = candidateIndex;
+                    storeIndex++;
+                }
+            }
+            
+            var tmp = ixs[storeIndex];
+            ixs[storeIndex] = ixs[right];
+            ixs[right] = tmp;
+
+            return storeIndex;
+        }
+
+        private static IEnumerable<T> _Order<T, V>(IEnumerable<T> e, Func<T, V> p, Comparer<V> c)
+        {
+            var data = ToArray(e);
+
+            var length = data.Length;
+
+            var indexes = new int[length];
+            for (int i = 0; i < length; i++)
+            {
+                indexes[i] = i;
+            }
+
+            var keys = new V[length];
+            for (int i = 0; i < length; i++)
+            {
+                keys[i] = p(data[i]);
+            }
+
+            QuickSort(indexes, keys, 0, length - 1, c);
+
+            for (int i = 0; i < indexes.Length; i++)
+            {
+                yield return data[indexes[i]];
+            } 
         }
     }
 }
