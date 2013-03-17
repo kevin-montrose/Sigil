@@ -14,7 +14,7 @@ namespace SigilTests
     public class Internals
     {
         [TestMethod]
-        public void Sort()
+        public void OrderBy()
         {
             var sigilTypes = typeof(Emit<>).Assembly.GetTypes();
             var linq = sigilTypes.Single(t => t.Name == "LinqAlternative");
@@ -35,6 +35,40 @@ namespace SigilTests
 
             var sigilOrdered = (IEnumerable<Tuple<int, double>>)orderBy.Invoke(null, new object[] { toSort.ToList(), p });
             var linqOrdered = toSort.ToList().OrderBy(p);
+
+            var sigilList = sigilOrdered.ToList();
+            var linqList = linqOrdered.ToList();
+
+            Assert.AreEqual(linqList.Count, sigilList.Count);
+
+            for (var i = 0; i < linqList.Count; i++)
+            {
+                Assert.AreEqual(linqList[i], sigilList[i]);
+            }
+        }
+
+        [TestMethod]
+        public void OrderByDescending()
+        {
+            var sigilTypes = typeof(Emit<>).Assembly.GetTypes();
+            var linq = sigilTypes.Single(t => t.Name == "LinqAlternative");
+
+            var orderByGeneric = linq.GetMethod("OrderByDescending");
+            var orderBy = orderByGeneric.MakeGenericMethod(typeof(Tuple<int, double>), typeof(double));
+
+            var toSort = new List<Tuple<int, double>>();
+
+            var rand = new Random();
+
+            for (var i = 0; i < 1000; i++)
+            {
+                toSort.Add(Tuple.Create(i, rand.NextDouble()));
+            }
+
+            Func<Tuple<int, double>, double> p = x => x.Item2;
+
+            var sigilOrdered = (IEnumerable<Tuple<int, double>>)orderBy.Invoke(null, new object[] { toSort.ToList(), p });
+            var linqOrdered = toSort.ToList().OrderByDescending(p);
 
             var sigilList = sigilOrdered.ToList();
             var linqList = linqOrdered.ToList();
