@@ -40,16 +40,16 @@ namespace Sigil
         private HashSet<Label> UnmarkedLabels;
 
         private LinqList<SigilTuple<OpCode, Label, int>> Branches;
-        private Dictionary<Label, int> Marks;
+        private LinqDictionary<Label, int> Marks;
         private LinqList<int> Returns;
 
-        private Dictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
+        private LinqDictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
         private Stack<ExceptionBlock> CurrentExceptionBlock;
 
-        private Dictionary<ExceptionBlock, SigilTuple<int, int>> TryBlocks;
-        private Dictionary<CatchBlock, SigilTuple<int, int>> CatchBlocks;
-        private Dictionary<FinallyBlock, SigilTuple<int, int>> FinallyBlocks;
+        private LinqDictionary<ExceptionBlock, SigilTuple<int, int>> TryBlocks;
+        private LinqDictionary<CatchBlock, SigilTuple<int, int>> CatchBlocks;
+        private LinqDictionary<FinallyBlock, SigilTuple<int, int>> FinallyBlocks;
 
         private LinqList<SigilTuple<int, TypeOnStack>> ReadonlyPatches;
 
@@ -87,7 +87,7 @@ namespace Sigil
 
         private LinqList<Local> FreedLocals { get; set; }
 
-        private Dictionary<string, Local> CurrentLocals;
+        private LinqDictionary<string, Local> CurrentLocals;
 
         /// <summary>
         /// Lookup for the locals currently in scope by name.
@@ -97,7 +97,7 @@ namespace Sigil
         /// </summary>
         public LocalLookup Locals { get; private set; }
 
-        private Dictionary<string, Label> CurrentLabels;
+        private LinqDictionary<string, Label> CurrentLabels;
 
         /// <summary>
         /// Lookup for declared labels by name.
@@ -113,8 +113,8 @@ namespace Sigil
         private HashSet<VerifiableTracker> AllTrackers = new HashSet<VerifiableTracker>();
 
         // Stores the stack during a BranchIf*; knowing that when the label is marked it'll need to be verified
-        private Dictionary<Label, LinqList<VerifiableTracker>> StateAtConditionalBranchToLabel = new Dictionary<Label, LinqList<VerifiableTracker>>();
-        private Dictionary<Label, VerifiableTracker> StateAtLabel = new Dictionary<Label, VerifiableTracker>();
+        private LinqDictionary<Label, LinqList<VerifiableTracker>> StateAtConditionalBranchToLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
+        private LinqDictionary<Label, VerifiableTracker> StateAtLabel = new LinqDictionary<Label, VerifiableTracker>();
 
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, ValidationOptions opts)
         {
@@ -157,16 +157,16 @@ namespace Sigil
             UnmarkedLabels = new HashSet<Label>();
 
             Branches = new LinqList<SigilTuple<OpCode, Label, int>>();
-            Marks = new Dictionary<Label, int>();
+            Marks = new LinqDictionary<Label, int>();
             Returns = new LinqList<int>();
 
-            BranchPatches = new Dictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>>();
+            BranchPatches = new LinqDictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>>();
 
             CurrentExceptionBlock = new Stack<ExceptionBlock>();
 
-            TryBlocks = new Dictionary<ExceptionBlock, SigilTuple<int, int>>();
-            CatchBlocks = new Dictionary<CatchBlock, SigilTuple<int, int>>();
-            FinallyBlocks = new Dictionary<FinallyBlock, SigilTuple<int, int>>();
+            TryBlocks = new LinqDictionary<ExceptionBlock, SigilTuple<int, int>>();
+            CatchBlocks = new LinqDictionary<CatchBlock, SigilTuple<int, int>>();
+            FinallyBlocks = new LinqDictionary<FinallyBlock, SigilTuple<int, int>>();
 
             ReadonlyPatches = new LinqList<SigilTuple<int, TypeOnStack>>();
 
@@ -174,10 +174,10 @@ namespace Sigil
 
             FreedLocals = new LinqList<Local>();
 
-            CurrentLocals = new Dictionary<string, Local>();
+            CurrentLocals = new LinqDictionary<string, Local>();
             Locals = new LocalLookup(CurrentLocals);
 
-            CurrentLabels = new Dictionary<string, Label>();
+            CurrentLabels = new LinqDictionary<string, Label>();
             Labels = new LabelLookup(CurrentLabels);
 
             ElidableCasts = new LinqList<int>();

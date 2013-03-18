@@ -29,7 +29,7 @@ namespace Sigil
 
         private void ValidateTryCatchFinallyBlocks()
         {
-            foreach (var kv in TryBlocks)
+            foreach (var kv in TryBlocks.AsEnumerable())
             {
                 if (kv.Value.Item2 == -1)
                 {
@@ -41,7 +41,7 @@ namespace Sigil
                 }
             }
 
-            foreach (var kv in CatchBlocks)
+            foreach (var kv in CatchBlocks.AsEnumerable())
             {
                 if (kv.Value.Item2 == -1)
                 {
@@ -49,7 +49,7 @@ namespace Sigil
                 }
             }
 
-            foreach (var kv in FinallyBlocks)
+            foreach (var kv in FinallyBlocks.AsEnumerable())
             {
                 if (kv.Value.Item2 == -1)
                 {

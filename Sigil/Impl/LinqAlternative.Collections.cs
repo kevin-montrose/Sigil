@@ -164,6 +164,60 @@ namespace Sigil.Impl
         }
     }
 
+    internal class LinqDictionary<K, V> : LinqRoot<KeyValuePair<K, V>>
+    {
+        private Dictionary<K, V> Inner;
+
+        public static explicit operator Dictionary<K, V>(LinqDictionary<K, V> d)
+        {
+            return d.Inner;
+        }
+
+        public V this[K key]
+        {
+            get
+            {
+                return Inner[key];
+            }
+            set
+            {
+                Inner[key] = value;
+            }
+        }
+
+        public LinqRoot<K> Keys
+        {
+            get
+            {
+                return new LinqList<K>(Inner.Keys);
+            }
+        }
+
+        private LinqDictionary(Dictionary<K, V> d) { Inner = d; }
+        
+        public LinqDictionary() : this(new Dictionary<K, V>()) { }
+
+        protected override IEnumerable<KeyValuePair<K, V>> InnerEnumerable()
+        {
+            return Inner;
+        }
+
+        public bool Remove(K key)
+        {
+            return Inner.Remove(key);
+        }
+
+        public bool ContainsKey(K key)
+        {
+            return Inner.ContainsKey(key);
+        }
+
+        public bool TryGetValue(K key, out V value)
+        {
+            return Inner.TryGetValue(key, out value);
+        }
+    }
+
     internal class LinqList<T> : LinqRoot<T>
     {
         private List<T> Inner;
@@ -172,11 +226,6 @@ namespace Sigil.Impl
         {
             return l.Inner;
         }
-
-        /*public static implicit operator LinqList<T>(List<T> l)
-        {
-            return new LinqList<T>(l);
-        }*/
 
         public T this[int ix]
         {

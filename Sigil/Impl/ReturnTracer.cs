@@ -92,10 +92,10 @@ namespace Sigil.Impl
     internal class ReturnTracer
     {
         private LinqList<SigilTuple<OpCode, Label, int>> Branches;
-        private Dictionary<Label, int> Marks;
+        private LinqDictionary<Label, int> Marks;
         private LinqList<int> Returns;
 
-        public ReturnTracer(LinqList<SigilTuple<OpCode, Label, int>> branches, Dictionary<Label, int> marks, LinqList<int> returns) 
+        public ReturnTracer(LinqList<SigilTuple<OpCode, Label, int>> branches, LinqDictionary<Label, int> marks, LinqList<int> returns) 
         {
             Branches = branches;
             Marks = marks;

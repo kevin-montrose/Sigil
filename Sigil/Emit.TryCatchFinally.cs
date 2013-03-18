@@ -70,7 +70,7 @@ namespace Sigil
             }
 
             // Can't close an exception block while there are outstanding catch blocks
-            foreach (var kv in CatchBlocks)
+            foreach (var kv in CatchBlocks.AsEnumerable())
             {
                 if (kv.Key.ExceptionBlock != forTry) continue;
 
@@ -80,7 +80,7 @@ namespace Sigil
                 }
             }
 
-            foreach (var kv in FinallyBlocks)
+            foreach (var kv in FinallyBlocks.AsEnumerable())
             {
                 if (kv.Key.ExceptionBlock != forTry) continue;
 

@@ -36,9 +36,9 @@ namespace Sigil
         /// </summary>
         public IEnumerable<string> Names { get { return InnerLookup.Keys.Where(k => !k.StartsWith("__")).ToList(); } }
 
-        private Dictionary<string, Local> InnerLookup;
+        private LinqDictionary<string, Local> InnerLookup;
 
-        internal LocalLookup(Dictionary<string, Local> innerLookup)
+        internal LocalLookup(LinqDictionary<string, Local> innerLookup)
         {
             InnerLookup = innerLookup;
         }
