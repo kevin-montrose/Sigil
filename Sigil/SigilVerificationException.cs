@@ -185,7 +185,7 @@ namespace Sigil
         /// <summary>
         /// Implementation for ISerializable.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -201,7 +201,7 @@ namespace Sigil
         /// <summary>
         /// Returns the message and stacks on this exception, in string form.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public override string ToString()

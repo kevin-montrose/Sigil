@@ -14,7 +14,7 @@ namespace Sigil
         /// 
         /// This helper assumes a void return and no parameters.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect(CallingConventions callConventions)
@@ -30,7 +30,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and no parameters.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType>(CallingConventions callConventions)
@@ -44,7 +44,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1>(CallingConventions callConventions)
@@ -58,7 +58,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2>(CallingConventions callConventions)
@@ -72,7 +72,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3>(CallingConventions callConventions)
@@ -86,7 +86,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4>(CallingConventions callConventions)
@@ -100,7 +100,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5>(CallingConventions callConventions)
@@ -114,7 +114,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6>(CallingConventions callConventions)
@@ -128,7 +128,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7>(CallingConventions callConventions)
@@ -142,7 +142,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8>(CallingConventions callConventions)
@@ -156,7 +156,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9>(CallingConventions callConventions)
@@ -170,7 +170,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10>(CallingConventions callConventions)
@@ -184,7 +184,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11>(CallingConventions callConventions)
@@ -198,7 +198,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12>(CallingConventions callConventions)
@@ -212,7 +212,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13>(CallingConventions callConventions)
@@ -226,7 +226,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14>(CallingConventions callConventions)
@@ -240,7 +240,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14, ParameterType15>(CallingConventions callConventions)
@@ -254,7 +254,7 @@ namespace Sigil
         /// 
         /// This helper assumes ReturnType as a return and parameters of the types given in ParameterType*.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> CallIndirect<ReturnType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14, ParameterType15, ParameterType16>(CallingConventions callConventions)

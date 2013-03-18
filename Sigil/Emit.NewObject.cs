@@ -12,7 +12,7 @@ namespace Sigil
         /// <summary>
         /// Invokes the parameterless constructor of the given type, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType>()
@@ -23,7 +23,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1>()
@@ -34,7 +34,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2>()
@@ -45,7 +45,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3>()
@@ -56,7 +56,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4>()
@@ -67,7 +67,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5>()
@@ -78,7 +78,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6>()
@@ -89,7 +89,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7>()
@@ -100,7 +100,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8>()
@@ -111,7 +111,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9>()
@@ -122,7 +122,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10>()
@@ -133,7 +133,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11>()
@@ -144,7 +144,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12>()
@@ -155,7 +155,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13>()
@@ -166,7 +166,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14>()
@@ -177,7 +177,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14, ParameterType15>()
@@ -188,7 +188,7 @@ namespace Sigil
         /// <summary>
         /// Pops # of parameter arguments from the stack, invokes the the constructor of the given reference type that matches the given parameter types, and pushes a reference to the new object onto the stack.
         /// </summary>
-#if !NET35
+#if NET45
         [System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
 #endif
         public Emit<DelegateType> NewObject<ReferenceType, ParameterType1, ParameterType2, ParameterType3, ParameterType4, ParameterType5, ParameterType6, ParameterType7, ParameterType8, ParameterType9, ParameterType10, ParameterType11, ParameterType12, ParameterType13, ParameterType14, ParameterType15, ParameterType16>()
