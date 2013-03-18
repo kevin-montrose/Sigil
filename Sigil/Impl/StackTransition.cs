@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Sigil.Impl
 {
-    internal delegate void VerificationCallback(Stack<List<TypeOnStack>> currentStack, bool isBaseless);
+    internal delegate void VerificationCallback(Stack<LinqList<TypeOnStack>> currentStack, bool isBaseless);
 
     internal class StackTransition
     {

@@ -29,19 +29,19 @@ namespace Sigil
         private Type[] ParameterTypes;
         private CallingConventions CallingConventions;
 
-        private List<VerifiableTracker> Trackers;
+        private LinqList<VerifiableTracker> Trackers;
 
         private ushort NextLocalIndex = 0;
 
-        private List<Local> AllLocals;
+        private LinqList<Local> AllLocals;
 
         private HashSet<Local> UnusedLocals;
         private HashSet<Label> UnusedLabels;
         private HashSet<Label> UnmarkedLabels;
 
-        private List<SigilTuple<OpCode, Label, int>> Branches;
+        private LinqList<SigilTuple<OpCode, Label, int>> Branches;
         private Dictionary<Label, int> Marks;
-        private List<int> Returns;
+        private LinqList<int> Returns;
 
         private Dictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
@@ -51,7 +51,7 @@ namespace Sigil
         private Dictionary<CatchBlock, SigilTuple<int, int>> CatchBlocks;
         private Dictionary<FinallyBlock, SigilTuple<int, int>> FinallyBlocks;
 
-        private List<SigilTuple<int, TypeOnStack>> ReadonlyPatches;
+        private LinqList<SigilTuple<int, TypeOnStack>> ReadonlyPatches;
 
         private EmitShorthand<DelegateType> Shorthand;
 
@@ -85,7 +85,7 @@ namespace Sigil
         /// </summary>
         public ValidationOptions ValidationOptions { get; private set; }
 
-        private List<Local> FreedLocals { get; set; }
+        private LinqList<Local> FreedLocals { get; set; }
 
         private Dictionary<string, Local> CurrentLocals;
 
@@ -108,12 +108,12 @@ namespace Sigil
 
         private bool MustMark;
 
-        private List<int> ElidableCasts;
+        private LinqList<int> ElidableCasts;
 
         private HashSet<VerifiableTracker> AllTrackers = new HashSet<VerifiableTracker>();
 
         // Stores the stack during a BranchIf*; knowing that when the label is marked it'll need to be verified
-        private Dictionary<Label, List<VerifiableTracker>> StateAtConditionalBranchToLabel = new Dictionary<Label, List<VerifiableTracker>>();
+        private Dictionary<Label, LinqList<VerifiableTracker>> StateAtConditionalBranchToLabel = new Dictionary<Label, LinqList<VerifiableTracker>>();
         private Dictionary<Label, VerifiableTracker> StateAtLabel = new Dictionary<Label, VerifiableTracker>();
 
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, ValidationOptions opts)
@@ -148,17 +148,17 @@ namespace Sigil
 
             IL = new BufferedILGenerator(typeof(DelegateType));
             
-            Trackers = new List<VerifiableTracker>();
+            Trackers = new LinqList<VerifiableTracker>();
 
-            AllLocals = new List<Local>();
+            AllLocals = new LinqList<Local>();
 
             UnusedLocals = new HashSet<Local>();
             UnusedLabels = new HashSet<Label>();
             UnmarkedLabels = new HashSet<Label>();
 
-            Branches = new List<SigilTuple<OpCode, Label, int>>();
+            Branches = new LinqList<SigilTuple<OpCode, Label, int>>();
             Marks = new Dictionary<Label, int>();
-            Returns = new List<int>();
+            Returns = new LinqList<int>();
 
             BranchPatches = new Dictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>>();
 
@@ -168,11 +168,11 @@ namespace Sigil
             CatchBlocks = new Dictionary<CatchBlock, SigilTuple<int, int>>();
             FinallyBlocks = new Dictionary<FinallyBlock, SigilTuple<int, int>>();
 
-            ReadonlyPatches = new List<SigilTuple<int, TypeOnStack>>();
+            ReadonlyPatches = new LinqList<SigilTuple<int, TypeOnStack>>();
 
             Shorthand = new EmitShorthand<DelegateType>(this);
 
-            FreedLocals = new List<Local>();
+            FreedLocals = new LinqList<Local>();
 
             CurrentLocals = new Dictionary<string, Local>();
             Locals = new LocalLookup(CurrentLocals);
@@ -180,7 +180,7 @@ namespace Sigil
             CurrentLabels = new Dictionary<string, Label>();
             Labels = new LabelLookup(CurrentLabels);
 
-            ElidableCasts = new List<int>();
+            ElidableCasts = new LinqList<int>();
 
             var start = DefineLabel("__start");
             CurrentVerifier = new VerifiableTracker(start);

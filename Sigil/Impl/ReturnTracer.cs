@@ -60,7 +60,7 @@ namespace Sigil.Impl
                 };
         }
 
-        public static ReturnTracerResult Failure(IEnumerable<Label> path)
+        public static ReturnTracerResult Failure(LinqList<Label> path)
         {
             return
                 new ReturnTracerResult
@@ -91,11 +91,11 @@ namespace Sigil.Impl
 
     internal class ReturnTracer
     {
-        private List<SigilTuple<OpCode, Label, int>> Branches;
+        private LinqList<SigilTuple<OpCode, Label, int>> Branches;
         private Dictionary<Label, int> Marks;
-        private List<int> Returns;
+        private LinqList<int> Returns;
 
-        public ReturnTracer(List<SigilTuple<OpCode, Label, int>> branches, Dictionary<Label, int> marks, List<int> returns) 
+        public ReturnTracer(LinqList<SigilTuple<OpCode, Label, int>> branches, Dictionary<Label, int> marks, LinqList<int> returns) 
         {
             Branches = branches;
             Marks = marks;
@@ -113,7 +113,7 @@ namespace Sigil.Impl
 
         private Dictionary<int, ReturnTracerResult> Cache = new Dictionary<int, ReturnTracerResult>();
 
-        private ReturnTracerResult TraceFrom(int startAt, List<Label> path, HashSet<Label> pathLookup)
+        private ReturnTracerResult TraceFrom(int startAt, LinqList<Label> path, HashSet<Label> pathLookup)
         {
             ReturnTracerResult cached;
             if (Cache.TryGetValue(startAt, out cached))
@@ -136,7 +136,7 @@ namespace Sigil.Impl
                 return cached;
             }
 
-            var ret = new List<ReturnTracerResult>();
+            var ret = new LinqList<ReturnTracerResult>();
 
             foreach (var nextBranch in nextBranches)
             {
@@ -185,9 +185,9 @@ namespace Sigil.Impl
             var firstLabel = Marks.OrderBy(o => o.Value).First().Key;
             var firstIx = Marks[firstLabel];
 
-            var path = new List<Label>();
+            var path = new LinqList<Label>();
             path.Add(firstLabel);
-            var pathLookup = new HashSet<Label>(path);
+            var pathLookup = new HashSet<Label>(path.AsEnumerable());
 
             return TraceFrom(firstIx, path, pathLookup);
         }

@@ -60,7 +60,7 @@ namespace Sigil
 
         private void ValidateTryCatchFinallyBranches()
         {
-            foreach (var branch in Branches)
+            foreach (var branch in Branches.AsEnumerable())
             {
                 var instr = BranchPatches[branch.Item3];
 

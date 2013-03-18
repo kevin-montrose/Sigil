@@ -30,22 +30,6 @@ namespace Sigil.Impl
                 op == OpCodes.Callvirt;
         }
 
-        public static void Each<T>(this IEnumerable<T> e, Action<T> a)
-        {
-            foreach (var x in e)
-            {
-                a(x);
-            }
-        }
-
-        public static void Each<T>(this T[] e, Action<T> a)
-        {
-            for (var i = 0; i < e.Length; i++)
-            {
-                a(e[i]);
-            }
-        }
-
         public static bool Any<T>(this List<T> e, Func<T, bool> p)
         {
             for (var i = 0; i < e.Count; i++)
@@ -66,25 +50,6 @@ namespace Sigil.Impl
         public static TransitionWrapper Wrap(this IEnumerable<StackTransition> transitions, string method)
         {
             return TransitionWrapper.Get(method, transitions);
-        }
-
-        public static string ErrorMessageString(this IEnumerable<TypeOnStack> types)
-        {
-            var names = types.Select(t => t.ToString()).OrderBy(n => n).ToArray();
-
-            if (names.Length == 1) return names[0];
-
-            var ret = new StringBuilder();
-            ret.Append(names[0]);
-
-            for (var i = 1; i < names.Length - 1; i++)
-            {
-                ret.Append(", " + names[i]);
-            }
-
-            ret.Append(", or " + names[names.Length - 1]);
-
-            return ret.ToString();
         }
 
         public static bool IsVolatile(this FieldInfo field)
@@ -241,12 +206,12 @@ namespace Sigil.Impl
             }
         }
 
-        private static List<TypeOnStack> _PeekWildcard = new List<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
-        public static List<TypeOnStack>[] Peek(this Stack<List<TypeOnStack>> stack, bool baseless, int n)
+        private static LinqList<TypeOnStack> _PeekWildcard = new LinqList<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
+        public static LinqList<TypeOnStack>[] Peek(this Stack<LinqList<TypeOnStack>> stack, bool baseless, int n)
         {
             if (stack.Count < n && !baseless) return null;
 
-            var ret = new List<TypeOnStack>[n];
+            var ret = new LinqList<TypeOnStack>[n];
 
             int i;
             for (i = 0; i < n && i < stack.Count; i++)

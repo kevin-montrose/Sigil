@@ -686,5 +686,24 @@ namespace Sigil.Impl
 
             return _Order(e, p, DescendingComparer<V>.Default);
         }
+
+        public static void Each<T>(this IEnumerable<T> e, Action<T> a)
+        {
+            var arr = e as T[];
+            if (arr != null)
+            {
+                for (var i = 0; i < arr.Length; i++)
+                {
+                    a(arr[i]);
+                }
+
+                return;
+            }
+
+            foreach (var x in e)
+            {
+                a(x);
+            }
+        }
     }
 }

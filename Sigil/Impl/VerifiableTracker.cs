@@ -13,12 +13,12 @@ namespace Sigil.Impl
         // When the stack is "unbased" or "baseless", underflowing it results in wildcards
         //   eventually they'll be fixed up to actual types
         public bool IsBaseless { get; private set; }
-        private List<InstructionAndTransitions> Transitions = new List<InstructionAndTransitions>();
+        private LinqList<InstructionAndTransitions> Transitions = new LinqList<InstructionAndTransitions>();
 
         private Dictionary<Label, int> MarkedLabelsAtTransitions = new Dictionary<Label, int>();
         private Dictionary<Label, int> BranchesAtTransitions = new Dictionary<Label, int>();
 
-        private Stack<List<TypeOnStack>> StartingStack = new Stack<List<TypeOnStack>>();
+        private Stack<LinqList<TypeOnStack>> StartingStack = new Stack<LinqList<TypeOnStack>>();
 
         public VerifiableTracker(Label beganAt, bool baseless = false, VerifiableTracker createdFrom = null) 
         {
@@ -48,7 +48,7 @@ namespace Sigil.Impl
             BranchesAtTransitions[label] = Transitions.Count;
         }
 
-        private static bool CompareOnStack(IEnumerable<TypeOnStack> a, IEnumerable<TypeOnStack> b, bool mustBeExact)
+        private static bool CompareOnStack(LinqList<TypeOnStack> a, LinqList<TypeOnStack> b, bool mustBeExact)
         {
             if (mustBeExact)
             {
@@ -90,11 +90,11 @@ namespace Sigil.Impl
         }
 
         // Cuts out any sequence that is wholy contained within another
-        private static List<VerifiableTrackerConcatPromise> RemoveOverlapping(List<VerifiableTrackerConcatPromise> all)
+        private static LinqList<VerifiableTrackerConcatPromise> RemoveOverlapping(LinqList<VerifiableTrackerConcatPromise> all)
         {
-            var ret = new List<VerifiableTrackerConcatPromise>();
+            var ret = new LinqList<VerifiableTrackerConcatPromise>();
 
-            foreach (var a in all)
+            foreach (var a in all.AsEnumerable())
             {
                 if (all.Any(x => x != a && x.Contains(a))) continue;
 
@@ -106,7 +106,7 @@ namespace Sigil.Impl
 
         public static VerificationResult Verify(Label modified, IEnumerable<VerifiableTracker> all, HashSet<TrackerDescriber> verificationCache)
         {
-            var allStreams = new List<VerifiableTrackerConcatPromise>();
+            var allStreams = new LinqList<VerifiableTrackerConcatPromise>();
 
             var asPromise = all.Select(a => new VerifiableTrackerConcatPromise(a)).ToList();
 
@@ -152,9 +152,9 @@ namespace Sigil.Impl
             return null;
         }
 
-        private static List<VerifiableTrackerConcatPromise> BuildStreams(VerifiableTrackerConcatPromise root, IEnumerable<VerifiableTrackerConcatPromise> all)
+        private static LinqList<VerifiableTrackerConcatPromise> BuildStreams(VerifiableTrackerConcatPromise root, IEnumerable<VerifiableTrackerConcatPromise> all)
         {
-            var ret = new List<VerifiableTrackerConcatPromise>();
+            var ret = new LinqList<VerifiableTrackerConcatPromise>();
             ret.Add(root);
 
             foreach (var mark in root.Inner.BranchesAtTransitions)
@@ -183,7 +183,7 @@ namespace Sigil.Impl
             var branchTo = BranchesAtTransitions.ContainsKey(other.BeganAt) ? BranchesAtTransitions[other.BeganAt] : Transitions.Count;
             var shouldTake = branchTo != Transitions.Count;
 
-            var trans = new List<InstructionAndTransitions>(branchTo + other.Transitions.Count);
+            var trans = new LinqList<InstructionAndTransitions>(branchTo + other.Transitions.Count);
             //trans.AddRange(shouldTake ? Transitions.Take(branchTo) : Transitions);
 
             if (shouldTake)
@@ -205,9 +205,9 @@ namespace Sigil.Impl
             var ret =
                 new VerifiableTracker(BeganAt, IsBaseless)
                 {
-                    StartingStack = IsBaseless ? new Stack<List<TypeOnStack>>(StartingStack) : new Stack<List<TypeOnStack>>(),
+                    StartingStack = IsBaseless ? new Stack<LinqList<TypeOnStack>>(StartingStack) : new Stack<LinqList<TypeOnStack>>(),
                     Transitions = trans,
-                    CachedVerifyStack = canReuseCache ? new Stack<List<TypeOnStack>>(CachedVerifyStack) : null,
+                    CachedVerifyStack = canReuseCache ? new Stack<LinqList<TypeOnStack>>(CachedVerifyStack) : null,
                     CachedVerifyIndex = canReuseCache ? CachedVerifyIndex : null
                 };
 
@@ -235,11 +235,11 @@ namespace Sigil.Impl
             return Transitions[ix].InstructionIndex;
         }
 
-        private static Stack<List<TypeOnStack>> GetStack(VerifiableTracker tracker)
+        private static Stack<LinqList<TypeOnStack>> GetStack(VerifiableTracker tracker)
         {
-            var retStack = new Stack<List<TypeOnStack>>(tracker.StartingStack.Reverse());
+            var retStack = new Stack<LinqList<TypeOnStack>>(tracker.StartingStack.Reverse());
 
-            foreach (var t in tracker.Transitions)
+            foreach (var t in tracker.Transitions.AsEnumerable())
             {
                 UpdateStack(retStack, t, tracker.IsBaseless);
             }
@@ -267,7 +267,7 @@ namespace Sigil.Impl
             return true;
         }
 
-        private static void UpdateStack(Stack<List<TypeOnStack>> stack, InstructionAndTransitions wrapped, bool isBaseless)
+        private static void UpdateStack(Stack<LinqList<TypeOnStack>> stack, InstructionAndTransitions wrapped, bool isBaseless)
         {
             var legal = wrapped.Transitions;
             var instr = wrapped.Instruction;
@@ -312,7 +312,7 @@ namespace Sigil.Impl
                 }
             }
 
-            var toPush = new List<TypeOnStack>(legalSize);
+            var toPush = new LinqList<TypeOnStack>(legalSize);
             var pushed = new HashSet<TypeOnStack>();
             for(var i = 0; i < legal.Count; i++)
             {
@@ -331,9 +331,9 @@ namespace Sigil.Impl
             }
         }
 
-        private List<StackTransition> GetLegalTransitions(List<StackTransition> ops, Stack<List<TypeOnStack>> runningStack)
+        private LinqList<StackTransition> GetLegalTransitions(LinqList<StackTransition> ops, Stack<LinqList<TypeOnStack>> runningStack)
         {
-            var ret = new List<StackTransition>(ops.Count);
+            var ret = new LinqList<StackTransition>(ops.Count);
 
             for (var i = 0; i < ops.Count; i++)
             {
@@ -374,11 +374,11 @@ namespace Sigil.Impl
             return ret;
         }
 
-        private Stack<List<TypeOnStack>> CachedVerifyStack;
+        private Stack<LinqList<TypeOnStack>> CachedVerifyStack;
         private int? CachedVerifyIndex;
         private VerificationResult CollapseAndVerify()
         {
-            var runningStack = CachedVerifyStack ?? new Stack<List<TypeOnStack>>(StartingStack.Reverse());
+            var runningStack = CachedVerifyStack ?? new Stack<LinqList<TypeOnStack>>(StartingStack.Reverse());
 
             int i = CachedVerifyIndex ?? 0;
 
@@ -414,7 +414,7 @@ namespace Sigil.Impl
                     }
 
                     IEnumerable<TypeOnStack> expected;
-                    var stackI = FindStackFailureIndex(runningStack, ops, out expected);
+                    var stackI = FindStackFailureIndex(runningStack, ops.AsEnumerable(), out expected);
 
                     return VerificationResult.FailureTypeMismatch(this, i, stackI, expected, runningStack);
                 }
@@ -453,9 +453,9 @@ namespace Sigil.Impl
                 {
                     if (!IsBaseless && runningStack.Count == 0) return VerificationResult.FailureUnderflow(this, i, 1, runningStack);
 
-                    var toPush = runningStack.Count > 0 ? runningStack.Peek() : new List<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
+                    var toPush = runningStack.Count > 0 ? runningStack.Peek() : new LinqList<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
 
-                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, new List<StackTransition>(new [] { new StackTransition(new TypeOnStack[0], toPush) })), IsBaseless);
+                    UpdateStack(runningStack, new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, new LinqList<StackTransition>(new[] { new StackTransition(new TypeOnStack[0], toPush.AsEnumerable()) })), IsBaseless);
                 }
                 else
                 {
@@ -469,9 +469,9 @@ namespace Sigil.Impl
             return VerificationResult.Successful(this, runningStack);
         }
 
-        private int FindStackFailureIndex(Stack<List<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)
+        private int FindStackFailureIndex(Stack<LinqList<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)
         {
-            var stillLegal = new List<StackTransition>(ops);
+            var stillLegal = new LinqList<StackTransition>(ops);
 
             for (var i = 0; i < types.Count; i++)
             {
@@ -485,7 +485,7 @@ namespace Sigil.Impl
                     return i;
                 }
 
-                stillLegal = legal;
+                stillLegal = new LinqList<StackTransition>(legal);
             }
 
             throw new Exception("Shouldn't be possible");
@@ -499,7 +499,7 @@ namespace Sigil.Impl
                     IsBaseless = IsBaseless,
                     MarkedLabelsAtTransitions = new Dictionary<Label,int>(MarkedLabelsAtTransitions),
                     BranchesAtTransitions = new Dictionary<Label,int>(BranchesAtTransitions),
-                    Transitions = Transitions.ToList()
+                    Transitions = new LinqList<InstructionAndTransitions>(Transitions.AsEnumerable())
                 };
         }
 

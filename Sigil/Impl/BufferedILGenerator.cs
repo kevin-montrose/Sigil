@@ -41,9 +41,9 @@ namespace Sigil.Impl
 
         public int Index { get { return Buffer.Count; } }
 
-        private List<Action<ILGenerator, bool, StringBuilder>> Buffer = new List<Action<ILGenerator, bool, StringBuilder>>();
-        private List<BufferedILInstruction> TraversableBuffer = new List<BufferedILInstruction>();
-        private List<Func<int>> InstructionSizes = new List<Func<int>>();
+        private LinqList<Action<ILGenerator, bool, StringBuilder>> Buffer = new LinqList<Action<ILGenerator, bool, StringBuilder>>();
+        private LinqList<BufferedILInstruction> TraversableBuffer = new LinqList<BufferedILInstruction>();
+        private LinqList<Func<int>> InstructionSizes = new LinqList<Func<int>>();
 
         private Type DelegateType;
 
@@ -98,7 +98,7 @@ namespace Sigil.Impl
             return cached;
         }
 
-        internal string[] Instructions(List<Local> locals)
+        internal string[] Instructions(LinqList<Local> locals)
         {
             var ret = new List<string>();
 
@@ -155,7 +155,7 @@ namespace Sigil.Impl
             return ret.ToArray();
         }
 
-        private static Dictionary<int, Local> GetInScopeAt(List<Local> allLocals, int ix)
+        private static Dictionary<int, Local> GetInScopeAt(LinqList<Local> allLocals, int ix)
         {
             return
                 allLocals
@@ -168,7 +168,7 @@ namespace Sigil.Impl
 
         private static Regex _ExtractLocal = new Regex(@"\s+(?<locId>\d+)", RegexOptions.Compiled);
 
-        private static Local ExtractLocal(string from, List<Local> locals, int ix)
+        private static Local ExtractLocal(string from, LinqList<Local> locals, int ix)
         {
             var match = _ExtractLocal.Match(from);
 

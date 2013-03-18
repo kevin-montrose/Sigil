@@ -53,8 +53,8 @@ namespace Sigil
 
             if (failure.IsTypeMismatch)
             {
-                var expected = failure.ExpectedAtStackIndex.ErrorMessageString();
-                var found = failure.Stack.ElementAt(failure.StackIndex).ErrorMessageString();
+                var expected = ErrorMessageString(failure.ExpectedAtStackIndex);
+                var found = ErrorMessageString(failure.Stack.ElementAt(failure.StackIndex).AsEnumerable());
 
                 return method + " expected " + (expected.StartsWithVowel() ? "an " : "a ") + expected + "; found " + found;
             }
@@ -80,6 +80,25 @@ namespace Sigil
             }
 
             throw new Exception("Shouldn't be possible!");
+        }
+
+        private static string ErrorMessageString(IEnumerable<TypeOnStack> types)
+        {
+            var names = types.Select(t => t.ToString()).OrderBy(n => n).ToArray();
+
+            if (names.Length == 1) return names[0];
+
+            var ret = new StringBuilder();
+            ret.Append(names[0]);
+
+            for (var i = 1; i < names.Length - 1; i++)
+            {
+                ret.Append(", " + names[i]);
+            }
+
+            ret.Append(", or " + names[names.Length - 1]);
+
+            return ret.ToString();
         }
 
         /// <summary>
@@ -158,7 +177,7 @@ namespace Sigil
             return ret.ToString();
         }
 
-        private static void PrintStack(Stack<List<TypeOnStack>> stack, StringBuilder sb, string mark = null, int? markAt = null)
+        private static void PrintStack(Stack<LinqList<TypeOnStack>> stack, StringBuilder sb, string mark = null, int? markAt = null)
         {
             if (stack.Count == 0)
             {

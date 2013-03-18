@@ -136,7 +136,7 @@ namespace Sigil
 
         private void CheckBranchStateCompatibility(string method, Label labelBranchedTo, VerifiableTracker compareTo)
         {
-            foreach (var otherState in StateAtConditionalBranchToLabel[labelBranchedTo])
+            foreach (var otherState in StateAtConditionalBranchToLabel[labelBranchedTo].AsEnumerable())
             {
                 var res = otherState.AreCompatible(compareTo);
 
@@ -149,10 +149,10 @@ namespace Sigil
 
         private void RecordConditionalBranchState(string method, Label label)
         {
-            List<VerifiableTracker> existingStates;
+            LinqList<VerifiableTracker> existingStates;
             if (!StateAtConditionalBranchToLabel.TryGetValue(label, out existingStates))
             {
-                existingStates = new List<VerifiableTracker>();
+                existingStates = new LinqList<VerifiableTracker>();
                 StateAtConditionalBranchToLabel[label] = existingStates;
             }
 

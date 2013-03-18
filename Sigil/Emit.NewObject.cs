@@ -247,7 +247,7 @@ namespace Sigil
             var transitions =
                 new[]
                 {
-                    new StackTransition(expectedParams, new [] { makesType })
+                    new StackTransition(expectedParams.AsEnumerable(), new [] { makesType })
                 };
 
             UpdateState(OpCodes.Newobj, constructor, transitions.Wrap("NewObject"));

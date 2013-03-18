@@ -5,11 +5,11 @@ namespace Sigil.Impl
 {
     internal class InstructionAndTransitions
     {
-        public List<StackTransition> Transitions { get; private set; }
+        public LinqList<StackTransition> Transitions { get; private set; }
         public OpCode? Instruction { get; private set; }
         public int? InstructionIndex { get; private set; }
 
-        public InstructionAndTransitions(OpCode? instr, int? ix, List<StackTransition> trans)
+        public InstructionAndTransitions(OpCode? instr, int? ix, LinqList<StackTransition> trans)
         {
             Instruction = instr;
             Transitions = trans;
