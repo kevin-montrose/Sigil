@@ -8,7 +8,7 @@ namespace Sigil.Impl
     {
         protected abstract IEnumerable<T> InnerEnumerable();
 
-        public IEnumerable<T> Where(Func<T, bool> p)
+        public LinqRoot<T> Where(Func<T, bool> p)
         {
             return LinqAlternative.Where(InnerEnumerable(), p);
         }
@@ -28,17 +28,17 @@ namespace Sigil.Impl
             return LinqAlternative.Any(InnerEnumerable(), p);
         }
 
-        public IEnumerable<V> Select<V>(Func<T, V> p)
+        public LinqRoot<V> Select<V>(Func<T, V> p)
         {
             return LinqAlternative.Select(InnerEnumerable(), p);
         }
 
-        public IEnumerable<V> Select<V>(Func<T, int, V> p)
+        public LinqRoot<V> Select<V>(Func<T, int, V> p)
         {
             return LinqAlternative.Select(InnerEnumerable(), p);
         }
 
-        public List<T> ToList()
+        public LinqList<T> ToList()
         {
             return LinqAlternative.ToList(InnerEnumerable());
         }
@@ -48,7 +48,7 @@ namespace Sigil.Impl
             return LinqAlternative.ToArray(InnerEnumerable());
         }
 
-        public Dictionary<Key, Value> ToDictionary<Key, Value>(Func<T, Key> k, Func<T, Value> v)
+        public LinqDictionary<Key, Value> ToDictionary<Key, Value>(Func<T, Key> k, Func<T, Value> v)
         {
             return LinqAlternative.ToDictionary(InnerEnumerable(), k, v);
         }
@@ -83,7 +83,7 @@ namespace Sigil.Impl
             return LinqAlternative.Last(InnerEnumerable());
         }
 
-        public IEnumerable<T> Reverse()
+        public LinqRoot<T> Reverse()
         {
             return LinqAlternative.Reverse(InnerEnumerable());
         }
@@ -93,7 +93,7 @@ namespace Sigil.Impl
             return LinqAlternative.All(InnerEnumerable(), p);
         }
 
-        public IEnumerable<T> Skip(int n)
+        public LinqRoot<T> Skip(int n)
         {
             return LinqAlternative.Skip(InnerEnumerable(), n);
         }
@@ -113,7 +113,7 @@ namespace Sigil.Impl
             return LinqAlternative.SingleOrDefault(InnerEnumerable(), p);
         }
 
-        public IEnumerable<V> Cast<V>()
+        public LinqRoot<V> Cast<V>()
         {
             return LinqAlternative.Cast<V>(InnerEnumerable());
         }
@@ -128,32 +128,37 @@ namespace Sigil.Impl
             return LinqAlternative.Aggregate(InnerEnumerable(), seed, p);
         }
 
-        public IEnumerable<V> SelectMany<V>(Func<T, IEnumerable<V>> p)
+        public LinqRoot<V> SelectMany<V>(Func<T, IEnumerable<V>> p)
         {
             return LinqAlternative.SelectMany(InnerEnumerable(), p);
         }
 
-        public IEnumerable<T> Distinct()
+        public LinqRoot<V> SelectMany<V>(Func<T, LinqRoot<V>> p)
+        {
+            return LinqAlternative.SelectMany(InnerEnumerable(), x => p(x).AsEnumerable());
+        }
+
+        public LinqRoot<T> Distinct()
         {
             return LinqAlternative.Distinct(InnerEnumerable());
         }
 
-        public IEnumerable<T> Distinct(IEqualityComparer<T> c)
+        public LinqRoot<T> Distinct(IEqualityComparer<T> c)
         {
             return LinqAlternative.Distinct(InnerEnumerable(), c);
         }
 
-        public IEnumerable<IGrouping<K, T>> GroupBy<K>(Func<T, K> p)
+        public LinqRoot<IGrouping<K, T>> GroupBy<K>(Func<T, K> p)
         {
             return LinqAlternative.GroupBy(InnerEnumerable(), p);
         }
 
-        public IEnumerable<T> OrderBy<V>(Func<T, V> p)
+        public LinqRoot<T> OrderBy<V>(Func<T, V> p)
         {
             return LinqAlternative.OrderBy(InnerEnumerable(), p);
         }
 
-        public IEnumerable<T> OrderByDescending<V>(Func<T, V> p)
+        public LinqRoot<T> OrderByDescending<V>(Func<T, V> p)
         {
             return LinqAlternative.OrderByDescending(InnerEnumerable(), p);
         }
@@ -164,14 +169,34 @@ namespace Sigil.Impl
         }
     }
 
+    internal class LinqEnumerable<T> : LinqRoot<T>
+    {
+        private IEnumerable<T> Inner;
+
+        private LinqEnumerable(IEnumerable<T> i)
+        {
+            Inner = i;
+        }
+
+        protected override IEnumerable<T> InnerEnumerable()
+        {
+            return Inner;
+        }
+
+        public static LinqEnumerable<T> For(IEnumerable<T> e)
+        {
+            return new LinqEnumerable<T>(e);
+        }
+
+        public static LinqEnumerable<T> For(LinqRoot<T> e)
+        {
+            return For(e.AsEnumerable());
+        }
+    }
+
     internal class LinqDictionary<K, V> : LinqRoot<KeyValuePair<K, V>>
     {
         private Dictionary<K, V> Inner;
-
-        public static explicit operator Dictionary<K, V>(LinqDictionary<K, V> d)
-        {
-            return d.Inner;
-        }
 
         public V this[K key]
         {
@@ -196,6 +221,16 @@ namespace Sigil.Impl
         private LinqDictionary(Dictionary<K, V> d) { Inner = d; }
         
         public LinqDictionary() : this(new Dictionary<K, V>()) { }
+        public LinqDictionary(LinqDictionary<K, V> dict)
+        {
+            var copy = new Dictionary<K, V>(dict.Count());
+            foreach (var k in dict.Keys.AsEnumerable())
+            {
+                copy[k] = dict[k];
+            }
+
+            Inner = copy;
+        }
 
         protected override IEnumerable<KeyValuePair<K, V>> InnerEnumerable()
         {
@@ -216,16 +251,16 @@ namespace Sigil.Impl
         {
             return Inner.TryGetValue(key, out value);
         }
+
+        public void Add(K key, V value)
+        {
+            Inner.Add(key, value);
+        }
     }
 
     internal class LinqList<T> : LinqRoot<T>
     {
         private List<T> Inner;
-
-        public static explicit operator List<T>(LinqList<T> l)
-        {
-            return l.Inner;
-        }
 
         public T this[int ix]
         {
@@ -255,6 +290,7 @@ namespace Sigil.Impl
         public LinqList() : this(new List<T>()) { }
         public LinqList(int n) : this(new List<T>(n)) { }
         public LinqList(IEnumerable<T> e) : this(new List<T>(e)) { }
+        public LinqList(LinqRoot<T> e) : this(e.AsEnumerable()) { }
 
         protected override IEnumerable<T> InnerEnumerable()
         {
@@ -264,6 +300,11 @@ namespace Sigil.Impl
         public void Add(T item)
         {
             Inner.Add(item);
+        }
+
+        public void AddRange(IEnumerable<T> items)
+        {
+            Inner.AddRange(items);
         }
 
         public void Insert(int ix, T item)
@@ -289,6 +330,117 @@ namespace Sigil.Impl
         public void CopyTo(T[] arr)
         {
             Inner.CopyTo(arr);
+        }
+    }
+
+    internal class LinqStack<T> : LinqRoot<T>
+        where T : class
+    {
+        public int Count { get { return Inner.Count; } }
+
+        private Stack<T> Inner;
+
+        private LinqStack(Stack<T> i)
+        {
+            Inner = i;
+        }
+
+        public LinqStack() : this(new Stack<T>()) { }
+        public LinqStack(IEnumerable<T> e) : this(new Stack<T>(e)) { }
+        public LinqStack(int n) : this(new Stack<T>(n)) { }
+        public LinqStack(LinqRoot<T> e) : this(e.AsEnumerable()) { }
+
+        protected override IEnumerable<T> InnerEnumerable()
+        {
+            return Inner;
+        }
+
+        public T Pop()
+        {
+            return Inner.Pop();
+        }
+
+        public void Push(T t)
+        {
+            Inner.Push(t);
+        }
+
+        public T Peek()
+        {
+            return Inner.Peek();
+        }
+
+        public void Clear()
+        {
+            Inner.Clear();
+        }
+
+        private static LinqList<TypeOnStack> _PeekWildcard = new LinqList<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
+        public LinqList<TypeOnStack>[] Peek(bool baseless, int n)
+        {
+            var stack = this;
+
+            if (stack.Count < n && !baseless) return null;
+
+            var ret = new LinqList<TypeOnStack>[n];
+
+            int i;
+            for (i = 0; i < n && i < stack.Count; i++)
+            {
+                ret[i] = stack.ElementAt(i) as LinqList<TypeOnStack>;
+            }
+
+            while (i < n)
+            {
+                ret[i] = _PeekWildcard;
+                i++;
+            }
+
+            return ret;
+        }
+    }
+
+    internal class LinqArray<T> : LinqRoot<T>
+    {
+        public static implicit operator LinqArray<T>(T[] t)
+        {
+            return new LinqArray<T>(t);
+        }
+
+        private T[] Inner;
+
+        private LinqArray(T[] i)
+        {
+            Inner = i;
+        }
+
+        protected override IEnumerable<T> InnerEnumerable()
+        {
+            return Inner;
+        }
+    }
+
+    internal class LinqHashSet<T> : LinqRoot<T>
+    {
+        private HashSet<T> Inner;
+
+        public int Count { get { return Inner.Count; } }
+
+        private LinqHashSet(HashSet<T> h)
+        {
+            Inner = h;
+        }
+
+        public LinqHashSet() : this(new HashSet<T>()) { }
+
+        protected override IEnumerable<T> InnerEnumerable()
+        {
+            return Inner;
+        }
+
+        public bool Add(T item)
+        {
+            return Inner.Add(item);
         }
     }
 }

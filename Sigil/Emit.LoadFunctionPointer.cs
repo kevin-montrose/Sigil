@@ -21,7 +21,7 @@ namespace Sigil
 
             var parameters = method.GetParameters();
 
-            var paramList = parameters.Select(p => p.ParameterType).ToList();
+            var paramList = ((LinqArray<ParameterInfo>)parameters).Select(p => p.ParameterType).ToList();
 
             var type =
                 TypeOnStack.GetKnownFunctionPointer(

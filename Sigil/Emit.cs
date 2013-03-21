@@ -110,7 +110,7 @@ namespace Sigil
 
         private LinqList<int> ElidableCasts;
 
-        private HashSet<VerifiableTracker> AllTrackers = new HashSet<VerifiableTracker>();
+        private LinqHashSet<VerifiableTracker> AllTrackers = new LinqHashSet<VerifiableTracker>();
 
         // Stores the stack during a BranchIf*; knowing that when the label is marked it'll need to be verified
         private LinqDictionary<Label, LinqList<VerifiableTracker>> StateAtConditionalBranchToLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
@@ -126,25 +126,25 @@ namespace Sigil
 
             ReturnType = TypeOnStack.Get(returnType);
             ParameterTypes = 
-                parameterTypes
-                    .Select(
-                        type =>
+                LinqAlternative.Select(
+                    parameterTypes,
+                    type =>
+                    {
+                        // All 32-bit ints on the stack
+                        if(type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort) || type == typeof(uint))
                         {
-                            // All 32-bit ints on the stack
-                            if(type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort) || type == typeof(uint))
-                            {
-                                type = typeof(int);
-                            }
-
-                            // Just a 64-bit int on the stack
-                            if(type == typeof(ulong))
-                            {
-                                type = typeof(long);
-                            }
-
-                            return type;
+                            type = typeof(int);
                         }
-                    ).ToArray();
+
+                        // Just a 64-bit int on the stack
+                        if(type == typeof(ulong))
+                        {
+                            type = typeof(long);
+                        }
+
+                        return type;
+                    }
+                ).ToArray();
 
             IL = new BufferedILGenerator(typeof(DelegateType));
             
@@ -207,7 +207,7 @@ namespace Sigil
         {
             var ret = new StringBuilder();
 
-            foreach (var line in IL.Instructions(AllLocals).Skip(2))
+            foreach (var line in ((LinqArray<string>)IL.Instructions(AllLocals)).Skip(2).AsEnumerable())
             {
                 ret.AppendLine(line);
             }
@@ -498,7 +498,7 @@ namespace Sigil
 
             var invoke = delType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
-            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+            var parameterTypes = LinqAlternative.Select(invoke.GetParameters(), s => s.ParameterType).ToArray();
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
@@ -530,7 +530,7 @@ namespace Sigil
 
             var invoke = delType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
-            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+            var parameterTypes = ((LinqArray<ParameterInfo>)invoke.GetParameters()).Select(s => s.ParameterType).ToArray();
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, owner, skipVisibility: true);
 
@@ -600,7 +600,7 @@ namespace Sigil
 
             var invoke = delType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
-            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+            var parameterTypes = ((LinqArray<ParameterInfo>)invoke.GetParameters()).Select(s => s.ParameterType).ToArray();
 
             var methodBuilder = type.DefineMethod(name, attributes, callingConvention, returnType, parameterTypes);
 
@@ -666,7 +666,7 @@ namespace Sigil
 
             var invoke = delType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
-            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+            var parameterTypes = LinqAlternative.Select(invoke.GetParameters(), s => s.ParameterType).ToArray();
 
             if (returnType != typeof(void))
             {
@@ -692,13 +692,13 @@ namespace Sigil
             IL.Remove(index);
 
             // We need to update our state to account for the new insertion
-            foreach (var v in Branches.Where(w => w.Item3 >= index).ToList())
+            foreach (var v in Branches.Where(w => w.Item3 >= index).ToList().AsEnumerable())
             {
                 Branches.Remove(v);
                 Branches.Add(SigilTuple.Create(v.Item1, v.Item2, v.Item3 - 1));
             }
 
-            foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
+            foreach (var kv in Marks.Where(w => w.Value >= index).ToList().AsEnumerable())
             {
                 Marks[kv.Key] = kv.Value - 1;
             }
@@ -713,41 +713,43 @@ namespace Sigil
 
             var needUpdateKeys = BranchPatches.Keys.Where(k => k >= index).ToList();
 
-            foreach (var key in needUpdateKeys)
+            foreach (var key in needUpdateKeys.AsEnumerable())
             {
                 var cur = BranchPatches[key];
                 BranchPatches.Remove(key);
                 BranchPatches[key - 1] = cur;
             }
 
-            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList().AsEnumerable())
             {
                 TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
             }
-            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList().AsEnumerable())
             {
                 TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
             }
 
-            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList().AsEnumerable())
             {
                 CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
             }
-            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList().AsEnumerable())
             {
                 CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
             }
 
-            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList().AsEnumerable())
             {
                 FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 - 1, kv.Value.Item2);
             }
-            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList().AsEnumerable())
             {
                 FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 - 1);
             }
 
-            foreach (var elem in ReadonlyPatches.ToList())
+            foreach (var elem in ReadonlyPatches.ToList().AsEnumerable())
             {
                 if (elem.Item1 >= index)
                 {
@@ -764,13 +766,13 @@ namespace Sigil
             IL.Insert(index, instr);
 
             // We need to update our state to account for the new insertion
-            foreach (var v in Branches.Where(w => w.Item3 >= index).ToList())
+            foreach (var v in Branches.Where(w => w.Item3 >= index).ToList().AsEnumerable())
             {
                 Branches.Remove(v);
                 Branches.Add(SigilTuple.Create(v.Item1, v.Item2, v.Item3 + 1));
             }
 
-            foreach (var kv in Marks.Where(w => w.Value >= index).ToList())
+            foreach (var kv in Marks.Where(w => w.Value >= index).ToList().AsEnumerable())
             {
                 Marks[kv.Key] = kv.Value + 1;
             }
@@ -785,41 +787,44 @@ namespace Sigil
 
             var needUpdateKeys = BranchPatches.Keys.Where(k => k >= index).ToList();
 
-            foreach (var key in needUpdateKeys)
+            foreach (var key in needUpdateKeys.AsEnumerable())
             {
                 var cur = BranchPatches[key];
                 BranchPatches.Remove(key);
                 BranchPatches[key + 1] = cur;
             }
 
-            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item1 >= index).ToList().AsEnumerable())
             {
                 TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
             }
-            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+
+            foreach (var kv in TryBlocks.Where(kv => kv.Value.Item2 >= index).ToList().AsEnumerable())
             {
                 TryBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
             }
 
-            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item1 >= index).ToList().AsEnumerable())
             {
                 CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
             }
-            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+
+            foreach (var kv in CatchBlocks.Where(kv => kv.Value.Item2 >= index).ToList().AsEnumerable())
             {
                 CatchBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
             }
 
-            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList())
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item1 >= index).ToList().AsEnumerable())
             {
                 FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1 + 1, kv.Value.Item2);
             }
-            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList())
+
+            foreach (var kv in FinallyBlocks.Where(kv => kv.Value.Item2 >= index).ToList().AsEnumerable())
             {
                 FinallyBlocks[kv.Key] = SigilTuple.Create(kv.Value.Item1, kv.Value.Item2 + 1);
             }
 
-            foreach (var elem in ReadonlyPatches.ToList())
+            foreach (var elem in ReadonlyPatches.ToList().AsEnumerable())
             {
                 if (elem.Item1 >= index)
                 {

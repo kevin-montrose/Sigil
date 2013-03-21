@@ -44,7 +44,7 @@ namespace Sigil
                 };
 
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Switch, labels.Select(l => l).ToArray(), transitions.Wrap("Switch"), out update);
+            UpdateState(OpCodes.Switch, labels, transitions.Wrap("Switch"), out update);
 
             foreach (var label in labels)
             {
@@ -64,9 +64,11 @@ namespace Sigil
         {
             if (names == null) throw new ArgumentNullException("names");
 
-            if (names.Any(n => n == null)) throw new ArgumentException("no label can be null");
+            var lNames = (LinqArray<string>)names;
 
-            return Switch(names.Select(n => Labels[n]).ToArray());
+            if (lNames.Any(n => n == null)) throw new ArgumentException("no label can be null");
+
+            return Switch(lNames.Select(n => Labels[n]).ToArray());
         }
     }
 }

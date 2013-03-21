@@ -10,7 +10,7 @@ namespace Sigil
         // Go through and slap *_S everywhere it's needed for branches
         private void PatchBranches()
         {
-            foreach (var start in BranchPatches.Keys.OrderBy(o => o))
+            foreach (var start in BranchPatches.Keys.OrderBy(o => o).AsEnumerable())
             {
                 var item = BranchPatches[start];
 

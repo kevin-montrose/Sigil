@@ -8,7 +8,7 @@ namespace Sigil
     {
         private void ElideCasts()
         {
-            foreach (var ix in ElidableCasts.OrderByDescending(_ => _))
+            foreach (var ix in ElidableCasts.OrderByDescending(_ => _).AsEnumerable())
             {
                 RemoveInstruction(ix);
             }

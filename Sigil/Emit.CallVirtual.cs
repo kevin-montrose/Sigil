@@ -37,7 +37,7 @@ namespace Sigil
                 }
             }
 
-            var expectedParams = method.GetParameters().Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
+            var expectedParams = ((LinqArray<ParameterInfo>)method.GetParameters()).Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
 
             var declaring = method.DeclaringType;
 
@@ -51,7 +51,7 @@ namespace Sigil
 
             if (arglist != null)
             {
-                expectedParams.AddRange(arglist.Select(t => TypeOnStack.Get(t)));
+                expectedParams.AddRange(LinqAlternative.Select(arglist, t => TypeOnStack.Get(t)));
             }
 
             var resultType = method.ReturnType == typeof(void) ? null : TypeOnStack.Get(method.ReturnType);
@@ -69,7 +69,7 @@ namespace Sigil
                 transitions =
                     new[]
                     {
-                        new StackTransition(expectedParams.AsEnumerable().Reverse(), new [] { resultType })
+                        new StackTransition(expectedParams.Reverse().AsEnumerable(), new [] { resultType })
                     };
             }
             else
@@ -77,7 +77,7 @@ namespace Sigil
                 transitions =
                     new[]
                     {
-                        new StackTransition(expectedParams.AsEnumerable().Reverse(), new TypeOnStack[0])
+                        new StackTransition(expectedParams.Reverse().AsEnumerable(), new TypeOnStack[0])
                     };
             }
 

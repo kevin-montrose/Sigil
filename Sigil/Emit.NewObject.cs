@@ -215,16 +215,17 @@ namespace Sigil
 
             var allCons = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance);
             var cons =
-                allCons
+                LinqAlternative
                     .Where(
+                        allCons,
                         c =>
                             c.GetParameters().Length == parameterTypes.Length &&
-                            c.GetParameters().Select((p, i) => p.ParameterType == parameterTypes[i]).Aggregate(true, (a, b) => a && b)
+                            LinqAlternative.Select(c.GetParameters(), (p, i) => p.ParameterType == parameterTypes[i]).Aggregate(true, (a, b) => a && b)
                     ).SingleOrDefault();
 
             if (cons == null)
             {
-                throw new InvalidOperationException("Type " + type + " must have a constructor that matches parameters [" + BufferedILGenerator.Join(", ", parameterTypes.AsEnumerable()) + "]");
+                throw new InvalidOperationException("Type " + type + " must have a constructor that matches parameters [" + BufferedILGenerator.Join(", ", ((LinqArray<Type>)parameterTypes).AsEnumerable()) + "]");
             }
 
             return NewObject(cons);
@@ -240,7 +241,7 @@ namespace Sigil
                 throw new ArgumentNullException("constructor");
             }
 
-            var expectedParams = constructor.GetParameters().Select(p => TypeOnStack.Get(p.ParameterType)).Reverse().ToList();
+            var expectedParams = ((LinqArray<ParameterInfo>)constructor.GetParameters()).Select(p => TypeOnStack.Get(p.ParameterType)).Reverse().ToList();
 
             var makesType = TypeOnStack.Get(constructor.DeclaringType);
 

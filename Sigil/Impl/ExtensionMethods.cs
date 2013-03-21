@@ -40,11 +40,11 @@ namespace Sigil.Impl
             return false;
         }
 
-        public static bool StartsWithVowel(this IEnumerable<char> str)
+        public static bool StartsWithVowel(this string str)
         {
-            var c = char.ToLower(str.ElementAt(0));
+            var c = char.ToLower(str[0]);
 
-            return "aeiou".Contains(c);
+            return "aeiou".IndexOf(c) != -1;
         }
 
         public static TransitionWrapper Wrap(this IEnumerable<StackTransition> transitions, string method)
@@ -172,7 +172,7 @@ namespace Sigil.Impl
 
             if (t1.IsInterface)
             {
-                var t2Interfaces = t2.GetInterfaces();
+                var t2Interfaces = (LinqArray<Type>)t2.GetInterfaces();
 
                 return t2Interfaces.Any(t2i => TypeOnStack.Get(t1).IsAssignableFrom(TypeOnStack.Get(t2i)));
             }
@@ -204,28 +204,6 @@ namespace Sigil.Impl
                 // Builders, some generic types, and so on don't implement this; just assume it's *no good* for now
                 return false; 
             }
-        }
-
-        private static LinqList<TypeOnStack> _PeekWildcard = new LinqList<TypeOnStack>(new[] { TypeOnStack.Get<WildcardType>() });
-        public static LinqList<TypeOnStack>[] Peek(this Stack<LinqList<TypeOnStack>> stack, bool baseless, int n)
-        {
-            if (stack.Count < n && !baseless) return null;
-
-            var ret = new LinqList<TypeOnStack>[n];
-
-            int i;
-            for (i = 0; i < n && i < stack.Count; i++)
-            {
-                ret[i] = stack.ElementAt(i);
-            }
-
-            while (i < n)
-            {
-                ret[i] = _PeekWildcard;
-                i++;
-            }
-
-            return ret;
         }
     }
 }

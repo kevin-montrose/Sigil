@@ -5,7 +5,7 @@ namespace Sigil.Impl
     internal class VerificationResult
     {
         public bool Success { get; private set; }
-        public Stack<LinqList<TypeOnStack>> Stack { get; private set; }
+        public LinqStack<LinqList<TypeOnStack>> Stack { get; private set; }
         public int StackSize { get { return Stack.Count; } }
 
         public VerifiableTracker Verifier { get; private set; }
@@ -16,24 +16,24 @@ namespace Sigil.Impl
 
         // Set when stacks don't match during an incoming
         public bool IsStackMismatch { get; private set; }
-        public Stack<LinqList<TypeOnStack>> ExpectedStack { get; private set; }
-        public Stack<LinqList<TypeOnStack>> IncomingStack { get; private set; }
+        public LinqStack<LinqList<TypeOnStack>> ExpectedStack { get; private set; }
+        public LinqStack<LinqList<TypeOnStack>> IncomingStack { get; private set; }
 
         // Set when types are dodge
         public bool IsTypeMismatch { get; private set; }
         public int? TransitionIndex { get; private set; }
         public int StackIndex { get; private set; }
-        public IEnumerable<TypeOnStack> ExpectedAtStackIndex { get; private set; }
+        public LinqRoot<TypeOnStack> ExpectedAtStackIndex { get; private set; }
 
         // Set when the stack was expected to be a certain size, but it wasn't
         public bool IsStackSizeFailure { get; private set; }
 
-        public static VerificationResult Successful(VerifiableTracker verifier, Stack<LinqList<TypeOnStack>> stack)
+        public static VerificationResult Successful(VerifiableTracker verifier, LinqStack<LinqList<TypeOnStack>> stack)
         {
             return new VerificationResult { Success = true, Stack = stack, Verifier = verifier };
         }
 
-        public static VerificationResult FailureUnderflow(VerifiableTracker verifier, int transitionIndex, int expectedSize, Stack<LinqList<TypeOnStack>> stack)
+        public static VerificationResult FailureUnderflow(VerifiableTracker verifier, int transitionIndex, int expectedSize, LinqStack<LinqList<TypeOnStack>> stack)
         {
             return
                 new VerificationResult
@@ -49,7 +49,7 @@ namespace Sigil.Impl
                 };
         }
 
-        public static VerificationResult FailureStackMismatch(VerifiableTracker verifier, Stack<LinqList<TypeOnStack>> expected, Stack<LinqList<TypeOnStack>> incoming)
+        public static VerificationResult FailureStackMismatch(VerifiableTracker verifier, LinqStack<LinqList<TypeOnStack>> expected, LinqStack<LinqList<TypeOnStack>> incoming)
         {
             return
                 new VerificationResult
@@ -64,7 +64,7 @@ namespace Sigil.Impl
                 };
         }
 
-        public static VerificationResult FailureTypeMismatch(VerifiableTracker verifier, int transitionIndex, int stackIndex, IEnumerable<TypeOnStack> expectedTypes, Stack<LinqList<TypeOnStack>> stack)
+        public static VerificationResult FailureTypeMismatch(VerifiableTracker verifier, int transitionIndex, int stackIndex, IEnumerable<TypeOnStack> expectedTypes, LinqStack<LinqList<TypeOnStack>> stack)
         {
             return
                 new VerificationResult
@@ -76,7 +76,7 @@ namespace Sigil.Impl
 
                     IsTypeMismatch = true,
                     StackIndex = stackIndex,
-                    ExpectedAtStackIndex = expectedTypes,
+                    ExpectedAtStackIndex = LinqEnumerable<TypeOnStack>.For(expectedTypes),
                     Stack = stack
                 };
         }

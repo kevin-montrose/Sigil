@@ -54,7 +54,7 @@ namespace Sigil
             if (failure.IsTypeMismatch)
             {
                 var expected = ErrorMessageString(failure.ExpectedAtStackIndex);
-                var found = ErrorMessageString(failure.Stack.ElementAt(failure.StackIndex).AsEnumerable());
+                var found = ErrorMessageString(failure.Stack.ElementAt(failure.StackIndex));
 
                 return method + " expected " + (expected.StartsWithVowel() ? "an " : "a ") + expected + "; found " + found;
             }
@@ -82,7 +82,7 @@ namespace Sigil
             throw new Exception("Shouldn't be possible!");
         }
 
-        private static string ErrorMessageString(IEnumerable<TypeOnStack> types)
+        private static string ErrorMessageString(LinqRoot<TypeOnStack> types)
         {
             var names = types.Select(t => t.ToString()).OrderBy(n => n).ToArray();
 
@@ -144,11 +144,11 @@ namespace Sigil
 
             if (ReturnFailure != null)
             {
-                foreach (var path in ReturnFailure.FailingPaths)
+                foreach (var path in ReturnFailure.FailingPaths.AsEnumerable())
                 {
                     ret.AppendLine("Bad Path");
                     ret.AppendLine("========");
-                    foreach (var label in path)
+                    foreach (var label in path.AsEnumerable())
                     {
                         ret.AppendLine(label.Name);
                     }
@@ -177,7 +177,7 @@ namespace Sigil
             return ret.ToString();
         }
 
-        private static void PrintStack(Stack<LinqList<TypeOnStack>> stack, StringBuilder sb, string mark = null, int? markAt = null)
+        private static void PrintStack(LinqStack<LinqList<TypeOnStack>> stack, StringBuilder sb, string mark = null, int? markAt = null)
         {
             if (stack.Count == 0)
             {

@@ -15,10 +15,10 @@ namespace Sigil.Impl
         public bool IsBaseless { get; private set; }
         private LinqList<InstructionAndTransitions> Transitions = new LinqList<InstructionAndTransitions>();
 
-        private Dictionary<Label, int> MarkedLabelsAtTransitions = new Dictionary<Label, int>();
-        private Dictionary<Label, int> BranchesAtTransitions = new Dictionary<Label, int>();
+        private LinqDictionary<Label, int> MarkedLabelsAtTransitions = new LinqDictionary<Label, int>();
+        private LinqDictionary<Label, int> BranchesAtTransitions = new LinqDictionary<Label, int>();
 
-        private Stack<LinqList<TypeOnStack>> StartingStack = new Stack<LinqList<TypeOnStack>>();
+        private LinqStack<LinqList<TypeOnStack>> StartingStack = new LinqStack<LinqList<TypeOnStack>>();
 
         public VerifiableTracker(Label beganAt, bool baseless = false, VerifiableTracker createdFrom = null) 
         {
@@ -104,7 +104,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public static VerificationResult Verify(Label modified, IEnumerable<VerifiableTracker> all, HashSet<TrackerDescriber> verificationCache)
+        public static VerificationResult Verify(Label modified, LinqRoot<VerifiableTracker> all, HashSet<TrackerDescriber> verificationCache)
         {
             var allStreams = new LinqList<VerifiableTrackerConcatPromise>();
 
@@ -152,12 +152,12 @@ namespace Sigil.Impl
             return null;
         }
 
-        private static LinqList<VerifiableTrackerConcatPromise> BuildStreams(VerifiableTrackerConcatPromise root, IEnumerable<VerifiableTrackerConcatPromise> all)
+        private static LinqList<VerifiableTrackerConcatPromise> BuildStreams(VerifiableTrackerConcatPromise root, LinqRoot<VerifiableTrackerConcatPromise> all)
         {
             var ret = new LinqList<VerifiableTrackerConcatPromise>();
             ret.Add(root);
 
-            foreach (var mark in root.Inner.BranchesAtTransitions)
+            foreach (var mark in root.Inner.BranchesAtTransitions.AsEnumerable())
             {
                 var startingAt = all.SingleOrDefault(a => a.Inner.BeganAt == mark.Key);
 
@@ -205,9 +205,9 @@ namespace Sigil.Impl
             var ret =
                 new VerifiableTracker(BeganAt, IsBaseless)
                 {
-                    StartingStack = IsBaseless ? new Stack<LinqList<TypeOnStack>>(StartingStack) : new Stack<LinqList<TypeOnStack>>(),
+                    StartingStack = IsBaseless ? new LinqStack<LinqList<TypeOnStack>>(StartingStack.AsEnumerable()) : new LinqStack<LinqList<TypeOnStack>>(),
                     Transitions = trans,
-                    CachedVerifyStack = canReuseCache ? new Stack<LinqList<TypeOnStack>>(CachedVerifyStack) : null,
+                    CachedVerifyStack = canReuseCache ? new LinqStack<LinqList<TypeOnStack>>(CachedVerifyStack.AsEnumerable()) : null,
                     CachedVerifyIndex = canReuseCache ? CachedVerifyIndex : null
                 };
 
@@ -235,9 +235,9 @@ namespace Sigil.Impl
             return Transitions[ix].InstructionIndex;
         }
 
-        private static Stack<LinqList<TypeOnStack>> GetStack(VerifiableTracker tracker)
+        private static LinqStack<LinqList<TypeOnStack>> GetStack(VerifiableTracker tracker)
         {
-            var retStack = new Stack<LinqList<TypeOnStack>>(tracker.StartingStack.Reverse());
+            var retStack = new LinqStack<LinqList<TypeOnStack>>(tracker.StartingStack.Reverse());
 
             foreach (var t in tracker.Transitions.AsEnumerable())
             {
@@ -267,7 +267,7 @@ namespace Sigil.Impl
             return true;
         }
 
-        private static void UpdateStack(Stack<LinqList<TypeOnStack>> stack, InstructionAndTransitions wrapped, bool isBaseless)
+        private static void UpdateStack(LinqStack<LinqList<TypeOnStack>> stack, InstructionAndTransitions wrapped, bool isBaseless)
         {
             var legal = wrapped.Transitions;
             var instr = wrapped.Instruction;
@@ -277,13 +277,13 @@ namespace Sigil.Impl
             legal.Each(
                 t =>
                 {
-                    legalSize += t.PushedToStack.Count();
+                    legalSize += t.PushedToStack.Length;
 
                     if (t.Before != null) t.Before(stack, isBaseless);
                 }
             );
 
-            if (legal.Any(l => l.PoppedFromStack.Any(u => u == TypeOnStack.Get<PopAllType>())))
+            if (legal.Any(l => LinqAlternative.Any(l.PoppedFromStack, u => u == TypeOnStack.Get<PopAllType>())))
             {
                 if (instr.HasValue)
                 {
@@ -331,7 +331,7 @@ namespace Sigil.Impl
             }
         }
 
-        private LinqList<StackTransition> GetLegalTransitions(LinqList<StackTransition> ops, Stack<LinqList<TypeOnStack>> runningStack)
+        private LinqList<StackTransition> GetLegalTransitions(LinqList<StackTransition> ops, LinqStack<LinqList<TypeOnStack>> runningStack)
         {
             var ret = new LinqList<StackTransition>(ops.Count);
 
@@ -339,7 +339,7 @@ namespace Sigil.Impl
             {
                 var w = ops[i];
 
-                if (w.PoppedFromStack.All(u => u == TypeOnStack.Get<PopAllType>()))
+                if (LinqAlternative.All(w.PoppedFromStack, u => u == TypeOnStack.Get<PopAllType>()))
                 {
                     ret.Add(w);
                     continue;
@@ -356,7 +356,7 @@ namespace Sigil.Impl
 
                 for (var j = 0; j < w.PoppedCount; j++)
                 {
-                    var shouldBe = w.PoppedFromStack.ElementAt(j);
+                    var shouldBe = w.PoppedFromStack[j];
                     var actuallyIs = onStack[j];
 
                     if (!actuallyIs.Any(a => shouldBe.IsAssignableFrom(a)))
@@ -374,11 +374,11 @@ namespace Sigil.Impl
             return ret;
         }
 
-        private Stack<LinqList<TypeOnStack>> CachedVerifyStack;
+        private LinqStack<LinqList<TypeOnStack>> CachedVerifyStack;
         private int? CachedVerifyIndex;
         private VerificationResult CollapseAndVerify()
         {
-            var runningStack = CachedVerifyStack ?? new Stack<LinqList<TypeOnStack>>(StartingStack.Reverse());
+            var runningStack = CachedVerifyStack ?? new LinqStack<LinqList<TypeOnStack>>(StartingStack.Reverse());
 
             int i = CachedVerifyIndex ?? 0;
 
@@ -406,7 +406,7 @@ namespace Sigil.Impl
 
                 if (legal.Count == 0)
                 {
-                    var wouldPop = ops.GroupBy(g => g.PoppedFromStack.Count()).Single().Key;
+                    var wouldPop = ops.GroupBy(g => g.PoppedFromStack.Length).Single().Key;
 
                     if (runningStack.Count < wouldPop)
                     {
@@ -419,7 +419,7 @@ namespace Sigil.Impl
                     return VerificationResult.FailureTypeMismatch(this, i, stackI, expected, runningStack);
                 }
 
-                if (legal.GroupBy(g => new { a = g.PoppedCount, b = g.PushedToStack.Count() }).Count() > 1)
+                if (legal.GroupBy(g => new { a = g.PoppedCount, b = g.PushedToStack.Length }).Count() > 1)
                 {
                     throw new Exception("Shouldn't be possible; legal transitions should have same push/pop #s");
                 }
@@ -427,7 +427,7 @@ namespace Sigil.Impl
                 // No reason to do all this work again
                 Transitions[i] = new InstructionAndTransitions(wrapped.Instruction, wrapped.InstructionIndex, legal);
 
-                bool popAll = legal.Any(l => l.PoppedFromStack.Contains(TypeOnStack.Get<PopAllType>()));
+                bool popAll = legal.Any(l => ((LinqArray<TypeOnStack>)l.PoppedFromStack).Contains(TypeOnStack.Get<PopAllType>()));
                 if (popAll && legal.Count() != 1)
                 {
                     throw new Exception("PopAll cannot coexist with any other transitions");
@@ -469,7 +469,7 @@ namespace Sigil.Impl
             return VerificationResult.Successful(this, runningStack);
         }
 
-        private int FindStackFailureIndex(Stack<LinqList<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)
+        private int FindStackFailureIndex(LinqStack<LinqList<TypeOnStack>> types, IEnumerable<StackTransition> ops, out IEnumerable<TypeOnStack> expected)
         {
             var stillLegal = new LinqList<StackTransition>(ops);
 
@@ -477,11 +477,11 @@ namespace Sigil.Impl
             {
                 var actuallyIs = types.ElementAt(i);
 
-                var legal = stillLegal.Where(l => actuallyIs.Any(a => l.PoppedFromStack.ElementAt(i).IsAssignableFrom(a))).ToList();
+                var legal = stillLegal.Where(l => actuallyIs.Any(a => l.PoppedFromStack[i].IsAssignableFrom(a))).ToList();
 
                 if (legal.Count == 0)
                 {
-                    expected = stillLegal.Select(l => l.PoppedFromStack.ElementAt(i)).Distinct().ToList();
+                    expected = stillLegal.Select(l => l.PoppedFromStack[i]).Distinct().ToList().AsEnumerable();
                     return i;
                 }
 
@@ -497,20 +497,20 @@ namespace Sigil.Impl
                 new VerifiableTracker(BeganAt)
                 {
                     IsBaseless = IsBaseless,
-                    MarkedLabelsAtTransitions = new Dictionary<Label,int>(MarkedLabelsAtTransitions),
-                    BranchesAtTransitions = new Dictionary<Label,int>(BranchesAtTransitions),
+                    MarkedLabelsAtTransitions = new LinqDictionary<Label,int>(MarkedLabelsAtTransitions),
+                    BranchesAtTransitions = new LinqDictionary<Label,int>(BranchesAtTransitions),
                     Transitions = new LinqList<InstructionAndTransitions>(Transitions.AsEnumerable())
                 };
         }
 
         // Returns the current stack *if* it can be inferred down to single types *and* is either based or verifiable to the given depth
-        public Stack<TypeOnStack> InferStack(int ofDepth)
+        public LinqStack<TypeOnStack> InferStack(int ofDepth)
         {
             var res = CollapseAndVerify();
 
             if(res.Stack.Count < ofDepth) return null;
 
-            var ret = new Stack<TypeOnStack>();
+            var ret = new LinqStack<TypeOnStack>();
             for (var i = ofDepth - 1; i >= 0; i--)
             {
                 var couldBe = res.Stack.ElementAt(i);

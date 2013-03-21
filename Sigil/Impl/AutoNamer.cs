@@ -31,7 +31,7 @@ namespace Sigil.Impl
 
                 var ret = root + next;
 
-                if (inUse.Any(a => a.Any(x => x == ret)))
+                if (LinqAlternative.Any(inUse, a => LinqAlternative.Any(a, x => x == ret)))
                 {
                     return Next(on, root, inUse);
                 }
@@ -44,9 +44,9 @@ namespace Sigil.Impl
         {
             lock (State)
             {
-                var deadKeys = State.Keys.Where(k => k.Item1 == on).ToList();
+                var deadKeys = LinqAlternative.Where(State.Keys,k => k.Item1 == on).ToList();
 
-                foreach (var key in deadKeys)
+                foreach (var key in deadKeys.AsEnumerable())
                 {
                     State.Remove(key);
                 }

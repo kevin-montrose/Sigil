@@ -6,21 +6,21 @@ namespace Sigil.Impl
 {
     internal class ReturnTracerResult
     {
-        private class LabelEnumerableComparer : IEqualityComparer<IEnumerable<Label>>
+        private class LabelEnumerableComparer : IEqualityComparer<LinqRoot<Label>>
         {
             public static readonly LabelEnumerableComparer Singleton = new LabelEnumerableComparer();
 
             private LabelEnumerableComparer() { }
 
-            public bool Equals(IEnumerable<Label> x, IEnumerable<Label> y)
+            public bool Equals(LinqRoot<Label> x, LinqRoot<Label> y)
             {
                 if (x == y) return true;
                 if (x == null || y == null) return false;
 
                 if (x.Count() != y.Count()) return false;
 
-                using(var eX = x.GetEnumerator())
-                using (var eY = y.GetEnumerator())
+                using(var eX = x.AsEnumerable().GetEnumerator())
+                using (var eY = y.AsEnumerable().GetEnumerator())
                 {
                     while (eX.MoveNext() && eY.MoveNext())
                     {
@@ -31,13 +31,13 @@ namespace Sigil.Impl
                 return true;
             }
 
-            public int GetHashCode(IEnumerable<Label> obj)
+            public int GetHashCode(LinqRoot<Label> obj)
             {
                 if (obj == null) return 0;
 
                 var ret = 0;
 
-                foreach (var label in obj)
+                foreach (var label in obj.AsEnumerable())
                 {
                     ret ^= label.GetHashCode();
                 }
@@ -47,7 +47,7 @@ namespace Sigil.Impl
         }
 
         public bool IsSuccess { get; private set; }
-        public IEnumerable<IEnumerable<Label>> FailingPaths { get; private set; }
+        public LinqRoot<LinqRoot<Label>> FailingPaths { get; private set; }
 
         private ReturnTracerResult() { }
 
@@ -67,24 +67,26 @@ namespace Sigil.Impl
                 {
                     IsSuccess = false,
 
-                    FailingPaths = new [] { path.ToList() }
+                    FailingPaths = LinqEnumerable<LinqRoot<Label>>.For(new [] { path })
                 };
         }
 
         public static ReturnTracerResult Combo(params ReturnTracerResult[] other)
         {
-            if (other.All(r => r.IsSuccess)) return Success();
+            var asArr = (LinqArray<ReturnTracerResult>)other;
 
-            var badPaths = other.Where(r => !r.IsSuccess).SelectMany(r => r.FailingPaths);
+            if (asArr.All(r => r.IsSuccess)) return Success();
 
-            badPaths = badPaths.Distinct(LabelEnumerableComparer.Singleton);
+            var allPaths = asArr.Where(r => !r.IsSuccess).SelectMany(r => r.FailingPaths).ToList();
+
+            var uniqePaths = allPaths.Distinct(LabelEnumerableComparer.Singleton).ToList();
 
             return
                 new ReturnTracerResult
                 {
                     IsSuccess = false,
 
-                    FailingPaths = badPaths
+                    FailingPaths = uniqePaths
                 };
         }
     }

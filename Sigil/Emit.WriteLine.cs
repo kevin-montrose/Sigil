@@ -23,7 +23,7 @@ namespace Sigil
                 throw new ArgumentNullException("locals");
             }
 
-            var unowned = locals.Cast<IOwned>().FirstOrDefault(l => l.Owner != this);
+            var unowned = LinqAlternative.Cast<IOwned>(locals).FirstOrDefault(l => l.Owner != this);
             if (unowned != null)
             {
                 FailOwnership(unowned);

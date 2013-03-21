@@ -70,7 +70,7 @@ namespace Sigil.Impl
 
         public bool IsMarkable { get { return UsedBy != null; } }
 
-        private HashSet<SigilTuple<OpCode, int>> UsedBy { get; set; }
+        private LinqHashSet<SigilTuple<OpCode, int>> UsedBy { get; set; }
 
         /// <summary>
         /// Call to indicate that something on the stack was used
@@ -132,7 +132,7 @@ namespace Sigil.Impl
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
-                    UsedBy = new HashSet<SigilTuple<OpCode, int>>()
+                    UsedBy = new LinqHashSet<SigilTuple<OpCode, int>>()
                 };
         }
 

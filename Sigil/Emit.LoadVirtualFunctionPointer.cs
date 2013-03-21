@@ -30,7 +30,7 @@ namespace Sigil
                     null;
 
             var parameters = method.GetParameters();
-            var paramList = parameters.Select(p => p.ParameterType).ToList();
+            var paramList = LinqAlternative.Select(parameters, p => p.ParameterType).ToList();
 
             var declaring = method.DeclaringType;
 

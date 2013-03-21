@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Sigil.Impl
 {
-    internal delegate void VerificationCallback(Stack<LinqList<TypeOnStack>> currentStack, bool isBaseless);
+    internal delegate void VerificationCallback(LinqStack<LinqList<TypeOnStack>> currentStack, bool isBaseless);
 
     internal class StackTransition
     {
-        public int PoppedCount { get { return PoppedFromStack.Count(); } }
+        public int PoppedCount { get { return PoppedFromStack.Length; } }
 
         // on the stack, first item is on the top of the stack
         public TypeOnStack[] PoppedFromStack { get; private set; }
@@ -24,8 +24,8 @@ namespace Sigil.Impl
         public StackTransition(IEnumerable<Type> popped, IEnumerable<Type> pushed, VerificationCallback before = null)
             : this
             (
-                popped.Select(s => TypeOnStack.Get(s)),
-                pushed.Select(s => TypeOnStack.Get(s)),
+                LinqEnumerable<Type>.For(popped).Select(s => TypeOnStack.Get(s)).AsEnumerable(),
+                LinqEnumerable<Type>.For(pushed).Select(s => TypeOnStack.Get(s)).AsEnumerable(),
                 before
             )
         { }
@@ -44,15 +44,15 @@ namespace Sigil.Impl
 
         public StackTransition(IEnumerable<TypeOnStack> popped, IEnumerable<TypeOnStack> pushed, VerificationCallback before = null)
         {
-            PoppedFromStack = popped.ToArray();
-            PushedToStack = pushed.ToArray();
+            PoppedFromStack = LinqEnumerable<TypeOnStack>.For(popped).ToArray();
+            PushedToStack = LinqEnumerable<TypeOnStack>.For(pushed).ToArray();
             
             Before = before;
         }
 
         public override string ToString()
         {
-            return "(" + string.Join(", ", PoppedFromStack.Select(p => p.ToString()).ToArray()) + ") => (" + string.Join(", ", PushedToStack.Select(p => p.ToString()).ToArray()) + ")";
+            return "(" + string.Join(", ", ((LinqArray<TypeOnStack>)PoppedFromStack).Select(p => p.ToString()).ToArray()) + ") => (" + string.Join(", ", ((LinqArray<TypeOnStack>)PushedToStack).Select(p => p.ToString()).ToArray()) + ")";
         }
 
         public static StackTransition[] None() { return new[] { new StackTransition(Type.EmptyTypes, Type.EmptyTypes) }; }

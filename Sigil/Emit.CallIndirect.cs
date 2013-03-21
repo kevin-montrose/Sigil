@@ -315,7 +315,7 @@ namespace Sigil
             {
                 var p = new List<Type>();
                 p.Add(typeof(NativeIntType));
-                p.AddRange(parameterTypes.Reverse());
+                p.AddRange(LinqAlternative.Reverse(parameterTypes).AsEnumerable());
                 p.Add(typeof(WildcardType));
 
                 if (returnType != typeof(void))
@@ -339,7 +339,7 @@ namespace Sigil
             {
                 var p = new List<Type>();
                 p.Add(typeof(NativeIntType));
-                p.AddRange(parameterTypes.Reverse());
+                p.AddRange(LinqAlternative.Reverse(parameterTypes).AsEnumerable());
 
                 if (returnType != typeof(void))
                 {
@@ -359,7 +359,7 @@ namespace Sigil
                 }
             }
 
-            var onStack = CurrentVerifier.InferStack(transitions.ElementAt(0).PoppedFromStack.Count());
+            var onStack = CurrentVerifier.InferStack(LinqAlternative.ElementAt(transitions, 0).PoppedFromStack.Length);
             if (onStack != null)
             {
                 var funcPtr = onStack.First();

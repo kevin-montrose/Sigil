@@ -26,7 +26,7 @@ namespace Sigil.Impl
         public OpCode? IsInstruction { get; internal set; }
 
         public Type MethodReturnType { get; internal set; }
-        public IEnumerable<Type> MethodParameterTypes { get; internal set; }
+        public LinqRoot<Type> MethodParameterTypes { get; internal set; }
     }
 
     internal class BufferedILGenerator
@@ -104,7 +104,7 @@ namespace Sigil.Impl
 
             var invoke = DelegateType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
-            var parameterTypes = invoke.GetParameters().Select(s => s.ParameterType).ToArray();
+            var parameterTypes = LinqAlternative.Select(invoke.GetParameters(), s => s.ParameterType).ToArray();
 
             var dynMethod = new DynamicMethod(Guid.NewGuid().ToString(), returnType, parameterTypes);
             var il = dynMethod.GetILGenerator();
@@ -155,7 +155,7 @@ namespace Sigil.Impl
             return ret.ToArray();
         }
 
-        private static Dictionary<int, Local> GetInScopeAt(LinqList<Local> allLocals, int ix)
+        private static LinqDictionary<int, Local> GetInScopeAt(LinqList<Local> allLocals, int ix)
         {
             return
                 allLocals
@@ -489,7 +489,7 @@ namespace Sigil.Impl
                 }
             );
 
-            var parameters = method.GetParameters().Select(p => p.ParameterType).ToList();
+            var parameters = ((LinqArray<ParameterInfo>)method.GetParameters()).Select(p => p.ParameterType).ToList();
             if(!method.IsStatic)
             {
                 var declaring = method.DeclaringType;
@@ -642,11 +642,11 @@ namespace Sigil.Impl
                 {
                     if (!logOnly)
                     {
-                        var ls = labels.Select(l => l.LabelDel(il)).ToArray();
+                        var ls = LinqAlternative.Select(labels, l => l.LabelDel(il)).ToArray();
                         il.Emit(localOp, ls);
                     }
 
-                    log.AppendLine(localOp + " " + Join(", ", labels.AsEnumerable()));
+                    log.AppendLine(localOp + " " + Join(", ", ((LinqArray<Label>)labels).AsEnumerable()));
                 }
             );
 
@@ -706,11 +706,11 @@ namespace Sigil.Impl
                         il.EmitCalli(op, callConventions, returnType, parameterTypes, null);
                     }
 
-                    log.AppendLine(op + " " + callConventions + " " + returnType + " " + Join(" ", (IEnumerable<Type>)parameterTypes));
+                    log.AppendLine(op + " " + callConventions + " " + returnType + " " + Join(" ", ((LinqArray<Type>)parameterTypes).AsEnumerable()));
                 }
             );
 
-            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = returnType, MethodParameterTypes = parameterTypes  });
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = returnType, MethodParameterTypes = (LinqArray<Type>)parameterTypes  });
         }
 
         public void EmitCall(OpCode op, MethodInfo method, Type[] arglist)
@@ -731,7 +731,7 @@ namespace Sigil.Impl
                 }
             );
 
-            var parameters = method.GetParameters().Select(p => p.ParameterType).ToList();
+            var parameters = ((LinqArray<ParameterInfo>)method.GetParameters()).Select(p => p.ParameterType).ToList();
             if (!method.IsStatic)
             {
                 var declaring = method.DeclaringType;
@@ -767,7 +767,7 @@ namespace Sigil.Impl
                 }
             );
 
-            var ps = parameterTypes.ToList();
+            var ps = new LinqList<Type>(parameterTypes);
             ps.AddRange(arglist);
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = OpCodes.Calli, MethodReturnType = returnType, MethodParameterTypes = ps });

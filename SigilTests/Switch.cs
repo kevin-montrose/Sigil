@@ -61,7 +61,8 @@ namespace SigilTests
                 {
                     var f = e.GetDebugInfo();
                     Assert.AreEqual("All execution paths must end with Return", e.Message);
-                    Assert.AreEqual("Bad Path\r\n========\r\n__start\r\nl1\r\n\r\nBad Path\r\n========\r\n__start\r\nl2\r\n\r\nBad Path\r\n========\r\n__start\r\nl3\r\n\r\nInstructions\r\n============\r\nldc.i4.0\r\nswitch l1, l2, l3, l4\r\n\r\nl4:\r\nret\r\n\r\nl1:\r\n\r\nl2:\r\n\r\nl3:\r\n", f);
+                    var b = "Bad Path\r\n========\r\n__start\r\nl1\r\n\r\nBad Path\r\n========\r\n__start\r\nl2\r\n\r\nBad Path\r\n========\r\n__start\r\nl3\r\n\r\nInstructions\r\n============\r\nldc.i4.0\r\nswitch l1, l2, l3, l4\r\n\r\nl4:\r\nret\r\n\r\nl1:\r\n\r\nl2:\r\n\r\nl3:\r\n";
+                    Assert.AreEqual(b, f);
                 }
             }
         }
