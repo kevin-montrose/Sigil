@@ -67,7 +67,7 @@ namespace Sigil.Impl
                 {
                     IsSuccess = false,
 
-                    FailingPaths = LinqEnumerable<LinqRoot<Label>>.For(new [] { path })
+                    FailingPaths = LinqEnumerable<LinqRoot<Label>>.For(new [] { path.ToList() })
                 };
         }
 

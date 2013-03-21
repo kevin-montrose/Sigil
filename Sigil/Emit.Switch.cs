@@ -43,8 +43,10 @@ namespace Sigil
                     new StackTransition(new [] { typeof(NativeIntType) }, Type.EmptyTypes),
                 };
 
+            var labelsCopy = ((LinqArray<Label>)labels).Select(l => l).ToArray();
+
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Switch, labels, transitions.Wrap("Switch"), out update);
+            UpdateState(OpCodes.Switch, labelsCopy, transitions.Wrap("Switch"), out update);
 
             foreach (var label in labels)
             {
