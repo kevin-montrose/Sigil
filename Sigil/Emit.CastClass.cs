@@ -53,7 +53,7 @@ namespace Sigil
 
                     var onStack = stack.First();
 
-                    if (onStack.All(a => referenceType.IsAssignableFrom(a)))
+                    if (onStack.All(a => ExtensionMethods.IsAssignableFrom(referenceType, a)))
                     {
                         ElidableCasts.Add(curIndex);
                         elided = true;

@@ -29,7 +29,7 @@ namespace Sigil
                 throw new ArgumentException("unaligned cannot be used with static fields");
             }
 
-            var useVolatile = isVolatile ?? field.IsVolatile();
+            var useVolatile = isVolatile ?? ExtensionMethods.IsVolatile(field);
 
             if (!field.IsStatic)
             {

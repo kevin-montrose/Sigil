@@ -8,21 +8,7 @@ namespace Sigil.Impl
 {
     internal static class ExtensionMethods
     {
-        public static bool TakesTypedReference(this BufferedILInstruction instr)
-        {
-            if (instr.MethodReturnType == typeof(TypedReference)) return true;
-
-            return instr.MethodParameterTypes.Any(p => p == typeof(TypedReference));
-        }
-
-        public static bool TakesManagedPointer(this BufferedILInstruction instr)
-        {
-            if (instr.MethodReturnType.IsPointer) return true;
-
-            return instr.MethodParameterTypes.Any(p => p.IsPointer);
-        }
-
-        public static bool IsTailableCall(this OpCode op)
+        public static bool IsTailableCall(OpCode op)
         {
             return
                 op == OpCodes.Call ||
@@ -30,17 +16,7 @@ namespace Sigil.Impl
                 op == OpCodes.Callvirt;
         }
 
-        public static bool Any<T>(this List<T> e, Func<T, bool> p)
-        {
-            for (var i = 0; i < e.Count; i++)
-            {
-                if (p(e[i])) return true;
-            }
-
-            return false;
-        }
-
-        public static bool StartsWithVowel(this string str)
+        public static bool StartsWithVowel(string str)
         {
             var c = char.ToLower(str[0]);
 
@@ -52,7 +28,7 @@ namespace Sigil.Impl
             return TransitionWrapper.Get(method, transitions);
         }
 
-        public static bool IsVolatile(this FieldInfo field)
+        public static bool IsVolatile(FieldInfo field)
         {
             // field builder doesn't implement GetRequiredCustomModifiers
             if (field is FieldBuilder) return false;
@@ -60,7 +36,7 @@ namespace Sigil.Impl
             return Array.IndexOf(field.GetRequiredCustomModifiers(), typeof(System.Runtime.CompilerServices.IsVolatile)) >= 0;
         }
 
-        public static bool IsPrefix(this OpCode op)
+        public static bool IsPrefix(OpCode op)
         {
             return
                 op == OpCodes.Tailcall ||
@@ -82,7 +58,7 @@ namespace Sigil.Impl
             { typeof(UIntPtr), typeof(NativeIntType) }
         };
 
-        public static Type Alias(this Type t)
+        private static Type Alias(Type t)
         {
             if (t.IsValueType && t.IsEnum)
             {
@@ -95,12 +71,12 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public static bool IsAssignableFrom(this Type type1, TypeOnStack type2)
+        public static bool IsAssignableFrom(Type type1, TypeOnStack type2)
         {
             return TypeOnStack.Get(type1).IsAssignableFrom(type2);
         }
 
-        public static bool IsAssignableFrom(this TypeOnStack type1, TypeOnStack type2)
+        public static bool IsAssignableFrom(TypeOnStack type1, TypeOnStack type2)
         {
             // wildcards match *everything*
             if (type1 == TypeOnStack.Get<WildcardType>() || type2 == TypeOnStack.Get<WildcardType>()) return true;
@@ -135,11 +111,11 @@ namespace Sigil.Impl
             return ReallyIsAssignableFrom(t1, t2);
         }
 
-        private static List<Type> GetBases(Type t)
+        private static LinqList<Type> GetBases(Type t)
         {
-            if (t.IsValueType) return new List<Type>();
+            if (t.IsValueType) return new LinqList<Type>();
 
-            var ret = new List<Type>();
+            var ret = new LinqList<Type>();
             t = t.BaseType;
 
             while (t != null)

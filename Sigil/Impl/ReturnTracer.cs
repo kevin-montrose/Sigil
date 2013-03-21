@@ -67,7 +67,7 @@ namespace Sigil.Impl
                 {
                     IsSuccess = false,
 
-                    FailingPaths = LinqEnumerable<LinqRoot<Label>>.For(new [] { path.ToList() })
+                    FailingPaths = (LinqArray<LinqRoot<Label>>)new [] { path.ToList() }
                 };
         }
 
@@ -115,7 +115,7 @@ namespace Sigil.Impl
 
         private Dictionary<int, ReturnTracerResult> Cache = new Dictionary<int, ReturnTracerResult>();
 
-        private ReturnTracerResult TraceFrom(int startAt, LinqList<Label> path, HashSet<Label> pathLookup)
+        private ReturnTracerResult TraceFrom(int startAt, LinqList<Label> path, LinqHashSet<Label> pathLookup)
         {
             ReturnTracerResult cached;
             if (Cache.TryGetValue(startAt, out cached))
@@ -189,7 +189,7 @@ namespace Sigil.Impl
 
             var path = new LinqList<Label>();
             path.Add(firstLabel);
-            var pathLookup = new HashSet<Label>(path.AsEnumerable());
+            var pathLookup = new LinqHashSet<Label>(path.AsEnumerable());
 
             return TraceFrom(firstIx, path, pathLookup);
         }

@@ -66,7 +66,7 @@ namespace Sigil.Impl
 
         internal VerifiableTracker Inner;
         internal VerifiableTrackerConcatPromise Next;
-        private HashSet<VerifiableTracker> ContainsLookup = new HashSet<VerifiableTracker>();
+        private LinqHashSet<VerifiableTracker> ContainsLookup = new LinqHashSet<VerifiableTracker>();
 
         public VerifiableTrackerConcatPromise(VerifiableTracker a)
         {
@@ -79,7 +79,7 @@ namespace Sigil.Impl
         {
             Next = next;
 
-            foreach(var x in Next.ContainsLookup)
+            foreach(var x in Next.ContainsLookup.AsEnumerable())
             {
                 ContainsLookup.Add(x);
             }

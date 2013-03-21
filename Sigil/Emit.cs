@@ -35,9 +35,9 @@ namespace Sigil
 
         private LinqList<Local> AllLocals;
 
-        private HashSet<Local> UnusedLocals;
-        private HashSet<Label> UnusedLabels;
-        private HashSet<Label> UnmarkedLabels;
+        private LinqHashSet<Local> UnusedLocals;
+        private LinqHashSet<Label> UnusedLabels;
+        private LinqHashSet<Label> UnmarkedLabels;
 
         private LinqList<SigilTuple<OpCode, Label, int>> Branches;
         private LinqDictionary<Label, int> Marks;
@@ -152,9 +152,9 @@ namespace Sigil
 
             AllLocals = new LinqList<Local>();
 
-            UnusedLocals = new HashSet<Local>();
-            UnusedLabels = new HashSet<Label>();
-            UnmarkedLabels = new HashSet<Label>();
+            UnusedLocals = new LinqHashSet<Local>();
+            UnusedLabels = new LinqHashSet<Label>();
+            UnmarkedLabels = new LinqHashSet<Label>();
 
             Branches = new LinqList<SigilTuple<OpCode, Label, int>>();
             Marks = new LinqDictionary<Label, int>();
@@ -836,7 +836,7 @@ namespace Sigil
             }
         }
 
-        private HashSet<TrackerDescriber> VerificationCache = new HashSet<TrackerDescriber>();
+        private LinqHashSet<TrackerDescriber> VerificationCache = new LinqHashSet<TrackerDescriber>();
         private void CheckBranchesAndLabels(string method, Label modifiedLabel, bool overrideOpts = false)
         {
             if (!overrideOpts)

@@ -196,5 +196,10 @@ namespace Sigil.Impl
                     (IsReference ? 0xFFFF0000 : 0)
                 );
         }
+
+        public bool IsAssignableFrom(TypeOnStack other)
+        {
+            return ExtensionMethods.IsAssignableFrom(this, other);
+        }
     }
 }

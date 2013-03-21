@@ -375,7 +375,7 @@ namespace Sigil
                     {
                         var thisRef = onStack.Last();
 
-                        if (!funcPtr.InstanceType.IsAssignableFrom(thisRef))
+                        if (!ExtensionMethods.IsAssignableFrom(funcPtr.InstanceType, thisRef))
                         {
                             throw new SigilVerificationException("CallIndirect expects a 'this' value assignable to " + funcPtr.InstanceType + ", found " + thisRef, IL.Instructions(AllLocals));
                         }

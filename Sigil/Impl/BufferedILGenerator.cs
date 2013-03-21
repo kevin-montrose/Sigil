@@ -27,6 +27,24 @@ namespace Sigil.Impl
 
         public Type MethodReturnType { get; internal set; }
         public LinqRoot<Type> MethodParameterTypes { get; internal set; }
+
+        public bool TakesTypedReference()
+        {
+            var instr = this;
+
+            if (instr.MethodReturnType == typeof(TypedReference)) return true;
+
+            return instr.MethodParameterTypes.Any(p => p == typeof(TypedReference));
+        }
+
+        public bool TakesManagedPointer()
+        {
+            var instr = this;
+
+            if (instr.MethodReturnType.IsPointer) return true;
+
+            return instr.MethodParameterTypes.Any(p => p.IsPointer);
+        }
     }
 
     internal class BufferedILGenerator
@@ -41,9 +59,9 @@ namespace Sigil.Impl
 
         public int Index { get { return Buffer.Count; } }
 
-        private LinqList<Action<ILGenerator, bool, StringBuilder>> Buffer = new LinqList<Action<ILGenerator, bool, StringBuilder>>();
+        private LinqList<SigilAction<ILGenerator, bool, StringBuilder>> Buffer = new LinqList<SigilAction<ILGenerator, bool, StringBuilder>>();
         private LinqList<BufferedILInstruction> TraversableBuffer = new LinqList<BufferedILInstruction>();
-        private LinqList<Func<int>> InstructionSizes = new LinqList<Func<int>>();
+        private LinqList<SigilFunc<int>> InstructionSizes = new LinqList<SigilFunc<int>>();
 
         private Type DelegateType;
 
@@ -223,7 +241,7 @@ namespace Sigil.Impl
                         il.Emit(op);
                     }
 
-                    if (op.IsPrefix())
+                    if (ExtensionMethods.IsPrefix(op))
                     {
                         log.Append(op.ToString());
                     }
@@ -257,7 +275,7 @@ namespace Sigil.Impl
                         il.Emit(op);
                     }
 
-                    if (op.IsPrefix())
+                    if (ExtensionMethods.IsPrefix(op))
                     {
                         log.Append(op.ToString());
                     }
@@ -285,7 +303,7 @@ namespace Sigil.Impl
                         il.Emit(op, b);
                     }
 
-                    if (op.IsPrefix())
+                    if (ExtensionMethods.IsPrefix(op))
                     {
                         log.Append(op + "" + b + ".");
                     }
@@ -313,7 +331,7 @@ namespace Sigil.Impl
                         il.Emit(op, s);
                     }
 
-                    if (op.IsPrefix())
+                    if (ExtensionMethods.IsPrefix(op))
                     {
                         log.Append(op + "" + s + ".");
                     }
@@ -341,7 +359,7 @@ namespace Sigil.Impl
                         il.Emit(op, i);
                     }
 
-                    if (op.IsPrefix())
+                    if (ExtensionMethods.IsPrefix(op))
                     {
                         log.Append(op + "" + i + ".");
                     }

@@ -30,7 +30,7 @@ namespace Sigil
 
                         if (atJ.IsInstruction.HasValue)
                         {
-                            if (atJ.IsInstruction.Value.IsTailableCall())
+                            if (ExtensionMethods.IsTailableCall(atJ.IsInstruction.Value))
                             {
                                 callIx = j;
                                 call = atJ;

@@ -104,7 +104,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public static VerificationResult Verify(Label modified, LinqRoot<VerifiableTracker> all, HashSet<TrackerDescriber> verificationCache)
+        public static VerificationResult Verify(Label modified, LinqRoot<VerifiableTracker> all, LinqHashSet<TrackerDescriber> verificationCache)
         {
             var allStreams = new LinqList<VerifiableTrackerConcatPromise>();
 

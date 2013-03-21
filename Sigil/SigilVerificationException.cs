@@ -56,7 +56,7 @@ namespace Sigil
                 var expected = ErrorMessageString(failure.ExpectedAtStackIndex);
                 var found = ErrorMessageString(failure.Stack.ElementAt(failure.StackIndex));
 
-                return method + " expected " + (expected.StartsWithVowel() ? "an " : "a ") + expected + "; found " + found;
+                return method + " expected " + (ExtensionMethods.StartsWithVowel(expected) ? "an " : "a ") + expected + "; found " + found;
             }
 
             if (failure.IsStackMismatch)

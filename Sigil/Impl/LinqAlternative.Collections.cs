@@ -8,7 +8,7 @@ namespace Sigil.Impl
     {
         protected abstract IEnumerable<T> InnerEnumerable();
 
-        public LinqRoot<T> Where(Func<T, bool> p)
+        public LinqRoot<T> Where(SigilFunc<T, bool> p)
         {
             return LinqAlternative.Where(InnerEnumerable(), p);
         }
@@ -18,22 +18,22 @@ namespace Sigil.Impl
             return LinqAlternative.Count(InnerEnumerable());
         }
 
-        public int Count(Func<T, bool> p)
+        public int Count(SigilFunc<T, bool> p)
         {
             return LinqAlternative.Count(InnerEnumerable(), p);
         }
 
-        public bool Any(Func<T, bool> p)
+        public virtual bool Any(SigilFunc<T, bool> p)
         {
             return LinqAlternative.Any(InnerEnumerable(), p);
         }
 
-        public LinqRoot<V> Select<V>(Func<T, V> p)
+        public LinqRoot<V> Select<V>(SigilFunc<T, V> p)
         {
             return LinqAlternative.Select(InnerEnumerable(), p);
         }
 
-        public LinqRoot<V> Select<V>(Func<T, int, V> p)
+        public LinqRoot<V> Select<V>(SigilFunc<T, int, V> p)
         {
             return LinqAlternative.Select(InnerEnumerable(), p);
         }
@@ -48,7 +48,7 @@ namespace Sigil.Impl
             return LinqAlternative.ToArray(InnerEnumerable());
         }
 
-        public LinqDictionary<Key, Value> ToDictionary<Key, Value>(Func<T, Key> k, Func<T, Value> v)
+        public LinqDictionary<Key, Value> ToDictionary<Key, Value>(SigilFunc<T, Key> k, SigilFunc<T, Value> v)
         {
             return LinqAlternative.ToDictionary(InnerEnumerable(), k, v);
         }
@@ -63,7 +63,7 @@ namespace Sigil.Impl
             return LinqAlternative.FirstOrDefault(InnerEnumerable());
         }
 
-        public T FirstOrDefault(Func<T, bool> p)
+        public T FirstOrDefault(SigilFunc<T, bool> p)
         {
             return LinqAlternative.FirstOrDefault(InnerEnumerable(), p);
         }
@@ -88,7 +88,7 @@ namespace Sigil.Impl
             return LinqAlternative.Reverse(InnerEnumerable());
         }
 
-        public bool All(Func<T, bool> p)
+        public bool All(SigilFunc<T, bool> p)
         {
             return LinqAlternative.All(InnerEnumerable(), p);
         }
@@ -108,7 +108,7 @@ namespace Sigil.Impl
             return LinqAlternative.SingleOrDefault(InnerEnumerable());
         }
 
-        public T SingleOrDefault(Func<T, bool> p)
+        public T SingleOrDefault(SigilFunc<T, bool> p)
         {
             return LinqAlternative.SingleOrDefault(InnerEnumerable(), p);
         }
@@ -123,17 +123,17 @@ namespace Sigil.Impl
             return LinqAlternative.Contains(InnerEnumerable(), i);
         }
 
-        public V Aggregate<V>(V seed, Func<V, T, V> p)
+        public V Aggregate<V>(V seed, SigilFunc<V, T, V> p)
         {
             return LinqAlternative.Aggregate(InnerEnumerable(), seed, p);
         }
 
-        public LinqRoot<V> SelectMany<V>(Func<T, IEnumerable<V>> p)
+        public LinqRoot<V> SelectMany<V>(SigilFunc<T, IEnumerable<V>> p)
         {
             return LinqAlternative.SelectMany(InnerEnumerable(), p);
         }
 
-        public LinqRoot<V> SelectMany<V>(Func<T, LinqRoot<V>> p)
+        public LinqRoot<V> SelectMany<V>(SigilFunc<T, LinqRoot<V>> p)
         {
             return LinqAlternative.SelectMany(InnerEnumerable(), x => p(x).AsEnumerable());
         }
@@ -148,22 +148,22 @@ namespace Sigil.Impl
             return LinqAlternative.Distinct(InnerEnumerable(), c);
         }
 
-        public LinqRoot<IGrouping<K, T>> GroupBy<K>(Func<T, K> p)
+        public LinqRoot<IGrouping<K, T>> GroupBy<K>(SigilFunc<T, K> p)
         {
             return LinqAlternative.GroupBy(InnerEnumerable(), p);
         }
 
-        public LinqRoot<T> OrderBy<V>(Func<T, V> p)
+        public LinqRoot<T> OrderBy<V>(SigilFunc<T, V> p)
         {
             return LinqAlternative.OrderBy(InnerEnumerable(), p);
         }
 
-        public LinqRoot<T> OrderByDescending<V>(Func<T, V> p)
+        public LinqRoot<T> OrderByDescending<V>(SigilFunc<T, V> p)
         {
             return LinqAlternative.OrderByDescending(InnerEnumerable(), p);
         }
 
-        public void Each(Action<T> a)
+        public virtual void Each(Action<T> a)
         {
             LinqAlternative.Each(InnerEnumerable(), a);
         }
@@ -331,6 +331,16 @@ namespace Sigil.Impl
         {
             Inner.CopyTo(arr);
         }
+
+        public override bool Any(SigilFunc<T, bool> p)
+        {
+            for (var i = 0; i < Inner.Count; i++)
+            {
+                if (p(Inner[i])) return true;
+            }
+
+            return false;
+        }
     }
 
     internal class LinqStack<T> : LinqRoot<T>
@@ -418,29 +428,61 @@ namespace Sigil.Impl
         {
             return Inner;
         }
+
+        public override void Each(Action<T> a)
+        {
+            for (var i = 0; i < Inner.Length; i++)
+            {
+                a(Inner[i]);
+            }
+        }
     }
 
     internal class LinqHashSet<T> : LinqRoot<T>
     {
-        private HashSet<T> Inner;
+        //private HashSet<T> Inner;
+        private System.Collections.Hashtable Inner;
 
         public int Count { get { return Inner.Count; } }
 
-        private LinqHashSet(HashSet<T> h)
+        private LinqHashSet(System.Collections.Hashtable h)
         {
             Inner = h;
         }
 
-        public LinqHashSet() : this(new HashSet<T>()) { }
+        public LinqHashSet() : this(new System.Collections.Hashtable()) { }
+        public LinqHashSet(IEnumerable<T> e) : this() 
+        {
+            foreach (var x in e)
+            {
+                Inner.Add(x, "");
+            }
+        }
 
         protected override IEnumerable<T> InnerEnumerable()
         {
-            return Inner;
+            foreach (var x in Inner.Keys)
+            {
+                yield return (T)x;
+            }
         }
 
         public bool Add(T item)
         {
-            return Inner.Add(item);
+            if (Inner.ContainsKey(item)) return false;
+
+            Inner.Add(item, "");
+
+            return true;
+        }
+
+        public bool Remove(T item)
+        {
+            if (!Inner.ContainsKey(item)) return false;
+
+            Inner.Remove(item);
+
+            return true;
         }
     }
 }

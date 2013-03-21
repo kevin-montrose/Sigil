@@ -222,6 +222,9 @@
       <DependentUpon>LinqAlternative.cs</DependentUpon>
     </Compile>
     <Compile Include="Impl\LinqAlternative.cs" />
+    <Compile Include="Impl\LinqAlternative.Delegates.cs">
+      <DependentUpon>LinqAlternative.cs</DependentUpon>
+    </Compile>
     <Compile Include="Impl\ReturnTracer.cs" />
     <Compile Include="Impl\SpecialTypes.cs" />
     <Compile Include="Impl\StackTransition.cs" />
