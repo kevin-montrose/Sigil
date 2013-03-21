@@ -19,8 +19,14 @@ namespace SigilTests
             var sigilTypes = typeof(Emit<>).Assembly.GetTypes();
             var linq = sigilTypes.Single(t => t.Name == "LinqAlternative");
 
-            var orderByGeneric = linq.GetMethod("OrderBy");
-            var orderBy = orderByGeneric.MakeGenericMethod(typeof(Tuple<int, double>), typeof(double));
+            var sigilListGeneric = sigilTypes.Single(t => t.Name == "LinqList`1");
+            var sigilListT = sigilListGeneric.MakeGenericType(typeof(Tuple<int, double>));
+            var sigilListCons = sigilListT.GetConstructor(new[] { typeof(List<Tuple<int, double>>) });
+
+            var asEnumerable = sigilListT.GetMethod("AsEnumerable");
+
+            var orderByGeneric = sigilListT.GetMethod("OrderBy");
+            var orderBy = orderByGeneric.MakeGenericMethod(typeof(double));
 
             var toSort = new List<Tuple<int, double>>();
 
@@ -33,7 +39,10 @@ namespace SigilTests
 
             Func<Tuple<int, double>, double> p = x => x.Item2;
 
-            var sigilOrdered = (IEnumerable<Tuple<int, double>>)orderBy.Invoke(null, new object[] { toSort.ToList(), p });
+            var asSigilList = sigilListCons.Invoke(new object[] { toSort });
+
+            var sigilOrderedInternal = orderBy.Invoke(asSigilList, new object[] { p });
+            var sigilOrdered = (IEnumerable<Tuple<int, double>>)asEnumerable.Invoke(sigilOrderedInternal, new object[0]);
             var linqOrdered = toSort.ToList().OrderBy(p);
 
             var sigilList = sigilOrdered.ToList();
@@ -53,8 +62,14 @@ namespace SigilTests
             var sigilTypes = typeof(Emit<>).Assembly.GetTypes();
             var linq = sigilTypes.Single(t => t.Name == "LinqAlternative");
 
-            var orderByGeneric = linq.GetMethod("OrderByDescending");
-            var orderBy = orderByGeneric.MakeGenericMethod(typeof(Tuple<int, double>), typeof(double));
+            var sigilListGeneric = sigilTypes.Single(t => t.Name == "LinqList`1");
+            var sigilListT = sigilListGeneric.MakeGenericType(typeof(Tuple<int, double>));
+            var sigilListCons = sigilListT.GetConstructor(new[] { typeof(List<Tuple<int, double>>) });
+
+            var asEnumerable = sigilListT.GetMethod("AsEnumerable");
+
+            var orderByGeneric = sigilListT.GetMethod("OrderByDescending");
+            var orderBy = orderByGeneric.MakeGenericMethod(typeof(double));
 
             var toSort = new List<Tuple<int, double>>();
 
@@ -67,7 +82,10 @@ namespace SigilTests
 
             Func<Tuple<int, double>, double> p = x => x.Item2;
 
-            var sigilOrdered = (IEnumerable<Tuple<int, double>>)orderBy.Invoke(null, new object[] { toSort.ToList(), p });
+            var asSigilList = sigilListCons.Invoke(new object[] { toSort });
+
+            var sigilOrderedInternal = orderBy.Invoke(asSigilList, new object[] { p });
+            var sigilOrdered = (IEnumerable<Tuple<int, double>>)asEnumerable.Invoke(sigilOrderedInternal, new object[0]);
             var linqOrdered = toSort.ToList().OrderByDescending(p);
 
             var sigilList = sigilOrdered.ToList();
