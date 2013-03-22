@@ -486,5 +486,10 @@ namespace Sigil.Impl
 
             return true;
         }
+
+        public new bool Contains(T item)
+        {
+            return Inner.Contains(item);
+        }
     }
 }

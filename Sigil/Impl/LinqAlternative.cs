@@ -493,6 +493,7 @@ namespace Sigil.Impl
         public static bool Contains<T>( IEnumerable<T> e, T a)
         {
             if (e == null) throw new ArgumentNullException("e");
+            if (a == null) throw new ArgumentNullException("a");
 
             var comparer = EqualityComparer<T>.Default;
 
