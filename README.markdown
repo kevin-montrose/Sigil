@@ -277,10 +277,7 @@ Be aware that these features are meant as debugging aids, and their contents and
 
 ###Unsupported Operations
 
-Sigil does not support the [Arglist](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.arglist.aspx), [Mkrefany](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.mkrefany.aspx), [Refanytype](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanytype.aspx), or [Refanyval](http://msdn.microsoft.com/en-us/library/system.reflection.emit.opcodes.refanyval.aspx) instructions.
-While not impossible to support, the unusualness of `VarArgs` methods in .NET makes them not worth the trouble at this time.
-
-Fault blocks are also not supported because of their rarity (there is no C# equivalent) and because they are forbidden in dynamic methods.
+Fault blocks are not supported because of their rarity (there is no C# equivalent) and because they are forbidden in dynamic methods.
 
 ###Performance
 
