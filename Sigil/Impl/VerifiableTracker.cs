@@ -352,6 +352,32 @@ namespace Sigil.Impl
                     continue;
                 }
 
+                if (LinqAlternative.Any(w.PushedToStack, p => p == TypeOnStack.Get<SamePointerType>()))
+                {
+                    if (w.PushedToStack.Length > 1)
+                    {
+                        throw new Exception("SamePointerType can be only product of a transition which contains it");
+                    }
+
+                    var shouldBePointer = LinqAlternative.SelectMany(onStack, p => p.Where(x => x.IsPointer || x == TypeOnStack.Get<WildcardType>()).AsEnumerable()).Distinct().ToList();
+
+                    if (shouldBePointer.Count == 0) continue;
+                    w = new StackTransition(w.PoppedFromStack, new [] { shouldBePointer.Single() });
+                }
+
+                if (LinqAlternative.Any(w.PushedToStack, p => p == TypeOnStack.Get<SameByRefType>()))
+                {
+                    if (w.PushedToStack.Length > 1)
+                    {
+                        throw new Exception("SameByRefType can be only product of a transition which contains it");
+                    }
+
+                    var shouldBeByRef = LinqAlternative.SelectMany(onStack, p => p.Where(x => x.IsReference || x == TypeOnStack.Get<WildcardType>()).AsEnumerable()).Distinct().ToList();
+
+                    if (shouldBeByRef.Count == 0) continue;
+                    w = new StackTransition(w.PoppedFromStack, new[] { shouldBeByRef.Single() });
+                }
+
                 bool outerContinue = false;
 
                 for (var j = 0; j < w.PoppedCount; j++)

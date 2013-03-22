@@ -76,7 +76,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
         }
 

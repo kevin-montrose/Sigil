@@ -4348,7 +4348,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
 
             var e3 = Emit<Action>.NewDynamicMethod("E3");
@@ -4362,7 +4362,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
 
             var e4 = Emit<Action>.NewDynamicMethod("E4");
@@ -4377,7 +4377,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
 
             var e5 = Emit<Action>.NewDynamicMethod("E5");
@@ -4391,7 +4391,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
 
             var e6 = Emit<Action>.NewDynamicMethod("E6");
@@ -4405,7 +4405,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
 
             var e7 = Emit<Action<int>>.NewDynamicMethod("E7");
@@ -4419,7 +4419,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
 
             var e8 = Emit<Action<int>>.NewDynamicMethod("E8");
@@ -4960,7 +4960,7 @@ namespace SigilTests
             }
             catch (SigilVerificationException e)
             {
-                Assert.AreEqual("Add expected a double, float, int, long, or native int; found System.String", e.Message);
+                Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
         }
     }

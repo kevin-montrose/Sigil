@@ -14,7 +14,6 @@ namespace Sigil
             IEnumerable<StackTransition> transitions;
             if (allowReference)
             {
-                // TODO: figure out how to represent pointer/reference addition rules
                 transitions =
                     new[] 
                     {
@@ -24,7 +23,12 @@ namespace Sigil
                         new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, new [] { typeof(NativeIntType) }),
                         new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
                         new StackTransition(new [] { typeof(float), typeof(float) }, new [] { typeof(float) }),
-                        new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(double) })
+                        new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(double) }),
+
+                        new StackTransition(new [] { typeof(AnyPointerType), typeof(int) }, new [] { typeof(SamePointerType) }),
+                        new StackTransition(new [] { typeof(AnyPointerType), typeof(NativeIntType) }, new [] { typeof(SamePointerType) }),
+                        new StackTransition(new [] { typeof(AnyByRefType), typeof(int) }, new [] { typeof(SameByRefType) }),
+                        new StackTransition(new [] { typeof(AnyByRefType), typeof(NativeIntType) }, new [] { typeof(SameByRefType) })
                     };
             }
             else

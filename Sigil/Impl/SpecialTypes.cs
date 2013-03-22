@@ -23,10 +23,7 @@ namespace Sigil.Impl
     /// 
     /// This type is exposed to allow for stack assertions containing native int via Emit.MarkLabel.
     /// </summary>
-    internal sealed class NativeIntType
-    {
-        private NativeIntType() { }
-    }
+    internal sealed class NativeIntType { }
 
     // Represents a type that *could be* anything
     internal sealed class WildcardType { }
@@ -42,4 +39,9 @@ namespace Sigil.Impl
 
     // Something that means "pop the entire damn stack" when encountered by the verifier
     internal sealed class PopAllType { }
+
+    // Something that represents a * type that cannot stand on it's own, but be inferred from where it's used
+    internal sealed class SamePointerType { }
+
+    internal sealed class SameByRefType { }
 }

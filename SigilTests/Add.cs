@@ -3,14 +3,57 @@ using Sigil;
 using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
 {
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class Add
+    public unsafe class Add
     {
+        private delegate int* PointerToPointerDelegate(int by, int* ptr);
+
+        [TestMethod]
+        public unsafe void PointerToPointer()
+        {
+            var e1 = Emit<PointerToPointerDelegate>.NewDynamicMethod();
+            e1.LoadArgument(0);
+            e1.LoadArgument(1);
+            e1.Add();
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            int* ptr1 = (int*)Marshal.AllocHGlobal(64);
+
+            var ptr2 = d1(4, ptr1);
+
+            Marshal.FreeHGlobal((IntPtr)ptr1);
+
+            Assert.AreEqual(((int)ptr1) + 4, (int)ptr2);
+        }
+
+        private delegate void ByRefToByRefDelegate(ref int a, int b, ref int c);
+
+        [TestMethod]
+        public unsafe void ByRefToByRef()
+        {
+            var e1 = Emit<ByRefToByRefDelegate>.NewDynamicMethod();
+            e1.LoadArgument(1);
+            e1.LoadArgument(0);
+            e1.Add();
+            e1.StoreArgument(2);
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            int a = 2;
+            d1(ref a, 4, ref a);
+
+            Assert.AreEqual(2, a);
+        }
+
         [TestMethod]
         public void BlogPost()
         {
