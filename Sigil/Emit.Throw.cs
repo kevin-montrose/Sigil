@@ -13,7 +13,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Throw()
         {
-            UpdateState(OpCodes.Throw, StackTransition.Pop<Exception>().Wrap("Throw"));
+            UpdateState(OpCodes.Throw, Wrap(StackTransition.Pop<Exception>(), "Throw"));
 
             return this;
         }

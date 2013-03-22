@@ -68,7 +68,7 @@ namespace Sigil
                         new StackTransition(new [] { typeof(object) }, new [] { referenceType }, before: before)
                     };
 
-            UpdateState(OpCodes.Castclass, referenceType, transitions.Wrap("CastClass"));
+            UpdateState(OpCodes.Castclass, referenceType, Wrap(transitions, "CastClass"));
 
             return this;
         }

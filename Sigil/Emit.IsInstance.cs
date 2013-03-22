@@ -52,7 +52,7 @@ namespace Sigil
                     new StackTransition(new[] { typeof(WildcardType) }, new [] { type }, before)
                 };
 
-            UpdateState(OpCodes.Isinst, type, transitions.Wrap("IsInstance"));
+            UpdateState(OpCodes.Isinst, type, Wrap(transitions, "IsInstance"));
 
             return this;
         }

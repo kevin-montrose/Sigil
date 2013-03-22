@@ -48,7 +48,7 @@ namespace Sigil
                     new StackTransition(new [] { valueType.MakeByRefType(), valueType.MakeByRefType() }, Type.EmptyTypes),
                 };
 
-            UpdateState(OpCodes.Cpobj, valueType, transitions.Wrap("CopyObject"));
+            UpdateState(OpCodes.Cpobj, valueType, Wrap(transitions, "CopyObject"));
 
             return this;
         }

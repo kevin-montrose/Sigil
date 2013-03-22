@@ -23,11 +23,6 @@ namespace Sigil.Impl
             return "aeiou".IndexOf(c) != -1;
         }
 
-        public static TransitionWrapper Wrap(this IEnumerable<StackTransition> transitions, string method)
-        {
-            return TransitionWrapper.Get(method, transitions);
-        }
-
         public static bool IsVolatile(FieldInfo field)
         {
             // field builder doesn't implement GetRequiredCustomModifiers

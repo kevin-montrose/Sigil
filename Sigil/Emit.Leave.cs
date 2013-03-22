@@ -32,7 +32,7 @@ namespace Sigil
 
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, label, new[] { new StackTransition(new [] { typeof(PopAllType) }, Type.EmptyTypes) }.Wrap("Leave"), out update);
+            UpdateState(OpCodes.Leave, label, Wrap(new[] { new StackTransition(new [] { typeof(PopAllType) }, Type.EmptyTypes) }, "Leave"), out update);
 
             CheckBranchesAndLabels("Leave", label);
 

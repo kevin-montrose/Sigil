@@ -186,15 +186,15 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("LoadIndirect"));
+                UpdateState(OpCodes.Volatile, Wrap(StackTransition.None(), "LoadIndirect"));
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, StackTransition.None().Wrap("LoadIndirect"));
+                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, Wrap(StackTransition.None(), "LoadIndirect"));
             }
 
-            UpdateState(instr.Value, transitions.Wrap("LoadIndirect"));
+            UpdateState(instr.Value, Wrap(transitions, "LoadIndirect"));
 
             return this;
         }

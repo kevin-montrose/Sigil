@@ -431,7 +431,7 @@ namespace Sigil
         {
             var delType = typeof(CheckDelegateType);
 
-            var baseTypes = new HashSet<Type>();
+            var baseTypes = new LinqHashSet<Type>();
             baseTypes.Add(delType);
             var bType = delType.BaseType;
             while (bType != null)
@@ -465,7 +465,7 @@ namespace Sigil
             il.Emit(OpCodes.Pop);
             il.Emit(OpCodes.Ret);
 
-            var d1 = (Action)canaryMethod.CreateDelegate(typeof(Action));
+            var d1 = (SigilAction)canaryMethod.CreateDelegate(typeof(SigilAction));
 
             try
             {
@@ -1017,6 +1017,11 @@ namespace Sigil
             {
                 IL.EmitCalli(callConventions, returnType, parameterTypes, arglist);
             }
+        }
+
+        private TransitionWrapper Wrap(IEnumerable<StackTransition> trans, string name)
+        {
+            return TransitionWrapper.Get(name, trans);
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Sigil
                     new StackTransition(new [] { elementType.MakeArrayType() }, new [] { typeof(int) })
                 };
 
-            UpdateState(OpCodes.Ldlen, transitions.Wrap("LoadLength"));
+            UpdateState(OpCodes.Ldlen, Wrap(transitions, "LoadLength"));
 
             return this;
         }

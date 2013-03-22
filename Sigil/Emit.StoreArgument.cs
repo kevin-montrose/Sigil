@@ -29,7 +29,7 @@ namespace Sigil
                     asByte = (byte)index;
                 }
 
-                UpdateState(OpCodes.Starg_S, asByte, StackTransition.Pop(ParameterTypes[index]).Wrap("StoreArgument"));
+                UpdateState(OpCodes.Starg_S, asByte, Wrap(StackTransition.Pop(ParameterTypes[index]), "StoreArgument"));
                 return this;
             }
 
@@ -39,7 +39,7 @@ namespace Sigil
                 asShort = (short)index;
             }
 
-            UpdateState(OpCodes.Starg, asShort, StackTransition.Pop(ParameterTypes[index]).Wrap("StoreArgument"));
+            UpdateState(OpCodes.Starg, asShort, Wrap(StackTransition.Pop(ParameterTypes[index]), "StoreArgument"));
 
             return this;
         }

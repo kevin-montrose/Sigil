@@ -23,7 +23,7 @@ namespace Sigil
                 throw new InvalidOperationException("ArgumentList can only be called in VarArgs methods");
             }
 
-            UpdateState(OpCodes.Arglist, StackTransition.Push<NativeIntType>().Wrap("ArgumentList"));
+            UpdateState(OpCodes.Arglist, Wrap(StackTransition.Push<NativeIntType>(), "ArgumentList"));
 
             return this;
         }

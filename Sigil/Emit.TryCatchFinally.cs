@@ -15,7 +15,7 @@ namespace Sigil
                 MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
             }
 
-            UpdateState((new[] { new StackTransition(0) }).Wrap("BeginExceptionBlock"));
+            UpdateState(Wrap(new[] { new StackTransition(0) }, "BeginExceptionBlock"));
 
             var labelDel = IL.BeginExceptionBlock();
             var label = new Label(this, labelDel, "__exceptionBlockEnd");
@@ -202,7 +202,7 @@ namespace Sigil
                 MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
             }
 
-            UpdateState((new[] { new StackTransition(0) }).Wrap("BeginCatchBlock"));
+            UpdateState(Wrap(new[] { new StackTransition(0) }, "BeginCatchBlock"));
 
             var tryBlock = TryBlocks[forTry];
 
@@ -213,7 +213,7 @@ namespace Sigil
 
             IL.BeginCatchBlock(exceptionType);
 
-            UpdateState(StackTransition.Push(exceptionType).Wrap("BeginCatchBlock"));
+            UpdateState(Wrap(StackTransition.Push(exceptionType), "BeginCatchBlock"));
 
             var ret = new CatchBlock(exceptionType, forTry);
 
@@ -254,7 +254,7 @@ namespace Sigil
                 MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
             }
 
-            UpdateState((new[] { new StackTransition(0) }).Wrap("EndCatchBlock"));
+            UpdateState(Wrap(new[] { new StackTransition(0) }, "EndCatchBlock"));
 
             var location = CatchBlocks[forCatch];
 
@@ -325,7 +325,7 @@ namespace Sigil
                 MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
             }
 
-            UpdateState((new[] { new StackTransition(0) }).Wrap("BeginFinallyBlock"));
+            UpdateState(Wrap(new[] { new StackTransition(0) }, "BeginFinallyBlock"));
 
             var ret = new FinallyBlock(forTry);
 
@@ -363,7 +363,7 @@ namespace Sigil
                 MarkLabel(DefineLabel(AutoNamer.Next(this, "__autolabel")));
             }
 
-            UpdateState((new[] { new StackTransition(0) }).Wrap("EndFinallyBlock"));
+            UpdateState(Wrap(new[] { new StackTransition(0) }, "EndFinallyBlock"));
 
             IL.EndFinallyBlock();
 

@@ -31,19 +31,19 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Volatile, Wrap(StackTransition.None(), "StoreIndirect"));
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, StackTransition.None().Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, Wrap(StackTransition.None(), "StoreIndirect"));
             }
 
             if (type.IsPointer)
             {
                 var transition = new[] { new StackTransition(new[] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes) };
 
-                UpdateState(OpCodes.Stind_I, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_I, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 
@@ -57,7 +57,7 @@ namespace Sigil
                         new StackTransition(new[] { type, typeof(NativeIntType) }, Type.EmptyTypes),
                     };
 
-                UpdateState(OpCodes.Stind_Ref, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_Ref, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 
@@ -73,7 +73,7 @@ namespace Sigil
                         new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stind_I1, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_I1, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 
@@ -89,7 +89,7 @@ namespace Sigil
                         new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stind_I2, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_I2, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 
@@ -105,7 +105,7 @@ namespace Sigil
                         new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stind_I4, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_I4, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 
@@ -121,7 +121,7 @@ namespace Sigil
                         new StackTransition(new[] { typeof(long), typeof(NativeIntType) }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stind_I8, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_I8, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 
@@ -135,7 +135,7 @@ namespace Sigil
                         new StackTransition(new[] { typeof(float), typeof(NativeIntType) }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stind_R4, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_R4, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 
@@ -149,7 +149,7 @@ namespace Sigil
                         new StackTransition(new[] { typeof(double), typeof(NativeIntType) }, Type.EmptyTypes)
                     };
 
-                UpdateState(OpCodes.Stind_R8, transition.Wrap("StoreIndirect"));
+                UpdateState(OpCodes.Stind_R8, Wrap(transition, "StoreIndirect"));
                 return this;
             }
 

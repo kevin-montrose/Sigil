@@ -27,19 +27,19 @@ namespace Sigil
 
             switch (local.Index)
             {
-                case 0: UpdateState(OpCodes.Ldloc_0, StackTransition.Push(local.StackType).Wrap("LoadLocal")); return this;
-                case 1: UpdateState(OpCodes.Ldloc_1, StackTransition.Push(local.StackType).Wrap("LoadLocal")); return this;
-                case 2: UpdateState(OpCodes.Ldloc_2, StackTransition.Push(local.StackType).Wrap("LoadLocal")); return this;
-                case 3: UpdateState(OpCodes.Ldloc_3, StackTransition.Push(local.StackType).Wrap("LoadLocal")); return this;
+                case 0: UpdateState(OpCodes.Ldloc_0, Wrap(StackTransition.Push(local.StackType), "LoadLocal")); return this;
+                case 1: UpdateState(OpCodes.Ldloc_1, Wrap(StackTransition.Push(local.StackType), "LoadLocal")); return this;
+                case 2: UpdateState(OpCodes.Ldloc_2, Wrap(StackTransition.Push(local.StackType), "LoadLocal")); return this;
+                case 3: UpdateState(OpCodes.Ldloc_3, Wrap(StackTransition.Push(local.StackType), "LoadLocal")); return this;
             }
 
             if (local.Index >= byte.MinValue && local.Index <= byte.MaxValue)
             {
-                UpdateState(OpCodes.Ldloc_S, (byte)local.Index, StackTransition.Push(local.StackType).Wrap("LoadLocal"));
+                UpdateState(OpCodes.Ldloc_S, (byte)local.Index, Wrap(StackTransition.Push(local.StackType), "LoadLocal"));
                 return this;
             }
 
-            UpdateState(OpCodes.Ldloc, local, StackTransition.Push(local.StackType).Wrap("LoadLocal"));
+            UpdateState(OpCodes.Ldloc, local, Wrap(StackTransition.Push(local.StackType), "LoadLocal"));
 
             return this;
         }

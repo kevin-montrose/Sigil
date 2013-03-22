@@ -42,7 +42,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(addOp, transitions.Wrap(name));
+            UpdateState(addOp, Wrap(transitions, name));
         }
 
         /// <summary>
@@ -202,7 +202,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(double) }, new [] { typeof(double) })
                 };
 
-            UpdateState(OpCodes.Neg, transitions.Wrap("Negate"));
+            UpdateState(OpCodes.Neg, Wrap(transitions, "Negate"));
 
             return this;
         }

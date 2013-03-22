@@ -34,7 +34,7 @@ namespace Sigil
                     new StackTransition(new[] { typeof(TypedReference) }, new[] { type.MakeByRefType() })
                 };
 
-            UpdateState(OpCodes.Refanyval, type, transitions.Wrap("ReferenceAnyValue"));
+            UpdateState(OpCodes.Refanyval, type, Wrap(transitions, "ReferenceAnyValue"));
 
             return this;
         }

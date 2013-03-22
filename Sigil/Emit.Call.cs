@@ -120,7 +120,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Call, method, transitions.Wrap("Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
+            UpdateState(OpCodes.Call, method, Wrap(transitions, "Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
 
             return this;
         }

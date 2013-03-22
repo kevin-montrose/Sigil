@@ -55,7 +55,7 @@ namespace Sigil
                 throw new InvalidOperationException("Jump cannot transfer control from an exception block");
             }
 
-            UpdateState((new [] {new StackTransition(0) }).Wrap("Jump"));
+            UpdateState(Wrap(new[] { new StackTransition(0) }, "Jump"));
 
             for (var i = 0; i < paras.Length; i++)
             {
@@ -68,7 +68,7 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Jmp, method, StackTransition.None().Wrap("Jump"));
+            UpdateState(OpCodes.Jmp, method, Wrap(StackTransition.None(), "Jump"));
 
             return this;
         }

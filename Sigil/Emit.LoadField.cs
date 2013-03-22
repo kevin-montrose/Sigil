@@ -35,12 +35,12 @@ namespace Sigil
             {
                 if (useVolatile)
                 {
-                    UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("LoadField"));
+                    UpdateState(OpCodes.Volatile, Wrap(StackTransition.None(), "LoadField"));
                 }
 
                 if (unaligned.HasValue)
                 {
-                    UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, StackTransition.None().Wrap("LoadField"));
+                    UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, Wrap(StackTransition.None(), "LoadField"));
                 }
 
                 var transitions =
@@ -49,16 +49,16 @@ namespace Sigil
                         new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType })
                     };
 
-                UpdateState(OpCodes.Ldfld, field, transitions.Wrap("LoadField"));
+                UpdateState(OpCodes.Ldfld, field, Wrap(transitions, "LoadField"));
             }
             else
             {
                 if (useVolatile)
                 {
-                    UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("LoadField"));
+                    UpdateState(OpCodes.Volatile, Wrap(StackTransition.None(), "LoadField"));
                 }
 
-                UpdateState(OpCodes.Ldsfld, field, StackTransition.Push(field.FieldType).Wrap("LoadField"));
+                UpdateState(OpCodes.Ldsfld, field, Wrap(StackTransition.Push(field.FieldType), "LoadField"));
             }
 
             return this;

@@ -25,12 +25,12 @@ namespace Sigil
 
             if (isVolatile)
             {
-                UpdateState(OpCodes.Volatile, StackTransition.None().Wrap("CopyBlock"));
+                UpdateState(OpCodes.Volatile, Wrap(StackTransition.None(),"CopyBlock"));
             }
 
             if (unaligned.HasValue)
             {
-                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, StackTransition.None().Wrap("CopyBlock"));
+                UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, Wrap(StackTransition.None(), "CopyBlock"));
             }
 
             var transition =
@@ -47,7 +47,7 @@ namespace Sigil
                     new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(byte).MakeByRefType() }, Type.EmptyTypes)
                 };
 
-            UpdateState(OpCodes.Cpblk, transition.Wrap("CopyBlock"));
+            UpdateState(OpCodes.Cpblk, Wrap(transition, "CopyBlock"));
 
             return this;
         }

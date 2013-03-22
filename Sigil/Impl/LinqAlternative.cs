@@ -544,7 +544,7 @@ namespace Sigil.Impl
 
         private static IEnumerable<T> _Distinct<T>(IEnumerable<T> e, IEqualityComparer<T> c)
         {
-            var h = new HashSet<T>(c);
+            var h = new LinqHashSet<T>(c);
             using (var i = e.GetEnumerator())
             {
                 while (i.MoveNext())

@@ -46,7 +46,7 @@ namespace Sigil
             var labelsCopy = ((LinqArray<Label>)labels).Select(l => l).ToArray();
 
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Switch, labelsCopy, transitions.Wrap("Switch"), out update);
+            UpdateState(OpCodes.Switch, labelsCopy, Wrap(transitions, "Switch"), out update);
 
             foreach (var label in labels)
             {

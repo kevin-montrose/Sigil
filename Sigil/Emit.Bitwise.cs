@@ -16,7 +16,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
                 };
 
-            UpdateState(op, transitions.Wrap(name));
+            UpdateState(op, Wrap(transitions, name));
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(NativeIntType) }),
                 };
 
-            UpdateState(OpCodes.Not, transitions.Wrap("Not"));
+            UpdateState(OpCodes.Not, Wrap(transitions, "Not"));
 
             return this;
         }
@@ -80,7 +80,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(int), typeof(long) }, new [] { typeof(long) })
                 };
 
-            UpdateState(op, transitions.Wrap(name));
+            UpdateState(op, Wrap(transitions, name));
         }
 
         /// <summary>

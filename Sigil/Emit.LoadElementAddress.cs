@@ -93,7 +93,7 @@ namespace Sigil
                     new StackTransition(new [] { TypeOnStack.Get<int>(), TypeOnStack.Get(arrayType) }, new [] { pushToStack })
                 };
 
-            UpdateState(OpCodes.Ldelema, elementType, transitions.Wrap("LoadElementAddress"));
+            UpdateState(OpCodes.Ldelema, elementType, Wrap(transitions, "LoadElementAddress"));
 
             return this;
         }

@@ -16,7 +16,7 @@ namespace Sigil
                 throw new InvalidOperationException("ReThrow is only legal in a catch block");
             }
 
-            UpdateState(OpCodes.Rethrow, StackTransition.None().Wrap("ReThrow"));
+            UpdateState(OpCodes.Rethrow, Wrap(StackTransition.None(), "ReThrow"));
 
             return this;
         }

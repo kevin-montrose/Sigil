@@ -313,7 +313,7 @@ namespace Sigil.Impl
             }
 
             var toPush = new LinqList<TypeOnStack>(legalSize);
-            var pushed = new HashSet<TypeOnStack>();
+            var pushed = new LinqHashSet<TypeOnStack>();
             for(var i = 0; i < legal.Count; i++)
             {
                 foreach (var p in legal[i].PushedToStack)

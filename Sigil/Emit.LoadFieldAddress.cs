@@ -31,11 +31,11 @@ namespace Sigil
                         new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType.MakeByRefType() })
                     };
 
-                UpdateState(OpCodes.Ldflda, field, transitions.Wrap("LoadFieldAddress"));
+                UpdateState(OpCodes.Ldflda, field, Wrap(transitions, "LoadFieldAddress"));
             }
             else
             {
-                UpdateState(OpCodes.Ldsflda, field, StackTransition.Push(field.FieldType.MakeByRefType()).Wrap("LoadFieldAddress"));
+                UpdateState(OpCodes.Ldsflda, field, Wrap(StackTransition.Push(field.FieldType.MakeByRefType()), "LoadFieldAddress"));
             }
 
             return this;

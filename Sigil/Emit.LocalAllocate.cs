@@ -30,7 +30,7 @@ namespace Sigil
                 FailUnverifiable("LocalAllocate");
             }
 
-            UpdateState(new[] { new StackTransition(1) }.Wrap("LocalAllocate"));
+            UpdateState(Wrap(new[] { new StackTransition(1) }, "LocalAllocate"));
 
             var transitions =
                 new[] {
@@ -38,7 +38,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(NativeIntType) })
                 };
 
-            UpdateState(OpCodes.Localloc, transitions.Wrap("LocalAllocate"));
+            UpdateState(OpCodes.Localloc, Wrap(transitions, "LocalAllocate"));
 
             return this;
         }

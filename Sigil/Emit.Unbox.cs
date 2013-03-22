@@ -40,7 +40,7 @@ namespace Sigil
 
             var transitions = new[] { new StackTransition(new[] { typeof(OnlyObjectType) }, new[] { valueType.MakeByRefType() }) };
 
-            UpdateState(OpCodes.Unbox, valueType, transitions.Wrap("Unbox"));
+            UpdateState(OpCodes.Unbox, valueType, Wrap(transitions, "Unbox"));
 
             return this;
         }
@@ -79,7 +79,7 @@ namespace Sigil
 
             var transitions = new[] { new StackTransition(new[] { typeof(OnlyObjectType) }, new[] { valueType }) };
 
-            UpdateState(OpCodes.Unbox_Any, valueType, transitions.Wrap("UnboxAny"));
+            UpdateState(OpCodes.Unbox_Any, valueType, Wrap(transitions, "UnboxAny"));
 
             return this;
         }

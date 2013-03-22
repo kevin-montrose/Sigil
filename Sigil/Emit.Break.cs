@@ -10,7 +10,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Break()
         {
-            UpdateState(OpCodes.Break, StackTransition.None().Wrap("Break"));
+            UpdateState(OpCodes.Break, Wrap(StackTransition.None(), "Break"));
 
             return this;
         }

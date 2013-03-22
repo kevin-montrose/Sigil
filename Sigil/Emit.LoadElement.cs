@@ -177,11 +177,11 @@ namespace Sigil
                         new StackTransition(new [] { typeof(int), arrType }, new [] { elementType }),
                     };
 
-                UpdateState(OpCodes.Ldelem, elementType, transitions.Wrap("LoadElement"));
+                UpdateState(OpCodes.Ldelem, elementType, Wrap(transitions, "LoadElement"));
                 return this;
             }
 
-            UpdateState(instr.Value, transitions.Wrap("LoadElement"));
+            UpdateState(instr.Value, Wrap(transitions, "LoadElement"));
 
             return this;
         }

@@ -9,20 +9,23 @@ namespace Sigil
         private TransitionWrapper CheckConvertible(string method, Type toType)
         {
             return
-                new[]
-                {
-                    new StackTransition(new [] { typeof(int) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(NativeIntType) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(long) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(float) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(double) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
-                    new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType })
+                Wrap(
+                    new[]
+                    {
+                        new StackTransition(new [] { typeof(int) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(long) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(float) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(double) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType })
                     
-                }.Wrap(method);
+                    },
+                    method
+                );
         }
 
         /// <summary>

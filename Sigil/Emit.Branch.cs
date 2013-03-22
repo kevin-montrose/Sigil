@@ -24,7 +24,7 @@ namespace Sigil
             UnusedLabels.Remove(label);
 
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Br, label, StackTransition.None().Wrap("Branch"), out update);
+            UpdateState(OpCodes.Br, label, Wrap(StackTransition.None(), "Branch"), out update);
 
             CurrentVerifier.Branch(label);
             CheckBranchesAndLabels("Branch", label);
@@ -75,7 +75,7 @@ namespace Sigil
             
 
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Beq, label, transitions.Wrap("BranchIfEqual"), out update);
+            UpdateState(OpCodes.Beq, label, Wrap(transitions, "BranchIfEqual"), out update);
 
             CurrentVerifier.Branch(label);
             CheckBranchesAndLabels("BranchIfEqual", label);
@@ -123,7 +123,7 @@ namespace Sigil
                 };
 
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Bne_Un, label, transitions.Wrap("UnsignedBranchIfNotEqual"), out update);
+            UpdateState(OpCodes.Bne_Un, label, Wrap(transitions, "UnsignedBranchIfNotEqual"), out update);
 
             CurrentVerifier.Branch(label);
             CheckBranchesAndLabels("UnsignedBranchIfNotEqual", label);
@@ -150,16 +150,19 @@ namespace Sigil
         private TransitionWrapper BranchComparableTransitions(string name)
         {
             return
-                new[]
-                {
-                    new StackTransition(new [] { typeof(int), typeof(int) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(long), typeof(long) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(float), typeof(float) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(double), typeof(double) }, Type.EmptyTypes)
-                }.Wrap(name);
+                Wrap(
+                    new[]
+                    {
+                        new StackTransition(new [] { typeof(int), typeof(int) }, Type.EmptyTypes),
+                        new StackTransition(new [] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, Type.EmptyTypes),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
+                        new StackTransition(new [] { typeof(long), typeof(long) }, Type.EmptyTypes),
+                        new StackTransition(new [] { typeof(float), typeof(float) }, Type.EmptyTypes),
+                        new StackTransition(new [] { typeof(double), typeof(double) }, Type.EmptyTypes)
+                    },
+                    name
+                );
         }
 
         /// <summary>
@@ -525,7 +528,7 @@ namespace Sigil
                 };
 
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Brfalse, label, transitions.Wrap("BranchIfFalse"), out update);
+            UpdateState(OpCodes.Brfalse, label, Wrap(transitions, "BranchIfFalse"), out update);
 
             CurrentVerifier.Branch(label);
             CheckBranchesAndLabels("BranchIfFalse", label);
@@ -577,7 +580,7 @@ namespace Sigil
                 };
 
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Brtrue, label, transitions.Wrap("BranchIfTrue"), out update);
+            UpdateState(OpCodes.Brtrue, label, Wrap(transitions, "BranchIfTrue"), out update);
 
             CurrentVerifier.Branch(label);
             CheckBranchesAndLabels("BranchIfTrue", label);

@@ -10,7 +10,7 @@ namespace Sigil
         /// </summary>
         public Emit<DelegateType> Nop()
         {
-            UpdateState(OpCodes.Nop, StackTransition.None().Wrap("Nop"));
+            UpdateState(OpCodes.Nop, Wrap(StackTransition.None(), "Nop"));
 
             return this;
         }

@@ -18,7 +18,7 @@ namespace Sigil
                     new StackTransition(new[] { typeof(TypedReference) }, new [] { typeof(RuntimeTypeHandle) })
                 };
 
-            UpdateState(OpCodes.Refanytype, transitions.Wrap("ReferenceAnyType"));
+            UpdateState(OpCodes.Refanytype, Wrap(transitions, "ReferenceAnyType"));
 
             return this;
         }

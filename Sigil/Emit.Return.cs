@@ -16,9 +16,9 @@ namespace Sigil
         {
             if (ReturnType == TypeOnStack.Get(typeof(void)))
             {
-                UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
+                UpdateState(Wrap(new[] { new StackTransition(0) }, "Return"));
 
-                UpdateState(OpCodes.Ret, StackTransition.None().Wrap("Return"));
+                UpdateState(OpCodes.Ret, Wrap(StackTransition.None(), "Return"));
 
                 Returns.Add(IL.Index);
 
@@ -30,11 +30,11 @@ namespace Sigil
                 return this;
             }
 
-            UpdateState(OpCodes.Ret, StackTransition.Pop(ReturnType).Wrap("Return"));
+            UpdateState(OpCodes.Ret, Wrap(StackTransition.Pop(ReturnType), "Return"));
 
             Returns.Add(IL.Index);
 
-            UpdateState((new[] { new StackTransition(0) }).Wrap("Return"));
+            UpdateState(Wrap(new[] { new StackTransition(0) }, "Return"));
 
             CheckBranchesAndLabels("Return", Labels["__start"]);
 

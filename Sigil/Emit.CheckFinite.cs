@@ -20,7 +20,7 @@ namespace Sigil
                 };
 
             // ckfinite leaves the value on the stack, oddly enough
-            UpdateState(OpCodes.Ckfinite, transitions.Wrap("CheckFinite"));
+            UpdateState(OpCodes.Ckfinite, Wrap(transitions, "CheckFinite"));
 
             return this;
         }

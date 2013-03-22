@@ -388,7 +388,7 @@ namespace Sigil
                 }
             }
 
-            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, transitions.Wrap("CallIndirect"), arglist);
+            UpdateState(OpCodes.Calli, callConventions, returnType, parameterTypes, Wrap(transitions, "CallIndirect"), arglist);
 
             return this;
         }

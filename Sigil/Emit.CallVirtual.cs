@@ -59,7 +59,7 @@ namespace Sigil
             // Shove the constrained prefix in if it's supplied
             if (constrained != null)
             {
-                UpdateState(OpCodes.Constrained, constrained, StackTransition.None().Wrap("CallVirtual"));
+                UpdateState(OpCodes.Constrained, constrained, Wrap(StackTransition.None(), "CallVirtual"));
             }
 
             IEnumerable<StackTransition> transitions;
@@ -81,7 +81,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Callvirt, method, transitions.Wrap("CallVirtual"), arglist: arglist);
+            UpdateState(OpCodes.Callvirt, method, Wrap(transitions, "CallVirtual"), arglist: arglist);
 
             return this;
         }

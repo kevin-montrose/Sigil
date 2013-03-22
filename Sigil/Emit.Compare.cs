@@ -8,14 +8,17 @@ namespace Sigil
         private TransitionWrapper ValidateComparable(string method)
         {
             return
-                new[]
-                {
-                    new StackTransition(new [] { typeof(int), typeof(int) }, new [] { typeof(int) }),
-                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(int) }),
-                    new StackTransition(new [] { typeof(long), typeof(long) }, new [] { typeof(int) }),
-                    new StackTransition(new [] { typeof(float), typeof(float) }, new [] { typeof(int) }),
-                    new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(int) }),
-                }.Wrap(method);
+                Wrap(
+                    new[]
+                    {
+                        new StackTransition(new [] { typeof(int), typeof(int) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(long), typeof(long) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(float), typeof(float) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(double), typeof(double) }, new [] { typeof(int) }),
+                    },
+                    method
+                );
         }
 
         /// <summary>
@@ -31,7 +34,7 @@ namespace Sigil
                     new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, new [] { typeof(int) })
                 };
 
-            UpdateState(OpCodes.Ceq, transitions.Wrap("CompareEqual"));
+            UpdateState(OpCodes.Ceq, Wrap(transitions, "CompareEqual"));
 
             return this;
         }

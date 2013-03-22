@@ -274,7 +274,7 @@ namespace Sigil.Impl
             }
         }
 
-        public int Count
+        public new int Count
         {
             get
             {
@@ -346,7 +346,7 @@ namespace Sigil.Impl
     internal class LinqStack<T> : LinqRoot<T>
         where T : class
     {
-        public int Count { get { return Inner.Count; } }
+        public new int Count { get { return Inner.Count; } }
 
         private Stack<T> Inner;
 
@@ -440,10 +440,29 @@ namespace Sigil.Impl
 
     internal class LinqHashSet<T> : LinqRoot<T>
     {
-        //private HashSet<T> Inner;
+        private class Comparer : System.Collections.IEqualityComparer
+        {
+            private IEqualityComparer<T> Inner;
+            public Comparer(IEqualityComparer<T> i) { Inner = i; }
+
+            public new bool Equals(object x, object y)
+            {
+                var xAs = (T)x;
+                var yAs = (T)y;
+
+                return Inner.Equals(xAs, yAs);
+            }
+
+            public int GetHashCode(object obj)
+            {
+                return Inner.GetHashCode((T)obj);
+            }
+        }
+
+
         private System.Collections.Hashtable Inner;
 
-        public int Count { get { return Inner.Count; } }
+        public new int Count { get { return Inner.Count; } }
 
         private LinqHashSet(System.Collections.Hashtable h)
         {
@@ -451,6 +470,7 @@ namespace Sigil.Impl
         }
 
         public LinqHashSet() : this(new System.Collections.Hashtable()) { }
+        public LinqHashSet(IEqualityComparer<T> c) : this(new System.Collections.Hashtable(new Comparer(c))) { }
         public LinqHashSet(IEnumerable<T> e) : this() 
         {
             foreach (var x in e)
