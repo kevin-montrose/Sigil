@@ -116,6 +116,17 @@ namespace Sigil.Impl
             if (e == null) throw new ArgumentNullException("e");
             if (p == null) throw new ArgumentNullException("p");
 
+            var asList = e as IList<T>;
+            if (asList != null)
+            {
+                for (var i = 0; i < asList.Count; i++)
+                {
+                    if (p(asList[i])) return true;
+                }
+
+                return false;
+            }
+
             using (var i = e.GetEnumerator())
             {
                 while (i.MoveNext())

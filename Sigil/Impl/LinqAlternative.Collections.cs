@@ -23,7 +23,7 @@ namespace Sigil.Impl
             return LinqAlternative.Count(InnerEnumerable(), p);
         }
 
-        public virtual bool Any(SigilFunc<T, bool> p)
+        public bool Any(SigilFunc<T, bool> p)
         {
             return LinqAlternative.Any(InnerEnumerable(), p);
         }
@@ -163,7 +163,7 @@ namespace Sigil.Impl
             return LinqAlternative.OrderByDescending(InnerEnumerable(), p);
         }
 
-        public virtual void Each(Action<T> a)
+        public void Each(Action<T> a)
         {
             LinqAlternative.Each(InnerEnumerable(), a);
         }
@@ -331,16 +331,6 @@ namespace Sigil.Impl
         {
             Inner.CopyTo(arr);
         }
-
-        public override bool Any(SigilFunc<T, bool> p)
-        {
-            for (var i = 0; i < Inner.Count; i++)
-            {
-                if (p(Inner[i])) return true;
-            }
-
-            return false;
-        }
     }
 
     internal class LinqStack<T> : LinqRoot<T>
@@ -427,14 +417,6 @@ namespace Sigil.Impl
         protected override IEnumerable<T> InnerEnumerable()
         {
             return Inner;
-        }
-
-        public override void Each(Action<T> a)
-        {
-            for (var i = 0; i < Inner.Length; i++)
-            {
-                a(Inner[i]);
-            }
         }
     }
 
