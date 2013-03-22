@@ -556,13 +556,15 @@ namespace Sigil.Impl
 
         private static IEnumerable<T> _Distinct<T>(IEnumerable<T> e, IEqualityComparer<T> c)
         {
-            var h = new LinqHashSet<T>(c);
+            var h = new Hashtable();
             using (var i = e.GetEnumerator())
             {
                 while (i.MoveNext())
                 {
-                    if (h.Add(i.Current))
+                    if (!h.Contains(i.Current))
                     {
+                        h.Add(i.Current, "");
+
                         yield return i.Current;
                     }
                 }

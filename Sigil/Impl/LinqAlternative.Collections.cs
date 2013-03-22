@@ -469,13 +469,9 @@ namespace Sigil.Impl
             }
         }
 
-        public bool Add(T item)
+        public void Add(T item)
         {
-            if (Inner.ContainsKey(item)) return false;
-
-            Inner.Add(item, "");
-
-            return true;
+            Inner[item] = "";
         }
 
         public bool Remove(T item)
