@@ -73,7 +73,7 @@ namespace Sigil.Impl
             return LinqEnumerable<T>.For(_Where(e, p));
         }
 
-        public static int Count<T>( IEnumerable<T> e)
+        public static int Count<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException("e");
 
@@ -181,7 +181,7 @@ namespace Sigil.Impl
             return LinqEnumerable<V>.For(_Select(e, p));
         }
 
-        public static LinqList<T> ToList<T>( IEnumerable<T> e)
+        public static LinqList<T> ToList<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException();
 
@@ -208,7 +208,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public static T[] ToArray<T>( IEnumerable<T> e)
+        public static T[] ToArray<T>(IEnumerable<T> e)
         {
             var l = ToList(e);
 
@@ -244,7 +244,7 @@ namespace Sigil.Impl
             return e;
         }
 
-        public static T FirstOrDefault<T>( IEnumerable<T> e)
+        public static T FirstOrDefault<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException("e");
 
@@ -278,7 +278,7 @@ namespace Sigil.Impl
             return default(T);
         }
 
-        public static T First<T>( IEnumerable<T> e)
+        public static T First<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException("e");
 
@@ -293,7 +293,7 @@ namespace Sigil.Impl
             }
         }
 
-        public static T ElementAt<T>( IEnumerable<T> e, int n)
+        public static T ElementAt<T>(IEnumerable<T> e, int n)
         {
             if (e == null) throw new ArgumentNullException("e");
             if (n < 0) throw new ArgumentOutOfRangeException();
@@ -309,7 +309,7 @@ namespace Sigil.Impl
             }
         }
 
-        public static T Last<T>( IEnumerable<T> e)
+        public static T Last<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException("e");
 
@@ -346,7 +346,7 @@ namespace Sigil.Impl
                 foreach (var x in reversed)
                 {
                     yield return x;
-                } 
+                }
             }
         }
 
@@ -402,7 +402,7 @@ namespace Sigil.Impl
             }
         }
 
-        public static LinqRoot<T> Skip<T>( IEnumerable<T> e, int n)
+        public static LinqRoot<T> Skip<T>(IEnumerable<T> e, int n)
         {
             if (e == null) throw new ArgumentNullException("e");
             if (n < 0) throw new ArgumentException("n");
@@ -410,7 +410,7 @@ namespace Sigil.Impl
             return LinqEnumerable<T>.For(_Skip(e, n));
         }
 
-        public static T Single<T>( IEnumerable<T> e)
+        public static T Single<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException("e");
 
@@ -426,7 +426,7 @@ namespace Sigil.Impl
             }
         }
 
-        public static T SingleOrDefault<T>( IEnumerable<T> e)
+        public static T SingleOrDefault<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException("e");
 
@@ -476,7 +476,7 @@ namespace Sigil.Impl
         private static IEnumerable<T> _Cast<T>(IEnumerable e)
         {
             var i = e.GetEnumerator();
-            
+
             while (i.MoveNext())
             {
                 yield return (T)i.Current;
@@ -490,7 +490,7 @@ namespace Sigil.Impl
             return LinqEnumerable<T>.For(_Cast<T>(e));
         }
 
-        public static bool Contains<T>( IEnumerable<T> e, T a)
+        public static bool Contains<T>(IEnumerable<T> e, T a)
         {
             if (e == null) throw new ArgumentNullException("e");
             if (a == null) throw new ArgumentNullException("a");
@@ -569,7 +569,7 @@ namespace Sigil.Impl
             }
         }
 
-        public static LinqRoot<T> Distinct<T>( IEnumerable<T> e)
+        public static LinqRoot<T> Distinct<T>(IEnumerable<T> e)
         {
             if (e == null) throw new ArgumentNullException("e");
 
@@ -638,7 +638,7 @@ namespace Sigil.Impl
                         yield return data[ixs[nextYield]];
                         nextYield++;
                     }
-                } 
+                }
             }
         }
 
@@ -664,7 +664,7 @@ namespace Sigil.Impl
                     storeIndex++;
                 }
             }
-            
+
             var tmp = ixs[storeIndex];
             ixs[storeIndex] = ixs[right];
             ixs[right] = tmp;
@@ -709,7 +709,7 @@ namespace Sigil.Impl
             return LinqEnumerable<T>.For(_Order(e, p, DescendingComparer<V>.Default));
         }
 
-        public static void Each<T>( IEnumerable<T> e, Action<T> a)
+        public static void Each<T>(IEnumerable<T> e, Action<T> a)
         {
             var arr = e as T[];
             if (arr != null)
