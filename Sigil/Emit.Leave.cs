@@ -28,20 +28,20 @@ namespace Sigil
                 throw new InvalidOperationException("Leave can only be used within an exception or catch block");
             }
 
-            CurrentVerifier.Branch(label);
-
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Leave, label, Wrap(new[] { new StackTransition(new [] { typeof(PopAllType) }, Type.EmptyTypes) }, "Leave"), out update);
 
-            CheckBranchesAndLabels("Leave", label);
-
             Branches.Add(SigilTuple.Create(OpCodes.Leave, label, IL.Index));
 
             BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Leave);
-
-            CurrentVerifier = null;
             MustMark = true;
+
+            var valid = CurrentVerifiers.UnconditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("Leave", valid, IL.Instructions(AllLocals));
+            }
 
             return this;
         }

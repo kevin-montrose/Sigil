@@ -26,14 +26,16 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Br, label, Wrap(StackTransition.None(), "Branch"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("Branch", label);
+            var valid = CurrentVerifiers.UnconditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("Branch", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Br, label, IL.Index));
 
             BranchPatches[IL.Index] = SigilTuple.Create(label, update, OpCodes.Br);
 
-            CurrentVerifier = null;
             MustMark = true;
 
             return this;
@@ -72,15 +74,14 @@ namespace Sigil
                     new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, Type.EmptyTypes)
                 };
 
-            
-
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Beq, label, Wrap(transitions, "BranchIfEqual"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("BranchIfEqual", label);
-
-            RecordConditionalBranchState("BranchIfEqual", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("BranchIfEqual", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Beq, label, IL.Index));
 
@@ -125,10 +126,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bne_Un, label, Wrap(transitions, "UnsignedBranchIfNotEqual"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("UnsignedBranchIfNotEqual", label);
-
-            RecordConditionalBranchState("UnsignedBranchIfNotEqual", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("UnsignedBranchIfNotEqual", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Bne_Un, label, IL.Index));
 
@@ -185,10 +187,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bge, label, BranchComparableTransitions("BranchIfGreaterOrEqual"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("BranchIfGreaterOrEqual", label);
-
-            RecordConditionalBranchState("BranchIfGreaterOrEqual", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("BranchIfGreaterOrEqual", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Bge, label, IL.Index));
 
@@ -228,10 +231,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bge_Un, label, BranchComparableTransitions("UnsignedBranchIfGreaterOrEqual"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("UnsignedBranchIfGreaterOrEqual", label);
-
-            RecordConditionalBranchState("UnsignedBranchIfGreaterOrEqual", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("UnsignedBranchIfGreaterOrEqual", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Bge_Un, label, IL.Index));
 
@@ -270,10 +274,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bgt, label, BranchComparableTransitions("BranchIfGreater"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("BranchIfGreater", label);
-
-            RecordConditionalBranchState("BranchIfGreater", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("BranchIfGreater", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Bgt, label, IL.Index));
 
@@ -312,10 +317,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Bgt_Un, label, BranchComparableTransitions("UnsignedBranchIfGreater"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("UnsignedBranchIfGreater", label);
-
-            RecordConditionalBranchState("UnsignedBranchIfGreater", label);
+            var valid = CurrentVerifiers.UnconditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("UnsignedBranchIfGreater", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Bgt_Un, label, IL.Index));
 
@@ -354,10 +360,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Ble, label, BranchComparableTransitions("BranchIfLessOrEqual"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("BranchIfLessOrEqual", label);
-
-            RecordConditionalBranchState("BranchIfLessOrEqual", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("BranchIfLessOrEqual", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Ble, label, IL.Index));
 
@@ -396,10 +403,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Ble_Un, label, BranchComparableTransitions("UnsignedBranchIfLessOrEqual"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("UnsignedBranchIfLessOrEqual", label);
-
-            RecordConditionalBranchState("UnsignedBranchIfLessOrEqual", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("UnsignedBranchIfLessOrEqual", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Ble_Un, label, IL.Index));
 
@@ -438,10 +446,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Blt, label, BranchComparableTransitions("BranchIfLess"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("BranchIfLess", label);
-
-            RecordConditionalBranchState("BranchIfLess", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("BranchIfLess", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Blt, label, IL.Index));
 
@@ -480,10 +489,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Blt_Un, label, BranchComparableTransitions("UnsignedBranchIfLess"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("UnsignedBranchIfLess", label);
-
-            RecordConditionalBranchState("UnsignedBranchIfLess", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("UnsignedBranchIfLess", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Blt_Un, label, IL.Index));
 
@@ -530,10 +540,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Brfalse, label, Wrap(transitions, "BranchIfFalse"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("BranchIfFalse", label);
-
-            RecordConditionalBranchState("BranchIfFalse", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("BranchIfFalse", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Brfalse, label, IL.Index));
 
@@ -582,10 +593,11 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Brtrue, label, Wrap(transitions, "BranchIfTrue"), out update);
 
-            CurrentVerifier.Branch(label);
-            CheckBranchesAndLabels("BranchIfTrue", label);
-
-            RecordConditionalBranchState("BranchIfTrue", label);
+            var valid = CurrentVerifiers.ConditionalBranch(label);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("BranchIfTrue", valid, IL.Instructions(AllLocals));
+            }
 
             Branches.Add(SigilTuple.Create(OpCodes.Brtrue, label, IL.Index));
 

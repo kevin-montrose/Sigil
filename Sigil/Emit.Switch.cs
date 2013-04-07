@@ -48,6 +48,12 @@ namespace Sigil
             UpdateOpCodeDelegate update;
             UpdateState(OpCodes.Switch, labelsCopy, Wrap(transitions, "Switch"), out update);
 
+            var valid = CurrentVerifiers.ConditionalBranch(labels);
+            if (!valid.Success)
+            {
+                throw new SigilVerificationException("Switch", valid, IL.Instructions(AllLocals));
+            }
+
             foreach (var label in labels)
             {
                 Branches.Add(SigilTuple.Create(OpCodes.Switch, label, IL.Index));

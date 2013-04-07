@@ -104,13 +104,12 @@ namespace Sigil
         /// </summary>
         public LabelLookup Labels { get; private set; }
 
-        private VerifiableTracker CurrentVerifier;
+       //private VerifiableTracker CurrentVerifier;
+        private RollingVerifier CurrentVerifiers;
 
         private bool MustMark;
 
         private LinqList<int> ElidableCasts;
-
-        private LinqHashSet<VerifiableTracker> AllTrackers = new LinqHashSet<VerifiableTracker>();
 
         // Stores the stack during a BranchIf*; knowing that when the label is marked it'll need to be verified
         private LinqDictionary<Label, LinqList<VerifiableTracker>> StateAtConditionalBranchToLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
@@ -183,7 +182,7 @@ namespace Sigil
             ElidableCasts = new LinqList<int>();
 
             var start = DefineLabel("__start");
-            CurrentVerifier = new VerifiableTracker(start);
+            CurrentVerifiers = new RollingVerifier(start);
             MarkLabel(start);
         }
 
@@ -235,11 +234,6 @@ namespace Sigil
             if ((optimizationOptions & ~OptimizationOptions.All) != 0)
             {
                 throw new ArgumentException("optimizationOptions contained unknown flags, found " + optimizationOptions);
-            }
-
-            if (!HasFlag(ValidationOptions, ValidationOptions.ControlFlowImmediately))
-            {
-                CheckBranchesAndLabels("Deferred Validation", Labels["__start"], overrideOpts: true);
             }
 
             if ((optimizationOptions & OptimizationOptions.EnableTrivialCastEliding) != 0)
@@ -836,21 +830,6 @@ namespace Sigil
             }
         }
 
-        private LinqHashSet<TrackerDescriber> VerificationCache = new LinqHashSet<TrackerDescriber>();
-        private void CheckBranchesAndLabels(string method, Label modifiedLabel, bool overrideOpts = false)
-        {
-            if (!overrideOpts)
-            {
-                if (!HasFlag(ValidationOptions, ValidationOptions.ControlFlowImmediately)) return;
-            }
-
-            var res = VerifiableTracker.Verify(modifiedLabel, AllTrackers, VerificationCache);
-            if (res != null)
-            {
-                throw new SigilVerificationException(method, res, IL.Instructions(AllLocals));
-            }
-        }
-
         private void UpdateStackAndInstrStream(OpCode? instr, TransitionWrapper transitions, bool firstParamIsThis = false)
         {
             if (Invalidated)
@@ -865,7 +844,7 @@ namespace Sigil
 
             var wrapped = new InstructionAndTransitions(instr, instr.HasValue ? (int?)IL.Index : null, transitions.Transitions);
 
-            var verifyRes = CurrentVerifier.Transition(wrapped);
+            var verifyRes = CurrentVerifiers.Transition(wrapped);
             if (!verifyRes.Success)
             {
                 throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(AllLocals));

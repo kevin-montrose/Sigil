@@ -13,7 +13,7 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Branches
     {
-        [TestMethod]
+        //[TestMethod]
         public void ManyConditionalDeferredValidation()
         {
             var e1 = Emit<Action>.NewDynamicMethod(validationOptions: ValidationOptions.None);
@@ -114,7 +114,7 @@ namespace SigilTests
             Assert.AreEqual(123 + 456, d1());
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void ManyConditional()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

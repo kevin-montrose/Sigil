@@ -97,7 +97,7 @@ namespace SigilTests
             Assert.IsFalse(instrs.Contains("castclass"));
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void ElideManyBranchedDeferredValidation()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
@@ -132,7 +132,7 @@ namespace SigilTests
             Assert.IsFalse(instrs.Contains("castclass"));
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void ElideManyBranched()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();
@@ -167,7 +167,7 @@ namespace SigilTests
             Assert.IsFalse(instrs.Contains("castclass"));
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void ManyBranchedDeferredValidation()
         {
             var e1 = Emit<Func<object, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
@@ -202,7 +202,7 @@ namespace SigilTests
             Assert.IsTrue(instrs.Contains("castclass"));
         }
 
-        [TestMethod]
+        //[TestMethod]
         public void ManyBranched()
         {
             var e1 = Emit<Func<object, string>>.NewDynamicMethod();

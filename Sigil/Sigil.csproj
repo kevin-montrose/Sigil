@@ -226,6 +226,7 @@
       <DependentUpon>LinqAlternative.cs</DependentUpon>
     </Compile>
     <Compile Include="Impl\ReturnTracer.cs" />
+    <Compile Include="Impl\RollingVerifier.cs" />
     <Compile Include="Impl\SpecialTypes.cs" />
     <Compile Include="Impl\StackTransition.cs" />
     <Compile Include="Impl\TransitionWrapper.cs" />

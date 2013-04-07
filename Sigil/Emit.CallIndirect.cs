@@ -359,7 +359,7 @@ namespace Sigil
                 }
             }
 
-            var onStack = CurrentVerifier.InferStack(LinqAlternative.ElementAt(transitions, 0).PoppedFromStack.Length);
+            var onStack = CurrentVerifiers.InferStack(LinqAlternative.ElementAt(transitions, 0).PoppedFromStack.Length);
             if (onStack != null)
             {
                 var funcPtr = onStack.First();

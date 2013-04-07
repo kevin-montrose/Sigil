@@ -124,43 +124,6 @@ namespace Sigil
             }
         }
 
-        private void RecordMarkState(string method, Label label)
-        {
-            StateAtLabel[label] = CurrentVerifier.Clone();
-
-            if (StateAtConditionalBranchToLabel.ContainsKey(label))
-            {
-                CheckBranchStateCompatibility(method, label, CurrentVerifier);
-            }
-        }
-
-        private void CheckBranchStateCompatibility(string method, Label labelBranchedTo, VerifiableTracker compareTo)
-        {
-            foreach (var otherState in StateAtConditionalBranchToLabel[labelBranchedTo].AsEnumerable())
-            {
-                var res = otherState.AreCompatible(compareTo);
-
-                if (res != null)
-                {
-                    throw new SigilVerificationException(method + " at " + labelBranchedTo, res, IL.Instructions(AllLocals));
-                }
-            }
-        }
-
-        private void RecordConditionalBranchState(string method, Label label)
-        {
-            LinqList<VerifiableTracker> existingStates;
-            if (!StateAtConditionalBranchToLabel.TryGetValue(label, out existingStates))
-            {
-                existingStates = new LinqList<VerifiableTracker>();
-                StateAtConditionalBranchToLabel[label] = existingStates;
-            }
-
-            CheckBranchStateCompatibility(method, label, CurrentVerifier);
-
-            existingStates.Add(CurrentVerifier.Clone());
-        }
-
         /// <summary>
         /// Defines a new label.
         /// 
@@ -237,27 +200,20 @@ namespace Sigil
 
             if (MustMark)
             {
-                CurrentVerifier = new VerifiableTracker(label, baseless: true);
-                AllTrackers.Add(CurrentVerifier);
                 MustMark = false;
             }
-            else
+
+            var valid = CurrentVerifiers.Mark(label);
+            if (!valid.Success)
             {
-                CurrentVerifier = new VerifiableTracker(label, baseless: CurrentVerifier.IsBaseless, createdFrom: CurrentVerifier);
-                AllTrackers.Add(CurrentVerifier);
+                throw new SigilVerificationException("MarkLabel", valid, IL.Instructions(AllLocals));
             }
-
-            CurrentVerifier.Mark(label);
-
-            RecordMarkState("MarkLabel", label);
 
             UnmarkedLabels.Remove(label);
 
             IL.MarkLabel(label);
 
             Marks[label] = IL.Index;
-
-            CheckBranchesAndLabels("MarkLabel", label);
 
             return this;
         }
