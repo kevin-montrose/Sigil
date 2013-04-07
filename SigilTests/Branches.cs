@@ -13,34 +13,6 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Branches
     {
-        //[TestMethod]
-        public void ManyConditionalDeferredValidation()
-        {
-            var e1 = Emit<Action>.NewDynamicMethod(validationOptions: ValidationOptions.None);
-
-            for (var i = 0; i < 50; i++)
-            {
-                var l1 = e1.DefineLabel();
-                var l2 = e1.DefineLabel();
-
-                e1.LoadConstant(0);
-                e1.LoadConstant(1);
-                e1.BranchIfGreater(l1);
-
-                e1.LoadConstant(2);
-                e1.LoadConstant(3);
-                e1.BranchIfLess(l2);
-
-                e1.MarkLabel(l1);
-                e1.MarkLabel(l2);
-            }
-
-            e1.Return();
-
-            var d1 = e1.CreateDelegate();
-            d1();
-        }
-
         [TestMethod]
         public void Scan()
         {
@@ -114,7 +86,7 @@ namespace SigilTests
             Assert.AreEqual(123 + 456, d1());
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void ManyConditional()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

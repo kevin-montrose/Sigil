@@ -22,15 +22,10 @@ namespace Sigil
         None = 0,
 
         /// <summary>
-        /// Validates all control flow whenever a new control transfer or label is introduced
-        /// </summary>
-        ControlFlowImmediately = 1,
-
-        /// <summary>
         /// Performs all validation immediately.
         /// 
         /// This is the default
         /// </summary>
-        All = ControlFlowImmediately
+        All = 0
     }
 }

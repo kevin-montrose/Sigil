@@ -55,7 +55,7 @@ namespace SigilTests
             }
         }
 
-        //[TestMethod]
+        [TestMethod]
         public void BadBranchManyConditional()
         {
             var e1 = Emit<Action>.NewDynamicMethod();
@@ -107,50 +107,7 @@ namespace SigilTests
             }
         }
 
-        //[TestMethod]
-        public void BadManyBranchDeferredValidation()
-        {
-            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
-
-            e1.LoadArgument(0);
-
-            for (var i = 0; i < 50; i++)
-            {
-                var l1 = e1.DefineLabel();
-                var l2 = e1.DefineLabel();
-                var l3 = e1.DefineLabel();
-                e1.Branch(l1);
-
-                e1.MarkLabel(l2);
-                e1.Duplicate();
-                e1.Pop();
-                e1.Branch(l3);
-
-                e1.MarkLabel(l1);
-                e1.Branch(l2);
-
-                e1.MarkLabel(l3);
-            }
-
-            e1.Pop();
-
-            e1.Return();
-
-            try
-            {
-                e1.CreateDelegate();
-
-                Assert.Fail();
-            }
-            catch (SigilVerificationException e)
-            {
-                var f = e.GetDebugInfo();
-                Assert.AreEqual("Deferred Validation expects a value on the stack, but it was empty", e.Message);
-                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldarg.0\r\nbr _label0\r\n\r\n_label1:\r\ndup\r\npop\r\nbr _label2\r\n\r\n_label0:\r\nbr _label1\r\n\r\n_label2:\r\nbr _label3\r\n\r\n_label4:\r\ndup\r\npop\r\nbr _label5\r\n\r\n_label3:\r\nbr _label4\r\n\r\n_label5:\r\nbr _label6\r\n\r\n_label7:\r\ndup\r\npop\r\nbr _label8\r\n\r\n_label6:\r\nbr _label7\r\n\r\n_label8:\r\nbr _label9\r\n\r\n_label10:\r\ndup\r\npop\r\nbr _label11\r\n\r\n_label9:\r\nbr _label10\r\n\r\n_label11:\r\nbr _label12\r\n\r\n_label13:\r\ndup\r\npop\r\nbr _label14\r\n\r\n_label12:\r\nbr _label13\r\n\r\n_label14:\r\nbr _label15\r\n\r\n_label16:\r\ndup\r\npop\r\nbr _label17\r\n\r\n_label15:\r\nbr _label16\r\n\r\n_label17:\r\nbr _label18\r\n\r\n_label19:\r\ndup\r\npop\r\nbr _label20\r\n\r\n_label18:\r\nbr _label19\r\n\r\n_label20:\r\nbr _label21\r\n\r\n_label22:\r\ndup\r\npop\r\nbr _label23\r\n\r\n_label21:\r\nbr _label22\r\n\r\n_label23:\r\nbr _label24\r\n\r\n_label25:\r\ndup\r\npop\r\nbr _label26\r\n\r\n_label24:\r\nbr _label25\r\n\r\n_label26:\r\nbr _label27\r\n\r\n_label28:\r\ndup\r\npop\r\nbr _label29\r\n\r\n_label27:\r\nbr _label28\r\n\r\n_label29:\r\nbr _label30\r\n\r\n_label31:\r\ndup\r\npop\r\nbr _label32\r\n\r\n_label30:\r\nbr _label31\r\n\r\n_label32:\r\nbr _label33\r\n\r\n_label34:\r\ndup\r\npop\r\nbr _label35\r\n\r\n_label33:\r\nbr _label34\r\n\r\n_label35:\r\nbr _label36\r\n\r\n_label37:\r\ndup\r\npop\r\nbr _label38\r\n\r\n_label36:\r\nbr _label37\r\n\r\n_label38:\r\nbr _label39\r\n\r\n_label40:\r\ndup\r\npop\r\nbr _label41\r\n\r\n_label39:\r\nbr _label40\r\n\r\n_label41:\r\nbr _label42\r\n\r\n_label43:\r\ndup\r\npop\r\nbr _label44\r\n\r\n_label42:\r\nbr _label43\r\n\r\n_label44:\r\nbr _label45\r\n\r\n_label46:\r\ndup\r\npop\r\nbr _label47\r\n\r\n_label45:\r\nbr _label46\r\n\r\n_label47:\r\nbr _label48\r\n\r\n_label49:\r\ndup\r\npop\r\nbr _label50\r\n\r\n_label48:\r\nbr _label49\r\n\r\n_label50:\r\nbr _label51\r\n\r\n_label52:\r\ndup\r\npop\r\nbr _label53\r\n\r\n_label51:\r\nbr _label52\r\n\r\n_label53:\r\nbr _label54\r\n\r\n_label55:\r\ndup\r\npop\r\nbr _label56\r\n\r\n_label54:\r\nbr _label55\r\n\r\n_label56:\r\nbr _label57\r\n\r\n_label58:\r\ndup\r\npop\r\nbr _label59\r\n\r\n_label57:\r\nbr _label58\r\n\r\n_label59:\r\nbr _label60\r\n\r\n_label61:\r\ndup\r\npop\r\nbr _label62\r\n\r\n_label60:\r\nbr _label61\r\n\r\n_label62:\r\nbr _label63\r\n\r\n_label64:\r\ndup\r\npop\r\nbr _label65\r\n\r\n_label63:\r\nbr _label64\r\n\r\n_label65:\r\nbr _label66\r\n\r\n_label67:\r\ndup\r\npop\r\nbr _label68\r\n\r\n_label66:\r\nbr _label67\r\n\r\n_label68:\r\nbr _label69\r\n\r\n_label70:\r\ndup\r\npop\r\nbr _label71\r\n\r\n_label69:\r\nbr _label70\r\n\r\n_label71:\r\nbr _label72\r\n\r\n_label73:\r\ndup\r\npop\r\nbr _label74\r\n\r\n_label72:\r\nbr _label73\r\n\r\n_label74:\r\nbr _label75\r\n\r\n_label76:\r\ndup\r\npop\r\nbr _label77\r\n\r\n_label75:\r\nbr _label76\r\n\r\n_label77:\r\nbr _label78\r\n\r\n_label79:\r\ndup\r\npop\r\nbr _label80\r\n\r\n_label78:\r\nbr _label79\r\n\r\n_label80:\r\nbr _label81\r\n\r\n_label82:\r\ndup\r\npop\r\nbr _label83\r\n\r\n_label81:\r\nbr _label82\r\n\r\n_label83:\r\nbr _label84\r\n\r\n_label85:\r\ndup\r\npop\r\nbr _label86\r\n\r\n_label84:\r\nbr _label85\r\n\r\n_label86:\r\nbr _label87\r\n\r\n_label88:\r\ndup\r\npop\r\nbr _label89\r\n\r\n_label87:\r\nbr _label88\r\n\r\n_label89:\r\nbr _label90\r\n\r\n_label91:\r\ndup\r\npop\r\nbr _label92\r\n\r\n_label90:\r\nbr _label91\r\n\r\n_label92:\r\nbr _label93\r\n\r\n_label94:\r\ndup\r\npop\r\nbr _label95\r\n\r\n_label93:\r\nbr _label94\r\n\r\n_label95:\r\nbr _label96\r\n\r\n_label97:\r\ndup\r\npop\r\nbr _label98\r\n\r\n_label96:\r\nbr _label97\r\n\r\n_label98:\r\nbr _label99\r\n\r\n_label100:\r\ndup\r\npop\r\nbr _label101\r\n\r\n_label99:\r\nbr _label100\r\n\r\n_label101:\r\nbr _label102\r\n\r\n_label103:\r\ndup\r\npop\r\nbr _label104\r\n\r\n_label102:\r\nbr _label103\r\n\r\n_label104:\r\nbr _label105\r\n\r\n_label106:\r\ndup\r\npop\r\nbr _label107\r\n\r\n_label105:\r\nbr _label106\r\n\r\n_label107:\r\nbr _label108\r\n\r\n_label109:\r\ndup\r\npop\r\nbr _label110\r\n\r\n_label108:\r\nbr _label109\r\n\r\n_label110:\r\nbr _label111\r\n\r\n_label112:\r\ndup\r\npop\r\nbr _label113\r\n\r\n_label111:\r\nbr _label112\r\n\r\n_label113:\r\nbr _label114\r\n\r\n_label115:\r\ndup\r\npop\r\nbr _label116\r\n\r\n_label114:\r\nbr _label115\r\n\r\n_label116:\r\nbr _label117\r\n\r\n_label118:\r\ndup\r\npop\r\nbr _label119\r\n\r\n_label117:\r\nbr _label118\r\n\r\n_label119:\r\nbr _label120\r\n\r\n_label121:\r\ndup\r\npop\r\nbr _label122\r\n\r\n_label120:\r\nbr _label121\r\n\r\n_label122:\r\nbr _label123\r\n\r\n_label124:\r\ndup\r\npop\r\nbr _label125\r\n\r\n_label123:\r\nbr _label124\r\n\r\n_label125:\r\nbr _label126\r\n\r\n_label127:\r\ndup\r\npop\r\nbr _label128\r\n\r\n_label126:\r\nbr _label127\r\n\r\n_label128:\r\nbr _label129\r\n\r\n_label130:\r\ndup\r\npop\r\nbr _label131\r\n\r\n_label129:\r\nbr _label130\r\n\r\n_label131:\r\nbr _label132\r\n\r\n_label133:\r\ndup\r\npop\r\nbr _label134\r\n\r\n_label132:\r\nbr _label133\r\n\r\n_label134:\r\nbr _label135\r\n\r\n_label136:\r\ndup\r\npop\r\nbr _label137\r\n\r\n_label135:\r\nbr _label136\r\n\r\n_label137:\r\nbr _label138\r\n\r\n_label139:\r\ndup\r\npop\r\nbr _label140\r\n\r\n_label138:\r\nbr _label139\r\n\r\n_label140:\r\nbr _label141\r\n\r\n_label142:\r\ndup\r\npop\r\nbr _label143\r\n\r\n_label141:\r\nbr _label142\r\n\r\n_label143:\r\nbr _label144\r\n\r\n_label145:\r\ndup\r\npop\r\nbr _label146\r\n\r\n_label144:\r\nbr _label145\r\n\r\n_label146:\r\nbr _label147\r\n\r\n_label148:\r\ndup\r\npop\r\nbr _label149\r\n\r\n_label147:\r\nbr _label148\r\n\r\n_label149:\r\npop\r\nret  // relevant instruction\r\n", f);
-            }
-        }
-
-        //[TestMethod]
+        [TestMethod]
         public void BadManyBranch()
         {
             var e1 = Emit<Func<string, string>>.NewDynamicMethod();
@@ -216,40 +173,6 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 Assert.AreEqual("Branch expects a value on the stack, but it was empty", e.Message);
-                var debug = e.GetDebugInfo();
-                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldarg.0\r\nbr l1\r\n\r\nl2:\r\npop\r\ncallvirt System.String ToString()  // relevant instruction\r\nbr l3\r\n\r\nl1:\r\nbr l2\r\n", debug);
-            }
-        }
-
-        //[TestMethod]
-        public void BadDoubleBranchDeferredValidation()
-        {
-            var e1 = Emit<Func<string, string>>.NewDynamicMethod(validationOptions: ValidationOptions.None);
-            var l1 = e1.DefineLabel("l1");
-            var l2 = e1.DefineLabel("l2");
-            var l3 = e1.DefineLabel("l3");
-
-            e1.LoadArgument(0);
-            e1.Branch(l1);
-
-            e1.MarkLabel(l2);
-            e1.Pop();
-            e1.CallVirtual(typeof(object).GetMethod("ToString"));
-            e1.Branch(l3);
-
-            e1.MarkLabel(l1);
-
-            e1.Branch(l2);
-
-            try
-            {
-                e1.CreateDelegate();
-
-                Assert.Fail();
-            }
-            catch (SigilVerificationException e)
-            {
-                Assert.AreEqual("Deferred Validation expects a value on the stack, but it was empty", e.Message);
                 var debug = e.GetDebugInfo();
                 Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldarg.0\r\nbr l1\r\n\r\nl2:\r\npop\r\ncallvirt System.String ToString()  // relevant instruction\r\nbr l3\r\n\r\nl1:\r\nbr l2\r\n", debug);
             }
