@@ -23,6 +23,72 @@ namespace Sigil.Impl
             CurrentlyInScope.Add(new VerifiableTracker(beginAt));
         }
 
+        public VerificationResult Mark(Label label)
+        {
+            if (CurrentlyInScope.Count == 0)
+            {
+                CurrentlyInScope.Add(new VerifiableTracker(label, baseless: true));
+            }
+
+            if (BecomesInScopeOnMark.ContainsKey(label))
+            {
+                var nowInScope = BecomesInScopeOnMark[label];
+                CurrentlyInScope.AddRange(nowInScope);
+            }
+
+            StateAtMark[label] = CurrentlyInScope.Select(c => c.Clone()).ToList();
+
+            var fromMark = CurrentlyInScope.Select(c => new VerifiableTracker(label, c.IsBaseless, c)).ToList();
+            StateFromMark[label] = fromMark;
+
+            CurrentlyInScope.AddRange(fromMark);
+
+            return VerifyCurrent();
+        }
+
+        public VerificationResult UnconditionalBranch(Label to)
+        {
+            var copy = CurrentlyInScope.Select(e => e.Clone()).ToList();
+
+            if (!BecomesInScopeOnMark.ContainsKey(to))
+            {
+                BecomesInScopeOnMark[to] = new LinqList<VerifiableTracker>();
+            }
+
+            BecomesInScopeOnMark[to].AddRange(copy);
+
+            var ret =
+                CheckMarkStateCompatible(to) ??
+                VerifyCurrent() ??
+                VerificationResult.Successful(null, null);
+
+            CurrentlyInScope = new LinqList<VerifiableTracker>();
+
+            return ret;
+        }
+
+        public VerificationResult ConditionalBranch(params Label[] toLabels)
+        {
+            var copy = CurrentlyInScope.Select(e => e.Clone()).ToList();
+
+            for (var i = 0; i < toLabels.Length; i++)
+            {
+                var to = toLabels[i];
+
+                if (!BecomesInScopeOnMark.ContainsKey(to))
+                {
+                    BecomesInScopeOnMark[to] = new LinqList<VerifiableTracker>();
+                }
+
+                BecomesInScopeOnMark[to].AddRange(copy);
+
+                var valid = CheckMarkStateCompatible(to);
+                if (valid != null) return valid;
+            }
+
+            return VerifyCurrent();
+        }
+
         private VerificationResult VerifyCurrent()
         {
             VerificationResult last = null;
@@ -69,49 +135,6 @@ namespace Sigil.Impl
             return last;
         }
 
-        public VerificationResult UnconditionalBranch(Label to)
-        {
-            var copy = CurrentlyInScope.Select(e => e.Clone()).ToList();
-
-            if (!BecomesInScopeOnMark.ContainsKey(to))
-            {
-                BecomesInScopeOnMark[to] = new LinqList<VerifiableTracker>();
-            }
-
-            BecomesInScopeOnMark[to].AddRange(copy);
-
-            var ret =
-                CheckMarkStateCompatible(to) ??
-                VerifyCurrent() ??
-                VerificationResult.Successful(null, null);
-
-            CurrentlyInScope = new LinqList<VerifiableTracker>();
-
-            return ret;
-        }
-
-        public VerificationResult ConditionalBranch(params Label[] toLabels)
-        {
-            var copy = CurrentlyInScope.Select(e => e.Clone()).ToList();
-
-            for (var i = 0; i < toLabels.Length; i++)
-            {
-                var to = toLabels[i];
-
-                if (!BecomesInScopeOnMark.ContainsKey(to))
-                {
-                    BecomesInScopeOnMark[to] = new LinqList<VerifiableTracker>();
-                }
-
-                BecomesInScopeOnMark[to].AddRange(copy);
-
-                var valid = CheckMarkStateCompatible(to);
-                if (valid != null) return valid;
-            }
-
-            return VerifyCurrent();
-        }
-
         private VerificationResult CheckMarkStateCompatible(Label branchingTo)
         {
             if (StateAtMark.ContainsKey(branchingTo))
@@ -152,29 +175,6 @@ namespace Sigil.Impl
             }
 
             return null;
-        }
-
-        public VerificationResult Mark(Label label)
-        {
-            if (CurrentlyInScope.Count == 0)
-            {
-                CurrentlyInScope.Add(new VerifiableTracker(label, baseless: true));
-            }
-
-            if (BecomesInScopeOnMark.ContainsKey(label))
-            {
-                var nowInScope = BecomesInScopeOnMark[label];
-                CurrentlyInScope.AddRange(nowInScope);
-            }
-
-            StateAtMark[label] = CurrentlyInScope.Select(c => c.Clone()).ToList();
-
-            var fromMark = CurrentlyInScope.Select(c => new VerifiableTracker(label, c.IsBaseless, c)).ToList();
-            StateFromMark[label] = fromMark;
-            
-            CurrentlyInScope.AddRange(fromMark);
-
-            return VerifyCurrent();
         }
 
         public LinqStack<TypeOnStack> InferStack(int ofDepth)
