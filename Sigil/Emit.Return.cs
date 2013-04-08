@@ -33,6 +33,12 @@ namespace Sigil
             UpdateState(Wrap(new[] { new StackTransition(0) }, "Return"));
             MustMark = true;
 
+            var verify = CurrentVerifiers.Return();
+            if (!verify.Success)
+            {
+                throw new SigilVerificationException("Return", verify, IL.Instructions(AllLocals));
+            }
+
             return this;
         }
     }
