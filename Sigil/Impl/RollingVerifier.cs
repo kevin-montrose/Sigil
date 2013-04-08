@@ -68,7 +68,7 @@ namespace Sigil.Impl
 
             VerifyFromLabel[label].Add(fromLabel);
 
-            return VerificationResult.Successful(null, null);
+            return VerificationResult.Successful();
         }
 
         public VerificationResult Return()
@@ -76,7 +76,7 @@ namespace Sigil.Impl
             CurrentlyInScope = new LinqList<VerifiableTracker>();
             MarkCreatesNewVerifier = true;
 
-            return VerificationResult.Successful(null, null);
+            return VerificationResult.Successful();
         }
 
         public VerificationResult UnconditionalBranch(Label to)
@@ -110,7 +110,7 @@ namespace Sigil.Impl
             CurrentlyInScope = new LinqList<VerifiableTracker>();
             MarkCreatesNewVerifier = true;
 
-            return VerificationResult.Successful(null, null);
+            return VerificationResult.Successful();
         }
 
         public VerificationResult ConditionalBranch(params Label[] toLabels)
@@ -148,7 +148,7 @@ namespace Sigil.Impl
                 }
             }
 
-            return VerificationResult.Successful(null, null);
+            return VerificationResult.Successful();
         }
 
         private Tuple<bool, LinqStack<LinqList<TypeOnStack>>> GetCurrentStack()
@@ -187,7 +187,7 @@ namespace Sigil.Impl
 
             foreach (var exp in expectations.AsEnumerable())
             {
-                var mismatch = CompareStacks(actual, exp);
+                var mismatch = CompareStacks(atLabel, actual, exp);
                 if (mismatch != null)
                 {
                     return mismatch;
@@ -197,14 +197,14 @@ namespace Sigil.Impl
             return null;
         }
 
-        private VerificationResult CompareStacks(Tuple<bool, LinqStack<LinqList<TypeOnStack>>> actual, Tuple<bool, LinqStack<LinqList<TypeOnStack>>> expected)
+        private VerificationResult CompareStacks(Label label, Tuple<bool, LinqStack<LinqList<TypeOnStack>>> actual, Tuple<bool, LinqStack<LinqList<TypeOnStack>>> expected)
         {
             if (!actual.Item1 && !expected.Item1)
             {
                 if (expected.Item2.Count != actual.Item2.Count)
                 {
                     // Both stacks are based, so the wrong size is a serious error as well
-                    return VerificationResult.FailureUnderflow(null, 0, 0, null);
+                    return VerificationResult.FailureUnderflow(label, expected.Item2.Count);
                 }
             }
 
@@ -213,7 +213,7 @@ namespace Sigil.Impl
                 if (i >= actual.Item2.Count && !actual.Item1)
                 {
                     // actual is based and expected wanted a value, this is an UNDERFLOW
-                    return VerificationResult.FailureUnderflow(null, 0, 0, null);
+                    return VerificationResult.FailureUnderflow(label, expected.Item2.Count);
                 }
 
                 var expectedTypes = expected.Item2.ElementAt(i);
@@ -240,7 +240,7 @@ namespace Sigil.Impl
                 if (!typesMatch)
                 {
                     // Just went through what's on the stack, and we the types are known to not be compatible
-                    return VerificationResult.FailureTypeMismatch(null, 0, 0, null, null);
+                    return VerificationResult.FailureTypeMismatch(label, actualTypes, expectedTypes);
                 }
             }
 

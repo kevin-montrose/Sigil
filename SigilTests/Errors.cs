@@ -292,8 +292,8 @@ namespace SigilTests
                 catch (SigilVerificationException e)
                 {
                     var f = e.GetDebugInfo();
-                    Assert.AreEqual("MarkLabel resulted in stack mismatches", e.Message);
-                    Assert.AreEqual("Expected Stack\r\n==============\r\nint\r\n\r\nIncoming Stack\r\n==============\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldc.i4.1\r\nbrfalse _label0\r\nldc.i4.4\r\n", f);
+                    Assert.AreEqual("MarkLabel expects 0 values on the stack", e.Message);
+                    Assert.AreEqual("\r\nInstructions\r\n============\r\nldc.i4.1\r\nbrfalse _label0\r\nldc.i4.4\r\n", f);
                 }
             }
         }
@@ -317,8 +317,8 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 var f = e.GetDebugInfo();
-                Assert.AreEqual("Branch resulted in stack mismatches", e.Message);
-                Assert.AreEqual("Expected Stack\r\n==============\r\nint\r\n\r\nIncoming Stack\r\n==============\r\nSystem.String\r\n\r\nInstructions\r\n============\r\nldc.i4.1\r\n\r\n_label0:\r\npop\r\nldstr '123'\r\nbr _label0\r\n", f);
+                Assert.AreEqual("Branch expected an int; found System.String", e.Message);
+                Assert.AreEqual("\r\nInstructions\r\n============\r\nldc.i4.1\r\n\r\n_label0:\r\npop\r\nldstr '123'\r\nbr _label0\r\n", f);
             }
         }
 

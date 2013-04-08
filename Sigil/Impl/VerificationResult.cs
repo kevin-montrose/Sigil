@@ -28,9 +28,33 @@ namespace Sigil.Impl
         // Set when the stack was expected to be a certain size, but it wasn't
         public bool IsStackSizeFailure { get; private set; }
 
+        public Label InvolvingLabel { get; private set; }
+
+        public LinqRoot<TypeOnStack> ExpectedOnStack { get; private set; }
+        public LinqRoot<TypeOnStack> ActuallyOnStack { get; private set; }
+
+        public static VerificationResult Successful()
+        {
+            return new VerificationResult { Success = true };
+        }
+
         public static VerificationResult Successful(VerifiableTracker verifier, LinqStack<LinqList<TypeOnStack>> stack)
         {
             return new VerificationResult { Success = true, Stack = stack, Verifier = verifier };
+        }
+
+        public static VerificationResult FailureUnderflow(Label involving, int expectedSize)
+        {
+            return
+                new VerificationResult
+                {
+                    Success = false,
+
+                    IsStackUnderflow = true,
+                    ExpectedStackSize = expectedSize,
+
+                    InvolvingLabel = involving
+                };
         }
 
         public static VerificationResult FailureUnderflow(VerifiableTracker verifier, int transitionIndex, int expectedSize, LinqStack<LinqList<TypeOnStack>> stack)
@@ -61,6 +85,19 @@ namespace Sigil.Impl
                     IsStackMismatch = true,
                     ExpectedStack = expected,
                     IncomingStack = incoming
+                };
+        }
+
+        public static VerificationResult FailureTypeMismatch(Label involving, LinqList<TypeOnStack> expected, LinqList<TypeOnStack> actual)
+        {
+            return
+                new VerificationResult
+                {
+                    Success = false,
+
+                    IsTypeMismatch = true,
+                    ExpectedOnStack = expected,
+                    ActuallyOnStack = actual
                 };
         }
 

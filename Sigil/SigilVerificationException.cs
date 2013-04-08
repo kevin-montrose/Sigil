@@ -53,10 +53,18 @@ namespace Sigil
 
             if (failure.IsTypeMismatch)
             {
-                var expected = ErrorMessageString(failure.ExpectedAtStackIndex);
-                var found = ErrorMessageString(failure.Stack.ElementAt(failure.StackIndex));
+                if (failure.ExpectedAtStackIndex != null)
+                {
+                    var expected = ErrorMessageString(failure.ExpectedAtStackIndex);
+                    var found = ErrorMessageString(failure.Stack.ElementAt(failure.StackIndex));
 
-                return method + " expected " + (ExtensionMethods.StartsWithVowel(expected) ? "an " : "a ") + expected + "; found " + found;
+                    return method + " expected " + (ExtensionMethods.StartsWithVowel(expected) ? "an " : "a ") + expected + "; found " + found;
+                }
+
+                var ex = ErrorMessageString(failure.ExpectedOnStack);
+                var ac = ErrorMessageString(failure.ActuallyOnStack);
+
+                return method + " expected " + (ExtensionMethods.StartsWithVowel(ex) ? "an " : "a ") + ex + "; found " + ac;
             }
 
             if (failure.IsStackMismatch)
@@ -125,14 +133,14 @@ namespace Sigil
                     PrintStack(VerificationFailure.IncomingStack, ret);
                 }
 
-                if (VerificationFailure.IsTypeMismatch)
+                if (VerificationFailure.IsTypeMismatch && VerificationFailure.Stack != null)
                 {
                     ret.AppendLine("Stack");
                     ret.AppendLine("=====");
                     PrintStack(VerificationFailure.Stack, ret, "// bad value", VerificationFailure.StackIndex);
                 }
 
-                if (VerificationFailure.IsStackUnderflow || VerificationFailure.IsStackSizeFailure)
+                if ((VerificationFailure.IsStackUnderflow || VerificationFailure.IsStackSizeFailure) && VerificationFailure.Stack != null)
                 {
                     ret.AppendLine("Stack");
                     ret.AppendLine("=====");
