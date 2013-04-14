@@ -297,6 +297,11 @@ namespace Sigil.Impl
             return Inner;
         }
 
+        public int IndexOf(T item)
+        {
+            return Inner.IndexOf(item);
+        }
+
         public void Add(T item)
         {
             Inner.Add(item);

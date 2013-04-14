@@ -5,8 +5,10 @@ namespace Sigil.Impl
     internal class RollingVerifier
     {
         private LinqList<VerifiableTracker> CurrentlyInScope;
+        private LinqList<LinqStack<LinqList<TypeOnStack>>> CurrentlyInScopeStacks;
 
         private LinqDictionary<Label, LinqList<VerifiableTracker>> RestoreOnMark;
+        private LinqDictionary<Label, LinqList<LinqStack<LinqList<TypeOnStack>>>> RestoreStacksOnMark;
 
         private LinqDictionary<Label, LinqList<VerifiableTracker>> VerifyFromLabel;
 
@@ -18,13 +20,17 @@ namespace Sigil.Impl
         public RollingVerifier(Label beginAt)
         {
             RestoreOnMark = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
+            RestoreStacksOnMark = new LinqDictionary<Label, LinqList<LinqStack<LinqList<TypeOnStack>>>>();
             VerifyFromLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
 
             StacksAtLabels = new LinqDictionary<Label, SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
             ExpectedStacksAtLabels = new LinqDictionary<Label, LinqList<SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>>();
 
             CurrentlyInScope = new LinqList<VerifiableTracker>();
+            CurrentlyInScopeStacks = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
+            
             CurrentlyInScope.Add(new VerifiableTracker(beginAt));
+            CurrentlyInScopeStacks.Add(new LinqStack<LinqList<TypeOnStack>>());
         }
 
         public VerificationResult Mark(Label label)
@@ -44,6 +50,7 @@ namespace Sigil.Impl
             {
                 var newVerifier = new VerifiableTracker(label, baseless: true);
                 CurrentlyInScope.Add(newVerifier);
+                CurrentlyInScopeStacks.Add(new LinqStack<LinqList<TypeOnStack>>());
                 MarkCreatesNewVerifier = false;
             }
 
@@ -52,6 +59,7 @@ namespace Sigil.Impl
             {
                 // don't copy, we want the *exact* same verifiers restore here
                 CurrentlyInScope.AddRange(restore);
+                CurrentlyInScopeStacks.AddRange(RestoreStacksOnMark[label]);
                 RestoreOnMark.Remove(label);
             }
 
@@ -60,6 +68,9 @@ namespace Sigil.Impl
 
             var fromLabel = new VerifiableTracker(label, based.IsBaseless, based);
             CurrentlyInScope.Add(fromLabel);
+
+            var fromStack = CurrentlyInScopeStacks[CurrentlyInScope.IndexOf(based)];
+            CurrentlyInScopeStacks.Add(CopyStack(fromStack));
 
             if (!VerifyFromLabel.ContainsKey(label))
             {
@@ -92,6 +103,7 @@ namespace Sigil.Impl
             if (!RestoreOnMark.ContainsKey(to))
             {
                 RestoreOnMark[to] = new LinqList<VerifiableTracker>();
+                RestoreStacksOnMark[to] = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
             }
 
             if (!ExpectedStacksAtLabels.ContainsKey(to))
@@ -108,6 +120,10 @@ namespace Sigil.Impl
 
             RestoreOnMark[to].AddRange(CurrentlyInScope);
             CurrentlyInScope = new LinqList<VerifiableTracker>();
+
+            RestoreStacksOnMark[to].AddRange(CurrentlyInScopeStacks);
+            CurrentlyInScopeStacks = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
+
             MarkCreatesNewVerifier = true;
 
             return VerificationResult.Successful();
@@ -130,9 +146,11 @@ namespace Sigil.Impl
                     if (!RestoreOnMark.ContainsKey(to))
                     {
                         RestoreOnMark[to] = new LinqList<VerifiableTracker>();
+                        RestoreStacksOnMark[to] = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
                     }
 
                     RestoreOnMark[to].AddRange(CurrentlyInScope.Select(t => t.Clone()));
+                    RestoreStacksOnMark[to].AddRange(CurrentlyInScopeStacks.Select(s => CopyStack(s)));
                 }
 
                 if (!ExpectedStacksAtLabels.ContainsKey(to))
@@ -154,18 +172,12 @@ namespace Sigil.Impl
         private SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>> GetCurrentStack()
         {
             SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>> ret = null;
-            foreach (var c in CurrentlyInScope.AsEnumerable())
+            for(var i = 0; i < CurrentlyInScope.Count; i++)
             {
-                var res = c.CollapseAndVerify();
+                var c = CurrentlyInScope[i];
+                var stack = CurrentlyInScopeStacks[i];
 
-                var stack = res.Stack;
-
-                var stackCopy = new LinqStack<LinqList<TypeOnStack>>(stack.Count);
-                for (var i = stack.Count - 1; i >= 0; i--)
-                {
-                    var toCopy = stack.ElementAt(i);
-                    stackCopy.Push(toCopy.Select(x => x).ToList());
-                }
+                var stackCopy = CopyStack(stack);
 
                 var innerRet = SigilTuple.Create(c.IsBaseless, stackCopy);
 
@@ -303,8 +315,22 @@ namespace Sigil.Impl
             return null;
         }
 
+        private LinqStack<LinqList<TypeOnStack>> CopyStack(LinqStack<LinqList<TypeOnStack>> toCopy)
+        {
+            var ret = new LinqStack<LinqList<TypeOnStack>>(toCopy.Count);
+
+            for (var i = toCopy.Count - 1; i >= 0; i--)
+            {
+                ret.Push(toCopy.ElementAt(i));
+            }
+
+            return ret;
+        }
+
         public VerificationResult Transition(InstructionAndTransitions legalTransitions)
         {
+            var stacks = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
+
             VerificationResult last = null;
             foreach (var x in CurrentlyInScope.AsEnumerable())
             {
@@ -313,7 +339,10 @@ namespace Sigil.Impl
                 if (!inner.Success) return inner;
 
                 last = inner;
+                stacks.Add(CopyStack(inner.Stack));
             }
+
+            CurrentlyInScopeStacks = stacks;
 
             return last;
         }

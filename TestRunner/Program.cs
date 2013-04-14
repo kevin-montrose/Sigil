@@ -25,7 +25,9 @@ namespace TestRunner
 
                 foreach (var test in clazz.GetMethods().Where(m => m.GetCustomAttribute<TestMethodAttribute>() != null).OrderBy(o => o.Name))
                 {
-                    Console.Write(clazz.Name + "." + test.Name + "...");
+                    var name = clazz.Name + "." + test.Name;
+
+                    Console.Write(name + "...");
 
                     try
                     {
