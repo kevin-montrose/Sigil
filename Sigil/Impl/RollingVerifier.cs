@@ -10,8 +10,8 @@ namespace Sigil.Impl
 
         private LinqDictionary<Label, LinqList<VerifiableTracker>> VerifyFromLabel;
 
-        private LinqDictionary<Label, Tuple<bool, LinqStack<LinqList<TypeOnStack>>>> StacksAtLabels;
-        private LinqDictionary<Label, LinqList<Tuple<bool, LinqStack<LinqList<TypeOnStack>>>>> ExpectedStacksAtLabels;
+        private LinqDictionary<Label, SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>> StacksAtLabels;
+        private LinqDictionary<Label, LinqList<SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>> ExpectedStacksAtLabels;
 
         private bool MarkCreatesNewVerifier;
 
@@ -20,8 +20,8 @@ namespace Sigil.Impl
             RestoreOnMark = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
             VerifyFromLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
 
-            StacksAtLabels = new LinqDictionary<Label, Tuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
-            ExpectedStacksAtLabels = new LinqDictionary<Label, LinqList<Tuple<bool, LinqStack<LinqList<TypeOnStack>>>>>();
+            StacksAtLabels = new LinqDictionary<Label, SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
+            ExpectedStacksAtLabels = new LinqDictionary<Label, LinqList<SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>>();
 
             CurrentlyInScope = new LinqList<VerifiableTracker>();
             CurrentlyInScope.Add(new VerifiableTracker(beginAt));
@@ -96,7 +96,7 @@ namespace Sigil.Impl
 
             if (!ExpectedStacksAtLabels.ContainsKey(to))
             {
-                ExpectedStacksAtLabels[to] = new LinqList<Tuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
+                ExpectedStacksAtLabels[to] = new LinqList<SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
             }
             ExpectedStacksAtLabels[to].Add(GetCurrentStack());
 
@@ -137,7 +137,7 @@ namespace Sigil.Impl
 
                 if (!ExpectedStacksAtLabels.ContainsKey(to))
                 {
-                    ExpectedStacksAtLabels[to] = new LinqList<Tuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
+                    ExpectedStacksAtLabels[to] = new LinqList<SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
                 }
                 ExpectedStacksAtLabels[to].Add(GetCurrentStack());
 
@@ -151,9 +151,9 @@ namespace Sigil.Impl
             return VerificationResult.Successful();
         }
 
-        private Tuple<bool, LinqStack<LinqList<TypeOnStack>>> GetCurrentStack()
+        private SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>> GetCurrentStack()
         {
-            Tuple<bool, LinqStack<LinqList<TypeOnStack>>> ret = null;
+            SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>> ret = null;
             foreach (var c in CurrentlyInScope.AsEnumerable())
             {
                 var res = c.CollapseAndVerify();
@@ -167,7 +167,7 @@ namespace Sigil.Impl
                     stackCopy.Push(toCopy.Select(x => x).ToList());
                 }
 
-                var innerRet = Tuple.Create(c.IsBaseless, stackCopy);
+                var innerRet = SigilTuple.Create(c.IsBaseless, stackCopy);
 
                 if (ret == null || (innerRet.Item1 && !ret.Item1) || innerRet.Item2.Count > ret.Item2.Count)
                 {
@@ -197,7 +197,7 @@ namespace Sigil.Impl
             return null;
         }
 
-        private VerificationResult CompareStacks(Label label, Tuple<bool, LinqStack<LinqList<TypeOnStack>>> actual, Tuple<bool, LinqStack<LinqList<TypeOnStack>>> expected)
+        private VerificationResult CompareStacks(Label label, SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>> actual, SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>> expected)
         {
             if (!actual.Item1 && !expected.Item1)
             {
