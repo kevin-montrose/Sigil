@@ -79,7 +79,26 @@ namespace Sigil.Impl
 
             VerifyFromLabel[label].Add(fromLabel);
 
+            RemoveUnnecessaryVerifiers();
+
             return VerificationResult.Successful();
+        }
+
+        // Looks at CurrentlyInScope and removes any verifiers that are not necessary going forward
+        private void RemoveUnnecessaryVerifiers()
+        {
+            var rooted = CurrentlyInScope.Where(c => !c.IsBaseless).ToList();
+
+            if (rooted.Count < 2) return;
+
+            for (var i = 1; i < rooted.Count; i++)
+            {
+                var toRemove = rooted[i];
+                var ix = CurrentlyInScope.IndexOf(toRemove);
+
+                CurrentlyInScope.RemoveAt(ix);
+                CurrentlyInScopeStacks.RemoveAt(ix);
+            }
         }
 
         public VerificationResult Return()
