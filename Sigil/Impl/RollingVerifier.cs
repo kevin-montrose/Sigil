@@ -26,11 +26,50 @@ namespace Sigil.Impl
             StacksAtLabels = new LinqDictionary<Label, SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
             ExpectedStacksAtLabels = new LinqDictionary<Label, LinqList<SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>>();
 
+            EmptyCurrentScope();
+            
+            Add(new VerifiableTracker(beginAt), new LinqStack<LinqList<TypeOnStack>>());
+        }
+
+        private void EmptyCurrentScope()
+        {
             CurrentlyInScope = new LinqList<VerifiableTracker>();
             CurrentlyInScopeStacks = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
-            
-            CurrentlyInScope.Add(new VerifiableTracker(beginAt));
-            CurrentlyInScopeStacks.Add(new LinqStack<LinqList<TypeOnStack>>());
+        }
+
+        private void Add(VerifiableTracker tracker, LinqStack<LinqList<TypeOnStack>> stack)
+        {
+            CurrentlyInScope.Add(tracker);
+            CurrentlyInScopeStacks.Add(stack);
+
+            if (CurrentlyInScope.Count != CurrentlyInScopeStacks.Count)
+            {
+                throw new Exception();
+            }
+        }
+
+        private void AddRange(LinqList<VerifiableTracker> trackers, LinqList<LinqStack<LinqList<TypeOnStack>>> stacks)
+        {
+            if (trackers.Count != stacks.Count)
+            {
+                throw new Exception();
+            }
+
+            for (var i = 0; i < trackers.Count; i++)
+            {
+                Add(trackers[i], stacks[i]);
+            }
+        }
+
+        private void RemoveAt(int ix)
+        {
+            CurrentlyInScope.RemoveAt(ix);
+            CurrentlyInScopeStacks.RemoveAt(ix);
+
+            if (CurrentlyInScope.Count != CurrentlyInScopeStacks.Count)
+            {
+                throw new Exception();
+            }
         }
 
         public VerificationResult Mark(Label label)
@@ -49,8 +88,7 @@ namespace Sigil.Impl
             if (MarkCreatesNewVerifier)
             {
                 var newVerifier = new VerifiableTracker(label, baseless: true);
-                CurrentlyInScope.Add(newVerifier);
-                CurrentlyInScopeStacks.Add(new LinqStack<LinqList<TypeOnStack>>());
+                Add(newVerifier, new LinqStack<LinqList<TypeOnStack>>());
                 MarkCreatesNewVerifier = false;
             }
 
@@ -58,19 +96,17 @@ namespace Sigil.Impl
             if(RestoreOnMark.TryGetValue(label, out restore))
             {
                 // don't copy, we want the *exact* same verifiers restore here
-                CurrentlyInScope.AddRange(restore);
-                CurrentlyInScopeStacks.AddRange(RestoreStacksOnMark[label]);
+                AddRange(restore, RestoreStacksOnMark[label]);
                 RestoreOnMark.Remove(label);
+                RestoreStacksOnMark.Remove(label);
             }
 
             var based = CurrentlyInScope.FirstOrDefault(f => !f.IsBaseless);
             based = based ?? CurrentlyInScope.First();
 
             var fromLabel = new VerifiableTracker(label, based.IsBaseless, based);
-            CurrentlyInScope.Add(fromLabel);
-
             var fromStack = CurrentlyInScopeStacks[CurrentlyInScope.IndexOf(based)];
-            CurrentlyInScopeStacks.Add(CopyStack(fromStack));
+            Add(fromLabel, CopyStack(fromStack));
 
             if (!VerifyFromLabel.ContainsKey(label))
             {
@@ -87,23 +123,71 @@ namespace Sigil.Impl
         // Looks at CurrentlyInScope and removes any verifiers that are not necessary going forward
         private void RemoveUnnecessaryVerifiers()
         {
+            // if anything's rooted, we only need one of them (since the IL stream being currently valid means they must in the future)
             var rooted = CurrentlyInScope.Where(c => !c.IsBaseless).ToList();
-
-            if (rooted.Count < 2) return;
-
-            for (var i = 1; i < rooted.Count; i++)
+            if (rooted.Count >= 2)
             {
-                var toRemove = rooted[i];
-                var ix = CurrentlyInScope.IndexOf(toRemove);
+                for (var i = 1; i < rooted.Count; i++)
+                {
+                    var toRemove = rooted[i];
+                    var ix = CurrentlyInScope.IndexOf(toRemove);
 
-                CurrentlyInScope.RemoveAt(ix);
-                CurrentlyInScopeStacks.RemoveAt(ix);
+                    RemoveAt(ix);
+                }
+            }
+
+            // remove any verifiers that have duplicate terminal stack states; we know that another verifier will do just as well, no need to verify the whole instruction stream again
+            for (var i = CurrentlyInScope.Count - 1; i >= 0; i--)
+            {
+                var curStack = CurrentlyInScopeStacks[i];
+
+                var otherMatch =
+                    CurrentlyInScopeStacks
+                        .Select(
+                            (cx, ix) =>
+                            {
+                                if (ix == i) return -1;
+
+                                if (curStack.Count != cx.Count) return -1;
+
+                                for (var j = 0; j < curStack.Count; j++)
+                                {
+                                    var curFrame = curStack.ElementAt(j);
+                                    var cxFrame = cx.ElementAt(j);
+
+                                    if (curFrame.Count != cxFrame.Count) return -1;
+
+                                    curFrame = curFrame.OrderBy(_ => _).ToList();
+                                    cxFrame = cxFrame.OrderBy(_ => _).ToList();
+
+                                    for (var k = 0; k < curFrame.Count; k++)
+                                    {
+                                        var curT = curFrame[k];
+                                        var cxT = cxFrame[k];
+
+                                        if (curT != cxT) return -1;
+                                    }
+                                }
+
+                                return ix;
+                            }
+                        ).Where(x => x != -1).OrderByDescending(_ => _).ToList();
+
+                foreach (var o in otherMatch.AsEnumerable())
+                {
+                    RemoveAt(o);
+
+                    if (o < i)
+                    {
+                        i--;
+                    }
+                }
             }
         }
 
         public VerificationResult Return()
         {
-            CurrentlyInScope = new LinqList<VerifiableTracker>();
+            EmptyCurrentScope();
             MarkCreatesNewVerifier = true;
 
             return VerificationResult.Successful();
@@ -138,11 +222,9 @@ namespace Sigil.Impl
             }
 
             RestoreOnMark[to].AddRange(CurrentlyInScope);
-            CurrentlyInScope = new LinqList<VerifiableTracker>();
-
             RestoreStacksOnMark[to].AddRange(CurrentlyInScopeStacks);
-            CurrentlyInScopeStacks = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
 
+            EmptyCurrentScope();
             MarkCreatesNewVerifier = true;
 
             return VerificationResult.Successful();

@@ -5,7 +5,7 @@ using System.Reflection.Emit;
 
 namespace Sigil.Impl
 {
-    internal class TypeOnStack
+    internal class TypeOnStack : IComparable
     {
         private class TypeCache
         {
@@ -200,6 +200,14 @@ namespace Sigil.Impl
         public bool IsAssignableFrom(TypeOnStack other)
         {
             return ExtensionMethods.IsAssignableFrom(this, other);
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (object.ReferenceEquals(this, obj)) return 0;
+            if (object.ReferenceEquals(obj, null)) return 1;
+
+            return this.ToString().CompareTo(obj.ToString());
         }
     }
 }
