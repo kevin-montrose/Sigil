@@ -237,6 +237,7 @@
     <Compile Include="Impl\VerificationResult.cs" />
     <Compile Include="LabelLookup.cs" />
     <Compile Include="LocalLookup.cs" />
+    <Compile Include="Operation.cs" />
     <Compile Include="OptimizationOptions.cs" />
     <Compile Include="Impl\SigilTuple.cs" />
     <Compile Include="Emit.Unbox.cs">

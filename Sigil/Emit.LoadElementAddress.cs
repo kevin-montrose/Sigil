@@ -81,7 +81,7 @@ namespace Sigil
             var arrayType = elementType.MakeArrayType();
 
             // needs to be markable so we can keep track of what makes use of this value
-            var pushToStack = TypeOnStack.Get(elementType.MakeByRefType(), makeMarkable: true);
+            var pushToStack = TypeOnStack.Get(elementType.MakeByRefType());
 
             // Shove this away, later on we'll figure out if we can insert a readonly here
             ReadonlyPatches.Add(SigilTuple.Create(IL.Index, pushToStack));

@@ -115,6 +115,8 @@ namespace Sigil
         private LinqDictionary<Label, LinqList<VerifiableTracker>> StateAtConditionalBranchToLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
         private LinqDictionary<Label, VerifiableTracker> StateAtLabel = new LinqDictionary<Label, VerifiableTracker>();
 
+        private LinqDictionary<int, LinqList<TypeOnStack>> TypesProducedAtIndex;
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, ValidationOptions opts)
         {
             ValidationOptions = opts;
@@ -180,6 +182,8 @@ namespace Sigil
             Labels = new LabelLookup(CurrentLabels);
 
             ElidableCasts = new LinqList<int>();
+
+            TypesProducedAtIndex = new LinqDictionary<int, LinqList<TypeOnStack>>();
 
             var start = DefineLabel("__start");
             CurrentVerifiers = new RollingVerifier(start);
@@ -291,6 +295,53 @@ namespace Sigil
             AutoNamer.Release(this);
 
             return CreatedDelegate;
+        }
+
+        private class TraceUsageComparer : IComparer<Operation>
+        {
+            private List<Operation> Operations;
+
+            public TraceUsageComparer(List<Operation> ops)
+            {
+                Operations = ops;
+            }
+
+            public int Compare(Operation x, Operation y)
+            {
+                var ix = Operations.IndexOf(x);
+                var iy = Operations.IndexOf(y);
+
+                return ix.CompareTo(iy);
+            }
+        }
+
+        /// <summary>
+        /// Returns 
+        /// </summary>
+        /// <returns></returns>
+        public SortedDictionary<Operation, List<Operation>> TraceUsage()
+        {
+            var orderer = new List<Operation>();
+
+            var ret = new SortedDictionary<Operation, List<Operation>>(new TraceUsageComparer(orderer));
+
+            foreach (var r in TypesProducedAtIndex.AsEnumerable())
+            {
+                var allUsage = new LinqList<InstructionAndTransitions>(r.Value.SelectMany(k => k.UsedBy.Select(u => u.Item1)).AsEnumerable());
+
+                var usedBy = new List<Operation>(allUsage.Select(u => IL.Operations[u.InstructionIndex.Value]).Distinct().AsEnumerable());
+
+                if(usedBy.Count > 0)
+                {
+                    var key = IL.Operations[r.Key];
+
+                    orderer.Add(key);
+
+                    ret[key] = usedBy;
+                }
+            }
+
+            return ret;
         }
 
         /// <summary>
@@ -843,6 +894,8 @@ namespace Sigil
             }
 
             var wrapped = new InstructionAndTransitions(instr, instr.HasValue ? (int?)IL.Index : null, transitions.Transitions);
+
+            TypesProducedAtIndex[IL.Index] = transitions.Transitions.SelectMany(t => t.PushedToStack).ToList();
 
             var verifyRes = CurrentVerifiers.Transition(wrapped);
             if (!verifyRes.Success)

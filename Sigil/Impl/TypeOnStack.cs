@@ -70,18 +70,16 @@ namespace Sigil.Impl
 
         public bool IsMarkable { get { return UsedBy != null; } }
 
-        private LinqHashSet<SigilTuple<OpCode, int>> UsedBy { get; set; }
+        internal LinqHashSet<SigilTuple<InstructionAndTransitions, int>> UsedBy { get; set; }
 
         /// <summary>
         /// Call to indicate that something on the stack was used
         /// as the #{index}'d (starting at 0) parameter to the {code} 
         /// opcode.
         /// </summary>
-        public void Mark(OpCode code, int index)
+        public void Mark(InstructionAndTransitions instr, int index)
         {
-            if (UsedBy == null) return;
-
-            UsedBy.Add(SigilTuple.Create(code, index));
+            UsedBy.Add(SigilTuple.Create(instr, index));
         }
 
         /// <summary>
@@ -89,9 +87,7 @@ namespace Sigil.Impl
         /// </summary>
         public int CountMarks(OpCode code, int ix)
         {
-            if (UsedBy == null) throw new Exception(this + " is not markable");
-
-            return UsedBy.Count(c => c.Item1.Equals(code) && c.Item2 == ix);
+            return UsedBy.Count(c => c.Item1.Instruction.Equals(code) && c.Item2 == ix);
         }
 
         /// <summary>
@@ -99,8 +95,6 @@ namespace Sigil.Impl
         /// </summary>
         public int CountMarks()
         {
-            if (UsedBy == null) throw new Exception(this + " is not markable");
-
             return UsedBy.Count;
         }
 
@@ -109,7 +103,7 @@ namespace Sigil.Impl
             return Get(typeof(T));
         }
 
-        public static TypeOnStack Get(Type type, bool makeMarkable = false)
+        public static TypeOnStack Get(Type type)
         {
             if (type.ContainsGenericParameters)
             {
@@ -117,11 +111,6 @@ namespace Sigil.Impl
             }
 
             var ret = TypeCache.Get(type);
-
-            if (!makeMarkable)
-            {
-                return ret;
-            }
 
             return
                 new TypeOnStack
@@ -132,7 +121,7 @@ namespace Sigil.Impl
                     ParameterTypes = ret.ParameterTypes,
                     ReturnType = ret.ReturnType,
                     Type = ret.Type,
-                    UsedBy = new LinqHashSet<SigilTuple<OpCode, int>>()
+                    UsedBy = new LinqHashSet<SigilTuple<InstructionAndTransitions, int>>()
                 };
         }
 
@@ -154,7 +143,8 @@ namespace Sigil.Impl
                             CallingConvention = conv,
                             InstanceType = instanceType,
                             ReturnType = returnType,
-                            ParameterTypes = parameterTypes
+                            ParameterTypes = parameterTypes,
+                            UsedBy = new LinqHashSet<SigilTuple<InstructionAndTransitions,int>>()
                         };
 
                     KnownFunctionPointerCache[key] = ret;

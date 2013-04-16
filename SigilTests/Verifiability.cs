@@ -23,6 +23,32 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Verifiability
     {
+        class _Usage
+        {
+            public string Foo;
+        }
+
+        [TestMethod]
+        public void Usage()
+        {
+            var e1 = Emit<Func<_Usage, string>>.NewDynamicMethod();
+            var l1 = e1.DefineLabel();
+            
+
+            e1.LoadArgument(0);
+            e1.LoadField(typeof(_Usage).GetField("Foo"));
+            e1.Duplicate();
+            e1.BranchIfFalse(l1);
+            e1.Return();
+
+            e1.MarkLabel(l1);
+            e1.Pop();
+            e1.LoadConstant("foo");
+            e1.Return();
+
+            var x = e1.TraceUsage();
+        }
+        
         [TestMethod]
         public void Ldelema()
         {

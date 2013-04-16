@@ -125,7 +125,7 @@ namespace Sigil.Impl
                     for (var i = 0; i < stack.Count; i++)
                     {
                         var ix = stack.Count - i - 1;
-                        stack.ElementAt(i).Each(y => y.Mark(instr.Value, ix));
+                        stack.ElementAt(i).Each(y => y.Mark(wrapped, ix));
                     }
                 }
 
@@ -142,7 +142,7 @@ namespace Sigil.Impl
                     if (instr.HasValue)
                     {
                         var ix = toPop - j - 1;
-                        popped.Each(y => y.Mark(instr.Value, ix));
+                        popped.Each(y => y.Mark(wrapped, ix));
                     }
                 }
             }
