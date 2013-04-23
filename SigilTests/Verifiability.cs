@@ -52,7 +52,76 @@ namespace SigilTests
             Assert.AreEqual("(dup) result is used by (brfalse _label0)", x.ElementAt(2).ToString());
             Assert.AreEqual("(ldstr foo) result is used by (ret)", x.ElementAt(3).ToString());
         }
-        
+
+        class _FollowTrace
+        {
+            public int _Bar;
+        }
+
+        [TestMethod]
+        public void FollowTrace()
+        {
+            var e1 = Emit<Func<_FollowTrace, _FollowTrace, int>>.NewDynamicMethod();
+            var l = e1.DeclareLocal<int>("l");
+
+            var bar = typeof(_FollowTrace).GetField("_Bar");
+
+            e1.LoadArgument(0);
+            e1.LoadField(bar);
+            e1.LoadConstant(1);
+            e1.Add();
+            e1.LoadArgument(1);
+            e1.LoadField(bar);
+            e1.LoadConstant(2);
+            e1.Multiply();
+            e1.StoreLocal(l);
+            e1.Return();
+
+            var x = e1.TraceOperationResultUsage();
+
+            {
+                var steps = new List<IEnumerable<OperationResultUsage>>();
+
+                IEnumerable<OperationResultUsage> prev = x.Where(r => r.ProducesResult.OpCode == OpCodes.Ldarg_0).ToList();
+                IEnumerable<OperationResultUsage> cur = prev;
+
+                while (cur.Count() > 0)
+                {
+                    prev = cur;
+
+                    steps.Add(prev);
+
+                    cur = x.Where(r => prev.Any(p => p.ResultUsedBy.Contains(r.ProducesResult))).ToList();
+                }
+
+                Assert.AreEqual(3, steps.Count);
+                Assert.AreEqual("(ldarg.0) result is used by (ldfld Int32 _Bar)", string.Join(", ", steps[0]));
+                Assert.AreEqual("(ldfld Int32 _Bar) result is used by (add)", string.Join(", ", steps[1]));
+                Assert.AreEqual("(add) result is used by (ret)", string.Join(", ", steps[2]));
+            }
+
+            {
+                var steps = new List<IEnumerable<OperationResultUsage>>();
+
+                IEnumerable<OperationResultUsage> prev = x.Where(r => r.ProducesResult.OpCode == OpCodes.Ldarg_1).ToList();
+                IEnumerable<OperationResultUsage> cur = prev;
+
+                while (cur.Count() > 0)
+                {
+                    prev = cur;
+
+                    steps.Add(prev);
+
+                    cur = x.Where(r => prev.Any(p => p.ResultUsedBy.Contains(r.ProducesResult))).ToList();
+                }
+
+                Assert.AreEqual(3, steps.Count);
+                Assert.AreEqual("(ldarg.1) result is used by (ldfld Int32 _Bar)", string.Join(", ", steps[0]));
+                Assert.AreEqual("(ldfld Int32 _Bar) result is used by (mul)", string.Join(", ", steps[1]));
+                Assert.AreEqual("(mul) result is used by (stloc.0)", string.Join(", ", steps[2]));
+            }
+        }
+
         [TestMethod]
         public void Ldelema()
         {
