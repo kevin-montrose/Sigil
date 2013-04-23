@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Sigil.Impl;
+﻿using Sigil.Impl;
+using System.Collections.Generic;
 
 namespace Sigil
 {

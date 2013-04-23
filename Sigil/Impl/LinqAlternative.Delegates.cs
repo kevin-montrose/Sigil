@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace Sigil.Impl
 {
     internal delegate void SigilAction();

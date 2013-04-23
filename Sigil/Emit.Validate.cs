@@ -1,7 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
 using System.Reflection.Emit;
-using System.Runtime.CompilerServices;
 
 namespace Sigil
 {
