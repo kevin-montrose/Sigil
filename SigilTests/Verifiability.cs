@@ -47,6 +47,10 @@ namespace SigilTests
             e1.Return();
 
             var x = e1.TraceOperationResultUsage();
+            Assert.AreEqual("(ldarg.0) result is used by (ldfld System.String Foo)", x.ElementAt(0).ToString());
+            Assert.AreEqual("(ldfld System.String Foo) result is used by (brfalse _label0, pop, ret)", x.ElementAt(1).ToString());
+            Assert.AreEqual("(dup) result is used by (brfalse _label0)", x.ElementAt(2).ToString());
+            Assert.AreEqual("(ldstr foo) result is used by (ret)", x.ElementAt(3).ToString());
         }
         
         [TestMethod]

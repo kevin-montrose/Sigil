@@ -26,7 +26,14 @@ namespace Sigil
         /// </summary>
         public override string ToString()
         {
-            return OpCode + " " + string.Join(", ", LinqAlternative.Select(Parameters, o => o.ToString()).ToArray());
+            var ps = string.Join(", ", LinqAlternative.Select(Parameters, o => o.ToString()).OrderBy(_ => _).ToArray());
+
+            if (ps.Length == 0)
+            {
+                return OpCode.ToString();
+            }
+
+            return OpCode + " " + ps;
         }
     }
 }

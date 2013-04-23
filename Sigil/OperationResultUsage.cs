@@ -30,7 +30,14 @@ namespace Sigil
         /// </summary>
         public override string ToString()
         {
-            return "(" + ProducesResult + ") used by (" + string.Join(", ", LinqAlternative.Select(ResultUsedBy, r => r.ToString()).ToArray()) + ")";
+            var users = string.Join(", ", LinqAlternative.Select(ResultUsedBy, r => r.ToString()).OrderBy(_ => _).ToArray());
+
+            if (users.Length == 0)
+            {
+                return "(" + ProducesResult + ") result is unused";
+            }
+
+            return "(" + ProducesResult + ") result is used by (" + users + ")";
         }
     }
 }
