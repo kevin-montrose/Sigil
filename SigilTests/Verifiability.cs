@@ -25,7 +25,9 @@ namespace SigilTests
     {
         class _Usage
         {
+#pragma warning disable 0649
             public string Foo;
+#pragma warning restore 0649
         }
 
         [TestMethod]
@@ -55,7 +57,9 @@ namespace SigilTests
 
         class _FollowTrace
         {
+#pragma warning disable 0649
             public int _Bar;
+#pragma warning restore 0649
         }
 
         [TestMethod]
