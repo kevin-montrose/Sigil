@@ -1,4 +1,5 @@
 ﻿using Sigil.Impl;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Sigil
@@ -17,7 +18,7 @@ namespace Sigil
         /// <summary>
         /// The parameters passsed to a call to Emit.
         /// </summary>
-        public object[] Parameters { get; internal set; }
+        public IEnumerable<object> Parameters { get; internal set; }
 
         /// <summary>
         /// A string representation of this Operation.
