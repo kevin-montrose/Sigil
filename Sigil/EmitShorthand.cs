@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -1324,6 +1325,12 @@ namespace Sigil
             InnerEmit.Xor();
 
             return this;
+        }
+
+        /// <summary cref="M:Sigil.Emit`1.TraceOperationResultUsage" />
+        public IEnumerable<OperationResultUsage> TraceOperationResultUsage()
+        {
+            return InnerEmit.TraceOperationResultUsage();
         }
     }
 }

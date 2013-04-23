@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Sigil
 {
@@ -28,7 +26,7 @@ namespace Sigil
         /// </summary>
         public override string ToString()
         {
-            return OpCode + " " + string.Join(", ", Parameters);
+            return OpCode + " " + string.Join(", ", LinqAlternative.Select(Parameters, o => o.ToString()).ToArray());
         }
     }
 }

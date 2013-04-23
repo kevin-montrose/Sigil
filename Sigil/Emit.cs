@@ -316,14 +316,22 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Returns 
+        /// Traces where the values produced by certain operations are used.
+        /// 
+        /// For example:
+        ///   ldc.i4 32
+        ///   ldc.i4 64
+        ///   add
+        ///   ret
+        ///   
+        /// Would be represented by a series of OperationResultUsage like so:
+        ///   - (lcd.i4 32) -> add
+        ///   - (ldc.i4 64) -> add
+        ///   - (add) -> ret
         /// </summary>
-        /// <returns></returns>
-        public SortedDictionary<Operation, List<Operation>> TraceUsage()
+        public IEnumerable<OperationResultUsage> TraceOperationResultUsage()
         {
-            var orderer = new List<Operation>();
-
-            var ret = new SortedDictionary<Operation, List<Operation>>(new TraceUsageComparer(orderer));
+            var ret = new List<OperationResultUsage>();
 
             foreach (var r in TypesProducedAtIndex.AsEnumerable())
             {
@@ -331,13 +339,11 @@ namespace Sigil
 
                 var usedBy = new List<Operation>(allUsage.Select(u => IL.Operations[u.InstructionIndex.Value]).Distinct().AsEnumerable());
 
-                if(usedBy.Count > 0)
+                if (usedBy.Count > 0)
                 {
                     var key = IL.Operations[r.Key];
 
-                    orderer.Add(key);
-
-                    ret[key] = usedBy;
+                    ret.Add(new OperationResultUsage(key, usedBy));
                 }
             }
 

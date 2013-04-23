@@ -46,7 +46,7 @@ namespace SigilTests
             e1.LoadConstant("foo");
             e1.Return();
 
-            var x = e1.TraceUsage();
+            var x = e1.TraceOperationResultUsage();
         }
         
         [TestMethod]
