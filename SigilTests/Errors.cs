@@ -3283,32 +3283,6 @@ namespace SigilTests
 
             {
                 var e1 = Emit<Action>.NewDynamicMethod();
-                try
-                {
-                    e1.UnsignedConvertOverflow<IntPtr>();
-                    Assert.Fail();
-                }
-                catch (InvalidOperationException e)
-                {
-                    Assert.AreEqual("There is no operation for converting to a pointer with overflow checking", e.Message);
-                }
-            }
-
-            {
-                var e1 = Emit<Action>.NewDynamicMethod();
-                try
-                {
-                    e1.UnsignedConvertOverflow<UIntPtr>();
-                    Assert.Fail();
-                }
-                catch (InvalidOperationException e)
-                {
-                    Assert.AreEqual("There is no operation for converting to a pointer with overflow checking", e.Message);
-                }
-            }
-
-            {
-                var e1 = Emit<Action>.NewDynamicMethod();
                 e1.NewObject<object>();
 
                 try

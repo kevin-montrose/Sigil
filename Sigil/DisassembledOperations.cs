@@ -11,7 +11,7 @@ namespace Sigil
     /// </summary>
     public sealed class DecompiledOperations<DelegateType>
     {
-        public int Count { get; private set; }
+        public int Count { get { return Operations.Count; } }
 
         public IEnumerable<Parameter> Parameters { get; private set; }
         public IEnumerable<Local> Locals { get; private set; }
@@ -94,9 +94,9 @@ namespace Sigil
 
             var e1 = Emit<DelegateType>.NewDynamicMethod(name, module, validationOptions);
 
-            for (var i = 0; i <= length; i++)
+            for (var i = 0; i < length; i++)
             {
-                this[from + length].Apply(e1);
+                this[from + i].Apply(e1);
             }
 
             return e1;

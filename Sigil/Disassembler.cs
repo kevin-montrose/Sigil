@@ -10,8 +10,8 @@ namespace Sigil
     public sealed class Disassembler
     {
         private const byte ContinueOpcode = 0xFE;
-        private static readonly ReadOnlyCollection<OpCode> OneByteOps;
-        private static readonly ReadOnlyCollection<OpCode> TwoByteOps;
+        private static readonly LinqDictionary<int, OpCode> OneByteOps;
+        private static readonly LinqDictionary<int, OpCode> TwoByteOps;
 
         static Disassembler()
         {
@@ -37,8 +37,8 @@ namespace Sigil
                 throw new Exception("Unexpected op size for " + op);
             }
 
-            OneByteOps = (new List<OpCode>(oneByte.OrderBy(o => o.Value).AsEnumerable())).AsReadOnly();
-            TwoByteOps = (new List<OpCode>(twoByte.OrderBy(o => o.Value).AsEnumerable())).AsReadOnly();
+            OneByteOps = oneByte.ToDictionary(d => (int)d.Value, d => d);
+            TwoByteOps = twoByte.ToDictionary(d => (int)d.Value, d => d);
         }
 
         private static void CheckDelegateType<DelegateType>()
