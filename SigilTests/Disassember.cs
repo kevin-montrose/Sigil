@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Reflection.Emit;
+using System.Linq;
 
 namespace SigilTests
 {
@@ -36,6 +37,41 @@ namespace SigilTests
             }
 
             Assert.AreEqual("ldarg.0\r\nldarg.1\r\nadd\r\nret\r\n", instrs);
+        }
+
+        class _Volatile
+        {
+            public volatile int Foo;
+        }
+
+        [TestMethod]
+        public void Volatile()
+        {
+            Action<_Volatile, int> d1 = (a, b) => { var x = a.Foo; x += b; a.Foo = b; };
+
+            var ops = Sigil.Disassembler.Decompile<Action<_Volatile, int>>(d1);
+
+            var loadField = ops[1];
+            Assert.AreEqual(OpCodes.Ldfld, loadField.OpCode);
+            Assert.AreEqual(typeof(_Volatile).GetField("Foo"), loadField.Parameters.ElementAt(0));
+            Assert.AreEqual(true, loadField.Parameters.ElementAt(1));
+
+            var e1 = ops.EmitAll();
+            string instrs;
+            var r1 = e1.CreateDelegate(out instrs);
+
+            var v1 = new _Volatile();
+            var v2 = new _Volatile();
+
+            for (var i = 0; i < 100; i++)
+            {
+                d1(v1, i);
+                r1(v2, i);
+
+                Assert.AreEqual(v1.Foo, v2.Foo);
+            }
+
+            Assert.AreEqual("", instrs);
         }
     }
 }

@@ -9,6 +9,47 @@ namespace Sigil
 {
     public sealed class Disassembler
     {
+        private sealed class PrefixTracker
+        {
+            public bool HasUnaligned { get; private set; }
+            public int? Unaligned { get; private set; }
+
+            public bool HasVolatile { get; private set; }
+
+            public bool HasReadOnly { get; private set; }
+
+            public bool HasTailCall { get; private set; }
+
+            public void SetUnaligned(int a)
+            {
+                HasUnaligned = true;
+                Unaligned = a;
+            }
+
+            public void SetVolatile()
+            {
+                HasVolatile = true;
+            }
+
+            public void SetReadOnly()
+            {
+                HasReadOnly = true;
+            }
+
+            public void SetTailCall()
+            {
+                HasTailCall = true;
+            }
+
+            public void Clear()
+            {
+                HasUnaligned = false;
+                Unaligned = -1;
+                HasVolatile = false;
+                HasReadOnly = false;
+            }
+        }
+
         private const byte ContinueOpcode = 0xFE;
         private static readonly LinqDictionary<int, OpCode> OneByteOps;
         private static readonly LinqDictionary<int, OpCode> TwoByteOps;
@@ -38,7 +79,7 @@ namespace Sigil
             }
 
             OneByteOps = oneByte.ToDictionary(d => (int)d.Value, d => d);
-            TwoByteOps = twoByte.ToDictionary(d => (int)d.Value, d => d);
+            TwoByteOps = twoByte.ToDictionary(d => (int)(d.Value & 0xFF), d => d);
         }
 
         private static void CheckDelegateType<DelegateType>()
@@ -60,7 +101,7 @@ namespace Sigil
             }
         }
 
-        public static DecompiledOperations<DelegateType> Decompile<DelegateType>(DelegateType del)
+        public static DisassembledOperations<DelegateType> Decompile<DelegateType>(DelegateType del)
             where DelegateType : class
         {
             CheckDelegateType<DelegateType>();
@@ -82,7 +123,7 @@ namespace Sigil
             var ops = GetOperations(asDel.Method.Module, cil, ps, ls);
 
             return
-                new DecompiledOperations<DelegateType>(new List<Operation>(ops), ps, ls);
+                new DisassembledOperations<DelegateType>(new List<Operation>(ops), ps, ls);
         }
 
         private static IEnumerable<Operation> GetOperations(Module mod, byte[] cil, IEnumerable<Parameter> ps, IEnumerable<Local> ls)
@@ -102,19 +143,25 @@ namespace Sigil
 
             var ret = new List<Operation>();
 
+            var prefixes = new PrefixTracker();
+
             int i = 0;
             while (i < cil.Length)
             {
                 Operation op;
-                i += ReadOp(mod, cil, i, parameterLookup, localLookup, out op);
+                i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, out op);
 
-                ret.Add(op);
+                if(op != null)
+                {
+                    ret.Add(op);
+                    prefixes.Clear();
+                }
             }
 
             return ret;
         }
 
-        private static int ReadOp(Module mod, byte[] cil, int ix, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, out Operation op)
+        private static int ReadOp(Module mod, byte[] cil, int ix, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, PrefixTracker prefixes, out Operation op)
         {
             int advance = 0;
 
@@ -123,7 +170,9 @@ namespace Sigil
 
             if (first == ContinueOpcode)
             {
-                opcode = TwoByteOps[cil[ix + 1]];
+                var next = cil[ix + 1];
+
+                opcode = TwoByteOps[next];
                 advance += 2;
             }
             else
@@ -134,12 +183,12 @@ namespace Sigil
 
             var operand = ReadOperands(mod, opcode, cil, ix + advance, pLookup, lLookup, ref advance);
 
-            op = MakeReplayableOperation(opcode, operand);
+            op = MakeReplayableOperation(opcode, operand, prefixes);
 
             return advance;
         }
 
-        private static Operation MakeReplayableOperation(OpCode op, object[] operands)
+        private static Operation MakeReplayableOperation(OpCode op, object[] operands, PrefixTracker prefixes)
         {
             if (op == OpCodes.Add)
             {
@@ -897,12 +946,15 @@ namespace Sigil
 
             if (op == OpCodes.Initblk)
             {
+                var isVolatile = prefixes.HasVolatile;
+                int? unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[0],
-                        Replay = emit => emit.InitializeBlock(false, null)
+                        Parameters = new object[] { isVolatile, unaligned },
+                        Replay = emit => emit.InitializeBlock(isVolatile, unaligned)
                     };
             }
 
@@ -1371,12 +1423,15 @@ namespace Sigil
             if (op == OpCodes.Ldfld)
             {
                 var fld = (FieldInfo)operands[0];
+                var isVolatile = prefixes.HasVolatile;
+                int? unalgined = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { fld, null, null },
-                        Replay = emit => emit.LoadField(fld, null, null)
+                        Parameters = new object[] { fld, isVolatile, unalgined },
+                        Replay = emit => emit.LoadField(fld, isVolatile, unalgined)
                     };
             }
 
@@ -1407,84 +1462,105 @@ namespace Sigil
             if (op == OpCodes.Ldind_I)
             {
                 var type = typeof(IntPtr);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_I1)
             {
                 var type = typeof(sbyte);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_I2)
             {
                 var type = typeof(short);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_I4)
             {
                 var type = typeof(int);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_I8)
             {
                 var type = typeof(long);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_R4)
             {
                 var type = typeof(float);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_R8)
             {
                 var type = typeof(double);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
@@ -1497,36 +1573,45 @@ namespace Sigil
             if (op == OpCodes.Ldind_U1)
             {
                 var type = typeof(byte);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_U2)
             {
                 var type = typeof(ushort);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldind_U4)
             {
                 var type = typeof(uint);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(type, isVolatile, unaligned)
                     };
             }
 
@@ -1654,24 +1739,30 @@ namespace Sigil
             if (op == OpCodes.Ldobj)
             {
                 var type = (Type)operands[0];
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.LoadObject(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.LoadObject(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Ldsfld)
             {
                 var fld = (FieldInfo)operands[0];
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { fld, null, null },
-                        Replay = emit => emit.LoadField(fld, null, null)
+                        Parameters = new object[] { fld, isVolatile, unaligned },
+                        Replay = emit => emit.LoadField(fld, isVolatile, unaligned)
                     };
             }
 
@@ -1905,7 +1996,8 @@ namespace Sigil
 
             if (op == OpCodes.Readonly)
             {
-                throw new NotImplementedException();
+                prefixes.SetReadOnly();
+                return null;
             }
 
             if (op == OpCodes.Refanytype)
@@ -2149,96 +2241,120 @@ namespace Sigil
             if (op == OpCodes.Stfld)
             {
                 var fld = (FieldInfo)operands[0];
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { fld, false, null },
-                        Replay = emit => emit.StoreField(fld, false, null)
+                        Parameters = new object[] { fld, isVolatile, unaligned },
+                        Replay = emit => emit.StoreField(fld, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_I)
             {
                 var type = typeof(IntPtr);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_I1)
             {
                 var type = typeof(sbyte);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_I2)
             {
                 var type = typeof(short);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_I4)
             {
                 var type = typeof(int);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_I8)
             {
                 var type = typeof(long);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_R4)
             {
                 var type = typeof(float);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_R8)
             {
                 var type = typeof(double);
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreIndirect(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(type, isVolatile, unaligned)
                     };
             }
 
@@ -2329,24 +2445,30 @@ namespace Sigil
             if (op == OpCodes.Stobj)
             {
                 var type = (Type)operands[0];
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { type, false, null },
-                        Replay = emit => emit.StoreObject(type, false, null)
+                        Parameters = new object[] { type, isVolatile, unaligned },
+                        Replay = emit => emit.StoreObject(type, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stsfld)
             {
                 var fld = (FieldInfo)operands[0];
+                var isVolatile = prefixes.HasVolatile;
+                var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
+
                 return
                     new Operation
                     {
                         OpCode = op,
-                        Parameters = new object[] { fld, false, null },
-                        Replay = emit => emit.StoreField(fld, false, null)
+                        Parameters = new object[] { fld, isVolatile, unaligned },
+                        Replay = emit => emit.StoreField(fld, isVolatile, unaligned)
                     };
             }
 
@@ -2390,7 +2512,8 @@ namespace Sigil
 
             if (op == OpCodes.Tailcall)
             {
-                throw new NotImplementedException();
+                prefixes.SetTailCall();
+                return null;
             }
 
             if (op == OpCodes.Throw)
@@ -2406,7 +2529,9 @@ namespace Sigil
 
             if (op == OpCodes.Unaligned)
             {
-                throw new NotImplementedException();
+                byte u = (byte)operands[0];
+                prefixes.SetUnaligned(u);
+                return null;
             }
 
             if (op == OpCodes.Unbox)
@@ -2435,7 +2560,9 @@ namespace Sigil
 
             if (op == OpCodes.Volatile)
             {
-                throw new NotImplementedException();
+                prefixes.SetVolatile();
+
+                return null;
             }
 
             if (op == OpCodes.Xor)

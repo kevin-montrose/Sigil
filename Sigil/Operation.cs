@@ -28,7 +28,19 @@ namespace Sigil
         /// </summary>
         public override string ToString()
         {
-            var ps = string.Join(", ", LinqAlternative.Select(Parameters, o => o.ToString()).OrderBy(_ => _).ToArray());
+            var ps = 
+                string.Join(
+                    ", ", 
+                    LinqAlternative.Select(
+                        Parameters, 
+                        o => 
+                        {
+                            if(o == null) return "(null)";
+                            
+                            return o.ToString();
+                        }
+                    ).ToArray()
+                );
 
             if (ps.Length == 0)
             {

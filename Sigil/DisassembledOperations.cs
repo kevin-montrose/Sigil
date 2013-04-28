@@ -9,7 +9,7 @@ namespace Sigil
     /// 
     /// The operations of the decompiled delegate can be inspected, and it can be replayed to a new Emit.
     /// </summary>
-    public sealed class DecompiledOperations<DelegateType>
+    public sealed class DisassembledOperations<DelegateType>
     {
         public int Count { get { return Operations.Count; } }
 
@@ -35,7 +35,7 @@ namespace Sigil
             }
         }
 
-        internal DecompiledOperations(List<Operation> ops, IEnumerable<Parameter> ps, IEnumerable<Local> locs)
+        internal DisassembledOperations(List<Operation> ops, IEnumerable<Parameter> ps, IEnumerable<Local> locs)
         {
             Operations = ops;
             Parameters = ps;
