@@ -276,11 +276,6 @@ namespace Sigil
                 throw new InvalidOperationException("There is no operation for converting to a double with overflow checking");
             }
 
-            if (primitiveType == typeof(UIntPtr) || primitiveType == typeof(IntPtr))
-            {
-                throw new InvalidOperationException("There is no operation for converting to a pointer with overflow checking");
-            }
-
             var transitions = CheckConvertible("UnsignedConvertOverflow", primitiveType);
 
             if (primitiveType == typeof(byte))
@@ -331,6 +326,18 @@ namespace Sigil
                 return this;
             }
 
+            if (primitiveType == typeof(IntPtr))
+            {
+                UnsignedConvertToNativeIntOverflow(transitions);
+                return this;
+            }
+
+            if (primitiveType == typeof(UIntPtr))
+            {
+                UnsignedConvertToUnsignedNativeIntOverflow(transitions);
+                return this;
+            }
+
             throw new Exception("Shouldn't be possible");
         }
 
@@ -363,6 +370,11 @@ namespace Sigil
             UpdateState(OpCodes.Conv_Ovf_I_Un, transitions);
         }
 
+        private void UnsignedConvertToUnsignedNativeIntOverflow(TransitionWrapper transitions)
+        {
+            UpdateState(OpCodes.Conv_Ovf_U_Un, transitions);
+        }
+
         private void ConvertToUnsignedNativeInt(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_U, transitions);
@@ -371,11 +383,6 @@ namespace Sigil
         private void ConvertToUnsignedNativeIntOverflow(TransitionWrapper transitions)
         {
             UpdateState(OpCodes.Conv_Ovf_U, transitions);
-        }
-
-        private void UnsignedConvertToUnsignedNativeIntOverflow(TransitionWrapper transitions)
-        {
-            UpdateState(OpCodes.Conv_Ovf_U_Un, transitions);
         }
 
         private void ConvertToSByte(TransitionWrapper transitions)

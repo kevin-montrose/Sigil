@@ -50,6 +50,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DisassembledOperations.cs" />
+    <Compile Include="Disassembler.cs" />
     <Compile Include="Emit.ArgumentList.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
@@ -265,6 +267,7 @@
     <Compile Include="Emit.LoadLocal.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SigilVerificationException.cs" />
     <Compile Include="ValidationOptions.cs" />

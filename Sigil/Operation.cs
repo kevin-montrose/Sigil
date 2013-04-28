@@ -1,4 +1,5 @@
 ﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
@@ -20,6 +21,8 @@ namespace Sigil
         /// </summary>
         public IEnumerable<object> Parameters { get; internal set; }
 
+        internal Action<dynamic> Replay { get; set; }
+
         /// <summary>
         /// A string representation of this Operation.
         /// </summary>
@@ -33,6 +36,16 @@ namespace Sigil
             }
 
             return OpCode + " " + ps;
+        }
+
+        internal void Apply<DelegateType>(Emit<DelegateType> emit)
+        {
+            if (Replay == null)
+            {
+                throw new InvalidOperationException("Cannot apply an Operation that didn't come from Disassembler");
+            }
+
+            Replay(emit);
         }
     }
 }
