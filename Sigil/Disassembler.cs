@@ -102,7 +102,7 @@ namespace Sigil
             }
         }
 
-        public static DisassembledOperations<DelegateType> Decompile(DelegateType del)
+        public static DisassembledOperations<DelegateType> Disassemble(DelegateType del)
         {
             CheckDelegateType<DelegateType>();
 
