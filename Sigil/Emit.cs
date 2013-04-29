@@ -24,7 +24,7 @@ namespace Sigil
 
         private bool Invalidated;
 
-        private BufferedILGenerator IL;
+        private BufferedILGenerator<DelegateType> IL;
         private TypeOnStack ReturnType;
         private Type[] ParameterTypes;
         private CallingConventions CallingConventions;
@@ -147,7 +147,7 @@ namespace Sigil
                     }
                 ).ToArray();
 
-            IL = new BufferedILGenerator(typeof(DelegateType));
+            IL = new BufferedILGenerator<DelegateType>();
             
             Trackers = new LinqList<VerifiableTracker>();
 
@@ -297,24 +297,6 @@ namespace Sigil
             return CreatedDelegate;
         }
 
-        private class TraceUsageComparer : IComparer<Operation>
-        {
-            private List<Operation> Operations;
-
-            public TraceUsageComparer(List<Operation> ops)
-            {
-                Operations = ops;
-            }
-
-            public int Compare(Operation x, Operation y)
-            {
-                var ix = Operations.IndexOf(x);
-                var iy = Operations.IndexOf(y);
-
-                return ix.CompareTo(iy);
-            }
-        }
-
         /// <summary>
         /// Traces where the values produced by certain operations are used.
         /// 
@@ -329,21 +311,21 @@ namespace Sigil
         ///   - (ldc.i4 64) -> add
         ///   - (add) -> ret
         /// </summary>
-        public IEnumerable<OperationResultUsage> TraceOperationResultUsage()
+        public IEnumerable<OperationResultUsage<DelegateType>> TraceOperationResultUsage()
         {
-            var ret = new List<OperationResultUsage>();
+            var ret = new List<OperationResultUsage<DelegateType>>();
 
             foreach (var r in TypesProducedAtIndex.AsEnumerable())
             {
                 var allUsage = new LinqList<InstructionAndTransitions>(r.Value.SelectMany(k => k.UsedBy.Select(u => u.Item1)).AsEnumerable());
 
-                var usedBy = new List<Operation>(allUsage.Select(u => IL.Operations[u.InstructionIndex.Value]).Distinct().AsEnumerable());
+                var usedBy = new List<Operation<DelegateType>>(allUsage.Select(u => IL.Operations[u.InstructionIndex.Value]).Distinct().AsEnumerable());
 
                 if (usedBy.Count > 0)
                 {
                     var key = IL.Operations[r.Key];
 
-                    ret.Add(new OperationResultUsage(key, usedBy));
+                    ret.Add(new OperationResultUsage<DelegateType>(key, usedBy));
                 }
             }
 

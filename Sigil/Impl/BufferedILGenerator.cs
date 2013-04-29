@@ -47,7 +47,7 @@ namespace Sigil.Impl
         }
     }
 
-    internal class BufferedILGenerator
+    internal class BufferedILGenerator<DelegateType>
     {
         public BufferedILInstruction this[int ix]
         {
@@ -61,14 +61,11 @@ namespace Sigil.Impl
 
         private LinqList<SigilAction<ILGenerator, bool, StringBuilder>> Buffer = new LinqList<SigilAction<ILGenerator, bool, StringBuilder>>();
         private LinqList<BufferedILInstruction> TraversableBuffer = new LinqList<BufferedILInstruction>();
-        internal LinqList<Operation> Operations = new LinqList<Operation>();
+        internal LinqList<Operation<DelegateType>> Operations = new LinqList<Operation<DelegateType>>();
         private LinqList<SigilFunc<int>> InstructionSizes = new LinqList<SigilFunc<int>>();
 
-        private Type DelegateType;
-
-        public BufferedILGenerator(Type delegateType)
+        public BufferedILGenerator()
         {
-            DelegateType = delegateType;
         }
 
         public string UnBuffer(ILGenerator il)
@@ -121,7 +118,7 @@ namespace Sigil.Impl
         {
             var ret = new List<string>();
 
-            var invoke = DelegateType.GetMethod("Invoke");
+            var invoke = typeof(DelegateType).GetMethod("Invoke");
             var returnType = invoke.ReturnType;
             var parameterTypes = LinqAlternative.Select(invoke.GetParameters(), s => s.ParameterType).ToArray();
 
@@ -263,7 +260,7 @@ namespace Sigil.Impl
                 }
             );
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[0] });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[0] });
         }
 
         public void Emit(OpCode op)
@@ -293,7 +290,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[0] });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[0] });
         }
 
         public void Emit(OpCode op, byte b)
@@ -323,7 +320,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { b } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { b } });
         }
 
         public void Emit(OpCode op, short s)
@@ -353,7 +350,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { s } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { s } });
         }
 
         public void Emit(OpCode op, int i)
@@ -383,7 +380,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { i } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { i } });
         }
 
         public void Emit(OpCode op, uint ui)
@@ -412,7 +409,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { ui } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { ui } });
         }
 
         public void Emit(OpCode op, long l)
@@ -435,7 +432,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { l } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { l } });
         }
 
         public void Emit(OpCode op, ulong ul)
@@ -464,7 +461,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { ul } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { ul } });
         }
 
         public void Emit(OpCode op, float f)
@@ -487,7 +484,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { f } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { f } });
         }
 
         public void Emit(OpCode op, double d)
@@ -509,7 +506,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { d } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { d } });
         }
 
         public void Emit(OpCode op, MethodInfo method)
@@ -545,7 +542,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = method.ReturnType, MethodParameterTypes = parameters });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { method } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { method } });
         }
 
         public void Emit(OpCode op, ConstructorInfo cons)
@@ -568,7 +565,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { cons } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { cons } });
         }
 
         public void Emit(OpCode op, Type type)
@@ -591,7 +588,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { type } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { type } });
         }
 
         public void Emit(OpCode op, FieldInfo field)
@@ -614,7 +611,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { field } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { field } });
         }
 
         public void Emit(OpCode op, string str)
@@ -637,7 +634,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { str } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { str } });
         }
 
         public void Emit(OpCode op, Sigil.Label label, out UpdateOpCodeDelegate update)
@@ -671,7 +668,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { label } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { label } });
         }
 
         public void Emit(OpCode op, Sigil.Label[] labels, out UpdateOpCodeDelegate update)
@@ -705,7 +702,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = labels });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = labels });
         }
 
         internal static string Join<T>(string delimiter, IEnumerable<T> parts) where T: class
@@ -746,7 +743,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = new object[] { local } });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { local } });
         }
 
         public void Emit(OpCode op, CallingConventions callConventions, Type returnType, Type[] parameterTypes)
@@ -772,7 +769,7 @@ namespace Sigil.Impl
             var paras = new List<object> { callConventions, returnType };
             paras.AddRange(parameterTypes);
 
-            Operations.Add(new Operation { OpCode = op, Parameters = paras.ToArray() });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = paras.ToArray() });
         }
 
         public void EmitCall(OpCode op, MethodInfo method, Type[] arglist)
@@ -813,7 +810,7 @@ namespace Sigil.Impl
 
             TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = method.ReturnType, MethodParameterTypes = parameters });
 
-            Operations.Add(new Operation { OpCode = op, Parameters = paras.ToArray() });
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = paras.ToArray() });
         }
 
         public void EmitCalli(CallingConventions callingConvention, Type returnType, Type[] parameterTypes, Type[] arglist)
@@ -843,7 +840,7 @@ namespace Sigil.Impl
             paras.AddRange(parameterTypes);
             paras.AddRange(arglist);
 
-            Operations.Add(new Operation { OpCode = OpCodes.Calli, Parameters = paras.ToArray() });
+            Operations.Add(new Operation<DelegateType> { OpCode = OpCodes.Calli, Parameters = paras.ToArray() });
         }
 
         public DefineLabelDelegate BeginExceptionBlock()

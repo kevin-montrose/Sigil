@@ -6,19 +6,19 @@ namespace Sigil
     /// <summary>
     /// Represents an IL operation, and the subsequent operations that may use it's result.
     /// </summary>
-    public sealed class OperationResultUsage
+    public sealed class OperationResultUsage<DelegateType>
     {
         /// <summary>
         /// The operation that is producing a result.
         /// </summary>
-        public Operation ProducesResult { get; private set; }
+        public Operation<DelegateType> ProducesResult { get; private set; }
 
         /// <summary>
         /// The operations that may use the result produced by the ProducesResult operation.
         /// </summary>
-        public IEnumerable<Operation> ResultUsedBy { get; private set; }
+        public IEnumerable<Operation<DelegateType>> ResultUsedBy { get; private set; }
 
-        internal OperationResultUsage(Operation producer, IEnumerable<Operation> users)
+        internal OperationResultUsage(Operation<DelegateType> producer, IEnumerable<Operation<DelegateType>> users)
         {
             ProducesResult = producer;
             ResultUsedBy = LinqAlternative.ToList(users).AsEnumerable();

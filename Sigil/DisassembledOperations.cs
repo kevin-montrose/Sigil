@@ -16,8 +16,8 @@ namespace Sigil
         public IEnumerable<Parameter> Parameters { get; private set; }
         public IEnumerable<Local> Locals { get; private set; }
 
-        private List<Operation> Operations;
-        public Operation this[int index]
+        private List<Operation<DelegateType>> Operations;
+        public Operation<DelegateType> this[int index]
         {
             get
             {
@@ -35,11 +35,24 @@ namespace Sigil
             }
         }
 
-        internal DisassembledOperations(List<Operation> ops, IEnumerable<Parameter> ps, IEnumerable<Local> locs)
+        internal DisassembledOperations(List<Operation<DelegateType>> ops, IEnumerable<Parameter> ps, IEnumerable<Local> locs)
         {
             Operations = ops;
             Parameters = ps;
             Locals = locs;
+        }
+
+        private void Apply(int i, Emit<DelegateType> emit)
+        {
+            if (i == 0)
+            {
+                foreach (var l in Locals)
+                {
+                    emit.DeclareLocal(l.LocalType, l.Name);
+                }
+            }
+
+            this[i].Apply(emit);
         }
 
         public void ContinueEmitFrom(Emit<DelegateType> emit, int from, int length)
@@ -61,7 +74,7 @@ namespace Sigil
 
             for (var i = 0; i <= length; i++)
             {
-                this[from + length].Apply(emit);
+                Apply(from + length, emit);
             }
         }
 
@@ -96,7 +109,7 @@ namespace Sigil
 
             for (var i = 0; i < length; i++)
             {
-                this[from + i].Apply(e1);
+                Apply(from + i, e1);
             }
 
             return e1;

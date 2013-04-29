@@ -225,7 +225,7 @@ namespace Sigil
 
             if (cons == null)
             {
-                throw new InvalidOperationException("Type " + type + " must have a constructor that matches parameters [" + BufferedILGenerator.Join(", ", ((LinqArray<Type>)parameterTypes).AsEnumerable()) + "]");
+                throw new InvalidOperationException("Type " + type + " must have a constructor that matches parameters [" + BufferedILGenerator<DelegateType>.Join(", ", ((LinqArray<Type>)parameterTypes).AsEnumerable()) + "]");
             }
 
             return NewObject(cons);

@@ -84,10 +84,10 @@ namespace SigilTests
             var x = e1.TraceOperationResultUsage();
 
             {
-                var steps = new List<IEnumerable<OperationResultUsage>>();
+                var steps = new List<IEnumerable<OperationResultUsage<Func<_FollowTrace, _FollowTrace, int>>>>();
 
-                IEnumerable<OperationResultUsage> prev = x.Where(r => r.ProducesResult.OpCode == OpCodes.Ldarg_0).ToList();
-                IEnumerable<OperationResultUsage> cur = prev;
+                IEnumerable<OperationResultUsage<Func<_FollowTrace, _FollowTrace, int>>> prev = x.Where(r => r.ProducesResult.OpCode == OpCodes.Ldarg_0).ToList();
+                IEnumerable<OperationResultUsage<Func<_FollowTrace, _FollowTrace, int>>> cur = prev;
 
                 while (cur.Count() > 0)
                 {
@@ -105,10 +105,10 @@ namespace SigilTests
             }
 
             {
-                var steps = new List<IEnumerable<OperationResultUsage>>();
+                var steps = new List<IEnumerable<OperationResultUsage<Func<_FollowTrace, _FollowTrace, int>>>>();
 
-                IEnumerable<OperationResultUsage> prev = x.Where(r => r.ProducesResult.OpCode == OpCodes.Ldarg_1).ToList();
-                IEnumerable<OperationResultUsage> cur = prev;
+                IEnumerable<OperationResultUsage<Func<_FollowTrace, _FollowTrace, int>>> prev = x.Where(r => r.ProducesResult.OpCode == OpCodes.Ldarg_1).ToList();
+                IEnumerable<OperationResultUsage<Func<_FollowTrace, _FollowTrace, int>>> cur = prev;
 
                 while (cur.Count() > 0)
                 {

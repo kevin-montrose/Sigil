@@ -7,7 +7,8 @@ using System.Reflection.Emit;
 
 namespace Sigil
 {
-    public sealed class Disassembler
+    public sealed class Disassembler<DelegateType>
+        where DelegateType : class
     {
         private sealed class PrefixTracker
         {
@@ -101,8 +102,7 @@ namespace Sigil
             }
         }
 
-        public static DisassembledOperations<DelegateType> Decompile<DelegateType>(DelegateType del)
-            where DelegateType : class
+        public static DisassembledOperations<DelegateType> Decompile(DelegateType del)
         {
             CheckDelegateType<DelegateType>();
 
@@ -123,10 +123,10 @@ namespace Sigil
             var ops = GetOperations(asDel.Method.Module, cil, ps, ls);
 
             return
-                new DisassembledOperations<DelegateType>(new List<Operation>(ops), ps, ls);
+                new DisassembledOperations<DelegateType>(new List<Operation<DelegateType>>(ops), ps, ls);
         }
 
-        private static IEnumerable<Operation> GetOperations(Module mod, byte[] cil, IEnumerable<Parameter> ps, IEnumerable<Local> ls)
+        private static IEnumerable<Operation<DelegateType>> GetOperations(Module mod, byte[] cil, IEnumerable<Parameter> ps, IEnumerable<Local> ls)
         {
             var parameterLookup = new Dictionary<int, Parameter>();
             var localLookup = new Dictionary<int, Local>();
@@ -141,14 +141,14 @@ namespace Sigil
                 localLookup[l.Index] = l;
             }
 
-            var ret = new List<Operation>();
+            var ret = new List<Operation<DelegateType>>();
 
             var prefixes = new PrefixTracker();
 
             int i = 0;
             while (i < cil.Length)
             {
-                Operation op;
+                Operation<DelegateType> op;
                 i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, out op);
 
                 if(op != null)
@@ -161,7 +161,7 @@ namespace Sigil
             return ret;
         }
 
-        private static int ReadOp(Module mod, byte[] cil, int ix, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, PrefixTracker prefixes, out Operation op)
+        private static int ReadOp(Module mod, byte[] cil, int ix, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, PrefixTracker prefixes, out Operation<DelegateType> op)
         {
             int advance = 0;
 
@@ -188,12 +188,12 @@ namespace Sigil
             return advance;
         }
 
-        private static Operation MakeReplayableOperation(OpCode op, object[] operands, PrefixTracker prefixes)
+        private static Operation<DelegateType> MakeReplayableOperation(OpCode op, object[] operands, PrefixTracker prefixes)
         {
             if (op == OpCodes.Add)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -204,7 +204,7 @@ namespace Sigil
             if (op == OpCodes.Add_Ovf)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -215,7 +215,7 @@ namespace Sigil
             if (op == OpCodes.Add_Ovf_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -226,7 +226,7 @@ namespace Sigil
             if (op == OpCodes.And)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -237,7 +237,7 @@ namespace Sigil
             if (op == OpCodes.Arglist)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -349,7 +349,7 @@ namespace Sigil
             {
                 var valType = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { valType },
@@ -370,7 +370,7 @@ namespace Sigil
             if (op == OpCodes.Break)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -404,7 +404,7 @@ namespace Sigil
                 var mtd = (MethodInfo)mem;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { mtd },
@@ -423,7 +423,7 @@ namespace Sigil
                 var mtd = (MethodInfo)mem;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { mtd },
@@ -436,7 +436,7 @@ namespace Sigil
                 var type = (Type)operands[0];
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -447,7 +447,7 @@ namespace Sigil
             if (op == OpCodes.Ceq)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -458,7 +458,7 @@ namespace Sigil
             if (op == OpCodes.Cgt)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -469,7 +469,7 @@ namespace Sigil
             if (op == OpCodes.Cgt_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -480,7 +480,7 @@ namespace Sigil
             if (op == OpCodes.Ckfinite)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -491,7 +491,7 @@ namespace Sigil
             if (op == OpCodes.Clt)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -502,7 +502,7 @@ namespace Sigil
             if (op == OpCodes.Clt_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -518,7 +518,7 @@ namespace Sigil
             if (op == OpCodes.Conv_I)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -529,7 +529,7 @@ namespace Sigil
             if (op == OpCodes.Conv_I1)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -540,7 +540,7 @@ namespace Sigil
             if (op == OpCodes.Conv_I2)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -551,7 +551,7 @@ namespace Sigil
             if (op == OpCodes.Conv_I4)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -562,7 +562,7 @@ namespace Sigil
             if (op == OpCodes.Conv_I8)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -573,7 +573,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -584,7 +584,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -595,7 +595,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I1)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -606,7 +606,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I1_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -617,7 +617,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I2)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -628,7 +628,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I2_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -639,7 +639,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I4)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -650,7 +650,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I4_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -661,7 +661,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I8)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -672,7 +672,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_I8_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -683,7 +683,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -694,7 +694,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -705,7 +705,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U1)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -716,7 +716,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U1_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -727,7 +727,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U2)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -738,7 +738,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U2_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -749,7 +749,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U4)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -760,7 +760,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U4_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -771,7 +771,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U8)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -782,7 +782,7 @@ namespace Sigil
             if (op == OpCodes.Conv_Ovf_U8_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -793,7 +793,7 @@ namespace Sigil
             if (op == OpCodes.Conv_R_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -804,7 +804,7 @@ namespace Sigil
             if (op == OpCodes.Conv_R4)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -815,7 +815,7 @@ namespace Sigil
             if (op == OpCodes.Conv_R8)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -826,7 +826,7 @@ namespace Sigil
             if (op == OpCodes.Conv_U)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -837,7 +837,7 @@ namespace Sigil
             if (op == OpCodes.Conv_U1)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -848,7 +848,7 @@ namespace Sigil
             if (op == OpCodes.Conv_U2)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -859,7 +859,7 @@ namespace Sigil
             if (op == OpCodes.Conv_U4)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -870,7 +870,7 @@ namespace Sigil
             if (op == OpCodes.Conv_U8)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -881,7 +881,7 @@ namespace Sigil
             if (op == OpCodes.Cpblk)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -893,7 +893,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -904,7 +904,7 @@ namespace Sigil
             if (op == OpCodes.Div)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -915,7 +915,7 @@ namespace Sigil
             if (op == OpCodes.Div_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -926,7 +926,7 @@ namespace Sigil
             if (op == OpCodes.Dup)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -950,7 +950,7 @@ namespace Sigil
                 int? unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { isVolatile, unaligned },
@@ -962,7 +962,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -974,7 +974,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -986,7 +986,7 @@ namespace Sigil
             {
                 var mtd = (MethodInfo)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { mtd },
@@ -998,7 +998,7 @@ namespace Sigil
             {
                 ushort ix = (ushort)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1010,7 +1010,7 @@ namespace Sigil
             {
                 ushort ix = 0;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1022,7 +1022,7 @@ namespace Sigil
             {
                 ushort ix = 1;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1034,7 +1034,7 @@ namespace Sigil
             {
                 ushort ix = 2;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1046,7 +1046,7 @@ namespace Sigil
             {
                 ushort ix = 3;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1058,7 +1058,7 @@ namespace Sigil
             {
                 ushort ix = (byte)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1070,7 +1070,7 @@ namespace Sigil
             {
                 ushort ix = (ushort)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1082,7 +1082,7 @@ namespace Sigil
             {
                 ushort ix = (byte)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -1094,7 +1094,7 @@ namespace Sigil
             {
                 int c = (int)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1106,7 +1106,7 @@ namespace Sigil
             {
                 int c = 0;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1118,7 +1118,7 @@ namespace Sigil
             {
                 int c = 1;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1130,7 +1130,7 @@ namespace Sigil
             {
                 int c = 2;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1142,7 +1142,7 @@ namespace Sigil
             {
                 int c = 3;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1154,7 +1154,7 @@ namespace Sigil
             {
                 int c = 4;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1166,7 +1166,7 @@ namespace Sigil
             {
                 int c = 5;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1178,7 +1178,7 @@ namespace Sigil
             {
                 int c = 6;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1190,7 +1190,7 @@ namespace Sigil
             {
                 int c = 7;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1202,7 +1202,7 @@ namespace Sigil
             {
                 int c = 8;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1214,7 +1214,7 @@ namespace Sigil
             {
                 int c = -1;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1226,7 +1226,7 @@ namespace Sigil
             {
                 int c = (sbyte)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1238,7 +1238,7 @@ namespace Sigil
             {
                 long c = (long)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1250,7 +1250,7 @@ namespace Sigil
             {
                 float c = (float)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1262,7 +1262,7 @@ namespace Sigil
             {
                 double c = (double)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { c },
@@ -1274,7 +1274,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1286,7 +1286,7 @@ namespace Sigil
             {
                 var type = typeof(IntPtr);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1298,7 +1298,7 @@ namespace Sigil
             {
                 var type = typeof(sbyte);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1310,7 +1310,7 @@ namespace Sigil
             {
                 var type = typeof(short);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1322,7 +1322,7 @@ namespace Sigil
             {
                 var type = typeof(int);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1334,7 +1334,7 @@ namespace Sigil
             {
                 var type = typeof(long);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1346,7 +1346,7 @@ namespace Sigil
             {
                 var type = typeof(float);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1358,7 +1358,7 @@ namespace Sigil
             {
                 var type = typeof(double);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1376,7 +1376,7 @@ namespace Sigil
             {
                 var type = typeof(byte);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1388,7 +1388,7 @@ namespace Sigil
             {
                 var type = typeof(ushort);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1400,7 +1400,7 @@ namespace Sigil
             {
                 var type = typeof(uint);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1412,7 +1412,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1427,7 +1427,7 @@ namespace Sigil
                 int? unalgined = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { fld, isVolatile, unalgined },
@@ -1439,7 +1439,7 @@ namespace Sigil
             {
                 var fld = (FieldInfo)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { fld },
@@ -1451,7 +1451,7 @@ namespace Sigil
             {
                 var mtd = (MethodInfo)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { mtd },
@@ -1466,7 +1466,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1481,7 +1481,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1496,7 +1496,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1511,7 +1511,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1526,7 +1526,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1541,7 +1541,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1556,7 +1556,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1577,7 +1577,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1592,7 +1592,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1607,7 +1607,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1626,7 +1626,7 @@ namespace Sigil
                 ushort ix = (ushort)operands[0];
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1639,7 +1639,7 @@ namespace Sigil
                 ushort ix = 0;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1652,7 +1652,7 @@ namespace Sigil
                 ushort ix = 1;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1665,7 +1665,7 @@ namespace Sigil
                 ushort ix = 2;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1678,7 +1678,7 @@ namespace Sigil
                 ushort ix = 3;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1691,7 +1691,7 @@ namespace Sigil
                 ushort ix = (byte)operands[0];
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1704,7 +1704,7 @@ namespace Sigil
                 ushort ix = (ushort)operands[0];
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1717,7 +1717,7 @@ namespace Sigil
                 ushort ix = (byte)operands[0];
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -1728,7 +1728,7 @@ namespace Sigil
             if (op == OpCodes.Ldnull)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1743,7 +1743,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -1758,7 +1758,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { fld, isVolatile, unaligned },
@@ -1770,7 +1770,7 @@ namespace Sigil
             {
                 var fld = (FieldInfo)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { fld },
@@ -1782,7 +1782,7 @@ namespace Sigil
             {
                 var str = (string)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { str },
@@ -1799,7 +1799,7 @@ namespace Sigil
                 if (asFld != null)
                 {
                     return
-                        new Operation
+                        new Operation<DelegateType>
                         {
                             OpCode = op,
                             Parameters = new object[] { asFld },
@@ -1810,7 +1810,7 @@ namespace Sigil
                 if (asMtd != null)
                 {
                     return
-                        new Operation
+                        new Operation<DelegateType>
                         {
                             OpCode = op,
                             Parameters = new object[] { asMtd },
@@ -1821,7 +1821,7 @@ namespace Sigil
                 if (asType != null)
                 {
                     return
-                        new Operation
+                        new Operation<DelegateType>
                         {
                             OpCode = op,
                             Parameters = new object[] { asType },
@@ -1836,7 +1836,7 @@ namespace Sigil
             {
                 var mtd = (MethodInfo)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { mtd },
@@ -1857,7 +1857,7 @@ namespace Sigil
             if (op == OpCodes.Localloc)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1869,7 +1869,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1880,7 +1880,7 @@ namespace Sigil
             if (op == OpCodes.Mul)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1891,7 +1891,7 @@ namespace Sigil
             if (op == OpCodes.Mul_Ovf)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1902,7 +1902,7 @@ namespace Sigil
             if (op == OpCodes.Mul_Ovf_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1913,7 +1913,7 @@ namespace Sigil
             if (op == OpCodes.Neg)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1925,7 +1925,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -1937,7 +1937,7 @@ namespace Sigil
             {
                 var ctor = (ConstructorInfo)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ctor },
@@ -1948,7 +1948,7 @@ namespace Sigil
             if (op == OpCodes.Nop)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1959,7 +1959,7 @@ namespace Sigil
             if (op == OpCodes.Not)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1970,7 +1970,7 @@ namespace Sigil
             if (op == OpCodes.Or)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -1981,7 +1981,7 @@ namespace Sigil
             if (op == OpCodes.Pop)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2003,7 +2003,7 @@ namespace Sigil
             if (op == OpCodes.Refanytype)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2015,7 +2015,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2026,7 +2026,7 @@ namespace Sigil
             if (op == OpCodes.Rem)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2037,7 +2037,7 @@ namespace Sigil
             if (op == OpCodes.Rem_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2048,7 +2048,7 @@ namespace Sigil
             if (op == OpCodes.Ret)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2059,7 +2059,7 @@ namespace Sigil
             if (op == OpCodes.Rethrow)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2070,7 +2070,7 @@ namespace Sigil
             if (op == OpCodes.Shl)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2081,7 +2081,7 @@ namespace Sigil
             if (op == OpCodes.Shr)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2092,7 +2092,7 @@ namespace Sigil
             if (op == OpCodes.Shr_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2104,7 +2104,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2116,7 +2116,7 @@ namespace Sigil
             {
                 ushort ix = (ushort)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -2128,7 +2128,7 @@ namespace Sigil
             {
                 ushort ix = (byte)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { ix },
@@ -2140,7 +2140,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2152,7 +2152,7 @@ namespace Sigil
             {
                 var type = typeof(IntPtr);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2164,7 +2164,7 @@ namespace Sigil
             {
                 var type = typeof(sbyte);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2176,7 +2176,7 @@ namespace Sigil
             {
                 var type = typeof(short);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2188,7 +2188,7 @@ namespace Sigil
             {
                 var type = typeof(int);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2200,7 +2200,7 @@ namespace Sigil
             {
                 var type = typeof(long);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2212,7 +2212,7 @@ namespace Sigil
             {
                 var type = typeof(float);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2224,7 +2224,7 @@ namespace Sigil
             {
                 var type = typeof(double);
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2245,7 +2245,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { fld, isVolatile, unaligned },
@@ -2260,7 +2260,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2275,7 +2275,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2290,7 +2290,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2305,7 +2305,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2320,7 +2320,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2335,7 +2335,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2350,7 +2350,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2369,7 +2369,7 @@ namespace Sigil
                 ushort ix = (ushort)operands[0];
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -2382,7 +2382,7 @@ namespace Sigil
                 ushort ix = 0;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -2395,7 +2395,7 @@ namespace Sigil
                 ushort ix = 1;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -2408,7 +2408,7 @@ namespace Sigil
                 ushort ix = 2;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -2421,7 +2421,7 @@ namespace Sigil
                 ushort ix = 3;
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -2434,7 +2434,7 @@ namespace Sigil
                 ushort ix = (byte)operands[0];
                 var name = "_local" + ix;
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { name },
@@ -2449,7 +2449,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type, isVolatile, unaligned },
@@ -2464,7 +2464,7 @@ namespace Sigil
                 var unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { fld, isVolatile, unaligned },
@@ -2475,7 +2475,7 @@ namespace Sigil
             if (op == OpCodes.Sub)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2486,7 +2486,7 @@ namespace Sigil
             if (op == OpCodes.Sub_Ovf)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2497,7 +2497,7 @@ namespace Sigil
             if (op == OpCodes.Sub_Ovf_Un)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2519,7 +2519,7 @@ namespace Sigil
             if (op == OpCodes.Throw)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],
@@ -2538,7 +2538,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2550,7 +2550,7 @@ namespace Sigil
             {
                 var type = (Type)operands[0];
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[] { type },
@@ -2568,7 +2568,7 @@ namespace Sigil
             if (op == OpCodes.Xor)
             {
                 return
-                    new Operation
+                    new Operation<DelegateType>
                     {
                         OpCode = op,
                         Parameters = new object[0],

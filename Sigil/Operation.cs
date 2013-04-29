@@ -8,7 +8,7 @@ namespace Sigil
     /// <summary>
     /// Represents a call to an Emit, used when providing introspection details about the generated IL stream.
     /// </summary>
-    public class Operation
+    public class Operation<DelegateType>
     {
         /// <summary>
         /// The OpCode that corresponds to an Emit call.
@@ -21,7 +21,7 @@ namespace Sigil
         /// </summary>
         public IEnumerable<object> Parameters { get; internal set; }
 
-        internal Action<dynamic> Replay { get; set; }
+        internal Action<Emit<DelegateType>> Replay { get; set; }
 
         /// <summary>
         /// A string representation of this Operation.
@@ -50,7 +50,7 @@ namespace Sigil
             return OpCode + " " + ps;
         }
 
-        internal void Apply<DelegateType>(Emit<DelegateType> emit)
+        internal void Apply(Emit<DelegateType> emit)
         {
             if (Replay == null)
             {

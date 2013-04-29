@@ -1328,7 +1328,7 @@ namespace Sigil
         }
 
         /// <summary cref="M:Sigil.Emit`1.TraceOperationResultUsage" />
-        public IEnumerable<OperationResultUsage> TraceOperationResultUsage()
+        public IEnumerable<OperationResultUsage<DelegateType>> TraceOperationResultUsage()
         {
             return InnerEmit.TraceOperationResultUsage();
         }

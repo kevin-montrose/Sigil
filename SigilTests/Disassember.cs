@@ -13,7 +13,7 @@ namespace SigilTests
         {
             Func<int, int, int> d1 = (a, b) => a + b;
 
-            var ops = Sigil.Disassembler.Decompile<Func<int, int, int>>(d1);
+            var ops = Sigil.Disassembler<Func<int, int, int>>.Decompile(d1);
 
             Assert.IsNotNull(ops);
             Assert.AreEqual(OpCodes.Ldarg_0, ops[0].OpCode);
@@ -49,7 +49,7 @@ namespace SigilTests
         {
             Action<_Volatile, int> d1 = (a, b) => { var x = a.Foo; x += b; a.Foo = b; };
 
-            var ops = Sigil.Disassembler.Decompile<Action<_Volatile, int>>(d1);
+            var ops = Sigil.Disassembler<Action<_Volatile, int>>.Decompile(d1);
 
             var loadField = ops[1];
             Assert.AreEqual(OpCodes.Ldfld, loadField.OpCode);
@@ -71,7 +71,7 @@ namespace SigilTests
                 Assert.AreEqual(v1.Foo, v2.Foo);
             }
 
-            Assert.AreEqual("", instrs);
+            Assert.AreEqual("ldarg.0\r\nvolatile.ldfld Int32 Foo\r\nstloc.0\r\nldloc.0\r\nldarg.1\r\nadd\r\nstloc.0\r\nldarg.0\r\nldarg.1\r\nvolatile.stfld Int32 Foo\r\nret\r\n", instrs);
         }
     }
 }
