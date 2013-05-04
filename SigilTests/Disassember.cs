@@ -107,5 +107,41 @@ namespace SigilTests
 
             Assert.AreEqual("ldarg.0\r\nbrtrue.s _label6\r\nldc.i4.m1\r\nret\r\n\r\n_label6:\r\nldarg.1\r\nbrtrue.s _label11\r\nldc.i4.m1\r\nret\r\n\r\n_label11:\r\nldarg.0\r\nldarg.1\r\nmul\r\nstloc.0\r\nldloc.0\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label22\r\nldc.i4.1\r\nret\r\n\r\n_label22:\r\nldc.i4.0\r\nret\r\n", instrs);
         }
+
+        [TestMethod]
+        public void TryCatch()
+        {
+            Func<int, int, string> d1 =
+                (a,b) =>
+                {
+                    try
+                    {
+                        var c = a / b;
+                        return c.ToString();
+                    }
+                    catch (Exception f)
+                    {
+                        return f.Message;
+                    }
+                };
+
+            var ops = Sigil.Disassembler<Func<int, int, string>>.Disassemble(d1);
+            Assert.IsNotNull(ops);
+
+            var e1 = ops.EmitAll();
+
+            string instrs;
+            var r1 = e1.CreateDelegate(out instrs);
+
+            for (var i = 0; i < 100; i++)
+            {
+                for (var j = 0; j < 100; j++)
+                {
+                    Assert.AreEqual(d1(i, j), r1(i, j));
+                }
+            }
+
+            Assert.AreEqual("--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloca.s 0\r\ncall System.String ToString()\r\nstloc.2\r\nleave.s _label25\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.1\r\nldloc.1\r\ncallvirt System.String get_Message()\r\nstloc.2\r\nleave.s _label25\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label25:\r\nldloc.2\r\nret\r\n", instrs);
+        }
     }
 }

@@ -134,6 +134,7 @@ namespace Sigil
             var cil = body.GetILAsByteArray();
             var locals = body.LocalVariables;
             var @params = asDel.Method.GetParameters();
+            var excBlocks = body.ExceptionHandlingClauses;
 
             var ps = new LinqList<ParameterInfo>(@params).Select(s => Parameter.For(s)).ToList().AsEnumerable();
             var ls = 
@@ -143,7 +144,7 @@ namespace Sigil
                     .ToList().AsEnumerable();
 
             var labels = new LabelTracker();
-            var ops = GetOperations(asDel.Method.Module, cil, ps, ls, labels);
+            var ops = GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks);
 
             var markAt = new Dictionary<int, string>();
             foreach (var at in labels.MarkAt)
@@ -177,8 +178,43 @@ namespace Sigil
             throw new Exception("Couldn't find label position in operations for " + ix);
         }
 
-        private static IEnumerable<SigilTuple<int, Operation<DelegateType>>> GetOperations(Module mod, byte[] cil, IEnumerable<Parameter> ps, IEnumerable<Local> ls, LabelTracker labels)
+        private static IEnumerable<SigilTuple<int, Operation<DelegateType>>> GetOperations(Module mod, byte[] cil, IEnumerable<Parameter> ps, IEnumerable<Local> ls, LabelTracker labels, IList<ExceptionHandlingClause> exceptions)
         {
+            var exceptionStart = new Dictionary<int, ExceptionHandlingClause>();
+            var exceptionEnd = new Dictionary<int, ExceptionHandlingClause>();
+            var catchStart = new Dictionary<int, ExceptionHandlingClause>();
+            var catchEnd = new Dictionary<int, ExceptionHandlingClause>();
+            var finallyStart = new Dictionary<int, ExceptionHandlingClause>();
+            var finallyEnd = new Dictionary<int, ExceptionHandlingClause>();
+
+            var activeExceptionBlocks = new Dictionary<ExceptionHandlingClause, string>();
+            var activeCatchBlocks = new Dictionary<ExceptionHandlingClause, string>();
+            var activeFinallyBlocks = new Dictionary<ExceptionHandlingClause, string>();
+
+            foreach (var exc in exceptions)
+            {
+                exceptionStart[exc.TryOffset] = exc;
+                exceptionEnd[exc.HandlerOffset + exc.HandlerLength] = exc;
+
+                if (exc.Flags == ExceptionHandlingClauseOptions.Clause)
+                {
+                    catchStart[exc.HandlerOffset] = exc;
+                    catchEnd[exc.HandlerOffset + exc.HandlerLength] = exc;
+
+                    continue;
+                }
+
+                if (exc.Flags == ExceptionHandlingClauseOptions.Finally)
+                {
+                    finallyStart[exc.HandlerOffset] = exc;
+                    finallyEnd[exc.HandlerOffset + exc.HandlerLength] = exc;
+
+                    continue;
+                }
+
+                throw new InvalidOperationException("Unexpected exception handling clause, Sigil only supports try/catch/finally.");
+            }
+
             var parameterLookup = new Dictionary<int, Parameter>();
             var localLookup = new Dictionary<int, Local>();
 
@@ -200,6 +236,8 @@ namespace Sigil
             int i = 0;
             while (i < cil.Length)
             {
+                CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+
                 Operation<DelegateType> op;
                 i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, out op);
 
@@ -215,7 +253,145 @@ namespace Sigil
                 }
             }
 
+            // One last check after all instructions are processed
+            CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+
             return ret;
+        }
+
+        private static void CheckForExceptionOperations(
+            int i,
+            Dictionary<int, ExceptionHandlingClause> exceptionStart, 
+            Dictionary<int, ExceptionHandlingClause> exceptionEnd, 
+            Dictionary<int, ExceptionHandlingClause> catchStart, 
+            Dictionary<int, ExceptionHandlingClause> catchEnd,
+            Dictionary<int, ExceptionHandlingClause> finallyStart, 
+            Dictionary<int, ExceptionHandlingClause> finallyEnd, 
+            Dictionary<ExceptionHandlingClause, string> activeExceptionBlocks,
+            Dictionary<ExceptionHandlingClause, string> activeCatchBlocks,
+            Dictionary<ExceptionHandlingClause, string> activeFinallyBlocks,
+            List<SigilTuple<int, Operation<DelegateType>>> ret)
+        {
+            if (exceptionStart.ContainsKey(i))
+            {
+                var name = "__exc-" + Guid.NewGuid();
+
+                ret.Add(
+                    SigilTuple.Create(
+                        -1,
+                        new Operation<DelegateType>
+                        {
+                            //OpCode = null,
+                            Parameters = new object[0],
+                            Replay = emit => emit.BeginExceptionBlock(name)
+                        }
+                    )
+                );
+
+                activeExceptionBlocks[exceptionStart[i]] = name;
+            }
+
+            if (catchStart.ContainsKey(i))
+            {
+                var exc = catchStart[i];
+                var name = activeExceptionBlocks[exc];
+
+                var catchName = "__catch-" + Guid.NewGuid();
+
+                ret.Add(
+                    SigilTuple.Create(
+                        -1,
+                        new Operation<DelegateType>
+                        {
+                            //OpCode = null,
+                            Parameters = new object[0],
+                            Replay = emit => emit.BeginCatchBlock(name, exc.CatchType, catchName)
+                        }
+                    )
+                );
+
+                activeCatchBlocks[exc] = catchName;
+            }
+
+            if (catchEnd.ContainsKey(i))
+            {
+                var c = activeCatchBlocks[catchEnd[i]];
+
+                ret.Add(
+                    SigilTuple.Create(
+                        -1,
+                        new Operation<DelegateType>
+                        {
+                            //OpCode = null,
+                            Parameters = new object[0],
+                            Replay = emit => emit.EndCatchBlock(c)
+                        }
+                    )
+                );
+
+                activeCatchBlocks.Remove(catchEnd[i]);
+            }
+
+            if (finallyStart.ContainsKey(i))
+            {
+                var exc = catchStart[i];
+                var name = activeExceptionBlocks[exc];
+
+                var finallyName = "__finally-" + Guid.NewGuid();
+
+                ret.Add(
+                    SigilTuple.Create(
+                        -1,
+                        new Operation<DelegateType>
+                        {
+                            //OpCode = null,
+                            Parameters = new object[0],
+                            Replay = emit => emit.BeginFinallyBlock(name, finallyName)
+                        }
+                    )
+                );
+
+                activeFinallyBlocks[exc] = finallyName;
+            }
+
+            if (finallyEnd.ContainsKey(i))
+            {
+                var f = activeFinallyBlocks[catchEnd[i]];
+
+                ret.Add(
+                    SigilTuple.Create(
+                        -1,
+                        new Operation<DelegateType>
+                        {
+                            //OpCode = null,
+                            Parameters = new object[0],
+                            Replay = emit => emit.EndFinallyBlock(f)
+                        }
+                    )
+                );
+
+                activeFinallyBlocks.Remove(catchEnd[i]);
+            }
+
+            // Must be checked last as catch & finally must end before the exception block overall
+            if (exceptionEnd.ContainsKey(i))
+            {
+                var name = activeExceptionBlocks[exceptionEnd[i]];
+
+                ret.Add(
+                    SigilTuple.Create(
+                        -1,
+                        new Operation<DelegateType>
+                        {
+                            //OpCode = null,
+                            Parameters = new object[0],
+                            Replay = emit => emit.EndExceptionBlock(name)
+                        }
+                    )
+                );
+
+                activeExceptionBlocks.Remove(exceptionEnd[i]);
+            }
         }
 
         private static int ReadOp(Module mod, byte[] cil, int ix, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, PrefixTracker prefixes, LabelTracker labels, out Operation<DelegateType> op)
@@ -1257,7 +1433,7 @@ namespace Sigil
 
             if (op == OpCodes.Endfilter)
             {
-                throw new NotImplementedException();
+                throw new InvalidOperationException("Sigil does not support fault blocks, or the Endfilter opcode");
             }
 
             if (op == OpCodes.Endfinally)
@@ -2167,12 +2343,32 @@ namespace Sigil
 
             if (op == OpCodes.Leave)
             {
-                throw new NotImplementedException();
+                var absAddr = (int)operands[0];
+                labels.Mark(absAddr);
+                var label = "_label" + absAddr;
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new object[] { label },
+                        Replay = emit => emit.Leave(label)
+                    };
             }
 
             if (op == OpCodes.Leave_S)
             {
-                throw new NotImplementedException();
+                var absAddr = (int)operands[0];
+                labels.Mark(absAddr);
+                var label = "_label" + absAddr;
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new object[] { label },
+                        Replay = emit => emit.Leave(label)
+                    };
             }
 
             if (op == OpCodes.Localloc)

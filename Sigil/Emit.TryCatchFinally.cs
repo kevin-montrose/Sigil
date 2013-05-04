@@ -1,10 +1,76 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Collections.Generic;
 
 namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+        private Dictionary<string, ExceptionBlock> DisassembledExceptionBlocks;
+        private Dictionary<string, CatchBlock> DisassembledCatchBlocks;
+        private Dictionary<string, FinallyBlock> DisassembledFinallyBlocks;
+
+        // A version of BeginExceptionBlock used by the Disassembler to keep track of
+        //   exception blocks while re-emitting
+        internal void BeginExceptionBlock(string storeUnderName)
+        {
+            var block = BeginExceptionBlock();
+
+            if (DisassembledExceptionBlocks == null)
+            {
+                DisassembledExceptionBlocks = new Dictionary<string, ExceptionBlock>();
+            }
+
+            DisassembledExceptionBlocks[storeUnderName] = block;
+        }
+
+        internal void EndExceptionBlock(string lookupByName)
+        {
+            var block = DisassembledExceptionBlocks[lookupByName];
+
+            EndExceptionBlock(block);
+
+            DisassembledExceptionBlocks.Remove(lookupByName);
+        }
+
+        internal void BeginCatchBlock(string lookupExcName, Type exceptionType, string storeUnderName)
+        {
+            var block = DisassembledExceptionBlocks[lookupExcName];
+            if (DisassembledCatchBlocks == null)
+            {
+                DisassembledCatchBlocks = new Dictionary<string, CatchBlock>();
+            }
+
+            DisassembledCatchBlocks[storeUnderName] = BeginCatchBlock(block, exceptionType);
+        }
+
+        internal void EndCatchBlock(string lookupByName)
+        {
+            var c = DisassembledCatchBlocks[lookupByName];
+            EndCatchBlock(c);
+
+            DisassembledCatchBlocks.Remove(lookupByName);
+        }
+
+        internal void BeginFinallyBlock(string lookupExcName, string storeUnderName)
+        {
+            var block = DisassembledExceptionBlocks[lookupExcName];
+            if (DisassembledFinallyBlocks == null)
+            {
+                DisassembledFinallyBlocks = new Dictionary<string, FinallyBlock>();
+            }
+
+            DisassembledFinallyBlocks[storeUnderName] = BeginFinallyBlock(block);
+        }
+
+        internal void EndFinallyBlock(string lookupByName)
+        {
+            var f = DisassembledFinallyBlocks[lookupByName];
+            EndFinallyBlock(f);
+
+            DisassembledFinallyBlocks.Remove(lookupByName);
+        }
+
         /// <summary>
         /// Start a new exception block.  This is roughly analogous to a `try` block in C#, but an exception block contains it's catch and finally blocks.
         /// </summary>
