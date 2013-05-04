@@ -227,5 +227,66 @@ namespace SigilTests
 
             Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s __exceptionBlockEnd1\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nldc.i4.m1\r\nstloc.0\r\nleave.s __exceptionBlockEnd1\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\nleave.s __exceptionBlockEnd0\r\n\r\n__autolabel2:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
         }
+
+        [TestMethod]
+        public void ComplicatedTryCatchFinally()
+        {
+            Func<int, int, string> d1 =
+                (a, x) =>
+                {
+                    string lateRet = "";
+                    try
+                    {
+
+                        var c = Math.Pow(a, 3);
+                        try
+                        {
+                            var b = a * a - a;
+
+                            return (b / (a - 1)).ToString();
+                        }
+                        catch (Exception e)
+                        {
+                            throw new Exception("foo - " + e.Message);
+                        }
+
+                    }
+                    catch (Exception f)
+                    {
+                        lateRet = f.Message + f.Message;
+                    }
+                    finally
+                    {
+                        if (x % 2 == 0)
+                        {
+                            try
+                            {
+                                lateRet += lateRet;
+                            }
+                            catch(Exception) { }
+                        }
+                    }
+
+                    return lateRet;
+                };
+
+            var ops = Sigil.Disassembler<Func<int, int, string>>.Disassemble(d1);
+            Assert.IsNotNull(ops);
+
+            var e1 = ops.EmitAll();
+
+            string instrs;
+            var r1 = e1.CreateDelegate(out instrs);
+
+            for (var i = 0; i < 100; i++)
+            {
+                for (var j = 0; j < 100; j++)
+                {
+                    Assert.AreEqual(d1(i, j), r1(i, j));
+                }
+            }
+
+            Assert.AreEqual("", instrs);
+        }
     }
 }
