@@ -21,6 +21,18 @@ namespace Sigil
         /// </summary>
         public IEnumerable<object> Parameters { get; internal set; }
 
+        public bool IsExceptionBlockStart { get; internal set; }
+
+        public bool IsExceptionBlockEnd { get; internal set; }
+
+        public bool IsCatchBlockStart { get; internal set; }
+
+        public bool IsCatchBlockEnd { get; internal set; }
+
+        public bool IsFinallyBlockStart { get; internal set; }
+
+        public bool IsFinallyBlockEnd { get; internal set; }
+
         internal Action<Emit<DelegateType>> Replay { get; set; }
 
         /// <summary>
@@ -28,6 +40,36 @@ namespace Sigil
         /// </summary>
         public override string ToString()
         {
+            if (IsExceptionBlockStart)
+            {
+                return "--Start Exception Block--";
+            }
+
+            if (IsExceptionBlockEnd)
+            {
+                return "--End Exception Block--";
+            }
+
+            if (IsCatchBlockStart)
+            {
+                return "--Start Catch Block--";
+            }
+
+            if (IsCatchBlockEnd)
+            {
+                return "--End Catch Block--";
+            }
+
+            if (IsFinallyBlockStart)
+            {
+                return "--Start Finally Block--";
+            }
+
+            if (IsFinallyBlockEnd)
+            {
+                return "--End Finally Block--";
+            }
+
             var ps = 
                 string.Join(
                     ", ", 

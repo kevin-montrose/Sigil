@@ -180,12 +180,12 @@ namespace Sigil
 
         private static IEnumerable<SigilTuple<int, Operation<DelegateType>>> GetOperations(Module mod, byte[] cil, IEnumerable<Parameter> ps, IEnumerable<Local> ls, LabelTracker labels, IList<ExceptionHandlingClause> exceptions)
         {
-            var exceptionStart = new Dictionary<int, ExceptionHandlingClause>();
-            var exceptionEnd = new Dictionary<int, ExceptionHandlingClause>();
-            var catchStart = new Dictionary<int, ExceptionHandlingClause>();
-            var catchEnd = new Dictionary<int, ExceptionHandlingClause>();
-            var finallyStart = new Dictionary<int, ExceptionHandlingClause>();
-            var finallyEnd = new Dictionary<int, ExceptionHandlingClause>();
+            var exceptionStart = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
+            var exceptionEnd = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
+            var catchStart = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
+            var catchEnd = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
+            var finallyStart = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
+            var finallyEnd = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
 
             var activeExceptionBlocks = new Dictionary<ExceptionHandlingClause, string>();
             var activeCatchBlocks = new Dictionary<ExceptionHandlingClause, string>();
@@ -193,26 +193,92 @@ namespace Sigil
 
             foreach (var exc in exceptions)
             {
-                exceptionStart[exc.TryOffset] = exc;
-                exceptionEnd[exc.HandlerOffset + exc.HandlerLength] = exc;
+                LinqList<ExceptionHandlingClause> eStart, eEnd;
+
+                if (!exceptionStart.TryGetValue(exc.TryOffset, out eStart))
+                {
+                    exceptionStart[exc.TryOffset] = eStart = new LinqList<ExceptionHandlingClause>();
+                }
+
+                if(!exceptionEnd.TryGetValue(exc.HandlerOffset + exc.HandlerLength, out eEnd))
+                {
+                    exceptionEnd[exc.HandlerOffset + exc.HandlerLength] = eEnd = new LinqList<ExceptionHandlingClause>();
+                }
+
+                eStart.Add(exc);
+                eEnd.Add(exc);
 
                 if (exc.Flags == ExceptionHandlingClauseOptions.Clause)
                 {
-                    catchStart[exc.HandlerOffset] = exc;
-                    catchEnd[exc.HandlerOffset + exc.HandlerLength] = exc;
+                    LinqList<ExceptionHandlingClause> cStart, cEnd;
+
+                    if (!catchStart.TryGetValue(exc.HandlerOffset, out cStart))
+                    {
+                        catchStart[exc.HandlerOffset] = cStart = new LinqList<ExceptionHandlingClause>();
+                    }
+
+                    if (!catchEnd.TryGetValue(exc.HandlerOffset + exc.HandlerLength, out cEnd))
+                    {
+                        catchEnd[exc.HandlerOffset + exc.HandlerLength] = cEnd = new LinqList<ExceptionHandlingClause>();
+                    }
+
+                    cStart.Add(exc);
+                    cEnd.Add(exc);
 
                     continue;
                 }
 
                 if (exc.Flags == ExceptionHandlingClauseOptions.Finally)
                 {
-                    finallyStart[exc.HandlerOffset] = exc;
-                    finallyEnd[exc.HandlerOffset + exc.HandlerLength] = exc;
+                    LinqList<ExceptionHandlingClause> fStart, fEnd;
+
+                    if (!finallyStart.TryGetValue(exc.HandlerOffset, out fStart))
+                    {
+                        finallyStart[exc.HandlerOffset] = fStart = new LinqList<ExceptionHandlingClause>();
+                    }
+
+                    if (!finallyEnd.TryGetValue(exc.HandlerOffset + exc.HandlerLength, out fEnd))
+                    {
+                        finallyEnd[exc.HandlerOffset + exc.HandlerLength] = fEnd = new LinqList<ExceptionHandlingClause>();
+                    }
+
+                    fStart.Add(exc);
+                    fEnd.Add(exc);
 
                     continue;
                 }
 
                 throw new InvalidOperationException("Unexpected exception handling clause, Sigil only supports try/catch/finally.");
+            }
+
+            foreach (var k in (new LinqList<int>(exceptionStart.Keys)).AsEnumerable())
+            {
+                exceptionStart[k] = exceptionStart[k].OrderByDescending(x => x.TryLength).ToList();
+            }
+
+            foreach (var k in (new LinqList<int>(exceptionEnd.Keys)).AsEnumerable())
+            {
+                exceptionEnd[k] = exceptionEnd[k].OrderBy(x => x.TryLength).ToList();
+            }
+
+            foreach (var k in (new LinqList<int>(catchStart.Keys)).AsEnumerable())
+            {
+                catchStart[k] = catchStart[k].OrderBy(x => x.TryLength).ToList();
+            }
+
+            foreach (var k in (new LinqList<int>(catchEnd.Keys)).AsEnumerable())
+            {
+                catchEnd[k] = catchEnd[k].OrderBy(x => x.TryLength).ToList();
+            }
+
+            foreach (var k in (new LinqList<int>(finallyStart.Keys)).AsEnumerable())
+            {
+                finallyStart[k] = finallyStart[k].OrderBy(x => x.TryLength).ToList();
+            }
+
+            foreach (var k in (new LinqList<int>(finallyEnd.Keys)).AsEnumerable())
+            {
+                finallyEnd[k] = finallyEnd[k].OrderBy(x => x.TryLength).ToList();
             }
 
             var parameterLookup = new Dictionary<int, Parameter>();
@@ -263,12 +329,12 @@ namespace Sigil
 
         private static int CheckForExceptionOperations(
             int i,
-            Dictionary<int, ExceptionHandlingClause> exceptionStart, 
-            Dictionary<int, ExceptionHandlingClause> exceptionEnd, 
-            Dictionary<int, ExceptionHandlingClause> catchStart, 
-            Dictionary<int, ExceptionHandlingClause> catchEnd,
-            Dictionary<int, ExceptionHandlingClause> finallyStart, 
-            Dictionary<int, ExceptionHandlingClause> finallyEnd, 
+            Dictionary<int, LinqList<ExceptionHandlingClause>> exceptionStart,
+            Dictionary<int, LinqList<ExceptionHandlingClause>> exceptionEnd,
+            Dictionary<int, LinqList<ExceptionHandlingClause>> catchStart,
+            Dictionary<int, LinqList<ExceptionHandlingClause>> catchEnd,
+            Dictionary<int, LinqList<ExceptionHandlingClause>> finallyStart,
+            Dictionary<int, LinqList<ExceptionHandlingClause>> finallyEnd, 
             Dictionary<ExceptionHandlingClause, string> activeExceptionBlocks,
             Dictionary<ExceptionHandlingClause, string> activeCatchBlocks,
             Dictionary<ExceptionHandlingClause, string> activeFinallyBlocks,
@@ -278,125 +344,142 @@ namespace Sigil
 
             if (exceptionStart.ContainsKey(i))
             {
-                var name = "__exc-" + Guid.NewGuid();
+                foreach (var exc in exceptionStart[i].AsEnumerable())
+                {
+                    var name = "__exc-" + Guid.NewGuid();
 
-                ret.Add(
-                    SigilTuple.Create(
-                        -1,
-                        new Operation<DelegateType>
-                        {
-                            //OpCode = null,
-                            Parameters = new object[0],
-                            Replay = emit => emit.BeginExceptionBlock(name)
-                        }
-                    )
-                );
+                    ret.Add(
+                        SigilTuple.Create(
+                            -1,
+                            new Operation<DelegateType>
+                            {
+                                IsExceptionBlockStart = true,
+                                Parameters = new object[0],
+                                Replay = emit => emit.BeginExceptionBlock(name)
+                            }
+                        )
+                    );
 
-                activeExceptionBlocks[exceptionStart[i]] = name;
+                    activeExceptionBlocks[exc] = name;
+                }
             }
 
             if (catchStart.ContainsKey(i))
             {
-                var exc = catchStart[i];
-                var name = activeExceptionBlocks[exc];
+                foreach (var exc in catchStart[i].AsEnumerable())
+                {
+                    var name = activeExceptionBlocks[exc];
 
-                var catchName = "__catch-" + Guid.NewGuid();
+                    var catchName = "__catch-" + Guid.NewGuid();
 
-                ret.Add(
-                    SigilTuple.Create(
-                        -1,
-                        new Operation<DelegateType>
-                        {
-                            //OpCode = null,
-                            Parameters = new object[0],
-                            Replay = emit => emit.BeginCatchBlock(name, exc.CatchType, catchName)
-                        }
-                    )
-                );
+                    ret.Add(
+                        SigilTuple.Create(
+                            -1,
+                            new Operation<DelegateType>
+                            {
+                                IsCatchBlockStart = true,
+                                Parameters = new object[0],
+                                Replay = emit => emit.BeginCatchBlock(name, exc.CatchType, catchName)
+                            }
+                        )
+                    );
 
-                activeCatchBlocks[exc] = catchName;
+                    activeCatchBlocks[exc] = catchName;
+                }
             }
 
             if (catchEnd.ContainsKey(i))
             {
-                var c = activeCatchBlocks[catchEnd[i]];
+                foreach (var exc in catchEnd[i].AsEnumerable())
+                {
+                    var c = activeCatchBlocks[exc];
 
-                ret.Add(
-                    SigilTuple.Create(
-                        -1,
-                        new Operation<DelegateType>
-                        {
-                            //OpCode = null,
-                            Parameters = new object[0],
-                            Replay = emit => emit.EndCatchBlock(c)
-                        }
-                    )
-                );
+                    ret.Add(
+                        SigilTuple.Create(
+                            -1,
+                            new Operation<DelegateType>
+                            {
+                                IsCatchBlockEnd = true,
+                                Parameters = new object[0],
+                                Replay = emit => emit.EndCatchBlock(c)
+                            }
+                        )
+                    );
 
-                activeCatchBlocks.Remove(catchEnd[i]);
+                    activeCatchBlocks.Remove(exc);
+                }
             }
 
             if (finallyStart.ContainsKey(i))
             {
-                var exc = finallyStart[i];
-                var name = activeExceptionBlocks[exc];
+                foreach (var exc in finallyStart[i].AsEnumerable())
+                {
+                    var name = activeExceptionBlocks[exc];
 
-                var finallyName = "__finally-" + Guid.NewGuid();
+                    var finallyName = "__finally-" + Guid.NewGuid();
 
-                ret.Add(
-                    SigilTuple.Create(
-                        -1,
-                        new Operation<DelegateType>
-                        {
-                            //OpCode = null,
-                            Parameters = new object[0],
-                            Replay = emit => emit.BeginFinallyBlock(name, finallyName)
-                        }
-                    )
-                );
+                    ret.Add(
+                        SigilTuple.Create(
+                            -1,
+                            new Operation<DelegateType>
+                            {
+                                IsFinallyBlockStart = true,
+                                Parameters = new object[0],
+                                Replay = emit => emit.BeginFinallyBlock(name, finallyName)
+                            }
+                        )
+                    );
 
-                activeFinallyBlocks[exc] = finallyName;
+                    activeFinallyBlocks[exc] = finallyName;
+                }
             }
 
             if (finallyEnd.ContainsKey(i))
             {
-                var f = activeFinallyBlocks[finallyEnd[i]];
+                foreach (var exc in finallyEnd[i].AsEnumerable())
+                {
+                    var f = activeFinallyBlocks[exc];
 
-                ret.Add(
-                    SigilTuple.Create(
-                        -1,
-                        new Operation<DelegateType>
-                        {
-                            //OpCode = null,
-                            Parameters = new object[0],
-                            Replay = emit => emit.EndFinallyBlock(f)
-                        }
-                    )
-                );
+                    ret.Add(
+                        SigilTuple.Create(
+                            -1,
+                            new Operation<DelegateType>
+                            {
+                                IsFinallyBlockEnd = true,
+                                Parameters = new object[0],
+                                Replay = emit => emit.EndFinallyBlock(f)
+                            }
+                        )
+                    );
 
-                activeFinallyBlocks.Remove(finallyEnd[i]);
+                    activeFinallyBlocks.Remove(exc);
 
-                extraInstrs++;
+                    // ILGenerator emits an "endfinally/endfilter" that we need to adjust for
+                    extraInstrs++;
+                }
             }
 
             // Must be checked last as catch & finally must end before the exception block overall
             if (exceptionEnd.ContainsKey(i))
             {
-                var name = activeExceptionBlocks[exceptionEnd[i]];
+                foreach (var exc in exceptionEnd[i].AsEnumerable())
+                {
+                    var name = activeExceptionBlocks[exc];
 
-                ret.Add(
-                    SigilTuple.Create(
-                        -1,
-                        new Operation<DelegateType>
-                        {
-                            //OpCode = null,
-                            Parameters = new object[0],
-                            Replay = emit => emit.EndExceptionBlock(name)
-                        }
-                    )
-                );
+                    ret.Add(
+                        SigilTuple.Create(
+                            -1,
+                            new Operation<DelegateType>
+                            {
+                                IsExceptionBlockEnd = true,
+                                Parameters = new object[0],
+                                Replay = emit => emit.EndExceptionBlock(name)
+                            }
+                        )
+                    );
 
-                activeExceptionBlocks.Remove(exceptionEnd[i]);
+                    activeExceptionBlocks.Remove(exc);
+                }
             }
 
             return extraInstrs;

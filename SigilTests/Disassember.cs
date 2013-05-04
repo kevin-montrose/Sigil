@@ -145,7 +145,7 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void TryFinal()
+        public void TryFinally()
         {
             Func<int, int, double> d1 =
                 (a, b) =>
@@ -182,6 +182,50 @@ namespace SigilTests
             }
 
             Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label18\r\n\r\n__autolabel0:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label18:\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
+        }
+
+        [TestMethod]
+        public void TryCatchFinally()
+        {
+            Func<int, int, double> d1 =
+                (a, b) =>
+                {
+                    int d = 0;
+
+                    try
+                    {
+                        d = a / b;
+                        d++;
+                    }
+                    catch (Exception)
+                    {
+                        d = -1;
+                    }
+                    finally
+                    {
+                        d *= 2;
+                    }
+
+                    return d;
+                };
+
+            var ops = Sigil.Disassembler<Func<int, int, double>>.Disassemble(d1);
+            Assert.IsNotNull(ops);
+
+            var e1 = ops.EmitAll();
+
+            string instrs;
+            var r1 = e1.CreateDelegate(out instrs);
+
+            for (var i = 0; i < 100; i++)
+            {
+                for (var j = 0; j < 100; j++)
+                {
+                    Assert.AreEqual(d1(i, j), r1(i, j));
+                }
+            }
+
+            Assert.AreEqual("", instrs);
         }
     }
 }
