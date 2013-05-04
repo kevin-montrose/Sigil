@@ -236,7 +236,9 @@ namespace Sigil
             int i = 0;
             while (i < cil.Length)
             {
-                CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+                var tweak = CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+
+                if (gap.HasValue) gap += tweak;
 
                 Operation<DelegateType> op;
                 i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, out op);
@@ -259,7 +261,7 @@ namespace Sigil
             return ret;
         }
 
-        private static void CheckForExceptionOperations(
+        private static int CheckForExceptionOperations(
             int i,
             Dictionary<int, ExceptionHandlingClause> exceptionStart, 
             Dictionary<int, ExceptionHandlingClause> exceptionEnd, 
@@ -272,6 +274,8 @@ namespace Sigil
             Dictionary<ExceptionHandlingClause, string> activeFinallyBlocks,
             List<SigilTuple<int, Operation<DelegateType>>> ret)
         {
+            var extraInstrs = 0;
+
             if (exceptionStart.ContainsKey(i))
             {
                 var name = "__exc-" + Guid.NewGuid();
@@ -334,7 +338,7 @@ namespace Sigil
 
             if (finallyStart.ContainsKey(i))
             {
-                var exc = catchStart[i];
+                var exc = finallyStart[i];
                 var name = activeExceptionBlocks[exc];
 
                 var finallyName = "__finally-" + Guid.NewGuid();
@@ -356,7 +360,7 @@ namespace Sigil
 
             if (finallyEnd.ContainsKey(i))
             {
-                var f = activeFinallyBlocks[catchEnd[i]];
+                var f = activeFinallyBlocks[finallyEnd[i]];
 
                 ret.Add(
                     SigilTuple.Create(
@@ -370,7 +374,9 @@ namespace Sigil
                     )
                 );
 
-                activeFinallyBlocks.Remove(catchEnd[i]);
+                activeFinallyBlocks.Remove(finallyEnd[i]);
+
+                extraInstrs++;
             }
 
             // Must be checked last as catch & finally must end before the exception block overall
@@ -392,6 +398,8 @@ namespace Sigil
 
                 activeExceptionBlocks.Remove(exceptionEnd[i]);
             }
+
+            return extraInstrs;
         }
 
         private static int ReadOp(Module mod, byte[] cil, int ix, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, PrefixTracker prefixes, LabelTracker labels, out Operation<DelegateType> op)
@@ -1438,7 +1446,8 @@ namespace Sigil
 
             if (op == OpCodes.Endfinally)
             {
-                throw new NotImplementedException();
+                //throw new NotImplementedException();
+                return null;
             }
 
             if (op == OpCodes.Initblk)
