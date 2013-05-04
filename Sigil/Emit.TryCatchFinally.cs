@@ -86,6 +86,8 @@ namespace Sigil
             var labelDel = IL.BeginExceptionBlock();
             var label = new Label(this, labelDel, AutoNamer.Next(this, "__exceptionBlockEnd"));
 
+            CurrentLabels[label.Name] = label;
+
             var ret = new ExceptionBlock(label);
 
             TryBlocks[ret] = SigilTuple.Create(IL.Index, -1);
