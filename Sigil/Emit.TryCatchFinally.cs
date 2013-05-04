@@ -84,7 +84,7 @@ namespace Sigil
             UpdateState(Wrap(new[] { new StackTransition(0) }, "BeginExceptionBlock"));
 
             var labelDel = IL.BeginExceptionBlock();
-            var label = new Label(this, labelDel, "__exceptionBlockEnd");
+            var label = new Label(this, labelDel, AutoNamer.Next(this, "__exceptionBlockEnd"));
 
             var ret = new ExceptionBlock(label);
 

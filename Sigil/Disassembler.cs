@@ -569,7 +569,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Beq)
+            if (op == OpCodes.Beq || op == OpCodes.Beq_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -584,22 +584,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Beq_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.BranchIfEqual(label)
-                    };
-            }
-
-            if (op == OpCodes.Bge)
+            if (op == OpCodes.Bge || op == OpCodes.Bge_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -614,22 +599,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Bge_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.BranchIfGreaterOrEqual(label)
-                    };
-            }
-
-            if (op == OpCodes.Bge_Un)
+            if (op == OpCodes.Bge_Un || op == OpCodes.Bge_Un_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -644,22 +614,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Bge_Un_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.UnsignedBranchIfGreaterOrEqual(label)
-                    };
-            }
-
-            if (op == OpCodes.Bgt)
+            if (op == OpCodes.Bgt || op == OpCodes.Bgt_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -674,22 +629,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Bgt_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.BranchIfGreater(label)
-                    };
-            }
-
-            if (op == OpCodes.Bgt_Un)
+            if (op == OpCodes.Bgt_Un || op == OpCodes.Bgt_Un_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -704,22 +644,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Bgt_Un_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.UnsignedBranchIfGreater(label)
-                    };
-            }
-
-            if (op == OpCodes.Ble)
+            if (op == OpCodes.Ble || op == OpCodes.Ble_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -734,22 +659,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Ble_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.BranchIfLessOrEqual(label)
-                    };
-            }
-
-            if (op == OpCodes.Ble_Un)
+            if (op == OpCodes.Ble_Un || op == OpCodes.Ble_Un_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -764,22 +674,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Ble_Un_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.UnsignedBranchIfLessOrEqual(label)
-                    };
-            }
-
-            if (op == OpCodes.Blt)
+            if (op == OpCodes.Blt || op == OpCodes.Blt_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -794,22 +689,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Blt_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.BranchIfLess(label)
-                    };
-            }
-
-            if (op == OpCodes.Blt_Un)
+            if (op == OpCodes.Blt_Un || op == OpCodes.Blt_Un_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -824,37 +704,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Blt_Un_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.UnsignedBranchIfLess(label)
-                    };
-            }
-
-            if (op == OpCodes.Bne_Un)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.UnsignedBranchIfNotEqual(label)
-                    };
-            }
-
-            if (op == OpCodes.Bne_Un_S)
+            if (op == OpCodes.Bne_Un || op == OpCodes.Bne_Un_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -881,22 +731,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Br)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.Branch(label)
-                    };
-            }
-
-            if (op == OpCodes.Br_S)
+            if (op == OpCodes.Br || op == OpCodes.Br_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -922,7 +757,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Brfalse)
+            if (op == OpCodes.Brfalse || op == OpCodes.Brfalse_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -937,37 +772,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Brfalse_S)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.BranchIfFalse(label)
-                    };
-            }
-
-            if (op == OpCodes.Brtrue)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.BranchIfTrue(label)
-                    };
-            }
-
-            if (op == OpCodes.Brtrue_S)
+            if (op == OpCodes.Brtrue || op == OpCodes.Brtrue_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
@@ -1529,7 +1334,7 @@ namespace Sigil
 
             if (op == OpCodes.Endfinally)
             {
-                //throw new NotImplementedException();
+                // Endfinally isn't emitted directly by ILGenerator or Sigil; it's implicit in EndFinallyBlock() calls
                 return null;
             }
 
@@ -2433,22 +2238,7 @@ namespace Sigil
                     };
             }
 
-            if (op == OpCodes.Leave)
-            {
-                var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
-
-                return
-                    new Operation<DelegateType>
-                    {
-                        OpCode = op,
-                        Parameters = new object[] { label },
-                        Replay = emit => emit.Leave(label)
-                    };
-            }
-
-            if (op == OpCodes.Leave_S)
+            if (op == OpCodes.Leave || op == OpCodes.Leave_S)
             {
                 var absAddr = (int)operands[0];
                 labels.Mark(absAddr);
