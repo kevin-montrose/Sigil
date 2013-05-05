@@ -313,7 +313,7 @@ namespace Sigil
                 var at = kv.Key;
                 var exc = kv.Value.First();
 
-                exceptionBlockEndAddrToIx[at + 1] = DeclarationNumber(exceptionStart, exc);
+                exceptionBlockEndAddrToIx[at] = DeclarationNumber(exceptionStart, exc);
             }
 
             var parameterLookup = new Dictionary<int, Parameter>();
