@@ -161,14 +161,14 @@ namespace Sigil
             foreach (var k in LinqAlternative.OrderByDescending(markAt.Keys, _ => _).ToList().AsEnumerable())
             {
                 var pair = markAt[k];
-                var name = pair.Item2;
+                var name = LinqAlternative.Where(asLabels, l => l.Name == pair.Item2).Single();
                 var ix = pair.Item1;
 
                 var mark =
                     new Operation<DelegateType>
                     {
                         IsMarkLabel = true,
-                        LabelName = name,
+                        LabelName = name.Name,
                         Parameters = new object[] { name },
                         Replay = emit => emit.MarkLabel(name)
                     };

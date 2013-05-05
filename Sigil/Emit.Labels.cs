@@ -189,6 +189,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return MarkLabel(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
