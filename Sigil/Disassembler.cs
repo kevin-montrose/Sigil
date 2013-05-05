@@ -615,7 +615,7 @@ namespace Sigil
 
             var operand = ReadOperands(mod, opcode, cil, ix, ix + advance, pLookup, lLookup, ref advance);
 
-            op = MakeReplayableOperation(opcode, operand, prefixes, labels, labelAccumulator);
+            op = MakeReplayableOperation(opcode, operand, prefixes, labels, labelAccumulator, lLookup);
 
             return advance;
         }
@@ -641,7 +641,8 @@ namespace Sigil
             object[] operands, 
             PrefixTracker prefixes, 
             LabelTracker labels,
-            List<Label> labelAccumulator)
+            List<Label> labelAccumulator,
+            IDictionary<int, Local> locals)
         {
             if (op == OpCodes.Add)
             {
@@ -2138,104 +2139,112 @@ namespace Sigil
             if (op == OpCodes.Ldloc)
             {
                 ushort ix = (ushort)operands[0];
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocal(loc)
                     };
             }
 
             if (op == OpCodes.Ldloc_0)
             {
                 ushort ix = 0;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocal(loc)
                     };
             }
 
             if (op == OpCodes.Ldloc_1)
             {
                 ushort ix = 1;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocal(loc)
                     };
             }
 
             if (op == OpCodes.Ldloc_2)
             {
                 ushort ix = 2;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocal(loc)
                     };
             }
 
             if (op == OpCodes.Ldloc_3)
             {
                 ushort ix = 3;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocal(loc)
                     };
             }
 
             if (op == OpCodes.Ldloc_S)
             {
                 ushort ix = (byte)operands[0];
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocal(loc)
                     };
             }
 
             if (op == OpCodes.Ldloca)
             {
                 ushort ix = (ushort)operands[0];
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocalAddress(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocalAddress(loc)
                     };
             }
 
             if (op == OpCodes.Ldloca_S)
             {
                 ushort ix = (byte)operands[0];
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.LoadLocalAddress(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.LoadLocalAddress(loc)
                     };
             }
 
@@ -2885,78 +2894,84 @@ namespace Sigil
             if (op == OpCodes.Stloc)
             {
                 ushort ix = (ushort)operands[0];
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.StoreLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.StoreLocal(loc)
                     };
             }
 
             if (op == OpCodes.Stloc_0)
             {
                 ushort ix = 0;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.StoreLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.StoreLocal(loc)
                     };
             }
 
             if (op == OpCodes.Stloc_1)
             {
                 ushort ix = 1;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.StoreLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.StoreLocal(loc)
                     };
             }
 
             if (op == OpCodes.Stloc_2)
             {
                 ushort ix = 2;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.StoreLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.StoreLocal(loc)
                     };
             }
 
             if (op == OpCodes.Stloc_3)
             {
                 ushort ix = 3;
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.StoreLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.StoreLocal(loc)
                     };
             }
 
             if (op == OpCodes.Stloc_S)
             {
                 ushort ix = (byte)operands[0];
-                var name = "_local" + ix;
+                var loc = locals[ix];
+
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { name },
-                        Replay = emit => emit.StoreLocal(name)
+                        Parameters = new object[] { loc },
+                        Replay = emit => emit.StoreLocal(loc)
                     };
             }
 
