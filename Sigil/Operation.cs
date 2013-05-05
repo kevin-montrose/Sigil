@@ -41,8 +41,6 @@ namespace Sigil
 
         internal bool IsIgnored { get; set; }
 
-        internal string Name { get; set; }
-
         /// <summary>
         /// A string representation of this Operation.
         /// </summary>
@@ -50,32 +48,32 @@ namespace Sigil
         {
             if (IsExceptionBlockStart)
             {
-                return "--Start Exception Block(" + Name + ")--";
+                return "--Start Exception Block--";
             }
 
             if (IsExceptionBlockEnd)
             {
-                return "--End Exception Block(" + Name + ")--";
+                return "--End Exception Block--";
             }
 
             if (IsCatchBlockStart)
             {
-                return "--Start Catch Block(" + Name + ")--";
+                return "--Start Catch Block--";
             }
 
             if (IsCatchBlockEnd)
             {
-                return "--End Catch Block(" + Name + ")--";
+                return "--End Catch Block--";
             }
 
             if (IsFinallyBlockStart)
             {
-                return "--Start Finally Block(" + Name + ")--";
+                return "--Start Finally Block--";
             }
 
             if (IsFinallyBlockEnd)
             {
-                return "--End Finally Block(" + Name + ")--";
+                return "--End Finally Block--";
             }
 
             if (IsMarkLabel)

@@ -448,8 +448,6 @@ namespace Sigil
                             i,
                             new Operation<DelegateType>
                             {
-                                Name = c,
-
                                 IsCatchBlockEnd = true,
                                 Parameters = new object[0],
                                 Replay = emit => emit.EndCatchBlock(c)
@@ -472,8 +470,6 @@ namespace Sigil
                             i,
                             new Operation<DelegateType>
                             {
-                                Name = f,
-
                                 IsFinallyBlockEnd = true,
                                 Parameters = new object[0],
                                 Replay = emit => emit.EndFinallyBlock(f)
@@ -497,8 +493,6 @@ namespace Sigil
                             i,
                             new Operation<DelegateType>
                             {
-                                Name = name,
-
                                 IsExceptionBlockEnd = true,
                                 Parameters = new object[0],
                                 Replay = emit => emit.EndExceptionBlock(name)
@@ -521,7 +515,6 @@ namespace Sigil
                             i,
                             new Operation<DelegateType>
                             {
-                                Name = name,
                                 IsExceptionBlockStart = true,
                                 Parameters = new object[0],
                                 Replay = emit => emit.BeginExceptionBlock(name)
@@ -546,8 +539,6 @@ namespace Sigil
                             i,
                             new Operation<DelegateType>
                             {
-                                Name = name + " " + catchName,
-
                                 IsCatchBlockStart = true,
                                 Parameters = new object[0],
                                 Replay = emit => emit.BeginCatchBlock(name, exc.CatchType, catchName)
@@ -572,8 +563,6 @@ namespace Sigil
                             i,
                             new Operation<DelegateType>
                             {
-                                Name = name + " " + finallyName,
-
                                 IsFinallyBlockStart = true,
                                 Parameters = new object[0],
                                 Replay = emit => emit.BeginFinallyBlock(name, finallyName)
