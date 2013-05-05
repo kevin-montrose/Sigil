@@ -23,6 +23,12 @@ namespace Sigil
                 throw new ArgumentException("labels must have at least one element");
             }
 
+            if (LinqAlternative.Any(labels, l => ((IOwned)l).Owner is DisassembledOperations<DelegateType>))
+            {
+                return
+                    Switch(LinqAlternative.Select(labels, l => l.Name).ToArray());
+            }
+
             foreach (var label in labels)
             {
                 if (((IOwned)label).Owner != this)

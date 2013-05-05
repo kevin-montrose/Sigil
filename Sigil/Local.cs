@@ -52,6 +52,13 @@ namespace Sigil
             DeclaredAtIndex = declaredAt;
         }
 
+        internal void SetOwner(object owner)
+        {
+            if (_Owner != null) throw new Exception("Can't set ownership of an owned local");
+
+            _Owner = owner;
+        }
+
         internal void SetReleasedAt(int index)
         {
             if (ReleasedAtIndex.HasValue) throw new Exception("Can't call this method twice");

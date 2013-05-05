@@ -146,14 +146,14 @@ namespace Sigil
             var labels = new LabelTracker();
             var ops = new List<SigilTuple<int, Operation<DelegateType>>>(GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks));
 
-            var labelNames = new List<string>();
+            var asLabels = new List<Label>();
             var markAt = new Dictionary<int, SigilTuple<int, string>>();
             foreach (var at in labels.MarkAt)
             {
                 var ix = IndexOfOpLastAt(ops, at);
                 var name = "_label" + at;
                 markAt[ix] = SigilTuple.Create(at, name);
-                labelNames.Add(name);
+                asLabels.Add(new Label(null, null, name));
             }
 
             foreach (var k in LinqAlternative.OrderByDescending(markAt.Keys, _ => _).ToList().AsEnumerable())
@@ -181,7 +181,7 @@ namespace Sigil
                     new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()), 
                     ps, 
                     ls,
-                    labelNames
+                    asLabels
                 );
         }
 

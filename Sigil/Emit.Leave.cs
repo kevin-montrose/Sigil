@@ -20,6 +20,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return Leave(label.Name);
+                }
+
                 FailOwnership(label);
             }
 

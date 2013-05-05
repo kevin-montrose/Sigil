@@ -18,6 +18,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return Branch(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -63,6 +68,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return BranchIfEqual(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -112,6 +122,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return UnsignedBranchIfNotEqual(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -179,6 +194,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return BranchIfGreaterOrEqual(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -223,6 +243,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return UnsignedBranchIfGreaterOrEqual(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -266,6 +291,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return BranchIfGreater(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -309,6 +339,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return UnsignedBranchIfGreater(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -352,6 +387,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return BranchIfLessOrEqual(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -395,6 +435,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return UnsignedBranchIfLessOrEqual(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -438,6 +483,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return BranchIfLess(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -481,6 +531,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return UnsignedBranchIfLess(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -526,6 +581,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return BranchIfFalse(label.Name);
+                }
+
                 FailOwnership(label);
             }
 
@@ -579,6 +639,11 @@ namespace Sigil
 
             if (((IOwned)label).Owner != this)
             {
+                if (((IOwned)label).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return BranchIfTrue(label.Name);
+                }
+
                 FailOwnership(label);
             }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sigil.Impl;
+using System;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
@@ -15,8 +16,9 @@ namespace Sigil
 
         public IEnumerable<Parameter> Parameters { get; private set; }
         public IEnumerable<Local> Locals { get; private set; }
+        public IEnumerable<Label> Labels { get; private set; }
 
-        public List<Operation<DelegateType>> Operations;
+        private List<Operation<DelegateType>> Operations;
         public Operation<DelegateType> this[int index]
         {
             get
@@ -35,18 +37,27 @@ namespace Sigil
             }
         }
 
-        private IEnumerable<string> Labels;
-
         internal DisassembledOperations(
             List<Operation<DelegateType>> ops, 
             IEnumerable<Parameter> ps, 
             IEnumerable<Local> locs,
-            IEnumerable<string> labels)
+            IEnumerable<Label> labels)
         {
             Operations = ops;
             Parameters = ps;
+
             Locals = locs;
             Labels = labels;
+
+            foreach (var loc in Locals)
+            {
+                loc.SetOwner(this);
+            }
+
+            foreach(var lab in Labels)
+            {
+                lab.SetOwner(this);
+            }
         }
 
         private void Apply(int i, Emit<DelegateType> emit)
@@ -60,7 +71,7 @@ namespace Sigil
 
                 foreach (var l in Labels)
                 {
-                    emit.DefineLabel(l);
+                    emit.DefineLabel(l.Name);
                 }
             }
 

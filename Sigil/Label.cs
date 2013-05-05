@@ -1,4 +1,5 @@
 ﻿using Sigil.Impl;
+using System;
 
 namespace Sigil
 {
@@ -30,6 +31,13 @@ namespace Sigil
             _Owner = owner;
             Name = name;
             LabelDel = label;
+        }
+
+        internal void SetOwner(object owner)
+        {
+            if (_Owner != null) throw new Exception("Cannot set ownership of an owner Label");
+
+            _Owner = owner;
         }
 
         /// <summary>

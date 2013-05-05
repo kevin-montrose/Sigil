@@ -20,6 +20,11 @@ namespace Sigil
 
             if (((IOwned)local).Owner != this)
             {
+                if (((IOwned)local).Owner is DisassembledOperations<DelegateType>)
+                {
+                    return LoadLocalAddress(local.Name);
+                }
+
                 FailOwnership(local);
             }
 
