@@ -145,9 +145,10 @@ namespace Sigil
 
             var labels = new LabelTracker();
             var asLabels = new List<Label>();
+            var needsInference = new List<SigilTuple<int, Operation<DelegateType>>>();
             var ops = 
                 new List<SigilTuple<int, Operation<DelegateType>>>(
-                    GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks, asLabels)
+                    GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks, asLabels, needsInference)
                 );
 
             var markAt = new Dictionary<int, SigilTuple<int, string>>();
@@ -178,6 +179,8 @@ namespace Sigil
 
             ops = OrderOperations(ops);
 
+            ops = InferTypes(ops, needsInference, ps, ls, asLabels);
+
             return
                 new DisassembledOperations<DelegateType>(
                     new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()), 
@@ -185,6 +188,18 @@ namespace Sigil
                     ls,
                     asLabels
                 );
+        }
+
+        private static List<SigilTuple<int, Operation<DelegateType>>> InferTypes(
+            List<SigilTuple<int, Operation<DelegateType>>> ops,
+            List<SigilTuple<int, Operation<DelegateType>>> infer,
+            IEnumerable<Parameter> ps,
+            IEnumerable<Local> ls,
+            IEnumerable<Label> asLabels)
+        {
+            if (infer.Count == 0) return ops;
+
+            throw new NotImplementedException();
         }
 
         private static List<SigilTuple<int, Operation<DelegateType>>> OrderOperations(List<SigilTuple<int, Operation<DelegateType>>> ops)
@@ -282,7 +297,8 @@ namespace Sigil
             IEnumerable<Local> ls, 
             LabelTracker labels, 
             IList<ExceptionHandlingClause> exceptions, 
-            List<Label> labelAccumulator)
+            List<Label> labelAccumulator,
+            List<SigilTuple<int, Operation<DelegateType>>> needsInference)
         {
             var exceptionStart = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
             var exceptionEnd = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
@@ -399,7 +415,6 @@ namespace Sigil
             }
 
             var ret = new List<SigilTuple<int, Operation<DelegateType>>>();
-
             var prefixes = new PrefixTracker();
 
             CheckForExceptionOperations(0, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
@@ -416,7 +431,14 @@ namespace Sigil
                 {
                     if (!op.IsIgnored)
                     {
-                        ret.Add(SigilTuple.Create(gap ?? startsAt, op));
+                        var toAdd = SigilTuple.Create(gap ?? startsAt, op);
+
+                        ret.Add(toAdd);
+
+                        if (op.Parameters == null)
+                        {
+                            needsInference.Add(toAdd);
+                        }
                     }
 
                     prefixes.Clear();
@@ -1904,7 +1926,13 @@ namespace Sigil
             if (op == OpCodes.Ldelem_Ref)
             {
                 // tricky, the type needs to be known to replay a call to LoadElement; but it's not in the IL stream
-                throw new NotImplementedException();
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = null,
+                        Replay = emit => emit.LoadElement(typeof(WildcardType))
+                    };
             }
 
             if (op == OpCodes.Ldelem_U1)
