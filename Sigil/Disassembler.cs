@@ -149,7 +149,7 @@ namespace Sigil
             var markAt = new Dictionary<int, string>();
             foreach (var at in labels.MarkAt)
             {
-                var ix = IndexOfOpAt(ops, at);
+                var ix = IndexOfOpLastAt(ops, at);
                 markAt[ix] = "_label" + at;
             }
 
@@ -162,9 +162,9 @@ namespace Sigil
                 );
         }
 
-        private static int IndexOfOpAt(IEnumerable<SigilTuple<int, Operation<DelegateType>>> ops, int ix)
+        private static int IndexOfOpLastAt(IEnumerable<SigilTuple<int, Operation<DelegateType>>> ops, int ix)
         {
-            var i = 0;
+            /*var i = 0;
             foreach (var x in ops)
             {
                 if (x.Item1 == ix)
@@ -173,6 +173,30 @@ namespace Sigil
                 }
 
                 i++;
+            }
+
+            throw new Exception("Couldn't find label position in operations for " + ix);*/
+
+            bool foundIt = false;
+            var i = 0;
+            foreach (var x in ops)
+            {
+                if (x.Item1 == ix)
+                {
+                    foundIt = true;
+                }
+
+                if (foundIt && x.Item1 != ix)
+                {
+                    return i - 1;
+                }
+
+                i++;
+            }
+
+            if (foundIt)
+            {
+                return i - 1;
             }
 
             throw new Exception("Couldn't find label position in operations for " + ix);
@@ -333,12 +357,12 @@ namespace Sigil
 
             var prefixes = new PrefixTracker();
 
+            CheckForExceptionOperations(0, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+
             int? gap = null;
             int i = 0;
             while (i < cil.Length)
             {
-                CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
-
                 var startsAt = i;
                 Operation<DelegateType> op;
                 i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, exceptionBlockEndAddrToIx, out op);
@@ -357,10 +381,9 @@ namespace Sigil
                 {
                     gap = gap ?? startsAt;
                 }
-            }
 
-            // One last check after all instructions are processed
-            CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+                CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+            }
 
             return ret;
         }
@@ -386,7 +409,7 @@ namespace Sigil
 
                     ret.Add(
                         SigilTuple.Create(
-                            -1,
+                            i,
                             new Operation<DelegateType>
                             {
                                 Name = c,
@@ -410,7 +433,7 @@ namespace Sigil
 
                     ret.Add(
                         SigilTuple.Create(
-                            -1,
+                            i,
                             new Operation<DelegateType>
                             {
                                 Name = f,
@@ -435,7 +458,7 @@ namespace Sigil
 
                     ret.Add(
                         SigilTuple.Create(
-                            -1,
+                            i,
                             new Operation<DelegateType>
                             {
                                 Name = name,
@@ -459,7 +482,7 @@ namespace Sigil
 
                     ret.Add(
                         SigilTuple.Create(
-                            -1,
+                            i,
                             new Operation<DelegateType>
                             {
                                 Name = name,
@@ -484,7 +507,7 @@ namespace Sigil
 
                     ret.Add(
                         SigilTuple.Create(
-                            -1,
+                            i,
                             new Operation<DelegateType>
                             {
                                 Name = name + " " + catchName,
@@ -510,7 +533,7 @@ namespace Sigil
 
                     ret.Add(
                         SigilTuple.Create(
-                            -1,
+                            i,
                             new Operation<DelegateType>
                             {
                                 Name = name + " " + finallyName,
@@ -565,14 +588,17 @@ namespace Sigil
 
         private static string ChooseLabelName(int absAddr, LabelTracker labels, IDictionary<int, int> exceptionBlockEnds)
         {
-            int exceptionBlockNum;
+            /*int exceptionBlockNum;
             if (!exceptionBlockEnds.TryGetValue(absAddr, out exceptionBlockNum))
             {
                 labels.Mark(absAddr);
                 return "_label" + absAddr;
             }
 
-            return "__exceptionBlockEnd" + exceptionBlockNum;
+            return "__exceptionBlockEnd" + exceptionBlockNum;*/
+
+            labels.Mark(absAddr);
+            return "_label" + absAddr;
         }
 
         private static Operation<DelegateType> MakeReplayableOperation(
