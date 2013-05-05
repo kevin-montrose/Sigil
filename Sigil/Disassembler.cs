@@ -337,22 +337,25 @@ namespace Sigil
             int i = 0;
             while (i < cil.Length)
             {
-                var tweak = CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
+                CheckForExceptionOperations(i, exceptionStart, exceptionEnd, catchStart, catchEnd, finallyStart, finallyEnd, activeExceptionBlocks, activeCatchBlocks, activeFinallyBlocks, ret);
 
-                if (gap.HasValue) gap += tweak;
-
+                var startsAt = i;
                 Operation<DelegateType> op;
                 i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, exceptionBlockEndAddrToIx, out op);
 
                 if (op != null)
                 {
-                    ret.Add(SigilTuple.Create(gap ?? i, op));
+                    if (!op.IsIgnored)
+                    {
+                        ret.Add(SigilTuple.Create(gap ?? startsAt, op));
+                    }
+
                     prefixes.Clear();
                     gap = null;
                 }
                 else
                 {
-                    gap = gap ?? i;
+                    gap = gap ?? startsAt;
                 }
             }
 
@@ -362,7 +365,7 @@ namespace Sigil
             return ret;
         }
 
-        private static int CheckForExceptionOperations(
+        private static void CheckForExceptionOperations(
             int i,
             Dictionary<int, LinqList<ExceptionHandlingClause>> exceptionStart,
             Dictionary<int, LinqList<ExceptionHandlingClause>> exceptionEnd,
@@ -375,8 +378,6 @@ namespace Sigil
             Dictionary<ExceptionHandlingClause, string> activeFinallyBlocks,
             List<SigilTuple<int, Operation<DelegateType>>> ret)
         {
-            var extraInstrs = 0;
-
             if (exceptionStart.ContainsKey(i))
             {
                 foreach (var exc in exceptionStart[i].AsEnumerable())
@@ -488,9 +489,6 @@ namespace Sigil
                     );
 
                     activeFinallyBlocks.Remove(exc);
-
-                    // ILGenerator emits an "endfinally/endfilter" that we need to adjust for
-                    extraInstrs++;
                 }
             }
 
@@ -516,8 +514,6 @@ namespace Sigil
                     activeExceptionBlocks.Remove(exc);
                 }
             }
-
-            return extraInstrs;
         }
 
         private static int ReadOp(
@@ -549,7 +545,7 @@ namespace Sigil
                 advance++;
             }
 
-            var operand = ReadOperands(mod, opcode, cil, ix + advance, pLookup, lLookup, ref advance);
+            var operand = ReadOperands(mod, opcode, cil, ix, ix + advance, pLookup, lLookup, ref advance);
 
             op = MakeReplayableOperation(opcode, operand, prefixes, labels, exceptionEndLabels);
 
@@ -785,8 +781,7 @@ namespace Sigil
             if (op == OpCodes.Br || op == OpCodes.Br_S)
             {
                 var absAddr = (int)operands[0];
-                labels.Mark(absAddr);
-                var label = "_label" + absAddr;
+                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
 
                 return
                     new Operation<DelegateType>
@@ -1384,7 +1379,11 @@ namespace Sigil
             if (op == OpCodes.Endfinally)
             {
                 // Endfinally isn't emitted directly by ILGenerator or Sigil; it's implicit in EndFinallyBlock() calls
-                return null;
+                return
+                    new Operation<DelegateType>
+                    {
+                        IsIgnored = true
+                    };
             }
 
             if (op == OpCodes.Initblk)
@@ -3095,24 +3094,24 @@ namespace Sigil
             return BitConverter.ToDouble(arr, 0);
         }
 
-        private static object[] ReadOperands(Module mod, OpCode op, byte[] cil, int ix, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, ref int advance)
+        private static object[] ReadOperands(Module mod, OpCode op, byte[] cil, int instrStart, int operandStart, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, ref int advance)
         {
             switch (op.OperandType)
             {
                 case OperandType.InlineBrTarget:
                     advance += 4;
-                    var offset = ReadInt(cil, ix);
-                    var jumpTarget = ix + advance + offset;
+                    var offset = ReadInt(cil, operandStart);
+                    var jumpTarget = instrStart + advance + offset;
                     return new object[] { jumpTarget };
 
                 case OperandType.InlineSwitch:
                     advance += 4;
-                    var len = ReadInt(cil, ix);
-                    var offset1 = ix + len * 4;
+                    var len = ReadInt(cil, operandStart);
+                    var offset1 = instrStart + len * 4;
                     var ret = new object[len];
                     for (var i = 0; i < len; i++)
                     {
-                        var step = ReadInt(cil, ix + advance);
+                        var step = ReadInt(cil, operandStart + advance);
                         advance += 4;
                         ret[i] = offset1 + step;
                     }
@@ -3120,8 +3119,8 @@ namespace Sigil
 
                 case OperandType.ShortInlineBrTarget:
                     advance += 1;
-                    var offset2 = (sbyte)cil[ix];
-                    var jumpTarget2 = ix + advance + offset2;
+                    var offset2 = (sbyte)cil[operandStart];
+                    var jumpTarget2 = instrStart + advance + offset2;
                     return new object[] { jumpTarget2 };
 
                 case OperandType.InlineField:
@@ -3129,56 +3128,56 @@ namespace Sigil
                 case OperandType.InlineType:
                 case OperandType.InlineMethod:
                     advance += 4;
-                    var mem = mod.ResolveMember(ReadInt(cil, ix));
+                    var mem = mod.ResolveMember(ReadInt(cil, operandStart));
                     return new object[] { mem };
 
                 case OperandType.InlineI:
                     advance += 4;
-                    return new object[] { ReadInt(cil, ix) };
+                    return new object[] { ReadInt(cil, operandStart) };
 
                 case OperandType.InlineI8:
                     advance += 8;
-                    return new object[] { ReadLong(cil, ix) };
+                    return new object[] { ReadLong(cil, operandStart) };
                 
                 case OperandType.InlineNone: 
                     return new object[0];
                 
                 case OperandType.InlineR:
                     advance += 8;
-                    return new object[] { ReadDouble(cil, ix) };
+                    return new object[] { ReadDouble(cil, operandStart) };
 
                 case OperandType.InlineSig:
                     advance += 4;
-                    var sig = mod.ResolveSignature(ReadInt(cil, ix));
+                    var sig = mod.ResolveSignature(ReadInt(cil, operandStart));
                     return new object[] { sig };
 
                 case OperandType.InlineString:
                     advance += 4;
-                    var str = mod.ResolveString(ReadInt(cil, ix));
+                    var str = mod.ResolveString(ReadInt(cil, operandStart));
                     return new object[] { str };
                  
                 case OperandType.InlineVar:
                     advance += 2;
-                    return new object[] { ReadShort(cil, ix) };
+                    return new object[] { ReadShort(cil, operandStart) };
                 
                 case OperandType.ShortInlineI:
                     advance += 1;
                     if (op == OpCodes.Ldc_I4_S)
                     {
-                        return new object[] { (sbyte)cil[ix] };
+                        return new object[] { (sbyte)cil[operandStart] };
                     }
                     else
                     {
-                        return new object[] { cil[ix] };
+                        return new object[] { cil[operandStart] };
                     }
 
                 case OperandType.ShortInlineR:
                     advance += 4;
-                    return new object[] { ReadShort(cil, ix) };
+                    return new object[] { ReadShort(cil, operandStart) };
  
                 case OperandType.ShortInlineVar:
                     advance += 1;
-                    return new object[] { cil[ix] };
+                    return new object[] { cil[operandStart] };
                 
                 default: throw new Exception("Unexpected operange type [" + op.OperandType + "]");
             }

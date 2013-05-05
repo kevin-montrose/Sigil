@@ -35,6 +35,8 @@ namespace Sigil
 
         internal Action<Emit<DelegateType>> Replay { get; set; }
 
+        internal bool IsIgnored { get; set; }
+
         /// <summary>
         /// A string representation of this Operation.
         /// </summary>
