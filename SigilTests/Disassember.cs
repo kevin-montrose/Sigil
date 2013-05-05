@@ -105,7 +105,7 @@ namespace SigilTests
                 }
             }
 
-            //Assert.AreEqual("ldarg.0\r\nbrtrue.s _label5\r\nldc.i4.m1\r\nret\r\n\r\n_label5:\r\nldarg.1\r\nbrtrue.s _label10\r\nldc.i4.m1\r\nret\r\n\r\n_label10:\r\nldarg.0\r\nldarg.1\r\nmul\r\nstloc.0\r\nldloc.0\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label21\r\nldc.i4.1\r\nret\r\n\r\n_label21:\r\nldc.i4.0\r\nret\r\n", instrs);
+            Assert.AreEqual("ldarg.0\r\nbrtrue.s _label5\r\nldc.i4.m1\r\nret\r\n\r\n_label5:\r\nldarg.1\r\nbrtrue.s _label10\r\nldc.i4.m1\r\nret\r\n\r\n_label10:\r\nldarg.0\r\nldarg.1\r\nmul\r\nstloc.0\r\nldloc.0\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label21\r\nldc.i4.1\r\nret\r\n\r\n_label21:\r\nldc.i4.0\r\nret\r\n", instrs);
         }
 
         [TestMethod]
@@ -141,7 +141,7 @@ namespace SigilTests
                 }
             }
 
-            //Assert.AreEqual("--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloca.s 0\r\ncall System.String ToString()\r\nstloc.2\r\nleave.s __exceptionBlockEnd0\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.1\r\nldloc.1\r\ncallvirt System.String get_Message()\r\nstloc.2\r\nleave.s __exceptionBlockEnd0\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\nldloc.2\r\nret\r\n", instrs);
+            Assert.AreEqual("--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloca.s 0\r\ncall System.String ToString()\r\nstloc.2\r\nleave.s _label24\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.1\r\nldloc.1\r\ncallvirt System.String get_Message()\r\nstloc.2\r\nleave.s _label24\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label24:\r\nldloc.2\r\nret\r\n", instrs);
         }
 
         [TestMethod]
@@ -181,7 +181,7 @@ namespace SigilTests
                 }
             }
 
-            //Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s __exceptionBlockEnd0\r\n\r\n__autolabel0:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
+            Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel0:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label17:\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
         }
 
         [TestMethod]
@@ -225,7 +225,7 @@ namespace SigilTests
                 }
             }
 
-            //Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s __exceptionBlockEnd1\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nldc.i4.m1\r\nstloc.0\r\nleave.s __exceptionBlockEnd1\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\nleave.s __exceptionBlockEnd0\r\n\r\n__autolabel2:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
+            Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nldc.i4.m1\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label17:\r\nleave.s _label24\r\n\r\n__autolabel2:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label24:\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
         }
 
         [TestMethod]
@@ -286,7 +286,7 @@ namespace SigilTests
                 }
             }
 
-            //Assert.AreEqual("", instrs);
+            Assert.AreEqual("ldstr ''\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nconv.r8\r\nldc.r8 3\r\ncall Double Pow(Double, Double)\r\npop\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.0\r\nmul\r\nldarg.0\r\nsub\r\nstloc.1\r\nldloc.1\r\nldarg.0\r\nldc.i4.1\r\nsub\r\ndiv\r\nstloc.s 5\r\nldloca.s 5\r\ncall System.String ToString()\r\nstloc.s 4\r\nleave.s _label114\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.2\r\nldstr 'foo - '\r\nldloc.2\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nnewobj Void .ctor(System.String)\r\nthrow\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.3\r\nldloc.3\r\ncallvirt System.String get_Message()\r\nldloc.3\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label91\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label91:\r\nleave.s _label112\r\n\r\n__autolabel2:\r\n--BeginFinallyBlock--\r\nldarg.1\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label111\r\n--BeginExceptionBlock--\r\nldloc.0\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label111\r\n\r\n__autolabel3:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nleave.s _label111\r\n\r\n__autolabel4:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label111:\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label112:\r\nldloc.0\r\nret\r\n\r\n_label114:\r\nldloc.s 4\r\nret\r\n", instrs);
         }
     }
 }
