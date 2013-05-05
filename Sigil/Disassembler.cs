@@ -144,16 +144,18 @@ namespace Sigil
                     .ToList().AsEnumerable();
 
             var labels = new LabelTracker();
-            var ops = new List<SigilTuple<int, Operation<DelegateType>>>(GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks));
-
             var asLabels = new List<Label>();
+            var ops = 
+                new List<SigilTuple<int, Operation<DelegateType>>>(
+                    GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks, asLabels)
+                );
+
             var markAt = new Dictionary<int, SigilTuple<int, string>>();
             foreach (var at in labels.MarkAt)
             {
                 var ix = IndexOfOpLastAt(ops, at);
                 var name = "_label" + at;
                 markAt[ix] = SigilTuple.Create(at, name);
-                asLabels.Add(new Label(null, null, name));
             }
 
             foreach (var k in LinqAlternative.OrderByDescending(markAt.Keys, _ => _).ToList().AsEnumerable())
@@ -273,7 +275,14 @@ namespace Sigil
             throw new Exception("Couldn't find [" + exc + "] in starting exception blocks");
         }
 
-        private static IEnumerable<SigilTuple<int, Operation<DelegateType>>> GetOperations(Module mod, byte[] cil, IEnumerable<Parameter> ps, IEnumerable<Local> ls, LabelTracker labels, IList<ExceptionHandlingClause> exceptions)
+        private static IEnumerable<SigilTuple<int, Operation<DelegateType>>> GetOperations(
+            Module mod, 
+            byte[] cil, 
+            IEnumerable<Parameter> ps, 
+            IEnumerable<Local> ls, 
+            LabelTracker labels, 
+            IList<ExceptionHandlingClause> exceptions, 
+            List<Label> labelAccumulator)
         {
             var exceptionStart = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
             var exceptionEnd = new Dictionary<int, LinqList<ExceptionHandlingClause>>();
@@ -401,7 +410,7 @@ namespace Sigil
             {
                 var startsAt = i;
                 Operation<DelegateType> op;
-                i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, out op);
+                i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, labelAccumulator, out op);
 
                 if (op != null)
                 {
@@ -583,6 +592,7 @@ namespace Sigil
             IDictionary<int, Local> lLookup, 
             PrefixTracker prefixes, 
             LabelTracker labels,
+            List<Label> labelAccumulator,
             out Operation<DelegateType> op)
         {
             int advance = 0;
@@ -605,22 +615,33 @@ namespace Sigil
 
             var operand = ReadOperands(mod, opcode, cil, ix, ix + advance, pLookup, lLookup, ref advance);
 
-            op = MakeReplayableOperation(opcode, operand, prefixes, labels);
+            op = MakeReplayableOperation(opcode, operand, prefixes, labels, labelAccumulator);
 
             return advance;
         }
 
-        private static string ChooseLabelName(int absAddr, LabelTracker labels)
+        private static Label ChooseLabel(int absAddr, LabelTracker labels, List<Label> labelAccumulator)
         {
+            var name = "_label" + absAddr;
+
+            var ret = LinqAlternative.Where(labelAccumulator, l => l.Name == name).SingleOrDefault();
+
+            if (ret == null)
+            {
+                ret = new Label(null, null, name);
+                labelAccumulator.Add(ret);
+            }
+
             labels.Mark(absAddr);
-            return "_label" + absAddr;
+            return ret;
         }
 
         private static Operation<DelegateType> MakeReplayableOperation(
             OpCode op, 
             object[] operands, 
             PrefixTracker prefixes, 
-            LabelTracker labels)
+            LabelTracker labels,
+            List<Label> labelAccumulator)
         {
             if (op == OpCodes.Add)
             {
@@ -680,7 +701,7 @@ namespace Sigil
             if (op == OpCodes.Beq || op == OpCodes.Beq_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -694,7 +715,7 @@ namespace Sigil
             if (op == OpCodes.Bge || op == OpCodes.Bge_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -708,7 +729,7 @@ namespace Sigil
             if (op == OpCodes.Bge_Un || op == OpCodes.Bge_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -722,7 +743,7 @@ namespace Sigil
             if (op == OpCodes.Bgt || op == OpCodes.Bgt_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -736,7 +757,7 @@ namespace Sigil
             if (op == OpCodes.Bgt_Un || op == OpCodes.Bgt_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -750,7 +771,7 @@ namespace Sigil
             if (op == OpCodes.Ble || op == OpCodes.Ble_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -764,7 +785,7 @@ namespace Sigil
             if (op == OpCodes.Ble_Un || op == OpCodes.Ble_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -778,7 +799,7 @@ namespace Sigil
             if (op == OpCodes.Blt || op == OpCodes.Blt_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -792,7 +813,7 @@ namespace Sigil
             if (op == OpCodes.Blt_Un || op == OpCodes.Blt_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -806,7 +827,7 @@ namespace Sigil
             if (op == OpCodes.Bne_Un || op == OpCodes.Bne_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -832,7 +853,7 @@ namespace Sigil
             if (op == OpCodes.Br || op == OpCodes.Br_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -857,7 +878,7 @@ namespace Sigil
             if (op == OpCodes.Brfalse || op == OpCodes.Brfalse_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -871,7 +892,7 @@ namespace Sigil
             if (op == OpCodes.Brtrue || op == OpCodes.Brtrue_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -2340,7 +2361,7 @@ namespace Sigil
             if (op == OpCodes.Leave || op == OpCodes.Leave_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels);
+                var label = ChooseLabel(absAddr, labels, labelAccumulator);
 
                 return
                     new Operation<DelegateType>
@@ -3004,12 +3025,12 @@ namespace Sigil
 
             if (op == OpCodes.Switch)
             {
-                var swLabls = new string[operands.Length];
+                var swLabls = new Label[operands.Length];
 
                 for(var i = 0; i < operands.Length; i++)
                 {
                     var abs = (int)operands[i];
-                    var label = ChooseLabelName(abs, labels);
+                    var label = ChooseLabel(abs, labels, labelAccumulator);
                     swLabls[i] = label;
                 }
 
