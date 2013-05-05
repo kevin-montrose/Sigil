@@ -37,6 +37,8 @@ namespace Sigil
 
         internal bool IsIgnored { get; set; }
 
+        internal string Name { get; set; }
+
         /// <summary>
         /// A string representation of this Operation.
         /// </summary>
@@ -44,43 +46,43 @@ namespace Sigil
         {
             if (IsExceptionBlockStart)
             {
-                return "--Start Exception Block--";
+                return "--Start Exception Block(" + Name + ")--";
             }
 
             if (IsExceptionBlockEnd)
             {
-                return "--End Exception Block--";
+                return "--End Exception Block(" + Name + ")--";
             }
 
             if (IsCatchBlockStart)
             {
-                return "--Start Catch Block--";
+                return "--Start Catch Block(" + Name + ")--";
             }
 
             if (IsCatchBlockEnd)
             {
-                return "--End Catch Block--";
+                return "--End Catch Block(" + Name + ")--";
             }
 
             if (IsFinallyBlockStart)
             {
-                return "--Start Finally Block--";
+                return "--Start Finally Block(" + Name + ")--";
             }
 
             if (IsFinallyBlockEnd)
             {
-                return "--End Finally Block--";
+                return "--End Finally Block(" + Name + ")--";
             }
 
-            var ps = 
+            var ps =
                 string.Join(
-                    ", ", 
+                    ", ",
                     LinqAlternative.Select(
-                        Parameters, 
-                        o => 
+                        Parameters,
+                        o =>
                         {
-                            if(o == null) return "(null)";
-                            
+                            if (o == null) return "(null)";
+
                             return o.ToString();
                         }
                     ).ToArray()

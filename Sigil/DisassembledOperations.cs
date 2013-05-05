@@ -17,7 +17,7 @@ namespace Sigil
         public IEnumerable<Local> Locals { get; private set; }
         public IEnumerable<Label> Labels { get; private set; }
 
-        private List<Operation<DelegateType>> Operations;
+        public List<Operation<DelegateType>> Operations;
         public Operation<DelegateType> this[int index]
         {
             get
