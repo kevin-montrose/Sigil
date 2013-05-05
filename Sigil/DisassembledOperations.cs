@@ -15,7 +15,6 @@ namespace Sigil
 
         public IEnumerable<Parameter> Parameters { get; private set; }
         public IEnumerable<Local> Locals { get; private set; }
-        public IEnumerable<Label> Labels { get; private set; }
 
         public List<Operation<DelegateType>> Operations;
         public Operation<DelegateType> this[int index]
@@ -36,14 +35,18 @@ namespace Sigil
             }
         }
 
-        private IDictionary<int, string> MarkLabelsAt;
+        private IEnumerable<string> Labels;
 
-        internal DisassembledOperations(List<Operation<DelegateType>> ops, IEnumerable<Parameter> ps, IEnumerable<Local> locs, IDictionary<int, string> markAt)
+        internal DisassembledOperations(
+            List<Operation<DelegateType>> ops, 
+            IEnumerable<Parameter> ps, 
+            IEnumerable<Local> locs,
+            IEnumerable<string> labels)
         {
             Operations = ops;
             Parameters = ps;
             Locals = locs;
-            MarkLabelsAt = markAt;
+            Labels = labels;
         }
 
         private void Apply(int i, Emit<DelegateType> emit)
@@ -55,17 +58,10 @@ namespace Sigil
                     emit.DeclareLocal(l.LocalType, l.Name);
                 }
 
-                foreach (var kv in MarkLabelsAt)
+                foreach (var l in Labels)
                 {
-                    emit.DefineLabel(kv.Value);
+                    emit.DefineLabel(l);
                 }
-            }
-
-            string newLabel;
-            if (MarkLabelsAt.TryGetValue(i, out newLabel))
-            {
-                emit.MarkLabel(newLabel);
-                MarkLabelsAt.Remove(i);
             }
 
             this[i].Apply(emit);

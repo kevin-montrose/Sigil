@@ -144,22 +144,81 @@ namespace Sigil
                     .ToList().AsEnumerable();
 
             var labels = new LabelTracker();
-            var ops = GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks);
+            var ops = new List<SigilTuple<int, Operation<DelegateType>>>(GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks));
 
-            var markAt = new Dictionary<int, string>();
+            var labelNames = new List<string>();
+            var markAt = new Dictionary<int, SigilTuple<int, string>>();
             foreach (var at in labels.MarkAt)
             {
                 var ix = IndexOfOpLastAt(ops, at);
-                markAt[ix] = "_label" + at;
+                var name = "_label" + at;
+                markAt[ix] = SigilTuple.Create(at, name);
+                labelNames.Add(name);
             }
+
+            foreach (var k in LinqAlternative.OrderByDescending(markAt.Keys, _ => _).ToList().AsEnumerable())
+            {
+                var pair = markAt[k];
+                var name = pair.Item2;
+                var ix = pair.Item1;
+
+                var mark =
+                    new Operation<DelegateType>
+                    {
+                        IsMarkLabel = true,
+                        LabelName = name,
+                        Parameters = new object[] { name },
+                        Replay = emit => emit.MarkLabel(name)
+                    };
+
+                ops.Insert(k, SigilTuple.Create(ix, mark));
+            }
+
+            ops = OrderOperations(ops);
 
             return
                 new DisassembledOperations<DelegateType>(
                     new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()), 
                     ps, 
                     ls,
-                    markAt
+                    labelNames
                 );
+        }
+
+        private static List<SigilTuple<int, Operation<DelegateType>>> OrderOperations(List<SigilTuple<int, Operation<DelegateType>>> ops)
+        {
+            var ret = new List<SigilTuple<int, Operation<DelegateType>>>();
+
+            var grouped = LinqAlternative.GroupBy(ops, g => g.Item1);
+
+            foreach (var group in grouped.OrderBy(o => o.Key).AsEnumerable())
+            {
+                var inOrder = 
+                    LinqAlternative.OrderBy<Operation<DelegateType>, int>(
+                        LinqAlternative.Select(group, _ => _.Item2).AsEnumerable(),
+                        op =>
+                        {
+                            if (op.IsCatchBlockEnd) return -1000000;
+                            if (op.IsFinallyBlockEnd) return -10000;
+                            if (op.IsExceptionBlockEnd) return -1000;
+
+                            if (op.IsExceptionBlockStart) return -100;
+                            if (op.IsCatchBlockStart) return -10;
+                            if (op.IsFinallyBlockStart) return -1;
+                            
+                            if (op.IsMarkLabel) return 0;
+
+                            return 1;
+                        }
+                    ).AsEnumerable();
+
+                foreach (var i in inOrder)
+                {
+                    ret.Add(SigilTuple.Create(group.Key, i));
+                }
+            }
+
+            return ret;
         }
 
         private static int IndexOfOpLastAt(IEnumerable<SigilTuple<int, Operation<DelegateType>>> ops, int ix)

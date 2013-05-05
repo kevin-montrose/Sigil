@@ -33,6 +33,10 @@ namespace Sigil
 
         public bool IsFinallyBlockEnd { get; internal set; }
 
+        public bool IsMarkLabel { get; internal set; }
+
+        public string LabelName { get; internal set; }
+
         internal Action<Emit<DelegateType>> Replay { get; set; }
 
         internal bool IsIgnored { get; set; }
@@ -72,6 +76,11 @@ namespace Sigil
             if (IsFinallyBlockEnd)
             {
                 return "--End Finally Block(" + Name + ")--";
+            }
+
+            if (IsMarkLabel)
+            {
+                return "--Mark Label " + LabelName + "--";
             }
 
             var ps =
