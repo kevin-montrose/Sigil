@@ -636,6 +636,11 @@ namespace Sigil
             return ret;
         }
 
+        private static void ParseSignature(byte[] sig, out CallingConventions callConventions, out Type returnType, out Type[] parameterTypes, out Type[] arglist)
+        {
+            throw new NotImplementedException();
+        }
+
         private static Operation<DelegateType> MakeReplayableOperation(
             OpCode op, 
             object[] operands, 
@@ -920,7 +925,22 @@ namespace Sigil
 
             if (op == OpCodes.Calli)
             {
-                throw new NotImplementedException();
+                var sig = (byte[])operands[0];
+
+                CallingConventions callConventions;
+                Type returnType;
+                Type[] parameterTypes;
+                Type[] arglist;
+
+                ParseSignature(sig, out callConventions, out returnType, out parameterTypes, out arglist);
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new object[] { callConventions, returnType, parameterTypes, arglist },
+                        Replay = emit => emit.CallIndirect(callConventions, returnType, parameterTypes, arglist)
+                    };
             }
 
             if (op == OpCodes.Callvirt)
@@ -3266,7 +3286,7 @@ namespace Sigil
                     advance += 1;
                     return new object[] { cil[operandStart] };
                 
-                default: throw new Exception("Unexpected operange type [" + op.OperandType + "]");
+                default: throw new Exception("Unexpected operand type [" + op.OperandType + "]");
             }
         }
     }

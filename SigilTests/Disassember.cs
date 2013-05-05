@@ -2,6 +2,8 @@
 using System;
 using System.Reflection.Emit;
 using System.Linq;
+using System.Reflection;
+using System.IO;
 
 namespace SigilTests
 {
