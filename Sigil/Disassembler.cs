@@ -164,19 +164,6 @@ namespace Sigil
 
         private static int IndexOfOpLastAt(IEnumerable<SigilTuple<int, Operation<DelegateType>>> ops, int ix)
         {
-            /*var i = 0;
-            foreach (var x in ops)
-            {
-                if (x.Item1 == ix)
-                {
-                    return i;
-                }
-
-                i++;
-            }
-
-            throw new Exception("Couldn't find label position in operations for " + ix);*/
-
             bool foundIt = false;
             var i = 0;
             foreach (var x in ops)
@@ -330,16 +317,6 @@ namespace Sigil
                 finallyEnd[k] = finallyEnd[k].OrderBy(x => x.TryLength + x.HandlerLength).ToList();
             }
 
-            var exceptionBlockEndAddrToIx = new Dictionary<int, int>();
-
-            foreach (var kv in exceptionEnd)
-            {
-                var at = kv.Key;
-                var exc = kv.Value.First();
-
-                exceptionBlockEndAddrToIx[at] = DeclarationNumber(exceptionStart, exc);
-            }
-
             var parameterLookup = new Dictionary<int, Parameter>();
             var localLookup = new Dictionary<int, Local>();
 
@@ -365,7 +342,7 @@ namespace Sigil
             {
                 var startsAt = i;
                 Operation<DelegateType> op;
-                i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, exceptionBlockEndAddrToIx, out op);
+                i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, out op);
 
                 if (op != null)
                 {
@@ -557,8 +534,7 @@ namespace Sigil
             IDictionary<int, Parameter> pLookup, 
             IDictionary<int, Local> lLookup, 
             PrefixTracker prefixes, 
-            LabelTracker labels, 
-            IDictionary<int, int> exceptionEndLabels,
+            LabelTracker labels,
             out Operation<DelegateType> op)
         {
             int advance = 0;
@@ -581,22 +557,13 @@ namespace Sigil
 
             var operand = ReadOperands(mod, opcode, cil, ix, ix + advance, pLookup, lLookup, ref advance);
 
-            op = MakeReplayableOperation(opcode, operand, prefixes, labels, exceptionEndLabels);
+            op = MakeReplayableOperation(opcode, operand, prefixes, labels);
 
             return advance;
         }
 
-        private static string ChooseLabelName(int absAddr, LabelTracker labels, IDictionary<int, int> exceptionBlockEnds)
+        private static string ChooseLabelName(int absAddr, LabelTracker labels)
         {
-            /*int exceptionBlockNum;
-            if (!exceptionBlockEnds.TryGetValue(absAddr, out exceptionBlockNum))
-            {
-                labels.Mark(absAddr);
-                return "_label" + absAddr;
-            }
-
-            return "__exceptionBlockEnd" + exceptionBlockNum;*/
-
             labels.Mark(absAddr);
             return "_label" + absAddr;
         }
@@ -605,8 +572,7 @@ namespace Sigil
             OpCode op, 
             object[] operands, 
             PrefixTracker prefixes, 
-            LabelTracker labels,
-            IDictionary<int, int> exceptionBlockEnds)
+            LabelTracker labels)
         {
             if (op == OpCodes.Add)
             {
@@ -666,7 +632,7 @@ namespace Sigil
             if (op == OpCodes.Beq || op == OpCodes.Beq_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -680,7 +646,7 @@ namespace Sigil
             if (op == OpCodes.Bge || op == OpCodes.Bge_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -694,7 +660,7 @@ namespace Sigil
             if (op == OpCodes.Bge_Un || op == OpCodes.Bge_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -708,7 +674,7 @@ namespace Sigil
             if (op == OpCodes.Bgt || op == OpCodes.Bgt_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -722,7 +688,7 @@ namespace Sigil
             if (op == OpCodes.Bgt_Un || op == OpCodes.Bgt_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -736,7 +702,7 @@ namespace Sigil
             if (op == OpCodes.Ble || op == OpCodes.Ble_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -750,7 +716,7 @@ namespace Sigil
             if (op == OpCodes.Ble_Un || op == OpCodes.Ble_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -764,7 +730,7 @@ namespace Sigil
             if (op == OpCodes.Blt || op == OpCodes.Blt_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -778,7 +744,7 @@ namespace Sigil
             if (op == OpCodes.Blt_Un || op == OpCodes.Blt_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -792,7 +758,7 @@ namespace Sigil
             if (op == OpCodes.Bne_Un || op == OpCodes.Bne_Un_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -818,7 +784,7 @@ namespace Sigil
             if (op == OpCodes.Br || op == OpCodes.Br_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -843,7 +809,7 @@ namespace Sigil
             if (op == OpCodes.Brfalse || op == OpCodes.Brfalse_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -857,7 +823,7 @@ namespace Sigil
             if (op == OpCodes.Brtrue || op == OpCodes.Brtrue_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -2326,7 +2292,7 @@ namespace Sigil
             if (op == OpCodes.Leave || op == OpCodes.Leave_S)
             {
                 var absAddr = (int)operands[0];
-                var label = ChooseLabelName(absAddr, labels, exceptionBlockEnds);
+                var label = ChooseLabelName(absAddr, labels);
 
                 return
                     new Operation<DelegateType>
@@ -2995,7 +2961,7 @@ namespace Sigil
                 for(var i = 0; i < operands.Length; i++)
                 {
                     var abs = (int)operands[i];
-                    var label = ChooseLabelName(abs, labels, exceptionBlockEnds);
+                    var label = ChooseLabelName(abs, labels);
                     swLabls[i] = label;
                 }
 
