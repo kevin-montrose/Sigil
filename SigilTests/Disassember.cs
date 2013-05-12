@@ -367,5 +367,43 @@ namespace SigilTests
 
             Assert.AreEqual("ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.ref\r\nstloc.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.0\r\nble.s _label40\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.1\r\nsub\r\ncallvirt System.String Substring(Int32, Int32)\r\nstelem.ref\r\nbr.s _label48\r\n\r\n_label40:\r\nldarg.0\r\nldarg.1\r\nldstr 'hello world'\r\nstelem.ref\r\n\r\n_label48:\r\nldloc.0\r\nret\r\n", instrs);
         }
+
+        delegate string LoadAndStoreIndictDel(ref string arr, int at);
+
+        [TestMethod]
+        public void LoadAndStoreIndict()
+        {
+            LoadAndStoreIndictDel d1 =
+                delegate(ref string str, int ix)
+                {
+                    var copy = str;
+
+                    for (var i = 0; i < ix; i++)
+                    {
+                        str = str + copy;
+                    }
+
+                    return str;
+                };
+
+            var ops = Sigil.Disassembler<LoadAndStoreIndictDel>.Disassemble(d1);
+            Assert.IsNotNull(ops);
+
+            var e1 = ops.EmitAll();
+
+            string instrs;
+            var r1 = e1.CreateDelegate(out instrs);
+
+            var a1 = "ab";
+            var a2 = "ab";
+
+            for (var i = 0; i < 10; i++)
+            {
+                Assert.AreEqual(d1(ref a1, i), r1(ref a2, i));
+                Assert.AreEqual(a1, a2);
+            }
+
+            Assert.AreEqual("ldarg.0\r\nldind.ref\r\nstloc.0\r\nldc.i4.0\r\nstloc.1\r\nbr.s _label21\r\n\r\n_label7:\r\nldarg.0\r\nldarg.0\r\nldind.ref\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstind.ref\r\nldloc.1\r\nldc.i4.1\r\nadd\r\nstloc.1\r\n\r\n_label21:\r\nldloc.1\r\nldarg.1\r\nblt.s _label7\r\nldarg.0\r\nldind.ref\r\nret\r\n", instrs);
+        }
     }
 }

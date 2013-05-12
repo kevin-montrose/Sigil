@@ -248,7 +248,7 @@ namespace Sigil
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new [] { elem },
+                        Parameters = new object[] { elem },
                         Replay = emit => emit.LoadLength(elem)
                     };
             }
@@ -261,7 +261,7 @@ namespace Sigil
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new[] { elem },
+                        Parameters = new object[] { elem },
                         Replay = emit => emit.LoadElement(elem)
                     };
             }
@@ -277,12 +277,41 @@ namespace Sigil
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new [] { elem },
+                        Parameters = new object[] { elem },
                         Replay = emit => emit.StoreElement(elem)
                     };
             }
 
-            throw new NotImplementedException();
+            if (op == OpCodes.Ldind_Ref)
+            {
+                // TODO: unaligned and volatile
+                var elem = consumesType.Single().Type.GetElementType();
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new object[] { elem, false, null },
+                        Replay = emit => emit.LoadIndirect(elem, isVolatile: false, unaligned: null)
+                    };
+            }
+
+            if (op == OpCodes.Stind_Ref)
+            {
+                // TODO: unaligned and volatile
+                var arr = consumesType.OrderByDescending(v => v.IsArray ? v.Type.GetArrayRank() : 0).First();
+                var elem = arr.Type.GetElementType();
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new object[] { elem, false, null },
+                        Replay = emit => emit.StoreIndirect(elem, isVolatile: false, unaligned: null)
+                    };
+            }
+
+            throw new Exception("Encountered unexpected operation [" + op + "] which requires type inferencing");
         }
 
         private static List<SigilTuple<int, Operation<DelegateType>>> OrderOperations(List<SigilTuple<int, Operation<DelegateType>>> ops)
@@ -2192,8 +2221,13 @@ namespace Sigil
 
             if (op == OpCodes.Ldind_Ref)
             {
-                // Another tricky one, like ldelem_ref
-                throw new NotImplementedException();
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = null,
+                        Replay = emit => emit.LoadIndirect<WildcardType>()
+                    };
             }
 
             if (op == OpCodes.Ldind_U1)
