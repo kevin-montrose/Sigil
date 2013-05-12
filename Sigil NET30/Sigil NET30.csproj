@@ -43,7 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Sigil\**\*.cs" />
+    <Compile Include="..\Sigil\**\*.cs" Exclude="..\Sigil\obj\**" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Sigil.snk" />
