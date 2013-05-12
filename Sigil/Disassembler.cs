@@ -7,6 +7,12 @@ using System.Reflection.Emit;
 
 namespace Sigil
 {
+    /// <summary>
+    /// Helper for disassembling delegates into a series of Emit operations.
+    /// 
+    /// This can be used to inspect delegates, or combine them via Sigil.
+    /// </summary>
+    /// <typeparam name="DelegateType">The type of delegate being disassembled</typeparam>
     public sealed class Disassembler<DelegateType>
         where DelegateType : class
     {
@@ -105,7 +111,7 @@ namespace Sigil
             TwoByteOps = twoByte.ToDictionary(d => (int)(d.Value & 0xFF), d => d);
         }
 
-        private static void CheckDelegateType<DelegateType>()
+        private static void CheckDelegateType()
         {
             var delType = typeof(DelegateType);
 
@@ -124,9 +130,14 @@ namespace Sigil
             }
         }
 
+        /// <summary>
+        /// Disassembles a delegate into a series of DisassembledOperations, which may be turned into
+        /// Sigil Emit or inspected directly.
+        /// </summary>
+        /// <param name="del">The delegate to disassemble</param>
         public static DisassembledOperations<DelegateType> Disassemble(DelegateType del)
         {
-            CheckDelegateType<DelegateType>();
+            CheckDelegateType();
 
             var asDel = (Delegate)(object)del;
             var body = asDel.Method.GetMethodBody();

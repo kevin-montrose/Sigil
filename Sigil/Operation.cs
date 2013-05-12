@@ -21,22 +21,56 @@ namespace Sigil
         /// </summary>
         public IEnumerable<object> Parameters { get; internal set; }
 
+        /// <summary>
+        /// This operation marks the beginning of an exception block,
+        /// which is analogous to a call to Emit.BeginExceptionBlock.
+        /// </summary>
         public bool IsExceptionBlockStart { get; internal set; }
 
+        /// <summary>
+        /// This operation marks the end of an exception block,
+        /// which is analogous to a call to Emit.EndExceptionBlock.
+        /// </summary>
         public bool IsExceptionBlockEnd { get; internal set; }
 
+        /// <summary>
+        /// This operation marks the beginning of a catch block,
+        /// which is analogous to a call to Emit.BeginCatchBlock.
+        /// </summary>
         public bool IsCatchBlockStart { get; internal set; }
 
+        /// <summary>
+        /// This operation marks the end of a catch block,
+        /// which is analogous to a call to Emit.EndCatchBlock.
+        /// </summary>
         public bool IsCatchBlockEnd { get; internal set; }
 
+        /// <summary>
+        /// This operation marks the beginning of a finally block,
+        /// which is analogous to a call to Emit.BeginFinallyBlock.
+        /// </summary>
         public bool IsFinallyBlockStart { get; internal set; }
 
+        /// <summary>
+        /// This operation marks the end of a finally block,
+        /// which is analogous to a call to Emit.EndFinallyBlock.
+        /// </summary>
         public bool IsFinallyBlockEnd { get; internal set; }
 
+        /// <summary>
+        /// This operation marks a label, the name of the label is given in LabelName.
+        /// </summary>
         public bool IsMarkLabel { get; internal set; }
 
+        /// <summary>
+        /// If this operation marks a label, which is indicated by IsMarkLabel, then this property
+        /// returns the name of the label being marked.
+        /// </summary>
         public string LabelName { get; internal set; }
 
+        /// <summary>
+        /// Returns true if this operation is emitted a CIL opcode.
+        /// </summary>
         public bool IsOpCode
         {
             get

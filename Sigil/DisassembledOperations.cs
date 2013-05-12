@@ -12,13 +12,30 @@ namespace Sigil
     /// </summary>
     public sealed class DisassembledOperations<DelegateType>
     {
+        /// <summary>
+        /// The total number of operations that were decompiled.
+        /// </summary>
         public int Count { get { return Operations.Count; } }
 
+        /// <summary>
+        /// The parameters the decompiled delegate takes.
+        /// </summary>
         public IEnumerable<Parameter> Parameters { get; private set; }
+
+        /// <summary>
+        /// The locals the decompiled delegate declared and uses.
+        /// </summary>
         public IEnumerable<Local> Locals { get; private set; }
+
+        /// <summary>
+        /// The labels the decompile delegate uses.
+        /// </summary>
         public IEnumerable<Label> Labels { get; private set; }
 
         private List<Operation<DelegateType>> Operations;
+        /// <summary>
+        /// Returns the operation that would be emitted at the given index.
+        /// </summary>
         public Operation<DelegateType> this[int index]
         {
             get
@@ -78,6 +95,9 @@ namespace Sigil
             this[i].Apply(emit);
         }
 
+        /// <summary>
+        /// Emits length instructions from the given index into the given Emit.
+        /// </summary>
         public void ContinueEmitFrom(Emit<DelegateType> emit, int from, int length)
         {
             if (from < 0 || from > Operations.Count)
@@ -101,6 +121,9 @@ namespace Sigil
             }
         }
 
+        /// <summary>
+        /// Emits all instructions from the given index into the given Emit.
+        /// </summary>
         public void ContinueEmitAllFrom(Emit<DelegateType> emit, int from)
         {
             if (from < 0 || from > Operations.Count)
@@ -111,6 +134,9 @@ namespace Sigil
             ContinueEmitFrom(emit, from, this.Count - from);
         }
 
+        /// <summary>
+        /// Emits length instructions from the given index into a new Emit.
+        /// </summary>
         public Emit<DelegateType> EmitFrom(int from, int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             if (from < 0 || from > Operations.Count)
@@ -138,6 +164,9 @@ namespace Sigil
             return e1;
         }
 
+        /// <summary>
+        /// Emits length instructions from the start of the disassembled instructions into a new Emit.
+        /// </summary>
         public Emit<DelegateType> Emit(int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             if(length < 0 || length > Operations.Count)
@@ -148,11 +177,17 @@ namespace Sigil
             return EmitFrom(0, length, name, module, validationOptions);
         }
 
+        /// <summary>
+        /// Emits the disassembled instructions into a new Emit.
+        /// </summary>
         public Emit<DelegateType> EmitAll(string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             return Emit(this.Count, name, module, validationOptions);
         }
 
+        /// <summary>
+        /// Emits all disassembled instructions starting at from into a new Emit.
+        /// </summary>
         public Emit<DelegateType> EmitAllFrom(int from, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             return EmitFrom(from, Count - from, name, module, validationOptions);
