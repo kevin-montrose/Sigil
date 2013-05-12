@@ -179,7 +179,20 @@ namespace Sigil
 
             ops = OrderOperations(ops);
 
-            ops = InferTypes(ops, needsInference, ps, ls, asLabels);
+            var prevCount = needsInference.Count;
+            while (needsInference.Count > 0)
+            {
+                ops = InferTypes(ops, needsInference, ps, ls, asLabels);
+
+                needsInference = new List<SigilTuple<int, Operation<DelegateType>>>(LinqAlternative.Where(ops, w => w.Item2.IsOpCode && w.Item2.Parameters == null).AsEnumerable());
+
+                if (prevCount == needsInference.Count)
+                {
+                    throw new Exception("Disassembler was unable to infer necessary types");
+                }
+
+                prevCount = needsInference.Count;
+            }
 
             return
                 new DisassembledOperations<DelegateType>(
@@ -197,8 +210,6 @@ namespace Sigil
             IEnumerable<Local> ls,
             IEnumerable<Label> asLabels)
         {
-            if (infer.Count == 0) return ops;
-
             var tempDisasm = new DisassembledOperations<DelegateType>(
                     new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()),
                     ps,

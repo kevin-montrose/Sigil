@@ -37,6 +37,22 @@ namespace Sigil
 
         public string LabelName { get; internal set; }
 
+        public bool IsOpCode
+        {
+            get
+            {
+                return
+                    !IsExceptionBlockStart &&
+                    !IsExceptionBlockEnd &&
+                    !IsCatchBlockStart &&
+                    !IsCatchBlockEnd &&
+                    !IsFinallyBlockStart &&
+                    !IsFinallyBlockEnd &&
+                    !IsMarkLabel &&
+                    !IsIgnored;
+            }
+        }
+
         internal Action<Emit<DelegateType>> Replay { get; set; }
 
         internal bool IsIgnored { get; set; }
