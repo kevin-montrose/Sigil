@@ -54,7 +54,7 @@ namespace Sigil
 
         internal void SetOwner(object owner)
         {
-            if (_Owner != null) throw new Exception("Can't set ownership of an owned local");
+            if (_Owner != null && owner != null) throw new Exception("Can't set ownership of an owned local");
 
             _Owner = owner;
         }

@@ -18,10 +18,13 @@ namespace Sigil
         /// </summary>
         public IEnumerable<Operation<DelegateType>> ResultUsedBy { get; private set; }
 
-        internal OperationResultUsage(Operation<DelegateType> producer, IEnumerable<Operation<DelegateType>> users)
+        internal IEnumerable<TypeOnStack> TypesProduced { get; private set; }
+
+        internal OperationResultUsage(Operation<DelegateType> producer, IEnumerable<Operation<DelegateType>> users, IEnumerable<TypeOnStack> typesProduced)
         {
             ProducesResult = producer;
             ResultUsedBy = LinqAlternative.ToList(users).AsEnumerable();
+            TypesProduced = LinqAlternative.ToList(typesProduced).AsEnumerable();
         }
 
         /// <summary>

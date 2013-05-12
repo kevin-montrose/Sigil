@@ -74,6 +74,19 @@ namespace Sigil.Impl
         {
             // wildcards match *everything*
             if (type1 == TypeOnStack.Get<WildcardType>() || type2 == TypeOnStack.Get<WildcardType>()) return true;
+            if (type1.IsArray && type2.IsArray)
+            {
+                if (type1.Type.GetArrayRank() == type2.Type.GetArrayRank())
+                {
+                    var t1Elem = type1.Type.GetElementType();
+                    var t2Elem = type2.Type.GetElementType();
+
+                    while (t1Elem.HasElementType) t1Elem = t1Elem.GetElementType();
+                    while (t2Elem.HasElementType) t2Elem = t2Elem.GetElementType();
+
+                    if (t1Elem == typeof(WildcardType) || t2Elem == typeof(WildcardType)) return true;
+                }
+            }
 
             if (type1.Type == typeof(AnyPointerType) && type2.IsPointer) return true;
             if (type2.Type == typeof(AnyPointerType) && type1.IsPointer) return true;

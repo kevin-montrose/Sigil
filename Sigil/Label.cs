@@ -35,7 +35,7 @@ namespace Sigil
 
         internal void SetOwner(object owner)
         {
-            if (_Owner != null) throw new Exception("Cannot set ownership of an owner Label");
+            if (_Owner != null && owner != null) throw new Exception("Cannot set ownership of an owner Label");
 
             _Owner = owner;
         }

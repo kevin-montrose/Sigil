@@ -290,5 +290,40 @@ namespace SigilTests
 
             Assert.AreEqual("ldstr ''\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nconv.r8\r\nldc.r8 3\r\ncall Double Pow(Double, Double)\r\npop\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.0\r\nmul\r\nldarg.0\r\nsub\r\nstloc.1\r\nldloc.1\r\nldarg.0\r\nldc.i4.1\r\nsub\r\ndiv\r\nstloc.s 5\r\nldloca.s 5\r\ncall System.String ToString()\r\nstloc.s 4\r\nleave.s _label114\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.2\r\nldstr 'foo - '\r\nldloc.2\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nnewobj Void .ctor(System.String)\r\nthrow\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.3\r\nldloc.3\r\ncallvirt System.String get_Message()\r\nldloc.3\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label91\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label91:\r\nleave.s _label112\r\n\r\n__autolabel2:\r\n--BeginFinallyBlock--\r\nldarg.1\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label111\r\n--BeginExceptionBlock--\r\nldloc.0\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label111\r\n\r\n__autolabel3:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nleave.s _label111\r\n\r\n__autolabel4:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label111:\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label112:\r\nldloc.0\r\nret\r\n\r\n_label114:\r\nldloc.s 4\r\nret\r\n", instrs);
         }
+
+        [TestMethod]
+        public void Arrays()
+        {
+            Func<int[], int, int> d1 =
+                (a, ix) =>
+                {
+                    ix %= a.Length;
+
+                    var b = a[ix];
+
+                    a[ix] = b - 1;
+
+                    return b;
+                };
+
+            var ops = Sigil.Disassembler<Func<int[], int, int>>.Disassemble(d1);
+            Assert.IsNotNull(ops);
+
+            var e1 = ops.EmitAll();
+
+            string instrs;
+            var r1 = e1.CreateDelegate(out instrs);
+
+            var a1 = new[] { 1, 2, 3, 4, 5, 6 };
+            var a2 = new[] { 1, 2, 3, 4, 5, 6 };
+
+            for (var i = 0; i < 100; i++)
+            {
+                Assert.AreEqual(d1(a1, i), r1(a2, i));
+                Assert.IsTrue(a1.SequenceEqual(a2));
+            }
+
+            Assert.AreEqual("ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.i4\r\nstloc.0\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.1\r\nsub\r\nstelem.i4\r\nldloc.0\r\nret\r\n", instrs);
+        }
     }
 }

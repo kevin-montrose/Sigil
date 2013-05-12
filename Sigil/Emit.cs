@@ -325,7 +325,7 @@ namespace Sigil
                 {
                     var key = IL.Operations[r.Key];
 
-                    ret.Add(new OperationResultUsage<DelegateType>(key, usedBy));
+                    ret.Add(new OperationResultUsage<DelegateType>(key, usedBy, r.Value.AsEnumerable()));
                 }
             }
 

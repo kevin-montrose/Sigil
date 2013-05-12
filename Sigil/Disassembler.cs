@@ -199,6 +199,60 @@ namespace Sigil
         {
             if (infer.Count == 0) return ops;
 
+            var tempDisasm = new DisassembledOperations<DelegateType>(
+                    new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()),
+                    ps,
+                    ls,
+                    asLabels
+                );
+
+            var del = tempDisasm.EmitAll();
+            var use = new LinqList<OperationResultUsage<DelegateType>>(del.TraceOperationResultUsage());
+
+            LinqAlternative.Each(ls, l => l.SetOwner(null));
+            LinqAlternative.Each(asLabels, l => l.SetOwner(null));
+
+            var inferOps = LinqAlternative.Select(infer, s => s.Item2.OpCode).Distinct().ToList();
+
+            var traced = use.Where(u => inferOps.Contains(u.ProducesResult.OpCode)).ToList();
+
+            foreach (var t in traced.AsEnumerable())
+            {
+                var couldBe = use.Where(u => LinqAlternative.Contains(u.ResultUsedBy, t.ProducesResult)).ToList();
+                var couldBeTypes = couldBe.SelectMany(c => c.TypesProduced).Distinct().ToList();
+
+                var op = MakeInferredReplayableOp(t.ProducesResult.OpCode, couldBeTypes);
+
+                var toReplace = infer[0];
+                infer.RemoveAt(0);
+
+                if(op != null)
+                {
+                    var replaceAt = ops.IndexOf(toReplace);
+                    ops[replaceAt] = SigilTuple.Create(toReplace.Item1, op);
+                }
+            }
+
+            return ops;
+        }
+
+        private static Operation<DelegateType> MakeInferredReplayableOp(OpCode op, LinqList<TypeOnStack> consumesType)
+        {
+            if (consumesType.Any(c => c.Type == typeof(WildcardType))) return null;
+
+            if (op == OpCodes.Ldlen)
+            {
+                var elem = consumesType.Single().Type.GetElementType();
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new [] { elem },
+                        Replay = emit => emit.LoadLength(elem)
+                    };
+            }
+
             throw new NotImplementedException();
         }
 
@@ -2161,7 +2215,13 @@ namespace Sigil
             if (op == OpCodes.Ldlen)
             {
                 // Yet another tricky one
-                throw new NotImplementedException();
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = null,
+                        Replay = emit => emit.LoadLength<WildcardType>()
+                    };
             }
 
             if (op == OpCodes.Ldloc)

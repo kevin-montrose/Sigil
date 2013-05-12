@@ -61,6 +61,7 @@ namespace Sigil.Impl
 
         public bool IsReference { get { return Type.IsByRef; } }
         public bool IsPointer { get { return Type.IsPointer; } }
+        public bool IsArray { get { return Type.IsArray; } }
 
         public bool HasAttachedMethodInfo { get; private set; }
         public CallingConventions CallingConvention { get; private set; }
