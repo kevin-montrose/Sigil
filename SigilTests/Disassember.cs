@@ -292,7 +292,7 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Arrays()
+        public void LoadLength()
         {
             Func<int[], int, int> d1 =
                 (a, ix) =>
@@ -324,6 +324,48 @@ namespace SigilTests
             }
 
             Assert.AreEqual("ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.i4\r\nstloc.0\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.1\r\nsub\r\nstelem.i4\r\nldloc.0\r\nret\r\n", instrs);
+        }
+
+        [TestMethod]
+        public void LoadAndStoreElement()
+        {
+            Func<string[], int, string> d1 =
+                (a, ix) =>
+                {
+                    ix %= a.Length;
+
+                    var b = a[ix];
+
+                    if (b.Length > 0)
+                    {
+                        a[ix] = b.Substring(0, b.Length - 1);
+                    }
+                    else
+                    {
+                        a[ix] = "hello world";
+                    }
+
+                    return b;
+                };
+
+            var ops = Sigil.Disassembler<Func<string[], int, string>>.Disassemble(d1);
+            Assert.IsNotNull(ops);
+
+            var e1 = ops.EmitAll();
+
+            string instrs;
+            var r1 = e1.CreateDelegate(out instrs);
+
+            var a1 = new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" };
+            var a2 = new[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" };
+
+            for (var i = 0; i < 100; i++)
+            {
+                Assert.AreEqual(d1(a1, i), r1(a2, i));
+                Assert.IsTrue(a1.SequenceEqual(a2));
+            }
+
+            Assert.AreEqual("ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.ref\r\nstloc.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.0\r\nble.s _label40\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.1\r\nsub\r\ncallvirt System.String Substring(Int32, Int32)\r\nstelem.ref\r\nbr.s _label48\r\n\r\n_label40:\r\nldarg.0\r\nldarg.1\r\nldstr 'hello world'\r\nstelem.ref\r\n\r\n_label48:\r\nldloc.0\r\nret\r\n", instrs);
         }
     }
 }

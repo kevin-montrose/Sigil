@@ -321,11 +321,14 @@ namespace Sigil
 
                 var usedBy = new List<Operation<DelegateType>>(allUsage.Select(u => IL.Operations[u.InstructionIndex.Value]).Distinct().AsEnumerable());
 
-                if (usedBy.Count > 0)
+                if (r.Key < IL.Operations.Count)
                 {
                     var key = IL.Operations[r.Key];
 
-                    ret.Add(new OperationResultUsage<DelegateType>(key, usedBy, r.Value.AsEnumerable()));
+                    if (key != null)
+                    {
+                        ret.Add(new OperationResultUsage<DelegateType>(key, usedBy, r.Value.AsEnumerable()));
+                    }
                 }
             }
 

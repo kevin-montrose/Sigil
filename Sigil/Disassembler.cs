@@ -253,6 +253,35 @@ namespace Sigil
                     };
             }
 
+            if (op == OpCodes.Ldelem_Ref)
+            {
+                var elem = consumesType.Where(x => x.IsArray).Single().Type.GetElementType();
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new[] { elem },
+                        Replay = emit => emit.LoadElement(elem)
+                    };
+            }
+
+            if (op == OpCodes.Stelem_Ref)
+            {
+                var vals = consumesType.Where(x => !x.Type.IsValueType).ToList();
+                var arr = vals.OrderByDescending(v => v.IsArray ? v.Type.GetArrayRank() : 0).First();
+
+                var elem = arr.Type.GetElementType();
+
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = new [] { elem },
+                        Replay = emit => emit.StoreElement(elem)
+                    };
+            }
+
             throw new NotImplementedException();
         }
 
@@ -2849,8 +2878,13 @@ namespace Sigil
 
             if (op == OpCodes.Stelem_Ref)
             {
-                // Another tricky one
-                throw new NotImplementedException();
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = null,
+                        Replay = emit => emit.StoreElement<WildcardType>()
+                    };
             }
 
             if (op == OpCodes.Stfld)
@@ -2975,8 +3009,13 @@ namespace Sigil
 
             if (op == OpCodes.Stind_Ref)
             {
-                // tricky tricky
-                throw new NotImplementedException();
+                return
+                    new Operation<DelegateType>
+                    {
+                        OpCode = op,
+                        Parameters = null,
+                        Replay = emit => emit.StoreIndirect<WildcardType>()
+                    };
             }
 
             if (op == OpCodes.Stloc)

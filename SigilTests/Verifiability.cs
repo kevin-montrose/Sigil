@@ -52,7 +52,11 @@ namespace SigilTests
             Assert.AreEqual("(ldarg.0) result is used by (ldfld System.String Foo)", x.ElementAt(0).ToString());
             Assert.AreEqual("(ldfld System.String Foo) result is used by (brfalse _label0, pop, ret)", x.ElementAt(1).ToString());
             Assert.AreEqual("(dup) result is used by (brfalse _label0)", x.ElementAt(2).ToString());
-            Assert.AreEqual("(ldstr foo) result is used by (ret)", x.ElementAt(3).ToString());
+            Assert.AreEqual("(brfalse _label0) result is unused", x.ElementAt(3).ToString());
+            Assert.AreEqual("(ret) result is unused", x.ElementAt(4).ToString());
+            Assert.AreEqual("(pop) result is unused", x.ElementAt(5).ToString());
+            Assert.AreEqual("(ldstr foo) result is used by (ret)", x.ElementAt(6).ToString());
+            Assert.AreEqual("(ret) result is unused", x.ElementAt(7).ToString());
         }
 
         class _FollowTrace
@@ -98,10 +102,11 @@ namespace SigilTests
                     cur = x.Where(r => prev.Any(p => p.ResultUsedBy.Contains(r.ProducesResult))).ToList();
                 }
 
-                Assert.AreEqual(3, steps.Count);
+                Assert.AreEqual(4, steps.Count);
                 Assert.AreEqual("(ldarg.0) result is used by (ldfld Int32 _Bar)", string.Join(", ", steps[0]));
                 Assert.AreEqual("(ldfld Int32 _Bar) result is used by (add)", string.Join(", ", steps[1]));
                 Assert.AreEqual("(add) result is used by (ret)", string.Join(", ", steps[2]));
+                Assert.AreEqual("(ret) result is unused", string.Join(", ", steps[3]));
             }
 
             {
@@ -119,10 +124,11 @@ namespace SigilTests
                     cur = x.Where(r => prev.Any(p => p.ResultUsedBy.Contains(r.ProducesResult))).ToList();
                 }
 
-                Assert.AreEqual(3, steps.Count);
+                Assert.AreEqual(4, steps.Count);
                 Assert.AreEqual("(ldarg.1) result is used by (ldfld Int32 _Bar)", string.Join(", ", steps[0]));
                 Assert.AreEqual("(ldfld Int32 _Bar) result is used by (mul)", string.Join(", ", steps[1]));
                 Assert.AreEqual("(mul) result is used by (stloc.0)", string.Join(", ", steps[2]));
+                Assert.AreEqual("(stloc.0) result is unused", string.Join(", ", steps[3]));
             }
         }
 
