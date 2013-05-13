@@ -67,7 +67,7 @@
     <Compile Include="CastClass.cs" />
     <Compile Include="CheckFinite.cs" />
     <Compile Include="Constructor.cs" />
-    <Compile Include="Disassember.cs" />
+    <Compile Include="Disassembler.cs" />
     <Compile Include="InitializeBlock.cs" />
     <Compile Include="Compares.cs" />
     <Compile Include="Converts.cs" />

@@ -95,10 +95,7 @@ namespace Sigil
             this[i].Apply(emit);
         }
 
-        /// <summary>
-        /// Emits length instructions from the given index into the given Emit.
-        /// </summary>
-        public void ContinueEmitFrom(Emit<DelegateType> emit, int from, int length)
+        private Emit<DelegateType> EmitFrom(int from, int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             if (from < 0 || from > Operations.Count)
             {
@@ -115,46 +112,14 @@ namespace Sigil
                 throw new InvalidOperationException("from + length must be less than " + Operations.Count + "; found " + (from + length));
             }
 
-            for (var i = 0; i <= length; i++)
-            {
-                Apply(from + length, emit);
-            }
-        }
-
-        /// <summary>
-        /// Emits all instructions from the given index into the given Emit.
-        /// </summary>
-        public void ContinueEmitAllFrom(Emit<DelegateType> emit, int from)
-        {
-            if (from < 0 || from > Operations.Count)
-            {
-                throw new InvalidOperationException("from must be between 0 and " + Operations.Count + ", inclusive; found " + from);
-            }
-
-            ContinueEmitFrom(emit, from, this.Count - from);
-        }
-
-        /// <summary>
-        /// Emits length instructions from the given index into a new Emit.
-        /// </summary>
-        public Emit<DelegateType> EmitFrom(int from, int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
-        {
-            if (from < 0 || from > Operations.Count)
-            {
-                throw new InvalidOperationException("from must be between 0 and " + Operations.Count + ", inclusive; found " + from);
-            }
-
-            if (length < 0)
-            {
-                throw new InvalidOperationException("length must be non-negative; found " + length);
-            }
-
-            if (from + length > Operations.Count)
-            {
-                throw new InvalidOperationException("from + length must be less than " + Operations.Count + "; found " + (from + length));
-            }
-
-            var e1 = Emit<DelegateType>.NewDynamicMethod(name, module, validationOptions);
+            //var e1 = Emit<DelegateType>.NewDynamicMethod(name, module, validationOptions);
+            var e1 =
+                Emit<DelegateType>.DisassemblerDynamicMethod(
+                    LinqAlternative.Select(Parameters, p => p.ParameterType).ToArray(),
+                    name,
+                    module,
+                    validationOptions
+                );
 
             for (var i = 0; i < length; i++)
             {
@@ -164,10 +129,7 @@ namespace Sigil
             return e1;
         }
 
-        /// <summary>
-        /// Emits length instructions from the start of the disassembled instructions into a new Emit.
-        /// </summary>
-        public Emit<DelegateType> Emit(int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
+        private Emit<DelegateType> Emit(int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             if(length < 0 || length > Operations.Count)
             {
@@ -183,14 +145,6 @@ namespace Sigil
         public Emit<DelegateType> EmitAll(string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             return Emit(this.Count, name, module, validationOptions);
-        }
-
-        /// <summary>
-        /// Emits all disassembled instructions starting at from into a new Emit.
-        /// </summary>
-        public Emit<DelegateType> EmitAllFrom(int from, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
-        {
-            return EmitFrom(from, Count - from, name, module, validationOptions);
         }
     }
 }

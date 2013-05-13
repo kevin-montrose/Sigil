@@ -131,7 +131,7 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Disassembles a delegate into a series of DisassembledOperations, which may be turned into
+        /// Disassembles a delegate which does not close over variables into a series of DisassembledOperations, which may be turned into
         /// Sigil Emit or inspected directly.
         /// </summary>
         /// <param name="del">The delegate to disassemble</param>
@@ -140,6 +140,7 @@ namespace Sigil
             CheckDelegateType();
 
             var asDel = (Delegate)(object)del;
+
             var body = asDel.Method.GetMethodBody();
 
             var cil = body.GetILAsByteArray();
@@ -147,7 +148,15 @@ namespace Sigil
             var @params = asDel.Method.GetParameters();
             var excBlocks = body.ExceptionHandlingClauses;
 
-            var ps = new LinqList<ParameterInfo>(@params).Select(s => Parameter.For(s)).ToList().AsEnumerable();
+            var convertedParams = new LinqList<ParameterInfo>(@params).Select(s => Parameter.For(s)).ToList();
+
+            if (asDel.Target != null)
+            {
+                convertedParams.Insert(0, new Parameter(0, asDel.Target.GetType()));
+            }
+
+            var ps = convertedParams.AsEnumerable();
+
             var ls = 
                 new LinqList<LocalVariableInfo>(locals)
                     .OrderBy(_ => _.LocalIndex)

@@ -8,7 +8,7 @@ using System.IO;
 namespace SigilTests
 {
     [TestClass]
-    public class Disassember
+    public class Disassembler
     {
         [TestMethod]
         public void Simple()
@@ -404,6 +404,51 @@ namespace SigilTests
             }
 
             Assert.AreEqual("ldarg.0\r\nldind.ref\r\nstloc.0\r\nldc.i4.0\r\nstloc.1\r\nbr.s _label21\r\n\r\n_label7:\r\nldarg.0\r\nldarg.0\r\nldind.ref\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstind.ref\r\nldloc.1\r\nldc.i4.1\r\nadd\r\nstloc.1\r\n\r\n_label21:\r\nldloc.1\r\nldarg.1\r\nblt.s _label7\r\nldarg.0\r\nldind.ref\r\nret\r\n", instrs);
+        }
+
+        class ComplexClass
+        {
+            public int Key { get; set; }
+            public string Value { get; set; }
+            public long NotUsed { get; set; }
+        }
+
+        [TestMethod]
+        public void Complex()
+        {
+            var rand = new Random();
+            var bs = new byte[16];
+            rand.NextBytes(bs);
+
+            var a = 
+                new ComplexClass
+                {
+                    Key = rand.Next(),
+                    Value = Convert.ToBase64String(bs)
+                };
+
+            Action closeOver =
+                () =>
+                {
+                    var cs = new byte[16];
+                    rand.NextBytes(cs);
+
+                    a.Key = rand.Next();
+                    a.Value = Convert.ToBase64String(cs);
+                };
+
+            var ops = Sigil.Disassembler<Action>.Disassemble(closeOver);
+            var e1 = ops.EmitAll();
+            var usage = e1.TraceOperationResultUsage();
+
+            var propAccess = 
+                usage
+                    .Where(w =>
+                        (w.ProducesResult.OpCode == OpCodes.Call || w.ProducesResult.OpCode == OpCodes.Callvirt) &&
+                        ((MethodInfo)w.ProducesResult.Parameters.ElementAt(0)).DeclaringType == typeof(ComplexClass)
+                    ).ToList();
+
+            Assert.AreEqual(2, propAccess.Count);
         }
     }
 }

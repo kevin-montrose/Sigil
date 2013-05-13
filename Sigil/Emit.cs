@@ -524,17 +524,22 @@ namespace Sigil
         /// </summary>
         public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
+            return DisassemblerDynamicMethod(name: name, module: module, validationOptions: validationOptions);
+        }
+
+        internal static Emit<DelegateType> DisassemblerDynamicMethod(Type[] parameters = null, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
+        {
             module = module ?? Module;
 
             name = name ?? AutoNamer.Next("_DynamicMethod");
-
+            
             ValidateNewParameters<DelegateType>(validationOptions);
 
             var delType = typeof(DelegateType);
 
             var invoke = delType.GetMethod("Invoke");
             var returnType = invoke.ReturnType;
-            var parameterTypes = LinqAlternative.Select(invoke.GetParameters(), s => s.ParameterType).ToArray();
+            var parameterTypes = parameters ?? LinqAlternative.Select(invoke.GetParameters(), s => s.ParameterType).ToArray();
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
