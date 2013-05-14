@@ -12,6 +12,26 @@ namespace SigilTests
     public class Errors
     {
         [TestMethod]
+        public void DisassemblingClosure()
+        {
+            var ret = 4;
+            Func<int> d = () => ret;
+
+            var ops = Disassembler<Func<int>>.Disassemble(d);
+            Assert.IsFalse(ops.CanEmit);
+
+            try
+            {
+                var e = ops.EmitAll();
+                Assert.Fail();
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.AreEqual("Cannot emit this DisassembledOperations object, check CanEmit before calling any Emit methods", e.Message);
+            }
+        }
+
+        [TestMethod]
         public void BadValidationOptions()
         {
             try

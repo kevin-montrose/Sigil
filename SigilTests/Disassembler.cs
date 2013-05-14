@@ -22,6 +22,7 @@ namespace SigilTests
             Assert.AreEqual(OpCodes.Ldarg_1, ops[1].OpCode);
             Assert.AreEqual(OpCodes.Add, ops[2].OpCode);
             Assert.AreEqual(OpCodes.Ret, ops[3].OpCode);
+            Assert.IsTrue(ops.CanEmit);
 
             var recompiled = ops.EmitAll();
             Assert.IsNotNull(recompiled);
@@ -57,6 +58,7 @@ namespace SigilTests
             Assert.AreEqual(OpCodes.Ldfld, loadField.OpCode);
             Assert.AreEqual(typeof(_Volatile).GetField("Foo"), loadField.Parameters.ElementAt(0));
             Assert.AreEqual(true, loadField.Parameters.ElementAt(1));
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
             string instrs;
@@ -93,6 +95,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<int, int, int>>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -129,6 +132,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<int, int, string>>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -169,6 +173,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<int, int, double>>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -213,6 +218,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<int, int, double>>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -274,6 +280,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<int, int, string>>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -308,6 +315,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<int[], int, int>>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -350,6 +358,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<string[], int, string>>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -388,6 +397,7 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<LoadAndStoreIndictDel>.Disassemble(d1);
             Assert.IsNotNull(ops);
+            Assert.IsTrue(ops.CanEmit);
 
             var e1 = ops.EmitAll();
 
@@ -448,6 +458,7 @@ namespace SigilTests
                     ).ToList();
 
             Assert.AreEqual(2, propAccess.Count);
+            Assert.IsFalse(ops.CanEmit);
         }
 
         [TestMethod]
@@ -467,6 +478,7 @@ namespace SigilTests
             Assert.IsTrue(methods.Any(m => (MethodInfo)m.Parameters.ElementAt(0) == typeof(int).GetMethod("Parse", new[] { typeof(string) })));
             Assert.IsTrue(methods.Any(m => (MethodInfo)m.Parameters.ElementAt(0) == typeof(Math).GetMethod("Pow", new[] { typeof(double), typeof(double) })));
             Assert.AreEqual(2, methods.Count);
+            Assert.IsTrue(ops.CanEmit);
         }
     }
 }
