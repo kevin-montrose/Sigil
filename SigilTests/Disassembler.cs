@@ -473,10 +473,11 @@ namespace SigilTests
 
             var ops = Sigil.Disassembler<Func<string, int>>.Disassemble(del);
 
-            var methods = ops.Where(o => new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
+            var calls = ops.Where(o => new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
+            var methods = calls.Select(c => c.Parameters.ElementAt(0)).Cast<MethodInfo>().ToList();
 
-            Assert.IsTrue(methods.Any(m => (MethodInfo)m.Parameters.ElementAt(0) == typeof(int).GetMethod("Parse", new[] { typeof(string) })));
-            Assert.IsTrue(methods.Any(m => (MethodInfo)m.Parameters.ElementAt(0) == typeof(Math).GetMethod("Pow", new[] { typeof(double), typeof(double) })));
+            Assert.IsTrue(methods.Any(m => m == typeof(int).GetMethod("Parse", new[] { typeof(string) })));
+            Assert.IsTrue(methods.Any(m => m == typeof(Math).GetMethod("Pow", new[] { typeof(double), typeof(double) })));
             Assert.AreEqual(2, methods.Count);
             Assert.IsTrue(ops.CanEmit);
         }

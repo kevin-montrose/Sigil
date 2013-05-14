@@ -282,10 +282,12 @@ Func<string, int> del =
     };
 
 var ops = Sigil.Disassembler<Func<string, int>>.Disassemble(del);
-var methods = ops.Where(o => new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
+
+var calls = ops.Where(o => new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
+var methods = calls.Select(c => c.Parameters.ElementAt(0)).Cast<MethodInfo>().ToList();
 ```
-Will find all calls to methods, which in this case would be `Int32.Parse(String)` and `Math.Pow(Double, Double)`.  The appropriate MethodInfos
-will be in the Parameters property on Operation.
+Will find all calls to methods, which in this case would be `Int32.Parse(String)` and `Math.Pow(Double, Double)`.  The `Parameters` on `Operation` 
+correspond to what would be passed to the corresponding `Emit` call.
 
 `DisassembledOperations` also provides usage information, like in `Emit<DelegateType>.TraceOperationUsage()`, which allows you to trace the flow
 of values through a delegate.
