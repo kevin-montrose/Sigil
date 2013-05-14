@@ -10,7 +10,7 @@ namespace Sigil
     /// 
     /// The operations of the decompiled delegate can be inspected, and it can be replayed to a new Emit.
     /// </summary>
-    public sealed class DisassembledOperations<DelegateType>
+    public sealed class DisassembledOperations<DelegateType> : IEnumerable<Operation<DelegateType>>
     {
         /// <summary>
         /// The total number of operations that were decompiled.
@@ -50,13 +50,21 @@ namespace Sigil
                 {
                     if (_Usage != null) return _Usage;
 
-                    var e1 = EmitAll();
+                    var e1 = EmitFrom(0, this.Count);
                     _Usage = e1.TraceOperationResultUsage();
 
                     return _Usage;
                 }
             }
         }
+
+        /// <summary>
+        /// Returns true if a call to EmitAll will succeed.
+        /// 
+        /// This property will be false if the delegate that was disassembled closed over it's environment,
+        /// thereby adding an implicit `this` that cannot be represented (and thus cannot be returned).
+        /// </summary>
+        public bool CanEmit { get; private set; }
 
         private List<Operation<DelegateType>> Operations;
         /// <summary>
@@ -84,13 +92,16 @@ namespace Sigil
             List<Operation<DelegateType>> ops, 
             IEnumerable<Parameter> ps, 
             IEnumerable<Local> locs,
-            IEnumerable<Label> labels)
+            IEnumerable<Label> labels,
+            bool canEmit)
         {
             Operations = ops;
             Parameters = ps;
 
             Locals = locs;
             Labels = labels;
+
+            CanEmit = canEmit;
 
             foreach (var loc in Locals)
             {
@@ -138,7 +149,6 @@ namespace Sigil
                 throw new InvalidOperationException("from + length must be less than " + Operations.Count + "; found " + (from + length));
             }
 
-            //var e1 = Emit<DelegateType>.NewDynamicMethod(name, module, validationOptions);
             var e1 =
                 Emit<DelegateType>.DisassemblerDynamicMethod(
                     LinqAlternative.Select(Parameters, p => p.ParameterType).ToArray(),
@@ -157,6 +167,11 @@ namespace Sigil
 
         private Emit<DelegateType> Emit(int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
+            if (!CanEmit)
+            {
+                throw new InvalidOperationException("Cannot emit this DisassembledOperations object, check CanEmit before calling any Emit methods");
+            }
+
             if(length < 0 || length > Operations.Count)
             {
                 throw new InvalidOperationException("length must be between 0 and "+Operations.Count+", inclusive; found "+length);
@@ -171,6 +186,22 @@ namespace Sigil
         public Emit<DelegateType> EmitAll(string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             return Emit(this.Count, name, module, validationOptions);
+        }
+
+        /// <summary>
+        /// Returns an enumerator which steps over the Operations that are in this DisassembledOperations.
+        /// </summary>
+        public IEnumerator<Operation<DelegateType>> GetEnumerator()
+        {
+            return Operations.GetEnumerator();
+        }
+
+        /// <summary>
+        /// Returns an enumerator which steps over the Operations that are in this DisassembledOperations.
+        /// </summary>
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return ((System.Collections.IEnumerable)Operations).GetEnumerator();
         }
     }
 }

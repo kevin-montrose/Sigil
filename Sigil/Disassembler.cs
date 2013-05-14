@@ -219,7 +219,8 @@ namespace Sigil
                     new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()), 
                     ps, 
                     ls,
-                    asLabels
+                    asLabels,
+                    asDel.Target == null
                 );
         }
 
@@ -234,11 +235,11 @@ namespace Sigil
                     new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()),
                     ps,
                     ls,
-                    asLabels
+                    asLabels,
+                    canEmit: false
                 );
 
-            var del = tempDisasm.EmitAll();
-            var use = new LinqList<OperationResultUsage<DelegateType>>(del.TraceOperationResultUsage());
+            var use = new LinqList<OperationResultUsage<DelegateType>>(tempDisasm.Usage);
 
             LinqAlternative.Each(ls, l => l.SetOwner(null));
             LinqAlternative.Each(asLabels, l => l.SetOwner(null));

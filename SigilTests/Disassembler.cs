@@ -449,5 +449,24 @@ namespace SigilTests
 
             Assert.AreEqual(2, propAccess.Count);
         }
+
+        [TestMethod]
+        public void UsedMethods()
+        {
+            Func<string, int> del =
+                str =>
+                {
+                    var i = int.Parse(str);
+                    return (int)Math.Pow(2, i);
+                };
+
+            var ops = Sigil.Disassembler<Func<string, int>>.Disassemble(del);
+
+            var methods = ops.Where(o => new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
+
+            Assert.IsTrue(methods.Any(m => (MethodInfo)m.Parameters.ElementAt(0) == typeof(int).GetMethod("Parse", new[] { typeof(string) })));
+            Assert.IsTrue(methods.Any(m => (MethodInfo)m.Parameters.ElementAt(0) == typeof(Math).GetMethod("Pow", new[] { typeof(double), typeof(double) })));
+            Assert.AreEqual(2, methods.Count);
+        }
     }
 }

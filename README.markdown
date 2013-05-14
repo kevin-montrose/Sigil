@@ -2,16 +2,6 @@
 
 A fail-fast, validating helper for [DynamicMethod](http://msdn.microsoft.com/en-us/library/system.reflection.emit.dynamicmethod.aspx) and [ILGenerator](http://msdn.microsoft.com/en-us/library/system.reflection.emit.ilgenerator.aspx).
 
-##Changes From Versions 1.X to 2.X
-
-The latest versions of Sigil remove type assertions, making it so unconditional branches can be used without manually indicating the types
-on the stack.  The optional type assertion parameters to MarkLabel has been removed as a consequence.
-
-A related change requires types to be passed to the StoreElement, LoadElement, and LoadLength instructions.
-
-Because Sigil can no longer guarantee that all types on the stack are known after each call, the GetStack method and related types have been
-removed.
-
 ##Usage
 
 Sigil is a roughly 1-to-1 replacement for ILGenerator.  Rather than calling ILGenerator.Emit(OpCode, ...), you call Emit<DelegateType>.OpCode(...).
@@ -275,9 +265,40 @@ Message property, also has a GetDebugInfo method which returns additional detail
 
 Be aware that these features are meant as debugging aids, and their contents and the formatting of said contents may change at any time.
 
+###Disassembly
+
+The `Disassembler<DelegateType>` adds limited support for disassembling .NET delegates starting with Sigil 3.0.0.
+
+The `Disassembler<DelegateType>.Disassemble(...)` method returns a `DisassembleOperations` object which can be used to inspect 
+the inner workings of the delegate, and re-emit it under certain circumstances.
+
+For example:
+```
+Func<string, int> del =
+    str =>
+    {
+        var i = int.Parse(str);
+        return (int)Math.Pow(2, i);
+    };
+
+var ops = Sigil.Disassembler<Func<string, int>>.Disassemble(del);
+var methods = ops.Where(o => new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
+```
+Will find all calls to methods, which in this case would be `Int32.Parse(String)` and `Math.Pow(Double, Double)`.  The appropriate MethodInfos
+will be in the Parameters property on Operation.
+
+`DisassembledOperations` also provides usage information, like in `Emit<DelegateType>.TraceOperationUsage()`, which allows you to trace the flow
+of values through a delegate.
+
+The `DisassembledOperations<DelegateType>.EmitAll(...)` method emits decompiled operations into a new emit, the standard Sigil optimizations
+will be applied so the CIL generated will not necessarily be exactly the same.  Also be aware that Sigil cannot emit delegates that close over
+variables, you can check the `CanEmit` property on `DisassembledOperations<DelegateType>` to distiguish these delegates.
+
 ###Unsupported Operations
 
 Fault blocks are not supported because of their rarity (there is no C# equivalent) and because they are forbidden in dynamic methods.
+
+Sigil does not support Calli when disassembling delegates, as the C# compilers will not emit that instruction it is currently untestable.
 
 ###Performance
 
