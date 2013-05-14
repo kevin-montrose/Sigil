@@ -131,8 +131,7 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Disassembles a delegate which does not close over variables into a series of DisassembledOperations, which may be turned into
-        /// Sigil Emit or inspected directly.
+        /// Disassembles a delegate into a DisassembledOperations object.
         /// </summary>
         /// <param name="del">The delegate to disassemble</param>
         public static DisassembledOperations<DelegateType> Disassemble(DelegateType del)
