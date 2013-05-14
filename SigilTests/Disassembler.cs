@@ -438,8 +438,7 @@ namespace SigilTests
                 };
 
             var ops = Sigil.Disassembler<Action>.Disassemble(closeOver);
-            var e1 = ops.EmitAll();
-            var usage = e1.TraceOperationResultUsage();
+            var usage = ops.Usage;
 
             var propAccess = 
                 usage

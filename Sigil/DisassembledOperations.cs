@@ -32,6 +32,32 @@ namespace Sigil
         /// </summary>
         public IEnumerable<Label> Labels { get; private set; }
 
+        private object UsageLock = new object();
+        private volatile IEnumerable<OperationResultUsage<DelegateType>> _Usage;
+        /// <summary>
+        /// Traces where values produced by certain operations are used.
+        /// 
+        /// This is roughly equivalent to having built the disassembled delegate via Sigil originally,
+        /// and saving the results of TraceOperationResultUsage().
+        /// </summary>
+        public IEnumerable<OperationResultUsage<DelegateType>> Usage 
+        {
+            get
+            {
+                if (_Usage != null) return _Usage;
+
+                lock (UsageLock)
+                {
+                    if (_Usage != null) return _Usage;
+
+                    var e1 = EmitAll();
+                    _Usage = e1.TraceOperationResultUsage();
+
+                    return _Usage;
+                }
+            }
+        }
+
         private List<Operation<DelegateType>> Operations;
         /// <summary>
         /// Returns the operation that would be emitted at the given index.
