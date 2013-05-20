@@ -283,7 +283,7 @@ Func<string, int> del =
 
 var ops = Sigil.Disassembler<Func<string, int>>.Disassemble(del);
 
-var calls = ops.Where(o => new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
+var calls = ops.Where(o => o.IsOpCode && new[] { OpCodes.Call, OpCodes.Callvirt }.Contains(o.OpCode)).ToList();
 var methods = calls.Select(c => c.Parameters.ElementAt(0)).Cast<MethodInfo>().ToList();
 ```
 Will find all calls to methods, which in this case would be `Int32.Parse(String)` and `Math.Pow(Double, Double)`.  The `Parameters` on `Operation` 
