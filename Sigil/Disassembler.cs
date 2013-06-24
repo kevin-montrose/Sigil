@@ -16,58 +16,6 @@ namespace Sigil
     public sealed class Disassembler<DelegateType>
         where DelegateType : class
     {
-        private sealed class PrefixTracker
-        {
-            public bool HasUnaligned { get; private set; }
-            public int? Unaligned { get; private set; }
-
-            public bool HasVolatile { get; private set; }
-
-            public bool HasReadOnly { get; private set; }
-
-            public bool HasTailCall { get; private set; }
-
-            public bool HasConstrained { get; private set; }
-            public Type Constrained { get; private set; }
-
-            public void SetUnaligned(int a)
-            {
-                HasUnaligned = true;
-                Unaligned = a;
-            }
-
-            public void SetVolatile()
-            {
-                HasVolatile = true;
-            }
-
-            public void SetReadOnly()
-            {
-                HasReadOnly = true;
-            }
-
-            public void SetTailCall()
-            {
-                HasTailCall = true;
-            }
-
-            public void SetConstrained(Type t)
-            {
-                HasConstrained = true;
-                Constrained = t;
-            }
-
-            public void Clear()
-            {
-                HasUnaligned = false;
-                Unaligned = -1;
-                HasVolatile = false;
-                HasReadOnly = false;
-                HasConstrained = false;
-                Constrained = null;
-            }
-        }
-
         private sealed class LabelTracker
         {
             private LinqHashSet<int> _MarkAt = new LinqHashSet<int>();
@@ -249,12 +197,13 @@ namespace Sigil
 
             foreach (var t in traced.AsEnumerable())
             {
+                var toReplace = infer[0];
+
                 var couldBe = use.Where(u => LinqAlternative.Contains(u.ResultUsedBy, t.ProducesResult)).ToList();
                 var couldBeTypes = couldBe.SelectMany(c => c.TypesProduced).Distinct().ToList();
 
-                var op = MakeInferredReplayableOp(t.ProducesResult.OpCode, couldBeTypes);
+                var op = MakeInferredReplayableOp(t.ProducesResult.OpCode, couldBeTypes, toReplace.Item2.Prefixes);
 
-                var toReplace = infer[0];
                 infer.RemoveAt(0);
 
                 if(op != null)
@@ -267,7 +216,7 @@ namespace Sigil
             return ops;
         }
 
-        private static Operation<DelegateType> MakeInferredReplayableOp(OpCode op, LinqList<TypeOnStack> consumesType)
+        private static Operation<DelegateType> MakeInferredReplayableOp(OpCode op, LinqList<TypeOnStack> consumesType, PrefixTracker prefixes)
         {
             if (consumesType.Any(c => c.Type == typeof(WildcardType))) return null;
 
@@ -315,30 +264,32 @@ namespace Sigil
 
             if (op == OpCodes.Ldind_Ref)
             {
-                // TODO: unaligned and volatile
                 var elem = consumesType.Single().Type.GetElementType();
+                var isVolatile = prefixes.HasVolatile;
+                int? unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { elem, false, null },
-                        Replay = emit => emit.LoadIndirect(elem, isVolatile: false, unaligned: null)
+                        Parameters = new object[] { elem, isVolatile, unaligned },
+                        Replay = emit => emit.LoadIndirect(elem, isVolatile, unaligned)
                     };
             }
 
             if (op == OpCodes.Stind_Ref)
             {
-                // TODO: unaligned and volatile
                 var arr = consumesType.OrderByDescending(v => v.IsArray ? v.Type.GetArrayRank() : 0).First();
                 var elem = arr.Type.GetElementType();
+                var isVolatile = prefixes.HasVolatile;
+                int? unaligned = prefixes.HasUnaligned ? prefixes.Unaligned : null;
 
                 return
                     new Operation<DelegateType>
                     {
                         OpCode = op,
-                        Parameters = new object[] { elem, false, null },
-                        Replay = emit => emit.StoreIndirect(elem, isVolatile: false, unaligned: null)
+                        Parameters = new object[] { elem, isVolatile, unaligned },
+                        Replay = emit => emit.StoreIndirect(elem, isVolatile, unaligned)
                     };
             }
 
@@ -2048,7 +1999,6 @@ namespace Sigil
 
             if (op == OpCodes.Ldelem_Ref)
             {
-                // tricky, the type needs to be known to replay a call to LoadElement; but it's not in the IL stream
                 return
                     new Operation<DelegateType>
                     {
@@ -2257,7 +2207,9 @@ namespace Sigil
                     {
                         OpCode = op,
                         Parameters = null,
-                        Replay = emit => emit.LoadIndirect<WildcardType>()
+                        Replay = emit => emit.LoadIndirect<WildcardType>(),
+
+                        Prefixes = prefixes.Clone()
                     };
             }
 
@@ -2308,7 +2260,6 @@ namespace Sigil
 
             if (op == OpCodes.Ldlen)
             {
-                // Yet another tricky one
                 return
                     new Operation<DelegateType>
                     {
@@ -3079,7 +3030,9 @@ namespace Sigil
                     {
                         OpCode = op,
                         Parameters = null,
-                        Replay = emit => emit.StoreIndirect<WildcardType>()
+                        Replay = emit => emit.StoreIndirect<WildcardType>(),
+
+                        Prefixes = prefixes.Clone()
                     };
             }
 

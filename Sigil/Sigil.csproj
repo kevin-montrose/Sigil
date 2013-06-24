@@ -227,6 +227,7 @@
     <Compile Include="Impl\LinqAlternative.Delegates.cs">
       <DependentUpon>LinqAlternative.cs</DependentUpon>
     </Compile>
+    <Compile Include="Impl\PrefixTracker.cs" />
     <Compile Include="Impl\ReturnTracer.cs" />
     <Compile Include="Impl\RollingVerifier.cs" />
     <Compile Include="Impl\SpecialTypes.cs" />

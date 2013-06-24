@@ -91,6 +91,8 @@ namespace Sigil
 
         internal bool IsIgnored { get; set; }
 
+        internal PrefixTracker Prefixes { get; set; }
+
         /// <summary>
         /// A string representation of this Operation.
         /// </summary>
