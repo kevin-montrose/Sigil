@@ -218,7 +218,7 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
-    <Compile Include="EmitNonGeneric.cs" />
+    <Compile Include="NonGeneric\Emit.cs" />
     <Compile Include="Impl\Delegates.cs" />
     <Compile Include="Impl\InstructionAndTransitions.cs" />
     <Compile Include="Impl\LinqAlternative.Collections.cs">
@@ -242,6 +242,15 @@
     <Compile Include="Impl\VerificationResult.cs" />
     <Compile Include="LabelLookup.cs" />
     <Compile Include="LocalLookup.cs" />
+    <Compile Include="NonGeneric\Emit.LoadArgument.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Return.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadConstant.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="Operation.cs" />
     <Compile Include="OperationResultUsage.cs" />
     <Compile Include="OptimizationOptions.cs" />

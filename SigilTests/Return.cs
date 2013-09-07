@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,18 @@ namespace SigilTests
             il.Return();
 
             var del = il.CreateDelegate();
+
+            Assert.AreEqual(123, del());
+        }
+
+        [TestMethod]
+        public void ConstantNonGeneric()
+        {
+            var il = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "ConstantNonGeneric");
+            il.LoadConstant(123);
+            il.Return();
+
+            var del = (Func<int>)il.CreateDelegate(typeof(Func<int>));
 
             Assert.AreEqual(123, del());
         }

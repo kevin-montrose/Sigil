@@ -57,7 +57,7 @@ namespace Sigil
 
         // These can only ever be set if we're building a DynamicMethod
         private DelegateType CreatedDelegate;
-        internal DynamicMethod DynMethod { private get; set; }
+        internal DynamicMethod DynMethod { get; set; }
 
         // These can only ever be set if we're building a MethodBuilder
         private MethodBuilder MtdBuilder;
@@ -301,6 +301,18 @@ namespace Sigil
             return ret;
         }
 
+        internal Delegate InnerCreateDelegate(Type delegateType, out string instructions, OptimizationOptions optimizationOptions)
+        {
+            Seal(optimizationOptions);
+
+            var il = DynMethod.GetILGenerator();
+            instructions = IL.UnBuffer(il);
+
+            AutoNamer.Release(this);
+
+            return DynMethod.CreateDelegate(delegateType);
+        }
+
         /// <summary>
         /// Converts the CIL stream into a delegate.
         /// 
@@ -328,14 +340,7 @@ namespace Sigil
                 return CreatedDelegate;
             }
 
-            Seal(optimizationOptions);
-
-            var il = DynMethod.GetILGenerator();
-            instructions = IL.UnBuffer(il);
-
-            CreatedDelegate = (DelegateType)(object)DynMethod.CreateDelegate(typeof(DelegateType));
-
-            AutoNamer.Release(this);
+            CreatedDelegate = (DelegateType)(object)InnerCreateDelegate(typeof(DelegateType), out instructions, optimizationOptions);
 
             return CreatedDelegate;
         }
