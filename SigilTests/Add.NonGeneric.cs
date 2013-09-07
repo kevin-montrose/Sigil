@@ -1,7 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -9,21 +10,18 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public unsafe partial class Add
+    public partial class Add
     {
-        private delegate int* PointerToPointerDelegate(int by, int* ptr);
-
         [TestMethod]
-        public unsafe void PointerToPointer()
+        public unsafe void PointerToPointerNonGeneric()
         {
-            var e1 = Emit<PointerToPointerDelegate>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int*), new[] { typeof(int), typeof(int*) });
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.Add();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (PointerToPointerDelegate)e1.CreateDelegate(typeof(PointerToPointerDelegate));
 
             int* ptr1 = (int*)Marshal.AllocHGlobal(64);
 
@@ -34,19 +32,17 @@ namespace SigilTests
             Assert.AreEqual(((int)ptr1) + 4, (int)ptr2);
         }
 
-        private delegate void ByRefToByRefDelegate(ref int a, int b, ref int c);
-
         [TestMethod]
-        public unsafe void ByRefToByRef()
+        public unsafe void ByRefToByRefNonGeneric()
         {
-            var e1 = Emit<ByRefToByRefDelegate>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), new [] { Type.GetType("System.Int32&"), typeof(int), Type.GetType("System.Int32&") });
             e1.LoadArgument(1);
             e1.LoadArgument(0);
             e1.Add();
             e1.StoreArgument(2);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (ByRefToByRefDelegate)e1.CreateDelegate(typeof(ByRefToByRefDelegate));
 
             int a = 2;
             d1(ref a, 4, ref a);
@@ -55,7 +51,7 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void BlogPost()
+        public void BlogPostNonGeneric()
         {
             {
                 var method = new DynamicMethod("AddOneAndTwo", typeof(int), Type.EmptyTypes);
@@ -94,12 +90,12 @@ namespace SigilTests
 
                 try
                 {
-                    var il = Emit<Func<int>>.NewDynamicMethod("AddOneAndTwo");
+                    var il = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "AddOneAndTwo");
                     il.LoadConstant(1);
                     il.Add();
                     il.Return();
 
-                    var del = il.CreateDelegate();
+                    var del = (Func<int>)il.CreateDelegate(typeof(Func<int>));
 
                     del();
                     Assert.Fail();
@@ -112,22 +108,22 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void IntInt()
+        public void IntIntNonGeneric()
         {
-            var il = Emit<Func<int>>.NewDynamicMethod("IntInt");
+            var il = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes,"IntInt");
             il.LoadConstant(1);
             il.LoadConstant(2);
             il.Add();
             il.Return();
 
-            var del = il.CreateDelegate();
+            var del = (Func<int>)il.CreateDelegate(typeof(Func<int>));
             Assert.AreEqual(3, del());
         }
 
         [TestMethod]
-        public void IntNativeInt()
+        public void IntNativeIntNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
             e1.LoadConstant(1);
             e1.Convert<IntPtr>();
             e1.LoadConstant(3);
@@ -135,15 +131,15 @@ namespace SigilTests
             e1.Convert<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<int>)e1.CreateDelegate(typeof(Func<int>));
 
             Assert.AreEqual(4, d1());
         }
 
         [TestMethod]
-        public void NativeIntInt()
+        public void NativeIntIntNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
             e1.LoadConstant(1);
             e1.LoadConstant(3);
             e1.Convert<IntPtr>();
@@ -151,15 +147,15 @@ namespace SigilTests
             e1.Convert<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<int>)e1.CreateDelegate(typeof(Func<int>));
 
             Assert.AreEqual(4, d1());
         }
 
         [TestMethod]
-        public void NativeIntNativeInt()
+        public void NativeIntNativeIntNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
             e1.LoadConstant(1);
             e1.Convert<IntPtr>();
             e1.LoadConstant(3);
@@ -168,22 +164,22 @@ namespace SigilTests
             e1.Convert<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<int>)e1.CreateDelegate(typeof(Func<int>));
 
             Assert.AreEqual(4, d1());
         }
 
         [TestMethod]
-        public void IntPointer()
+        public void IntPointerNonGeneric()
         {
-            var e1 = Emit<Func<int, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int) }, "E1");
             e1.LoadArgumentAddress(0);
             e1.LoadConstant(2);
             e1.Add();
             e1.Convert<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<int, int>)e1.CreateDelegate(typeof(Func<int, int>));
 
             try
             {
@@ -198,16 +194,16 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void PointerInt()
+        public void PointerIntNonGeneric()
         {
-            var e1 = Emit<Func<int, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int) }, "E1");
             e1.LoadConstant(2);
             e1.LoadArgumentAddress(0);
             e1.Add();
             e1.Convert<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<int, int>)e1.CreateDelegate(typeof(Func<int, int>));
 
             try
             {
@@ -222,9 +218,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void PointerNativeInt()
+        public void PointerNativeIntNonGeneric()
         {
-            var e1 = Emit<Func<int, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int) }, "E1");
             e1.LoadConstant(2);
             e1.Convert<IntPtr>();
             e1.LoadArgumentAddress(0);
@@ -232,7 +228,7 @@ namespace SigilTests
             e1.Convert<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<int, int>)e1.CreateDelegate(typeof(Func<int, int>));
 
             try
             {
@@ -247,71 +243,71 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void LongLong()
+        public void LongLongNonGeneric()
         {
-            var e1 = Emit<Func<long, long, long>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(long), new [] { typeof(long), typeof(long) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.Add();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<long, long, long>)e1.CreateDelegate(typeof(Func<long, long, long>));
 
             Assert.AreEqual(2 * ((long)uint.MaxValue), d1(uint.MaxValue, uint.MaxValue));
         }
 
         [TestMethod]
-        public void FloatFloat()
+        public void FloatFloatNonGeneric()
         {
-            var e1 = Emit<Func<float, float, float>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(float), new [] { typeof(float), typeof(float) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.Add();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<float, float, float>)e1.CreateDelegate(typeof(Func<float, float, float>));
 
             Assert.AreEqual(3.14f + 1.59f, d1(3.14f, 1.59f));
         }
 
         [TestMethod]
-        public void DoubleDouble()
+        public void DoubleDoubleNonGeneric()
         {
-            var e1 = Emit<Func<double, double, double>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(double), new [] { typeof(double), typeof(double) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.Add();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<double, double, double>)e1.CreateDelegate(typeof(Func<double, double, double>));
 
             Assert.AreEqual(3.14 + 1.59, d1(3.14, 1.59));
         }
 
         [TestMethod]
-        public void Overflow()
+        public void OverflowNonGeneric()
         {
-            var e1 = Emit<Func<double, double, double>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(double), new [] { typeof(double), typeof(double) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.AddOverflow();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<double, double, double>)e1.CreateDelegate(typeof(Func<double, double, double>));
 
             Assert.AreEqual(3.14 + 1.59, d1(3.14, 1.59));
         }
 
         [TestMethod]
-        public void UnsignedOverflow()
+        public void UnsignedOverflowNonGeneric()
         {
-            var e1 = Emit<Func<double, double, double>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(double), new [] { typeof(double), typeof(double) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.UnsignedAddOverflow();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Func<double, double, double>)e1.CreateDelegate(typeof(Func<double, double, double>));
 
             Assert.AreEqual(3.14 + 1.59, d1(3.14, 1.59));
         }

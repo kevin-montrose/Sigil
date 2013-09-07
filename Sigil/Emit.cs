@@ -60,7 +60,7 @@ namespace Sigil
         internal DynamicMethod DynMethod { get; set; }
 
         // These can only ever be set if we're building a MethodBuilder
-        private MethodBuilder MtdBuilder;
+        internal MethodBuilder MtdBuilder { get; set; }
         private bool MethodBuilt;
 
         private ConstructorBuilder ConstrBuilder;
@@ -591,7 +591,7 @@ namespace Sigil
             return ret;
         }
 
-        private static void CheckAttributesAndConventions(MethodAttributes attributes, CallingConventions callingConvention)
+        internal static void CheckAttributesAndConventions(MethodAttributes attributes, CallingConventions callingConvention)
         {
             if ((attributes & ~(MethodAttributes.Abstract | MethodAttributes.Assembly | MethodAttributes.CheckAccessOnOverride | MethodAttributes.FamANDAssem | MethodAttributes.Family | MethodAttributes.FamORAssem | MethodAttributes.Final | MethodAttributes.HasSecurity | MethodAttributes.HideBySig | MethodAttributes.MemberAccessMask | MethodAttributes.NewSlot | MethodAttributes.PinvokeImpl | MethodAttributes.Private | MethodAttributes.PrivateScope | MethodAttributes.Public | MethodAttributes.RequireSecObject | MethodAttributes.ReuseSlot | MethodAttributes.RTSpecialName | MethodAttributes.SpecialName | MethodAttributes.Static | MethodAttributes.UnmanagedExport | MethodAttributes.Virtual | MethodAttributes.VtableLayoutMask)) != 0)
             {

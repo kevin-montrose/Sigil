@@ -2,6 +2,7 @@
 using Sigil.Impl;
 using System.Reflection.Emit;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace Sigil.NonGeneric
 {
@@ -21,13 +22,20 @@ namespace Sigil.NonGeneric
         private Type[] ParameterTypes;
 
         private Delegate CreatedDelegate;
+        private MethodBuilder CreatedMethod;
 
         private bool IsDynamicMethod;
+        private bool IsMethod;
 
-        private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod)
+        private TypeBuilder TypeBuilder;
+        private MethodAttributes Attributes;
+        private CallingConventions CallingConvention;
+
+        private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod, bool isMethod)
         {
             InnerEmit = innerEmit;
             IsDynamicMethod = isDynamicMethod;
+            IsMethod = isMethod;
         }
 
         private static void ValidateReturnAndParameterTypes(Type returnType, Type[] parameterTypes, ValidationOptions validationOptions)
@@ -72,7 +80,7 @@ namespace Sigil.NonGeneric
 
             var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module), validationOptions);
 
-            var ret = new Emit(innerEmit, isDynamicMethod: true);
+            var ret = new Emit(innerEmit, isDynamicMethod: true, isMethod: false);
             ret.Module = module;
             ret.Name = name ?? AutoNamer.Next("_DynamicMethod");
             ret.ReturnType = returnType;
@@ -146,6 +154,120 @@ namespace Sigil.NonGeneric
         {
             string ignored;
             return CreateDelegate(delegateType, out ignored, optimizationOptions);
+        }
+
+        private static bool HasFlag(MethodAttributes value, MethodAttributes flag)
+        {
+            return (value & flag) != 0;
+        }
+
+        private static bool HasFlag(CallingConventions value, CallingConventions flag)
+        {
+            return (value & flag) != 0;
+        }
+
+        private static bool HasFlag(ValidationOptions value, ValidationOptions flag)
+        {
+            return (value & flag) != 0;
+        }
+
+        /// <summary>
+        /// Creates a new Emit, suitable for building a method on the given TypeBuilder.
+        /// 
+        /// The DelegateType and MethodBuilder must agree on return types, parameter types, and parameter counts.
+        /// 
+        /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
+        /// </summary>
+        public static Emit BuildMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            if (name == null)
+            {
+                throw new ArgumentNullException("name");
+            }
+
+            Emit<NonGenericPlaceholderDelegate>.CheckAttributesAndConventions(attributes, callingConvention);
+
+            ValidateReturnAndParameterTypes(returnType, parameterTypes, validationOptions);
+
+            if (HasFlag(callingConvention, CallingConventions.HasThis))
+            {
+                // Shove `this` in front, can't require it because it doesn't exist yet!
+                var pList = new List<Type>(parameterTypes);
+                pList.Insert(0, type);
+
+                parameterTypes = pList.ToArray();
+            }
+
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, returnType, parameterTypes, allowUnverifiableCode, validationOptions);
+            
+            var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: true);
+            ret.Name = name;
+            ret.ReturnType = returnType;
+            ret.ParameterTypes = parameterTypes;
+            ret.Attributes = attributes;
+            ret.CallingConvention = callingConvention;
+            ret.TypeBuilder = type;
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the MethodBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a MethodBuilder, which can be used to define overrides or for further inspection.
+        /// 
+        /// `instructions` will be set to a representation of the instructions making up the returned method.
+        /// Note that this string is typically *not* enough to regenerate the method, it is available for
+        /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
+        /// the returned method fails validation (indicative of a bug in Sigil) or
+        /// behaves unexpectedly (indicative of a logic bug in the consumer code).
+        /// </summary>
+        public MethodBuilder CreateMethod(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
+        {
+            if (!IsMethod)
+            {
+                throw new InvalidOperationException("Emit was not created to build a method, thus CreateMethod cannot be called");
+            }
+
+            if (CreatedMethod != null)
+            {
+                instructions = null;
+                return CreatedMethod;
+            }
+
+            var methodBuilder = TypeBuilder.DefineMethod(Name, Attributes, CallingConvention, ReturnType, ParameterTypes);
+
+            InnerEmit.MtdBuilder = methodBuilder;
+
+            CreatedMethod = InnerEmit.CreateMethod(out instructions, optimizationOptions);
+
+            return CreatedMethod;
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the MethodBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a MethodBuilder, which can be used to define overrides or for further inspection.
+        /// </summary>
+        public MethodBuilder CreateMethod(OptimizationOptions optimizationOptions = OptimizationOptions.All)
+        {
+            string ignored;
+            return CreateMethod(out ignored, optimizationOptions);
         }
     }
 }

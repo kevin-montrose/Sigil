@@ -17,8 +17,8 @@ namespace Sigil
             {
                 FailUnverifiable("ArgumentList");
             }
-
-            if (MtdBuilder == null || MtdBuilder.CallingConvention != System.Reflection.CallingConventions.VarArgs)
+            
+            if (CallingConventions != System.Reflection.CallingConventions.VarArgs)
             {
                 throw new InvalidOperationException("ArgumentList can only be called in VarArgs methods");
             }

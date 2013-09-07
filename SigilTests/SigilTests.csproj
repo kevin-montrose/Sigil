@@ -55,7 +55,13 @@
   </Choose>
   <ItemGroup>
     <Compile Include="Add.cs" />
+    <Compile Include="Add.NonGeneric.cs">
+      <DependentUpon>Add.cs</DependentUpon>
+    </Compile>
     <Compile Include="Arglist.cs" />
+    <Compile Include="Arglist.NonGeneric.cs">
+      <DependentUpon>Arglist.cs</DependentUpon>
+    </Compile>
     <Compile Include="AutoNamer.cs" />
     <Compile Include="Bitwise.cs" />
     <Compile Include="BlogPost.cs" />
@@ -106,7 +112,9 @@
     <Compile Include="Remainder.cs" />
     <Compile Include="ReThrow.cs" />
     <Compile Include="Return.cs" />
-    <Compile Include="Return.NonGeneric.cs" />
+    <Compile Include="Return.NonGeneric.cs">
+      <DependentUpon>Return.cs</DependentUpon>
+    </Compile>
     <Compile Include="Shifts.cs" />
     <Compile Include="SizeOf.cs" />
     <Compile Include="StoreElement.cs" />
