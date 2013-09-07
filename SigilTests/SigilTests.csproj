@@ -99,7 +99,13 @@
     <Compile Include="CheckFinite.NonGeneric.cs">
       <DependentUpon>CheckFinite.cs</DependentUpon>
     </Compile>
+    <Compile Include="Compares.NonGeneric.cs">
+      <DependentUpon>Compares.cs</DependentUpon>
+    </Compile>
     <Compile Include="Constructor.cs" />
+    <Compile Include="Constructor.NonGeneric.cs">
+      <DependentUpon>Constructor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Disassembler.cs" />
     <Compile Include="InitializeBlock.cs" />
     <Compile Include="Compares.cs" />

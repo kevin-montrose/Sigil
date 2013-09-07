@@ -23,19 +23,22 @@ namespace Sigil.NonGeneric
 
         private Delegate CreatedDelegate;
         private MethodBuilder CreatedMethod;
+        private ConstructorBuilder CreatedConstructor;
 
         private bool IsDynamicMethod;
         private bool IsMethod;
+        private bool IsConstructor;
 
         private TypeBuilder TypeBuilder;
         private MethodAttributes Attributes;
         private CallingConventions CallingConvention;
 
-        private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod, bool isMethod)
+        private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod, bool isMethod, bool isConstructor)
         {
             InnerEmit = innerEmit;
             IsDynamicMethod = isDynamicMethod;
             IsMethod = isMethod;
+            IsConstructor = isConstructor;
         }
 
         private static void ValidateReturnAndParameterTypes(Type returnType, Type[] parameterTypes, ValidationOptions validationOptions)
@@ -80,7 +83,7 @@ namespace Sigil.NonGeneric
 
             var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module), validationOptions);
 
-            var ret = new Emit(innerEmit, isDynamicMethod: true, isMethod: false);
+            var ret = new Emit(innerEmit, isDynamicMethod: true, isMethod: false, isConstructor: false);
             ret.Module = module;
             ret.Name = name ?? AutoNamer.Next("_DynamicMethod");
             ret.ReturnType = returnType;
@@ -218,7 +221,7 @@ namespace Sigil.NonGeneric
 
             var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, returnType, parameterTypes, allowUnverifiableCode, validationOptions);
             
-            var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: true);
+            var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: true, isConstructor: false);
             ret.Name = name;
             ret.ReturnType = returnType;
             ret.ParameterTypes = passedParameterTypes;
@@ -291,6 +294,103 @@ namespace Sigil.NonGeneric
         {
             string ignored;
             return CreateMethod(out ignored, optimizationOptions);
+        }
+
+        /// <summary>
+        /// Creates a new Emit, suitable for building a constructo on the given TypeBuilder.
+        /// 
+        /// The DelegateType and TypeBuilder must agree on parameter types and parameter counts.
+        /// 
+        /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
+        /// </summary>
+        public static Emit BuildConstructor(Type[] parameterTypes, TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            Emit<NonGenericPlaceholderDelegate>.CheckAttributesAndConventions(attributes, callingConvention);
+
+            if (!HasFlag(callingConvention, CallingConventions.HasThis))
+            {
+                throw new ArgumentException("Constructors always have a this reference");
+            }
+
+            ValidateReturnAndParameterTypes(type, parameterTypes, validationOptions);
+
+            var passedParameters = parameterTypes;
+
+            // Constructors always have a `this`
+            var pList = new List<Type>(parameterTypes);
+            pList.Insert(0, type);
+
+            parameterTypes = pList.ToArray();
+
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, validationOptions);
+
+            var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: false, isConstructor: true);
+            ret.ReturnType = type;
+            ret.ParameterTypes = passedParameters;
+            ret.Attributes = attributes;
+            ret.CallingConvention = callingConvention;
+            ret.TypeBuilder = type;
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the ConstructorBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
+        /// 
+        /// `instructions` will be set to a representation of the instructions making up the returned constructor.
+        /// Note that this string is typically *not* enough to regenerate the constructor, it is available for
+        /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
+        /// the returned constructor fails validation (indicative of a bug in Sigil) or
+        /// behaves unexpectedly (indicative of a logic bug in the consumer code).
+        /// </summary>
+        public ConstructorBuilder CreateConstructor(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
+        {
+            if (!IsConstructor)
+            {
+                throw new InvalidOperationException("Emit was not created to build a constructor, thus CreateConstructor cannot be called");
+            }
+
+            if (CreatedConstructor != null)
+            {
+                instructions = null;
+                return CreatedConstructor;
+            }
+
+            var constructorBuilder = TypeBuilder.DefineConstructor(Attributes, CallingConvention, ParameterTypes);
+
+            InnerEmit.ConstrBuilder = constructorBuilder;
+
+            CreatedConstructor = InnerEmit.CreateConstructor(out instructions, optimizationOptions);
+
+            return CreatedConstructor;
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the ConstructorBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
+        /// </summary>
+        public ConstructorBuilder CreateConstructor(OptimizationOptions optimizationOptions = OptimizationOptions.All)
+        {
+            string ignored;
+            return CreateConstructor(out ignored, optimizationOptions);
         }
     }
 }

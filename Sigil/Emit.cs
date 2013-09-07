@@ -63,7 +63,7 @@ namespace Sigil
         internal MethodBuilder MtdBuilder { get; set; }
         private bool MethodBuilt;
 
-        private ConstructorBuilder ConstrBuilder;
+        internal ConstructorBuilder ConstrBuilder { get; set; }
         private bool ConstructorBuilt;
 
         /// <summary>
