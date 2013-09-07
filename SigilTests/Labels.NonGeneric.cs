@@ -1,16 +1,19 @@
-﻿using System;
-using Sigil;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Sigil.NonGeneric;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass]
     public partial class Labels
     {
         [TestMethod]
-        public void Lookup()
+        public void LookupNonGeneric()
         {
-            var e1 = Emit<Func<bool, bool>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(bool), new [] { typeof(bool) });
             var f = e1.DefineLabel("false");
 
             Assert.IsTrue(f == e1.Labels["false"]);
@@ -24,7 +27,7 @@ namespace SigilTests
             e1.LoadConstant(false);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<bool, bool>>();
 
             Assert.IsTrue(d1(true));
             Assert.IsFalse(d1(false));

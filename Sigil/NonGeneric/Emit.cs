@@ -33,6 +33,11 @@ namespace Sigil.NonGeneric
         private MethodAttributes Attributes;
         private CallingConventions CallingConvention;
 
+        /// <summary>
+        /// Lookup for declared labels by name.
+        /// </summary>
+        public LabelLookup Labels { get { return InnerEmit.Labels; } }
+
         private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod, bool isMethod, bool isConstructor)
         {
             InnerEmit = innerEmit;

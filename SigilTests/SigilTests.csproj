@@ -137,8 +137,17 @@
     <Compile Include="Instructions.cs" />
     <Compile Include="Internals.cs" />
     <Compile Include="IsInstance.cs" />
+    <Compile Include="IsInstance.NonGeneric.cs">
+      <DependentUpon>IsInstance.cs</DependentUpon>
+    </Compile>
     <Compile Include="Jump.cs" />
+    <Compile Include="Jump.NonGeneric.cs">
+      <DependentUpon>Jump.cs</DependentUpon>
+    </Compile>
     <Compile Include="Labels.cs" />
+    <Compile Include="Labels.NonGeneric.cs">
+      <DependentUpon>Labels.cs</DependentUpon>
+    </Compile>
     <Compile Include="Leave.cs" />
     <Compile Include="LoadArgumentAddress.cs" />
     <Compile Include="LoadArguments.cs" />
