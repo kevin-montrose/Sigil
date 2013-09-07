@@ -92,7 +92,13 @@
       <DependentUpon>Calls.cs</DependentUpon>
     </Compile>
     <Compile Include="CastClass.cs" />
+    <Compile Include="CastClass.NonGeneric.cs">
+      <DependentUpon>CastClass.cs</DependentUpon>
+    </Compile>
     <Compile Include="CheckFinite.cs" />
+    <Compile Include="CheckFinite.NonGeneric.cs">
+      <DependentUpon>CheckFinite.cs</DependentUpon>
+    </Compile>
     <Compile Include="Constructor.cs" />
     <Compile Include="Disassembler.cs" />
     <Compile Include="InitializeBlock.cs" />
