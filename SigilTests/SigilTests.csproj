@@ -116,6 +116,9 @@
       <DependentUpon>CopyObject.cs</DependentUpon>
     </Compile>
     <Compile Include="Disassembler.cs" />
+    <Compile Include="Divide.NonGeneric.cs">
+      <DependentUpon>Divide.cs</DependentUpon>
+    </Compile>
     <Compile Include="InitializeBlock.cs" />
     <Compile Include="Compares.cs" />
     <Compile Include="Converts.cs" />
@@ -124,7 +127,13 @@
     <Compile Include="Divide.cs" />
     <Compile Include="Errors.cs" />
     <Compile Include="Init.cs" />
+    <Compile Include="InitializeBlock.NonGeneric.cs">
+      <DependentUpon>InitializeBlock.cs</DependentUpon>
+    </Compile>
     <Compile Include="InitializeObject.cs" />
+    <Compile Include="InitializeObject.NonGeneric.cs">
+      <DependentUpon>InitializeObject.cs</DependentUpon>
+    </Compile>
     <Compile Include="Instructions.cs" />
     <Compile Include="Internals.cs" />
     <Compile Include="IsInstance.cs" />

@@ -1,20 +1,19 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Linq;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class InitializeBlock
     {
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
-            var e1 = Emit<Action<byte[]>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), new [] { typeof(byte[]) });
 
             e1.LoadArgument(0);
             e1.LoadConstant(0);
@@ -25,7 +24,7 @@ namespace SigilTests
             e1.InitializeBlock();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Action<byte[]>>();
 
             var b = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             d1(b);
@@ -34,9 +33,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Volatile()
+        public void VolatileNonGeneric()
         {
-            var e1 = Emit<Action<byte[]>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), new [] { typeof(byte[]) });
 
             e1.LoadArgument(0);
             e1.LoadConstant(0);
@@ -47,7 +46,7 @@ namespace SigilTests
             e1.InitializeBlock(isVolatile: true);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Action<byte[]>>();
 
             var b = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
             d1(b);
