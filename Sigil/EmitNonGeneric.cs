@@ -11,11 +11,11 @@ namespace Sigil
     /// Unlike Emit&lt;DelegateType&gt;, does not require a known delegate type to construct.
     /// However, if possible use Emit&lt;DelegateType&gt; so as to avoid common type mistakes.
     /// </summary>
-    public class EmitNonGeneric
+    public class Emit
     {
         private Emit<NonGenericPlaceholderDelegate> InnerEmit;
 
-        private EmitNonGeneric(Emit<NonGenericPlaceholderDelegate> innerEmit)
+        private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit)
         {
             InnerEmit = innerEmit;
         }
@@ -54,7 +54,7 @@ namespace Sigil
         /// 
         /// If module is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static EmitNonGeneric NewDynamicMethod(Type returnType, Type[] parameterTypes, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
+        public static Emit NewDynamicMethod(Type returnType, Type[] parameterTypes, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
         {
             ValidateReturnAndParameterTypes(returnType, parameterTypes, validationOptions);
 
@@ -64,10 +64,10 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
-            var innerEmit = Emit<EmitNonGeneric>.MakeNonGenericEmit(dynMethod.CallingConvention, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module), validationOptions);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(dynMethod.CallingConvention, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module), validationOptions);
             innerEmit.DynMethod = dynMethod;
 
-            var ret = new EmitNonGeneric(innerEmit);
+            var ret = new Emit(innerEmit);
 
             return ret;
         }
