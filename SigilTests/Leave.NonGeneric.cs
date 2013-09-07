@@ -1,19 +1,19 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Leave
     {
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
-            var e1 = Emit<Func<int, int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int) });
             var t = e1.BeginExceptionBlock();
             var l = e1.DefineLabel("dead_code");
             e1.Leave(t.Label);
@@ -30,7 +30,7 @@ namespace SigilTests
             e1.LoadArgument(0);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int, int>>();
 
             Assert.AreEqual(1, d1(1));
         }

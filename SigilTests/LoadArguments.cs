@@ -10,7 +10,7 @@ using Sigil;
 namespace SigilTests
 {
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class LoadArguments
+    public partial class LoadArguments
     {
         [TestMethod]
         public void Simple()

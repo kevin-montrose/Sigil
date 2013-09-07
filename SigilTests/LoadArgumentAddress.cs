@@ -9,7 +9,7 @@ using System.Linq;
 namespace SigilTests
 {
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class LoadArgumentAddress
+    public partial class LoadArgumentAddress
     {
         delegate int LotsOfParams(
             int a1, int b1, int c1, int d1, int e1, int f1, int g1, int h1, int i1, int j1, int k1, int l1, int m1, int n1, int o1, int p1, int q1, int r1, int s1, int t1, int u1, int v1, int w1, int x1, int y1, int z1,

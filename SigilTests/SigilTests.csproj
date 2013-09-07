@@ -149,8 +149,17 @@
       <DependentUpon>Labels.cs</DependentUpon>
     </Compile>
     <Compile Include="Leave.cs" />
+    <Compile Include="Leave.NonGeneric.cs">
+      <DependentUpon>Leave.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadArgumentAddress.cs" />
+    <Compile Include="LoadArgumentAddress.NonGeneric.cs">
+      <DependentUpon>LoadArgumentAddress.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadArguments.cs" />
+    <Compile Include="LoadArguments.NonGeneric.cs">
+      <DependentUpon>LoadArguments.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadConstants.cs" />
     <Compile Include="LoadElement.cs" />
     <Compile Include="LoadElementAddress.cs" />

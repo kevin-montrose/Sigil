@@ -38,6 +38,13 @@ namespace Sigil.NonGeneric
         /// </summary>
         public LabelLookup Labels { get { return InnerEmit.Labels; } }
 
+        /// <summary>
+        /// Returns the maxmimum number of items on the stack for the IL stream created with the current emit.
+        /// 
+        /// This is not the maximum that *can be placed*, but the maximum that actually are.
+        /// </summary>
+        public int MaxStackSize { get { return InnerEmit.MaxStackSize; } }
+
         private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod, bool isMethod, bool isConstructor)
         {
             InnerEmit = innerEmit;
