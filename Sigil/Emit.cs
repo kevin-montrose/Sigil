@@ -14,7 +14,7 @@ namespace Sigil
     /// <typeparam name="DelegateType">The type of delegate being built</typeparam>
     public partial class Emit<DelegateType>
     {
-        private static readonly ModuleBuilder Module;
+        internal static readonly ModuleBuilder Module;
 
         static Emit()
         {
@@ -57,7 +57,7 @@ namespace Sigil
 
         // These can only ever be set if we're building a DynamicMethod
         private DelegateType CreatedDelegate;
-        private DynamicMethod DynMethod;
+        internal DynamicMethod DynMethod { private get; set; }
 
         // These can only ever be set if we're building a MethodBuilder
         private MethodBuilder MtdBuilder;
@@ -190,6 +190,11 @@ namespace Sigil
             MarkLabel(start);
         }
 
+        internal static Emit<NonGenericPlaceholderDelegate> MakeNonGenericEmit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, ValidationOptions opts)
+        {
+            return new Emit<NonGenericPlaceholderDelegate>(callConvention, returnType, parameterTypes, allowUnverifiable, opts);
+        }
+
         /// <summary>
         /// Returns a proxy for this Emit that exposes method names that more closely
         /// match the fields on System.Reflection.Emit.OpCodes.
@@ -259,6 +264,44 @@ namespace Sigil
         }
 
         /// <summary>
+        /// Traces where the values produced by certain operations are used.
+        /// 
+        /// For example:
+        ///   ldc.i4 32
+        ///   ldc.i4 64
+        ///   add
+        ///   ret
+        ///   
+        /// Would be represented by a series of OperationResultUsage like so:
+        ///   - (lcd.i4 32) -> add
+        ///   - (ldc.i4 64) -> add
+        ///   - (add) -> ret
+        /// </summary>
+        public IEnumerable<OperationResultUsage<DelegateType>> TraceOperationResultUsage()
+        {
+            var ret = new List<OperationResultUsage<DelegateType>>();
+
+            foreach (var r in TypesProducedAtIndex.AsEnumerable())
+            {
+                var allUsage = new LinqList<InstructionAndTransitions>(r.Value.SelectMany(k => k.UsedBy.Select(u => u.Item1)).AsEnumerable());
+
+                var usedBy = new List<Operation<DelegateType>>(allUsage.Select(u => IL.Operations[u.InstructionIndex.Value]).Distinct().AsEnumerable());
+
+                if (r.Key < IL.Operations.Count)
+                {
+                    var key = IL.Operations[r.Key];
+
+                    if (key != null)
+                    {
+                        ret.Add(new OperationResultUsage<DelegateType>(key, usedBy, r.Value.AsEnumerable()));
+                    }
+                }
+            }
+
+            return ret;
+        }
+
+        /// <summary>
         /// Converts the CIL stream into a delegate.
         /// 
         /// Validation that cannot be run until a method is finished is run, and various instructions
@@ -295,44 +338,6 @@ namespace Sigil
             AutoNamer.Release(this);
 
             return CreatedDelegate;
-        }
-
-        /// <summary>
-        /// Traces where the values produced by certain operations are used.
-        /// 
-        /// For example:
-        ///   ldc.i4 32
-        ///   ldc.i4 64
-        ///   add
-        ///   ret
-        ///   
-        /// Would be represented by a series of OperationResultUsage like so:
-        ///   - (lcd.i4 32) -> add
-        ///   - (ldc.i4 64) -> add
-        ///   - (add) -> ret
-        /// </summary>
-        public IEnumerable<OperationResultUsage<DelegateType>> TraceOperationResultUsage()
-        {
-            var ret = new List<OperationResultUsage<DelegateType>>();
-
-            foreach (var r in TypesProducedAtIndex.AsEnumerable())
-            {
-                var allUsage = new LinqList<InstructionAndTransitions>(r.Value.SelectMany(k => k.UsedBy.Select(u => u.Item1)).AsEnumerable());
-
-                var usedBy = new List<Operation<DelegateType>>(allUsage.Select(u => IL.Operations[u.InstructionIndex.Value]).Distinct().AsEnumerable());
-
-                if (r.Key < IL.Operations.Count)
-                {
-                    var key = IL.Operations[r.Key];
-
-                    if (key != null)
-                    {
-                        ret.Add(new OperationResultUsage<DelegateType>(key, usedBy, r.Value.AsEnumerable()));
-                    }
-                }
-            }
-
-            return ret;
         }
 
         /// <summary>
@@ -487,12 +492,12 @@ namespace Sigil
             }
         }
 
-        private static bool AllowsUnverifiableCode(Module m)
+        internal static bool AllowsUnverifiableCode(Module m)
         {
             return Attribute.IsDefined(m, typeof(System.Security.UnverifiableCodeAttribute));
         }
 
-        private static bool AllowsUnverifiableCode(ModuleBuilder m)
+        internal static bool AllowsUnverifiableCode(ModuleBuilder m)
         {
             var canaryMethod = new DynamicMethod("__Canary" + Guid.NewGuid(), typeof(void), Type.EmptyTypes, m);
             var il = canaryMethod.GetILGenerator();
