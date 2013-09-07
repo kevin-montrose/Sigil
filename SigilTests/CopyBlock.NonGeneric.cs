@@ -1,19 +1,19 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class CopyBlock
     {
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
-            var e1 = Emit<Action<byte[], byte[]>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), new [] { typeof(byte[]), typeof(byte[]) });
 
             e1.LoadArgument(1);
             e1.LoadConstant(0);
@@ -22,7 +22,7 @@ namespace SigilTests
             e1.LoadArgument(0);
             e1.LoadConstant(0);
             e1.LoadElementAddress<byte>();
-            
+
             e1.LoadArgument(0);
             e1.LoadLength<byte>();
 
@@ -30,7 +30,7 @@ namespace SigilTests
 
             e1.Return();
 
-            var d = e1.CreateDelegate();
+            var d = e1.CreateDelegate<Action<byte[], byte[]>>();
 
             var a = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             var b = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 00 };
@@ -45,9 +45,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Volatile()
+        public void VolatileNonGeneric()
         {
-            var e1 = Emit<Action<byte[], byte[]>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), new [] { typeof(byte[]), typeof(byte[]) });
 
             e1.LoadArgument(1);
             e1.LoadConstant(0);
@@ -64,7 +64,7 @@ namespace SigilTests
 
             e1.Return();
 
-            var d = e1.CreateDelegate();
+            var d = e1.CreateDelegate<Action<byte[], byte[]>>();
 
             var a = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
             var b = new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 00 };

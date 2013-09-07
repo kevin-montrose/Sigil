@@ -106,6 +106,15 @@
     <Compile Include="Constructor.NonGeneric.cs">
       <DependentUpon>Constructor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Converts.NonGeneric.cs">
+      <DependentUpon>Converts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CopyBlock.NonGeneric.cs">
+      <DependentUpon>CopyBlock.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CopyObject.NonGeneric.cs">
+      <DependentUpon>CopyObject.cs</DependentUpon>
+    </Compile>
     <Compile Include="Disassembler.cs" />
     <Compile Include="InitializeBlock.cs" />
     <Compile Include="Compares.cs" />

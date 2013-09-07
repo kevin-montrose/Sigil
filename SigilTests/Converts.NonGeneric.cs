@@ -1,80 +1,80 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Converts
     {
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
             {
-                var e1 = Emit<Func<int, byte>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(byte), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<byte>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, byte>>();
 
                 Assert.AreEqual((byte)111, d1(111));
             }
 
             {
-                var e1 = Emit<Func<int, sbyte>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(sbyte), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<sbyte>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, sbyte>>();
 
                 Assert.AreEqual((sbyte)-11, d1(-11));
             }
 
             {
-                var e1 = Emit<Func<int, short>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(short), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<short>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, short>>();
 
                 Assert.AreEqual((short)2111, d1(2111));
             }
 
             {
-                var e1 = Emit<Func<int, ushort>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(ushort), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<ushort>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, ushort>>();
 
                 Assert.AreEqual(ushort.MaxValue, d1(ushort.MaxValue));
             }
 
             {
-                var e1 = Emit<Func<byte, int>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(byte) });
                 e1.LoadArgument(0);
                 e1.Convert<int>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<byte, int>>();
 
                 Assert.AreEqual(123, d1(123));
             }
 
             {
-                var e1 = Emit<Func<long, uint>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(uint), new [] { typeof(long) });
                 e1.LoadArgument(0);
                 e1.Convert<uint>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<long, uint>>();
 
                 var x = (uint)int.MaxValue;
                 x++;
@@ -83,56 +83,56 @@ namespace SigilTests
             }
 
             {
-                var e1 = Emit<Func<float, long>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(long), new [] { typeof(float) });
                 e1.LoadArgument(0);
                 e1.Convert<long>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<float, long>>();
 
                 Assert.AreEqual(12345678, d1(12345678f));
             }
 
             {
-                var e1 = Emit<Func<float, ulong>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(ulong), new [] { typeof(float) });
                 e1.LoadArgument(0);
                 e1.Convert<ulong>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<float, ulong>>();
 
                 Assert.AreEqual((ulong)12345678, d1(12345678f));
             }
 
             {
-                var e1 = Emit<Func<int, float>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(float), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<float>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, float>>();
 
                 Assert.AreEqual(123f, d1(123));
             }
 
             {
-                var e1 = Emit<Func<int, double>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(double), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<double>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, double>>();
 
                 Assert.AreEqual(123.0, d1(123));
             }
 
             {
-                var e1 = Emit<Func<int, IntPtr>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(IntPtr), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<IntPtr>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, IntPtr>>();
 
                 var intPtr = new IntPtr(123);
 
@@ -140,12 +140,12 @@ namespace SigilTests
             }
 
             {
-                var e1 = Emit<Func<int, UIntPtr>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(UIntPtr), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.Convert<UIntPtr>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, UIntPtr>>();
 
                 var uintPtr = new UIntPtr(123);
 
@@ -154,70 +154,70 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Overflows()
+        public void OverflowsNonGeneric()
         {
             {
-                var e1 = Emit<Func<int, byte>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(byte), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<byte>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, byte>>();
 
                 Assert.AreEqual((byte)111, d1(111));
             }
 
             {
-                var e1 = Emit<Func<int, sbyte>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(sbyte), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<sbyte>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, sbyte>>();
 
                 Assert.AreEqual((sbyte)-11, d1(-11));
             }
 
             {
-                var e1 = Emit<Func<int, short>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(short), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<short>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, short>>();
 
                 Assert.AreEqual((short)2111, d1(2111));
             }
 
             {
-                var e1 = Emit<Func<int, ushort>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(ushort), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<ushort>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, ushort>>();
 
                 Assert.AreEqual(ushort.MaxValue, d1(ushort.MaxValue));
             }
 
             {
-                var e1 = Emit<Func<byte, int>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(byte) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<int>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<byte, int>>();
 
                 Assert.AreEqual(123, d1(123));
             }
 
             {
-                var e1 = Emit<Func<long, uint>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(uint), new [] { typeof(long) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<uint>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<long, uint>>();
 
                 var x = (uint)int.MaxValue;
                 x++;
@@ -226,34 +226,34 @@ namespace SigilTests
             }
 
             {
-                var e1 = Emit<Func<float, long>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(long), new [] { typeof(float) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<long>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<float, long>>();
 
                 Assert.AreEqual(12345678, d1(12345678f));
             }
 
             {
-                var e1 = Emit<Func<float, ulong>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(ulong), new [] { typeof(float) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<ulong>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<float, ulong>>();
 
                 Assert.AreEqual((ulong)12345678, d1(12345678f));
             }
 
             {
-                var e1 = Emit<Func<int, IntPtr>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(IntPtr), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<IntPtr>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, IntPtr>>();
 
                 var intPtr = new IntPtr(123);
 
@@ -261,12 +261,12 @@ namespace SigilTests
             }
 
             {
-                var e1 = Emit<Func<int, UIntPtr>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(UIntPtr), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.ConvertOverflow<UIntPtr>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, UIntPtr>>();
 
                 var uintPtr = new UIntPtr(123);
 
@@ -275,26 +275,26 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void UnsignedOverflows()
+        public void UnsignedOverflowsNonGeneric()
         {
             {
-                var e1 = Emit<Func<int, byte>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(byte), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<byte>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, byte>>();
 
                 Assert.AreEqual((byte)111, d1(111));
             }
 
             {
-                var e1 = Emit<Func<int, sbyte>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(sbyte), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<sbyte>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, sbyte>>();
 
                 try
                 {
@@ -305,45 +305,45 @@ namespace SigilTests
             }
 
             {
-                var e1 = Emit<Func<int, short>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(short), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<short>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, short>>();
 
                 Assert.AreEqual((short)2111, d1(2111));
             }
 
             {
-                var e1 = Emit<Func<int, ushort>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(ushort), new [] { typeof(int) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<ushort>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<int, ushort>>();
 
                 Assert.AreEqual(ushort.MaxValue, d1(ushort.MaxValue));
             }
 
             {
-                var e1 = Emit<Func<byte, int>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(byte) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<int>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<byte, int>>();
 
                 Assert.AreEqual(123, d1(123));
             }
 
             {
-                var e1 = Emit<Func<long, uint>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(uint), new [] { typeof(long) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<uint>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<long, uint>>();
 
                 var x = (uint)int.MaxValue;
                 x++;
@@ -352,23 +352,23 @@ namespace SigilTests
             }
 
             {
-                var e1 = Emit<Func<float, long>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(long), new [] { typeof(float) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<long>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<float, long>>();
 
                 Assert.AreEqual(12345678, d1(12345678f));
             }
 
             {
-                var e1 = Emit<Func<float, ulong>>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(ulong), new [] { typeof(float) });
                 e1.LoadArgument(0);
                 e1.UnsignedConvertOverflow<ulong>();
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Func<float, ulong>>();
 
                 Assert.AreEqual((ulong)12345678, d1(12345678f));
             }
