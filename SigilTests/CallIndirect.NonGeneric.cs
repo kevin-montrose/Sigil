@@ -1,67 +1,44 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class CallIndirect
     {
-        public static string Foo(int i)
-        {
-            var ret = "";
-
-            for (var j = 0; j < i; j++)
-            {
-                ret += "Bar";
-            }
-
-            return ret;
-        }
-
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
             var foo = typeof(CallIndirect).GetMethod("Foo");
 
-            var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes, "E1");
             e1.LoadConstant(3);
             e1.LoadFunctionPointer(foo);
             e1.CallIndirect<string, int>(foo.CallingConvention);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<string>>();
 
             Assert.AreEqual("BarBarBar", d1());
         }
 
-        public class VirtualClass
-        {
-            public override string ToString()
-            {
-                return "I'm Virtual!";
-            }
-        }
-
         [TestMethod]
-        public void Virtual()
+        public void VirtualNonGeneric()
         {
             var toString = typeof(object).GetMethod("ToString");
 
-            var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes, "E1");
             e1.NewObject<VirtualClass>();
             e1.Duplicate();
             e1.LoadVirtualFunctionPointer(toString);
             e1.CallIndirect<string>(toString.CallingConvention);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<string>>();
 
             Assert.AreEqual("I'm Virtual!", d1());
         }

@@ -80,8 +80,17 @@
       <DependentUpon>Branches.cs</DependentUpon>
     </Compile>
     <Compile Include="Break.cs" />
+    <Compile Include="Break.NonGeneric.cs">
+      <DependentUpon>Break.cs</DependentUpon>
+    </Compile>
     <Compile Include="CallIndirect.cs" />
+    <Compile Include="CallIndirect.NonGeneric.cs">
+      <DependentUpon>CallIndirect.cs</DependentUpon>
+    </Compile>
     <Compile Include="Calls.cs" />
+    <Compile Include="Calls.NonGeneric.cs">
+      <DependentUpon>Calls.cs</DependentUpon>
+    </Compile>
     <Compile Include="CastClass.cs" />
     <Compile Include="CheckFinite.cs" />
     <Compile Include="Constructor.cs" />

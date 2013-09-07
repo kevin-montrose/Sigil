@@ -205,6 +205,8 @@ namespace Sigil.NonGeneric
 
             ValidateReturnAndParameterTypes(returnType, parameterTypes, validationOptions);
 
+            var passedParameterTypes = parameterTypes;
+
             if (HasFlag(callingConvention, CallingConventions.HasThis))
             {
                 // Shove `this` in front, can't require it because it doesn't exist yet!
@@ -219,7 +221,7 @@ namespace Sigil.NonGeneric
             var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: true);
             ret.Name = name;
             ret.ReturnType = returnType;
-            ret.ParameterTypes = parameterTypes;
+            ret.ParameterTypes = passedParameterTypes;
             ret.Attributes = attributes;
             ret.CallingConvention = callingConvention;
             ret.TypeBuilder = type;

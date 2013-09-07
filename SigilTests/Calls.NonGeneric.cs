@@ -1,7 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -9,68 +10,67 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Calls
     {
         [TestMethod]
-        public void ValueTypeCallIndirect()
+        public void ValueTypeCallIndirectNonGeneric()
         {
             var hasValue = typeof(int?).GetProperty("HasValue");
             var getHasValue = hasValue.GetGetMethod();
 
-            var e1 = Emit<Func<int?, bool>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(bool), new [] { typeof(int?) });
             e1.LoadArgumentAddress(0);
             e1.Duplicate();
             e1.LoadVirtualFunctionPointer(getHasValue);
             e1.CallIndirect(getHasValue.CallingConvention, typeof(bool));
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int?, bool>>();
 
             Assert.IsTrue(d1(1));
             Assert.IsFalse(d1(null));
         }
 
         [TestMethod]
-        public void ValueTypeCallVirtual()
+        public void ValueTypeCallVirtualNonGeneric()
         {
             var hasValue = typeof(int?).GetProperty("HasValue");
             var getHasValue = hasValue.GetGetMethod();
 
-            var e1 = Emit<Func<int?, bool>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(bool), new [] { typeof(int?) });
             e1.LoadArgumentAddress(0);
             e1.CallVirtual(getHasValue);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int?, bool>>();
 
             Assert.IsTrue(d1(1));
             Assert.IsFalse(d1(null));
         }
 
         [TestMethod]
-        public void ValueTypeCall()
+        public void ValueTypeCallNonGeneric()
         {
             var hasValue = typeof(int?).GetProperty("HasValue");
             var getHasValue = hasValue.GetGetMethod();
 
-            var e1 = Emit<Func<int?, bool>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(bool), new [] { typeof(int?) });
             e1.LoadArgumentAddress(0);
             e1.Call(getHasValue);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int?, bool>>();
 
             Assert.IsTrue(d1(1));
             Assert.IsFalse(d1(null));
         }
 
         [TestMethod]
-        public void MultipleTailcalls()
+        public void MultipleTailcallsNonGeneric()
         {
             var toString = typeof(object).GetMethod("ToString");
 
-            var e1 = Emit<Func<int, string>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(string), new [] { typeof(int) });
             var l1 = e1.DefineLabel("l1");
             var l2 = e1.DefineLabel("l2");
             var l3 = e1.DefineLabel("l3");
@@ -109,7 +109,7 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<int, string>>(out instrs);
 
             Assert.AreEqual("123", d1(0));
             Assert.AreEqual("System.Object", d1(1));
@@ -120,7 +120,7 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void PartialTypeMapping2()
+        public void PartialTypeMapping2NonGeneric()
         {
             {
                 var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
@@ -128,7 +128,7 @@ namespace SigilTests
                 var t = mod.DefineType("T");
                 var dictOfT = typeof(IDictionary<,>).MakeGenericType(t, t);
 
-                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.HasThis);
+                var e1 = Emit.BuildMethod(typeof(bool), new [] { typeof(object), typeof(object) }, t, "E1", MethodAttributes.Public, CallingConventions.HasThis);
                 e1.LoadArgument(1);
                 e1.CastClass(dictOfT);
                 e1.LoadArgument(2);
@@ -159,7 +159,7 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void PartialTypeMapping1()
+        public void PartialTypeMapping1NonGeneric()
         {
             {
                 var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
@@ -167,7 +167,7 @@ namespace SigilTests
                 var t = mod.DefineType("T");
                 var listOfT = typeof(List<>).MakeGenericType(t);
 
-                var e1 = Emit<Func<object, object, bool>>.BuildMethod(t, "E1", MethodAttributes.Public, CallingConventions.HasThis);
+                var e1 = Emit.BuildMethod(typeof(bool), new [] { typeof(object), typeof(object) }, t, "E1", MethodAttributes.Public, CallingConventions.HasThis);
                 e1.LoadArgument(1);
                 e1.CastClass(listOfT);
                 e1.LoadArgument(2);
@@ -197,27 +197,15 @@ namespace SigilTests
             }
         }
 
-        public enum EnumParamsEnum
-        {
-            A,
-            B
-        }
-
-        private static EnumParamsEnum? _EnumParamsMethod;
-        public static void EnumParamsMethod(EnumParamsEnum foo)
-        {
-            _EnumParamsMethod = foo;
-        }
-
         [TestMethod]
-        public void EnumParams()
+        public void EnumParamsNonGeneric()
         {
-            var e1 = Emit<Action<int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), new [] { typeof(int) });
             e1.LoadArgument(0);
             e1.Call(typeof(Calls).GetMethod("EnumParamsMethod"));
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Action<int>>();
 
             _EnumParamsMethod = null;
             d1((int)EnumParamsEnum.A);
@@ -228,77 +216,56 @@ namespace SigilTests
             Assert.AreEqual(EnumParamsEnum.B, _EnumParamsMethod.Value);
         }
 
-        private static bool DoesNothingWasCalled;
-        public static void DoesNothing()
-        {
-            DoesNothingWasCalled = true;
-        }
-
         [TestMethod]
-        public void VoidStatic()
+        public void VoidStaticNonGeneric()
         {
             DoesNothingWasCalled = false;
 
             var mi = typeof(Calls).GetMethod("DoesNothing");
 
-            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
             e1.Call(mi);
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Action>();
 
             Assert.IsFalse(DoesNothingWasCalled);
             del();
             Assert.IsTrue(DoesNothingWasCalled);
         }
 
-        class VoidInstanceClass
-        {
-            public int Go() { return 314159; }
-        }
-
         [TestMethod]
-        public void VoidInstance()
+        public void VoidInstanceNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
             e1.NewObject<VoidInstanceClass>();
             e1.Call(typeof(VoidInstanceClass).GetMethod("Go"));
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(314159, del());
         }
 
-        class StringInstanceClass
-        {
-            public string Go(int hello) { return hello.ToString(); }
-        }
-
         [TestMethod]
-        public void StringInstance()
+        public void StringInstanceNonGeneric()
         {
-            var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes, "E1");
             e1.NewObject<StringInstanceClass>();
             e1.LoadConstant(8675309);
             e1.Call(typeof(StringInstanceClass).GetMethod("Go"));
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<string>>();
 
             Assert.AreEqual("8675309", del());
         }
 
-        public static int MultiParamFunc(string a, int b, double c)
-        {
-            return int.Parse(a) + b + (int)c;
-        }
-
         [TestMethod]
-        public void MultiParam()
+        public void MultiParamNonGeneric()
         {
             var func = typeof(Calls).GetMethod("MultiParamFunc");
-            var e1 = Emit<Func<string, int, double, int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(string), typeof(int), typeof(double) });
 
             e1.LoadArgument(0);
             e1.LoadArgument(1);
@@ -306,7 +273,7 @@ namespace SigilTests
             e1.Call(func);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<string, int, double, int>>();
 
             Assert.AreEqual(123 + 456 + 7, d1("123", 456, 7.89));
         }
