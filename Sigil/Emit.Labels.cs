@@ -172,13 +172,6 @@ namespace Sigil
         /// When branching, leaving, or switching with a label control will be transfered to where it was *marked* not defined.
         /// 
         /// Labels can only be marked once, and *must* be marked before creating a delegate.
-        /// 
-        /// Logically after a Branch or Leave instruction, a stack assertion is required to continue emiting.  The stack
-        /// is assumed to match that state in these cases.
-        /// 
-        /// In all other cases, a stack assertion is merely checked (and if failing, a verification exception is thrown).
-        /// 
-        /// In the assertion, the top of the stack is the first (0-indexed, left-most) parameter.
         /// </summary>
         public Emit<DelegateType> MarkLabel(Label label)
         {
@@ -228,13 +221,6 @@ namespace Sigil
         /// When branching, leaving, or switching with a label control will be transfered to where it was *marked* not defined.
         /// 
         /// Labels can only be marked once, and *must* be marked before creating a delegate.
-        /// 
-        /// Logically after a Branch or Leave instruction, a stack assertion is required to continue emiting.  The stack
-        /// is assumed to match that state in these cases.
-        /// 
-        /// In all other cases, a stack assertion is merely checked (and if failing, a verification exception is thrown).
-        /// 
-        /// In the assertion, the top of the stack is the first (0-indexed, left-most) parameter.
         /// </summary>
         public Emit<DelegateType> MarkLabel(string name)
         {

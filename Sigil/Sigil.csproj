@@ -218,6 +218,51 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="NonGeneric\Emit.ArgumentList.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Arithmetic.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Bitwise.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Box.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Branch.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Break.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Call.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.CallIndirect.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.CallVirtual.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.CastClass.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.CheckFinite.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Compare.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Convert.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.CopyBlock.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.CopyObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="NonGeneric\Emit.cs" />
     <Compile Include="Impl\Delegates.cs" />
     <Compile Include="Impl\InstructionAndTransitions.cs" />
@@ -242,13 +287,136 @@
     <Compile Include="Impl\VerificationResult.cs" />
     <Compile Include="LabelLookup.cs" />
     <Compile Include="LocalLookup.cs" />
+    <Compile Include="NonGeneric\Emit.Duplicate.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.InitializeBlock.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.InitializeObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.IsInstance.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Jump.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Labels.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Leave.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
     <Compile Include="NonGeneric\Emit.LoadArgument.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadArgumentAddress.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadElement.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadElementAddress.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadField.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadFieldAddress.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadFunctionPointer.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadIndirect.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadLength.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadLocal.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadLocalAddress.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LoadVirtualFunctionPointer.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.LocalAllocate.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Locals.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.MakeReferenceAny.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.NewArray.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.NewObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Nop.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Pop.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.ReferenceAnyType.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.ReferenceAnyValue.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.ReThrow.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="NonGeneric\Emit.Return.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="NonGeneric\Emit.LoadConstant.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.SizeOf.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.StoreArgument.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.StoreElement.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.StoreField.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.StoreIndirect.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.StoreLocal.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.StoreObject.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Switch.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Throw.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.TryCatchFinally.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.Unbox.cs">
+      <DependentUpon>Emit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NonGeneric\Emit.WriteLine.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
     <Compile Include="Operation.cs" />

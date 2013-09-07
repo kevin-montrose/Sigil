@@ -1,0 +1,31 @@
+﻿using Sigil.Impl;
+using System;
+using System.Reflection.Emit;
+
+namespace Sigil.NonGeneric
+{
+    public partial class Emit
+    {
+        /// <summary>
+        /// Converts a TypedReference on the stack into a reference to the contained object, given the type contained in the TypedReference.
+        /// 
+        /// __makeref(int) on the stack would become an int&amp;, for example.
+        /// </summary>
+        public Emit ReferenceAnyValue<Type>()
+        {
+            InnerEmit.ReferenceAnyValue<Type>();
+            return this;
+        }
+
+        /// <summary>
+        /// Converts a TypedReference on the stack into a reference to the contained object, given the type contained in the TypedReference.
+        /// 
+        /// __makeref(int) on the stack would become an int&amp;, for example.
+        /// </summary>
+        public Emit ReferenceAnyValue(Type type)
+        {
+            InnerEmit.ReferenceAnyValue(type);
+            return this;
+        }
+    }
+}
