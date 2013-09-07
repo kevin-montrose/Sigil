@@ -1,7 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -10,16 +11,15 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Branches
     {
         [TestMethod]
-        public void Scan()
+        public void ScanNonGeneric()
         {
             var terms = new[] { "hello", "world", "fizz", "buzz" };
             var strEq = typeof(string).GetMethod("Equals", new[] { typeof(object) });
 
-            var e1 = Emit<Func<string, int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), new[] { typeof(string) });
 
             var done = e1.DefineLabel("done");
 
@@ -43,11 +43,11 @@ namespace SigilTests
 
             e1.Pop();                               // --empty--
             e1.LoadConstant(-1);                    // int
-           
+
             e1.MarkLabel(done);                     // int
             e1.Return();                            // --empty--
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<string, int>>();
 
             Assert.AreEqual(-1, d1("whatever"));
             Assert.AreEqual(0, d1("hello"));
@@ -57,9 +57,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void ConditionalBranchOver()
+        public void ConditionalBranchOverNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes);
             var a = e1.DeclareLocal<int>("a");
 
             var l1 = e1.DefineLabel("l1");
@@ -81,15 +81,15 @@ namespace SigilTests
 
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(123 + 456, d1());
         }
 
         [TestMethod]
-        public void ManyConditional()
+        public void ManyConditionalNonGeneric()
         {
-            var e1 = Emit<Action>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes);
 
             for (var i = 0; i < 100; i++)
             {
@@ -110,18 +110,18 @@ namespace SigilTests
 
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Action>();
             d1();
         }
 
         [TestMethod]
-        public void InMethod()
+        public void InMethodNonGeneric()
         {
             var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Foo"), AssemblyBuilderAccess.Run);
             var mod = asm.DefineDynamicModule("Bar");
             var t = mod.DefineType("T");
 
-            var e1 = Emit<Func<int, string>>.BuildStaticMethod(t, "Static", MethodAttributes.Public);
+            var e1 = Emit.BuildStaticMethod(typeof(string), new[] { typeof(int) }, t, "Static", MethodAttributes.Public);
             var gt = e1.DefineLabel("GreaterThan");
             var skip = e1.DefineLabel("Skip");
 
@@ -153,14 +153,14 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void BranchingOverExceptions()
+        public void BranchingOverExceptionsNonGeneric()
         {
             {
                 var hasNormalBranch = new Regex("^br ", RegexOptions.Multiline);
 
                 for (var i = 0; i < 127 - 10; i++)
                 {
-                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
                     var end = e1.DefineLabel("end");
 
                     e1.Branch(end);
@@ -180,7 +180,7 @@ namespace SigilTests
                     e1.Return();
 
                     string instrs;
-                    var d1 = e1.CreateDelegate(out instrs);
+                    var d1 = e1.CreateDelegate<Action>(out instrs);
 
                     d1();
 
@@ -197,7 +197,7 @@ namespace SigilTests
 
                 for (var i = 0; i < 127 - 16; i++)
                 {
-                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
                     var end = e1.DefineLabel("end");
 
                     e1.Branch(end);
@@ -219,7 +219,7 @@ namespace SigilTests
                     e1.Return();
 
                     string instrs;
-                    var d1 = e1.CreateDelegate(out instrs);
+                    var d1 = e1.CreateDelegate<Action>(out instrs);
 
                     d1();
 
@@ -233,9 +233,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void LeaveDataOnStackBetweenBranches()
+        public void LeaveDataOnStackBetweenBranchesNonGeneric()
         {
-            var il = Emit<Func<int>>.NewDynamicMethod("LeaveDataOnStackBetweenBranches");
+            var il = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "LeaveDataOnStackBetweenBranches");
 
             Sigil.Label b0 = il.DefineLabel("b0"), b1 = il.DefineLabel("b1"), b2 = il.DefineLabel("b2");
             il.LoadConstant("abc");
@@ -252,43 +252,19 @@ namespace SigilTests
 
             il.MarkLabel(b2); // incoming: 4
             il.Return();
-            int i = il.CreateDelegate()();
+            int i = il.CreateDelegate<Func<int>>()();
             Assert.AreEqual(4, i);
         }
 
         [TestMethod]
-        public void LeaveDataOnStackBetweenBranches_OldSchool()
-        {
-            var dm = new System.Reflection.Emit.DynamicMethod("foo", typeof(int), null);
-            var il = dm.GetILGenerator();
-            System.Reflection.Emit.Label b0 = il.DefineLabel(), b1 = il.DefineLabel(), b2 = il.DefineLabel();
-            il.Emit(System.Reflection.Emit.OpCodes.Ldstr, "abc");
-            il.Emit(System.Reflection.Emit.OpCodes.Br, b0); // jump to b0 with "abc"
-
-            il.MarkLabel(b1); // incoming: 3
-            il.Emit(System.Reflection.Emit.OpCodes.Ldc_I4_4);
-            il.EmitCall(System.Reflection.Emit.OpCodes.Call, typeof(Math).GetMethod("Max", new[] { typeof(int), typeof(int) }), null);
-            il.Emit(System.Reflection.Emit.OpCodes.Br, b2); // jump to b2 with 4
-
-            il.MarkLabel(b0); // incoming: "abc"
-            il.EmitCall(System.Reflection.Emit.OpCodes.Callvirt, typeof(string).GetProperty("Length").GetGetMethod(), null);
-            il.Emit(System.Reflection.Emit.OpCodes.Br, b1); // jump to b1 with 3
-
-            il.MarkLabel(b2); // incoming: 4
-            il.Emit(System.Reflection.Emit.OpCodes.Ret);
-            int i = ((Func<int>)dm.CreateDelegate(typeof(Func<int>)))();
-            Assert.AreEqual(4, i);
-        }
-
-        [TestMethod]
-        public void ShortForm()
+        public void ShortFormNonGeneric()
         {
             {
                 var hasNormalBranch = new Regex("^br ", RegexOptions.Multiline);
 
                 for (var i = 0; i < 127; i++)
                 {
-                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
                     var dead = e1.DefineLabel();
                     var end = e1.DefineLabel("end");
 
@@ -305,7 +281,7 @@ namespace SigilTests
                     e1.Return();
 
                     string instrs;
-                    var d1 = e1.CreateDelegate(out instrs);
+                    var d1 = e1.CreateDelegate<Action>(out instrs);
 
                     d1();
 
@@ -319,14 +295,14 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void ShortFormNoOptimizations()
+        public void ShortFormNoOptimizationsNonGeneric()
         {
             {
                 var hasNormalBranch = new Regex("^br ", RegexOptions.Multiline);
 
                 for (var i = 0; i < 127; i++)
                 {
-                    var e1 = Emit<Action>.NewDynamicMethod("E1");
+                    var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
                     var dead = e1.DefineLabel();
                     var end = e1.DefineLabel("end");
 
@@ -343,7 +319,7 @@ namespace SigilTests
                     e1.Return();
 
                     string instrs;
-                    var d1 = e1.CreateDelegate(out instrs, OptimizationOptions.None);
+                    var d1 = e1.CreateDelegate<Action>(out instrs, Sigil.OptimizationOptions.None);
 
                     d1();
 
@@ -357,9 +333,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void BinaryInput()
+        public void BinaryInputNonGeneric()
         {
-            var emit = typeof(Emit<Action>);
+            var emit = typeof(Emit);
             var branches =
                 new[]
                 {
@@ -377,7 +353,7 @@ namespace SigilTests
 
             foreach (var branch in branches)
             {
-                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
                 var l = e1.DefineLabel();
                 e1.LoadConstant(0);
                 e1.LoadConstant(1);
@@ -385,45 +361,45 @@ namespace SigilTests
                 e1.MarkLabel(l);
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Action>();
                 d1();
             }
         }
 
         [TestMethod]
-        public void UnaryInput()
+        public void UnaryInputNonGeneric()
         {
             {
-                var e1 = Emit<Action>.NewDynamicMethod("E1");
+                var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
                 var l = e1.DefineLabel();
                 e1.LoadConstant(0);
                 e1.BranchIfFalse(l);
                 e1.MarkLabel(l);
                 e1.Return();
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Action>();
 
                 d1();
             }
 
             {
-                var e2 = Emit<Action>.NewDynamicMethod("E1");
+                var e2 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
                 var l = e2.DefineLabel();
                 e2.LoadConstant(0);
                 e2.BranchIfTrue(l);
                 e2.MarkLabel(l);
                 e2.Return();
 
-                var d2 = e2.CreateDelegate();
+                var d2 = e2.CreateDelegate<Action>();
 
                 d2();
             }
         }
 
         [TestMethod]
-        public void MultiLabel()
+        public void MultiLabelNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
             var d1 = e1.DefineLabel();
             var d2 = e1.DefineLabel();
 
@@ -448,15 +424,15 @@ namespace SigilTests
             e1.MarkLabel(two);
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(1, del());
         }
 
         [TestMethod]
-        public void BrS()
+        public void BrSNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
             var dead = e1.DefineLabel();
 
             var after = e1.DefineLabel("after");
@@ -464,22 +440,22 @@ namespace SigilTests
             e1.Branch(after);
 
             e1.MarkLabel(dead);
-            
+
             e1.LoadConstant(111);
             e1.Add();
 
             e1.MarkLabel(after);
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(456, del());
         }
 
         [TestMethod]
-        public void Br()
+        public void BrNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
 
             var after = e1.DefineLabel("after");
             var dead = e1.DefineLabel();
@@ -496,15 +472,15 @@ namespace SigilTests
             e1.MarkLabel(after);
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(111, del());
         }
 
         [TestMethod]
-        public void BeqS()
+        public void BeqSNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
 
             var after = e1.DefineLabel("after");
             e1.LoadConstant(314);
@@ -518,15 +494,15 @@ namespace SigilTests
             e1.MarkLabel(after);
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(314, del());
         }
 
         [TestMethod]
-        public void Beq()
+        public void BeqNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
 
             var after = e1.DefineLabel("after");
             e1.LoadConstant(314);
@@ -545,7 +521,7 @@ namespace SigilTests
             e1.MarkLabel(after);
             e1.Return();
 
-            var del = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(314, del());
         }

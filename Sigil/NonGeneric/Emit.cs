@@ -228,6 +228,16 @@ namespace Sigil.NonGeneric
         }
 
         /// <summary>
+        /// Convenience method for creating static methods.
+        /// 
+        /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
+        /// </summary>
+        public static Emit BuildStaticMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        {
+            return BuildMethod(returnType, parameterTypes, type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode, validationOptions);
+        }
+
+        /// <summary>
         /// Writes the CIL stream out to the MethodBuilder used to create this Emit.
         /// 
         /// Validation that cannot be run until a method is finished is run, and various instructions

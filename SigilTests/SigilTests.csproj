@@ -76,6 +76,9 @@
       <DependentUpon>Boxing.cs</DependentUpon>
     </Compile>
     <Compile Include="Branches.cs" />
+    <Compile Include="Branches.NonGeneric.cs">
+      <DependentUpon>Branches.cs</DependentUpon>
+    </Compile>
     <Compile Include="Break.cs" />
     <Compile Include="CallIndirect.cs" />
     <Compile Include="Calls.cs" />
