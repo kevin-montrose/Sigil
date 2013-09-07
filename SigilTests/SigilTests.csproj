@@ -64,8 +64,17 @@
     </Compile>
     <Compile Include="AutoNamer.cs" />
     <Compile Include="Bitwise.cs" />
+    <Compile Include="Bitwise.NonGeneric.cs">
+      <DependentUpon>Bitwise.cs</DependentUpon>
+    </Compile>
     <Compile Include="BlogPost.cs" />
+    <Compile Include="BlogPost.NonGeneric.cs">
+      <DependentUpon>BlogPost.cs</DependentUpon>
+    </Compile>
     <Compile Include="Boxing.cs" />
+    <Compile Include="Boxing.NonGeneric.cs">
+      <DependentUpon>Boxing.cs</DependentUpon>
+    </Compile>
     <Compile Include="Branches.cs" />
     <Compile Include="Break.cs" />
     <Compile Include="CallIndirect.cs" />

@@ -1,25 +1,25 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Bitwise
     {
         [TestMethod]
-        public void And()
+        public void AndNonGeneric()
         {
-            var e1 = Emit<Func<byte, byte, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(byte), typeof(byte) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.And();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<byte, byte, int>>();
 
             byte a = 123, b = 200;
 
@@ -27,15 +27,15 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Or()
+        public void OrNonGeneric()
         {
-            var e1 = Emit<Func<byte, byte, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(byte), typeof(byte) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.Or();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<byte, byte, int>>();
 
             byte a = 123, b = 200;
 
@@ -43,15 +43,15 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Xor()
+        public void XorNonGeneric()
         {
-            var e1 = Emit<Func<byte, byte, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(byte), typeof(byte) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.Xor();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<byte, byte, int>>();
 
             byte a = 123, b = 200;
 
@@ -59,14 +59,14 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Not()
+        public void NotNonGeneric()
         {
-            var e1 = Emit<Func<byte, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(byte) }, "E1");
             e1.LoadArgument(0);
             e1.Not();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<byte, int>>();
 
             byte a = 123;
 

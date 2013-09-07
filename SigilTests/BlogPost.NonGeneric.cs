@@ -1,26 +1,27 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class BlogPost
     {
         [TestMethod]
-        public void Block1()
+        public void Block1NonGeneric()
         {
-            var il = Emit<Func<int>>.NewDynamicMethod("AddOneAndTwo");
+            var il = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "AddOneAndTwo");
             il.LoadConstant(1);
             try
             {
                 // Still missing that 2!
                 il.Add();
                 il.Return();
-                var del = il.CreateDelegate();
+                var del = il.CreateDelegate<Func<int>>();
                 del();
 
                 Assert.Fail();
@@ -32,9 +33,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Block2()
+        public void Block2NonGeneric()
         {
-            var il = Emit<Func<string, Func<string, int>, string>>.NewDynamicMethod("E1");
+            var il = Emit.NewDynamicMethod(typeof(string), new[] { typeof(string), typeof(Func<string, int>) }, "E1");
             var invoke = typeof(Func<string, int>).GetMethod("Invoke");
             try
             {
@@ -46,14 +47,14 @@ namespace SigilTests
                 il.LoadNull();
                 il.Return();
 
-                
+
                 il.MarkLabel(notNull);
                 il.LoadArgument(1);
                 il.LoadArgument(0);
                 il.CallVirtual(invoke);
                 il.Return();
 
-                var d1 = il.CreateDelegate();
+                var d1 = il.CreateDelegate<Func<string, Func<string, int>, string>>();
 
                 Assert.Fail();
             }

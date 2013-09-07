@@ -156,6 +156,17 @@ namespace Sigil.NonGeneric
             return CreateDelegate(delegateType, out ignored, optimizationOptions);
         }
 
+        public DelegateType CreateDelegate<DelegateType>(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
+        {
+            return (DelegateType)(object)CreateDelegate(typeof(DelegateType), out instructions, optimizationOptions);
+        }
+
+        public DelegateType CreateDelegate<DelegateType>(OptimizationOptions optimizationOptions = OptimizationOptions.All)
+        {
+            string ignored;
+            return CreateDelegate<DelegateType>(out ignored, optimizationOptions);
+        }
+
         private static bool HasFlag(MethodAttributes value, MethodAttributes flag)
         {
             return (value & flag) != 0;
