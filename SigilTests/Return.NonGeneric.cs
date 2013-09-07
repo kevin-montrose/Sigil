@@ -1,5 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
 using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
@@ -9,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Return
     {
         [TestMethod]
-        public void NonTerminal()
+        public void NonTerminalNonGeneric()
         {
-            var e1 = Emit<Action>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes);
             var l1 = e1.DefineLabel("l1");
             var l2 = e1.DefineLabel("l2");
 
@@ -27,29 +25,29 @@ namespace SigilTests
             e1.MarkLabel(l1);
             e1.Branch(l2);
 
-            var d1 = e1.CreateDelegate();
+            var d1 = (Action)e1.CreateDelegate(typeof(Action));
             d1();
         }
 
         [TestMethod]
-        public void Empty()
+        public void EmptyNonGeneric()
         {
-            var il = Emit<Action>.NewDynamicMethod("Empty");
+            var il = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes,"Empty");
             il.Return();
 
-            var del = il.CreateDelegate();
+            var del = (Action)il.CreateDelegate(typeof(Action));
 
             del();
         }
 
         [TestMethod]
-        public void Constant()
+        public void ConstantNonGeneric()
         {
-            var il = Emit<Func<int>>.NewDynamicMethod("Constant");
+            var il = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes,"Constant");
             il.LoadConstant(123);
             il.Return();
 
-            var del = il.CreateDelegate();
+            var del = (Func<int>)il.CreateDelegate(typeof(Func<int>));
 
             Assert.AreEqual(123, del());
         }

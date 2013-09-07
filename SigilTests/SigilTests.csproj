@@ -106,6 +106,7 @@
     <Compile Include="Remainder.cs" />
     <Compile Include="ReThrow.cs" />
     <Compile Include="Return.cs" />
+    <Compile Include="Return.NonGeneric.cs" />
     <Compile Include="Shifts.cs" />
     <Compile Include="SizeOf.cs" />
     <Compile Include="StoreElement.cs" />
