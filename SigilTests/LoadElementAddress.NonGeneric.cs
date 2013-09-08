@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +10,12 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class LoadElementAddress
     {
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
-            var e1 = Emit<Func<int[], int, int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int[]), typeof(int) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.LoadElementAddress<int>();
@@ -24,16 +23,16 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<int[], int, int>>(out instrs);
 
             Assert.AreEqual(2, d1(new[] { 1, 2, 3 }, 1));
             Assert.IsTrue(instrs.Contains("readonly."));
         }
 
         [TestMethod]
-        public void NotReadonly()
+        public void NotReadonlyNonGeneric()
         {
-            var e1 = Emit<Action<int[], int>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(void), new[] { typeof(int[]), typeof(int) }, "E1");
             e1.LoadArgument(0);
             e1.LoadArgument(1);
             e1.LoadElementAddress<int>();
@@ -45,7 +44,7 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Action<int[], int>>(out instrs);
 
             var x = new[] { 1, 2, 3 };
             d1(x, 1);
@@ -58,11 +57,11 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void ReadOnlyCall()
+        public void ReadOnlyCallNonGeneric()
         {
             var toString = typeof(object).GetMethod("ToString");
 
-            var e1 = Emit<Func<int, object[], string>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(string), new [] { typeof(int), typeof(object[]) }, "E1");
             e1.LoadArgument(1);
             e1.LoadArgument(0);
             e1.LoadElementAddress<object>();
@@ -71,18 +70,18 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<int, object[], string>>(out instrs);
 
             Assert.AreEqual("123", d1(0, new object[] { 123 }));
             Assert.IsTrue(instrs.Contains("readonly."));
         }
 
         [TestMethod]
-        public void NotReadOnlyCall()
+        public void NotReadOnlyCallNonGeneric()
         {
             var toString = typeof(object).GetMethod("ToString");
 
-            var e1 = Emit<Func<int, object[], string>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(string), new [] { typeof(int), typeof(object[]) }, "E1");
             e1.LoadArgument(1);
             e1.LoadArgument(0);
             e1.LoadElementAddress<object>();
@@ -93,7 +92,7 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<int, object[], string>>(out instrs);
 
             Assert.AreEqual("123", d1(0, new object[] { 123 }));
             Assert.IsFalse(instrs.Contains("readonly."));

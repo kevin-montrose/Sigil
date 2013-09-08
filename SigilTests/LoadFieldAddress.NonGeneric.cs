@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,38 +8,31 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class LoadFieldAddress
     {
-        class TestObj
-        {
-            public static int Static;
-            public int Instance;
-        }
-
         [TestMethod]
-        public void Instance()
+        public void InstanceNonGeneric()
         {
-            var e1 = Emit<Func<TestObj, int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(TestObj) });
             e1.LoadArgument(0);
             e1.LoadFieldAddress(typeof(TestObj).GetField("Instance"));
             e1.LoadIndirect<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<TestObj, int>>();
 
             Assert.AreEqual(10, d1(new TestObj { Instance = 10 }));
         }
 
         [TestMethod]
-        public void Static()
+        public void StaticNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes);
             e1.LoadFieldAddress(typeof(TestObj).GetField("Static"));
             e1.LoadIndirect<int>();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int>>();
 
             TestObj.Static = 20;
             Assert.AreEqual(20, d1());

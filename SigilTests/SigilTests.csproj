@@ -109,6 +109,12 @@
     <Compile Include="Converts.NonGeneric.cs">
       <DependentUpon>Converts.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoadFieldAddress.NonGeneric.cs">
+      <DependentUpon>LoadFieldAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadElementAddress.NonGeneric.cs">
+      <DependentUpon>LoadElementAddress.cs</DependentUpon>
+    </Compile>
     <Compile Include="CopyBlock.NonGeneric.cs">
       <DependentUpon>CopyBlock.cs</DependentUpon>
     </Compile>
@@ -160,8 +166,14 @@
     <Compile Include="LoadArguments.NonGeneric.cs">
       <DependentUpon>LoadArguments.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoadConstants.NonGeneric.cs">
+      <DependentUpon>LoadConstants.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadConstants.cs" />
     <Compile Include="LoadElement.cs" />
+    <Compile Include="LoadElement.NonGeneric.cs">
+      <DependentUpon>LoadElement.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadElementAddress.cs" />
     <Compile Include="LoadFieldAddress.cs" />
     <Compile Include="LoadFields.cs" />
