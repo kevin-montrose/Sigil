@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Local
     {
         [TestMethod]
-        public void ReuseLabels()
+        public void ReuseLabelsNonGeneric()
         {
-            var e1 = Emit<Action>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes);
             e1.DeclareLocal<int>("a");
             e1.DeclareLocal<int>("b");
 
@@ -42,7 +41,7 @@ namespace SigilTests
 
                 Assert.Fail();
             }
-            catch (SigilVerificationException e)
+            catch (Sigil.SigilVerificationException e)
             {
                 var debug = e.GetDebugInfo();
                 Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldloc.0 // System.Int32 a\r\nldloc.1 // System.Int32 b\r\nldloc.2 // System.Int32 c\r\nldloc.2 // System.Int32 d\r\nstloc.0 // System.Int32 a\r\nstloc.0 // System.Int32 a\r\nstloc.1 // System.Int32 b\r\nstloc.1 // System.Int32 b\r\n", debug);
@@ -50,9 +49,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Instructions()
+        public void InstructionsNonGeneric()
         {
-            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
 
             for (var c = 'A'; c <= 'Z'; c++)
             {
@@ -65,7 +64,7 @@ namespace SigilTests
 
             e1.Return();
 
-            e1.CreateDelegate();
+            e1.CreateDelegate<Action>();
 
             string instrs = e1.Instructions();
 
@@ -73,18 +72,18 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Name()
+        public void NameNonGeneric()
         {
-            var e1 = Emit<Action>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes);
             var local = e1.DeclareLocal<int>("local");
 
             Assert.AreEqual("System.Int32 local", local.ToString());
         }
 
         [TestMethod]
-        public void Reuse()
+        public void ReuseNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes);
 
             using (var a = e1.DeclareLocal<int>("a"))
             {
@@ -101,16 +100,16 @@ namespace SigilTests
             }
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<int>>(out instrs);
 
             Assert.AreEqual(1, d1());
             Assert.AreEqual("ldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nldloc.0\r\nret\r\n", instrs);
         }
 
         [TestMethod]
-        public void Lookup()
+        public void LookupNonGeneric()
         {
-            var e1 = Emit<Action>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes);
             var a = e1.DeclareLocal<int>("a");
 
             var aRef = e1.Locals["a"];

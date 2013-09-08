@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,29 +8,29 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public partial class LoadlLocalAddress
+    public partial class LoadLocal
     {
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod("E1");
-            var a = e1.DeclareLocal<int>("a");
-            e1.LoadConstant(123);
-            e1.StoreLocal(a);
-            e1.LoadLocalAddress(a);
-            e1.LoadIndirect<int>();
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "E1");
+
+            var foo = e1.DeclareLocal<int>("foo");
+
+            e1.LoadLocal(foo);
+            e1.LoadConstant(3);
+            e1.Add();
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var del = e1.CreateDelegate<Func<int>>();
 
-            Assert.AreEqual(123, d1());
+            Assert.AreEqual(3, del());
         }
 
         [TestMethod]
-        public void All()
+        public void AllNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes);
 
             var locals = new List<Sigil.Local>();
             int total = 0;
@@ -48,8 +48,7 @@ namespace SigilTests
 
             foreach (var l in locals)
             {
-                e1.LoadLocalAddress(l);
-                e1.LoadIndirect<int>();
+                e1.LoadLocal(l);
             }
 
             for (var i = 0; i <= 255; i++)
@@ -59,7 +58,7 @@ namespace SigilTests
 
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(total, d1());
         }

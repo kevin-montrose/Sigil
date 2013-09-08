@@ -45,6 +45,14 @@ namespace Sigil.NonGeneric
         /// </summary>
         public int MaxStackSize { get { return InnerEmit.MaxStackSize; } }
 
+        /// <summary>
+        /// Lookup for the locals currently in scope by name.
+        /// 
+        /// Locals go out of scope when released (by calling Dispose() directly, or via using) and go into scope
+        /// immediately after a DeclareLocal()
+        /// </summary>
+        public LocalLookup Locals { get { return InnerEmit.Locals; } }
+
         private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod, bool isMethod, bool isConstructor)
         {
             InnerEmit = innerEmit;
@@ -403,6 +411,16 @@ namespace Sigil.NonGeneric
         {
             string ignored;
             return CreateConstructor(out ignored, optimizationOptions);
+        }
+
+        /// <summary>
+        /// Returns a string representation of the CIL opcodes written to this Emit to date.
+        /// 
+        /// This method is meant for debugging purposes only.
+        /// </summary>
+        public string Instructions()
+        {
+            return InnerEmit.Instructions();
         }
     }
 }

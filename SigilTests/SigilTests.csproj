@@ -109,6 +109,24 @@
     <Compile Include="Converts.NonGeneric.cs">
       <DependentUpon>Converts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Local.NonGeneric.cs">
+      <DependentUpon>Local.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadObject.NonGeneric.cs">
+      <DependentUpon>LoadObject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadLocal.NonGeneric.cs">
+      <DependentUpon>LoadLocal.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadlLocalAddress.NonGeneric.cs">
+      <DependentUpon>LoadlLocalAddress.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadIndirect.NonGeneric.cs">
+      <DependentUpon>LoadIndirect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadFields.NonGeneric.cs">
+      <DependentUpon>LoadFields.cs</DependentUpon>
+    </Compile>
     <Compile Include="LoadFieldAddress.NonGeneric.cs">
       <DependentUpon>LoadFieldAddress.cs</DependentUpon>
     </Compile>
