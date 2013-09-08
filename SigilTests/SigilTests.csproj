@@ -109,6 +109,12 @@
     <Compile Include="Converts.NonGeneric.cs">
       <DependentUpon>Converts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Methods.NonGeneric.cs">
+      <DependentUpon>Methods.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocalAllocate.NonGeneric.cs">
+      <DependentUpon>LocalAllocate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Local.NonGeneric.cs">
       <DependentUpon>Local.cs</DependentUpon>
     </Compile>

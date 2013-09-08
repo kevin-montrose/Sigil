@@ -253,6 +253,16 @@ namespace Sigil.NonGeneric
         }
 
         /// <summary>
+        /// Convenience method for creating instance methods.
+        /// 
+        /// Equivalent to calling to BuildMethod, but with CallingConventions.HasThis.
+        /// </summary>
+        public static Emit BuildInstanceMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        {
+            return BuildMethod(returnType, parameterTypes, type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode, validationOptions);
+        }
+
+        /// <summary>
         /// Convenience method for creating static methods.
         /// 
         /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
