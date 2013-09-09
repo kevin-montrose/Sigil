@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SigilTests
 {
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class Errors
+    public partial class Errors
     {
         [TestMethod]
         public void DisassemblingClosure()

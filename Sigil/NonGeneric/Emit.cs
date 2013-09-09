@@ -121,6 +121,49 @@ namespace Sigil.NonGeneric
             return ret;
         }
 
+        private void ValidateDelegateType(Type delegateType)
+        {
+            var baseTypes = new LinqHashSet<Type>();
+            baseTypes.Add(delegateType);
+            var bType = delegateType.BaseType;
+            while (bType != null)
+            {
+                baseTypes.Add(bType);
+                bType = bType.BaseType;
+            }
+
+            if (!baseTypes.Contains(typeof(Delegate)))
+            {
+                throw new ArgumentException("delegateType must be a delegate, found " + delegateType.FullName);
+            }
+
+            var invoke = delegateType.GetMethod("Invoke");
+            var returnType = invoke.ReturnType;
+
+            if (returnType != ReturnType)
+            {
+                throw new ArgumentException("Expected delegateType to return " + ReturnType + ", found " + returnType);
+            }
+
+            var parameterTypes = invoke.GetParameters();
+
+            if (parameterTypes.Length != ParameterTypes.Length)
+            {
+                throw new ArgumentException("Expected delegateType to take " + ParameterTypes.Length + " parameters, found " + parameterTypes.Length);
+            }
+
+            for (var i = 0; i < parameterTypes.Length; i++)
+            {
+                var actualType = parameterTypes[i].ParameterType;
+                var expectedType = ParameterTypes[i];
+
+                if (actualType != expectedType)
+                {
+                    throw new ArgumentException("Expected delegateType's parameter at index " + i + " to be a " + expectedType + ", found " + actualType);
+                }
+            }
+        }
+
         /// <summary>
         /// Converts the CIL stream into a delegate.
         /// 
@@ -142,19 +185,7 @@ namespace Sigil.NonGeneric
                 throw new InvalidOperationException("Emit was not created to build a DynamicMethod, thus CreateDelegate cannot be called");
             }
 
-            var baseTypes = new LinqHashSet<Type>();
-            baseTypes.Add(delegateType);
-            var bType = delegateType.BaseType;
-            while (bType != null)
-            {
-                baseTypes.Add(bType);
-                bType = bType.BaseType;
-            }
-
-            if (!baseTypes.Contains(typeof(Delegate)))
-            {
-                throw new ArgumentException("delegateType must be a delegate, found " + delegateType.FullName);
-            }
+            ValidateDelegateType(delegateType);
 
             if (InnerEmit.DynMethod == null)
             {

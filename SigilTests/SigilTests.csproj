@@ -109,6 +109,9 @@
     <Compile Include="Converts.NonGeneric.cs">
       <DependentUpon>Converts.cs</DependentUpon>
     </Compile>
+    <Compile Include="Errors.NonGeneric.cs">
+      <DependentUpon>Errors.cs</DependentUpon>
+    </Compile>
     <Compile Include="WriteLine.NonGeneric.cs">
       <DependentUpon>WriteLine.cs</DependentUpon>
     </Compile>
