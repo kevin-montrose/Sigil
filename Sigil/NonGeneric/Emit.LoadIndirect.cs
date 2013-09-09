@@ -1,7 +1,4 @@
-﻿using Sigil.Impl;
-using System;
-using System.Collections.Generic;
-using System.Reflection.Emit;
+﻿using System;
 
 namespace Sigil.NonGeneric
 {

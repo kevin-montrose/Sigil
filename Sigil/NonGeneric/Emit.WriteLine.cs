@@ -1,6 +1,4 @@
-﻿using Sigil.Impl;
-using System;
-
+﻿
 namespace Sigil.NonGeneric
 {
     public partial class Emit
