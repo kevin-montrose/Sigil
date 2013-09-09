@@ -109,6 +109,33 @@
     <Compile Include="Converts.NonGeneric.cs">
       <DependentUpon>Converts.cs</DependentUpon>
     </Compile>
+    <Compile Include="SizeOf.NonGeneric.cs">
+      <DependentUpon>SizeOf.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Shifts.NonGeneric.cs">
+      <DependentUpon>Shifts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ReThrow.NonGeneric.cs">
+      <DependentUpon>ReThrow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Remainder.NonGeneric.cs">
+      <DependentUpon>Remainder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Readme.NonGeneric.cs">
+      <DependentUpon>Readme.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NewObject.NonGeneric.cs">
+      <DependentUpon>NewObject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NewArray.NonGeneric.cs">
+      <DependentUpon>NewArray.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Negate.NonGeneric.cs">
+      <DependentUpon>Negate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Multiply.NonGeneric.cs">
+      <DependentUpon>Multiply.cs</DependentUpon>
+    </Compile>
     <Compile Include="Methods.NonGeneric.cs">
       <DependentUpon>Methods.cs</DependentUpon>
     </Compile>

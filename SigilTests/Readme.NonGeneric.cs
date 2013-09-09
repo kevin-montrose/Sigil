@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +10,13 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Readme
     {
         [TestMethod]
-        public void Block1()
+        public void Block1NonGeneric()
         {
             {
-                var emiter = Emit<Func<int>>.NewDynamicMethod("MyMethod");
+                var emiter = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "MyMethod");
                 Assert.IsNotNull(emiter);
             }
 
@@ -26,7 +25,7 @@ namespace SigilTests
                 var mod = asm.DefineDynamicModule("Bar");
 
                 TypeBuilder myBuilder = mod.DefineType("T");
-                var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Static", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard);
+                var emiter = Emit.BuildMethod(typeof(string), new [] { typeof(int) }, myBuilder, "Static", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard);
 
                 Assert.IsNotNull(emiter);
             }
@@ -36,7 +35,7 @@ namespace SigilTests
                 var mod = asm.DefineDynamicModule("Bar");
 
                 TypeBuilder myBuilder = mod.DefineType("T");
-                var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Instance", MethodAttributes.Public, CallingConventions.HasThis);
+                var emiter = Emit.BuildMethod(typeof(string), new [] { typeof(int) }, myBuilder, "Instance", MethodAttributes.Public, CallingConventions.HasThis);
                 // Technically this is a Func<myBuilder, int string>; but because myBuilder isn't complete
                 //   the generic parameters skip the `this` reference.  myBuilder will still be available as the
                 //   first argument to the method
@@ -46,15 +45,15 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Block2()
+        public void Block2NonGeneric()
         {
             // Create a delegate that sums two integers
-            var emiter = Emit<Func<int, int, int>>.NewDynamicMethod("MyMethod");
+            var emiter = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int), typeof(int) }, "MyMethod");
             emiter.LoadArgument(0);
             emiter.LoadArgument(1);
             emiter.Add();
             emiter.Return();
-            var del = emiter.CreateDelegate();
+            var del = emiter.CreateDelegate<Func<int, int, int>>();
 
             // prints "473"
             //Console.WriteLine(del(314, 159));
@@ -62,11 +61,11 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Block3()
+        public void Block3NonGeneric()
         {
             try
             {
-                var emiter = Emit<Func<int, string, int>>.NewDynamicMethod("MyMethod");
+                var emiter = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int), typeof(string) }, "MyMethod");
                 emiter.LoadArgument(0);
                 emiter.LoadArgument(1);
                 emiter.Add();   // Throws a SigilVerificationException, indicating that Add() isn't defined for [int, string]
@@ -74,36 +73,18 @@ namespace SigilTests
 
                 Assert.Fail("An exception should have been thrown");
             }
-            catch (SigilVerificationException e)
+            catch (Sigil.SigilVerificationException e)
             {
                 Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
         }
 
-        private static bool MayFailFirstCall = true;
-        public static void MayFail()
-        {
-            if (MayFailFirstCall)
-            {
-                MayFailFirstCall = false;
-                return;
-            }
-
-            throw new Exception();
-        }
-
-        private static bool AlwaysCallCalled;
-        public static void AlwaysCall()
-        {
-            AlwaysCallCalled = true;
-        }
-
         [TestMethod]
-        public void Block4()
+        public void Block4NonGeneric()
         {
             MethodInfo mayFail = typeof(Readme).GetMethod("MayFail");
             MethodInfo alwaysCall = typeof(Readme).GetMethod("AlwaysCall");
-            var emiter = Emit<Func<string, bool>>.NewDynamicMethod("TryCatchFinally");
+            var emiter = Emit.NewDynamicMethod(typeof(bool), new [] { typeof(string) }, "TryCatchFinally");
 
             var inputIsNull = emiter.DefineLabel("ifNull");  // names are purely for ease of debugging, and are optional
             var tryCall = emiter.DefineLabel("tryCall");
@@ -140,7 +121,7 @@ namespace SigilTests
             emiter.LoadLocal(succeeded);
             emiter.Return();
 
-            var del = emiter.CreateDelegate();
+            var del = emiter.CreateDelegate<Func<string, bool>>();
 
             MayFailFirstCall = true;
             AlwaysCallCalled = false;
@@ -157,7 +138,7 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Block5()
+        public void Block5NonGeneric()
         {
             Action mayFail = () => MayFail();
             Action alwaysCall = () => AlwaysCall();
@@ -200,9 +181,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Block6()
+        public void Block6NonGeneric()
         {
-            var emiter = Emit<Func<int>>.NewDynamicMethod("Unconditional");
+            var emiter = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes, "Unconditional");
             var label1 = emiter.DefineLabel("label1");
             var label2 = emiter.DefineLabel("label2");
             var label3 = emiter.DefineLabel("label3");
@@ -221,7 +202,7 @@ namespace SigilTests
             emiter.Add();
             emiter.Return();
 
-            var d = emiter.CreateDelegate();
+            var d = emiter.CreateDelegate<Func<int>>();
 
             Assert.AreEqual(3, d());
         }

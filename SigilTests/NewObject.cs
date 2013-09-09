@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace SigilTests
 {
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
-    public class NewObject
+    public partial class NewObject
     {
         class ThreeClass
         {
