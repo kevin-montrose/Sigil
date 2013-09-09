@@ -265,6 +265,16 @@ Message property, also has a GetDebugInfo method which returns additional detail
 
 Be aware that these features are meant as debugging aids, and their contents and the formatting of said contents may change at any time.
 
+###Non-Generic Interface
+
+The normal Sigil interface is generic, allowing many type constraints to be enforced at compile time.  For cases where a type isn't available
+at compile time all Sigil methods with generic parameters have overrides that take a `System.Type` directly.
+
+When a delegate's type is not known at compile time, use the `Sigil.NonGeneric.Emit` class.  It exposes the same interface as `Sigil.Emit<DelegateType>`, 
+but takes types directly instead of via generic parameters.
+
+Using the generic version of Sigil when possible is strongly recommended.
+
 ###Disassembly
 
 The `Disassembler<DelegateType>` adds limited support for disassembling .NET delegates starting with Sigil 3.0.0.
