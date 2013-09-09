@@ -109,6 +109,18 @@
     <Compile Include="Converts.NonGeneric.cs">
       <DependentUpon>Converts.cs</DependentUpon>
     </Compile>
+    <Compile Include="StoreIndirect.NonGeneric.cs">
+      <DependentUpon>StoreIndirect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreField.NonGeneric.cs">
+      <DependentUpon>StoreField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreElement.NonGeneric.cs">
+      <DependentUpon>StoreElement.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreArgument.NonGeneric.cs">
+      <DependentUpon>StoreArgument.cs</DependentUpon>
+    </Compile>
     <Compile Include="SizeOf.NonGeneric.cs">
       <DependentUpon>SizeOf.cs</DependentUpon>
     </Compile>
