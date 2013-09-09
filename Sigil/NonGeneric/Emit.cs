@@ -219,11 +219,33 @@ namespace Sigil.NonGeneric
             return CreateDelegate(delegateType, out ignored, optimizationOptions);
         }
 
+        /// <summary>
+        /// Converts the CIL stream into a delegate.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// `instructions` will be set to a representation of the instructions making up the returned delegate.
+        /// Note that this string is typically *not* enough to regenerate the delegate, it is available for
+        /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
+        /// the returned delegate fails validation (indicative of a bug in Sigil) or
+        /// behaves unexpectedly (indicative of a logic bug in the consumer code).
+        /// </summary>
         public DelegateType CreateDelegate<DelegateType>(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             return (DelegateType)(object)CreateDelegate(typeof(DelegateType), out instructions, optimizationOptions);
         }
 
+        /// <summary>
+        /// Converts the CIL stream into a delegate.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// </summary>
         public DelegateType CreateDelegate<DelegateType>(OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             string ignored;

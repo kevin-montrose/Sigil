@@ -205,7 +205,7 @@ namespace Sigil.NonGeneric
             return InnerEmit.CreateDelegate(delegateType, optimizationOptions);
         }
 
-        /// <summary cref="M:Sigil.Emit.NonGeneric.Emit`1.CreateDelegate" />
+        /// <summary cref="M:Sigil.Emit.NonGeneric.Emit`1.CreateDelegate`2" />
         public DelegateType CreateDelegate<DelegateType>(OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
             return InnerEmit.CreateDelegate<DelegateType>(optimizationOptions);
