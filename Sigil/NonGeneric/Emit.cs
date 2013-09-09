@@ -33,6 +33,8 @@ namespace Sigil.NonGeneric
         private MethodAttributes Attributes;
         private CallingConventions CallingConvention;
 
+        private EmitShorthand Shorthand;
+
         /// <summary>
         /// Lookup for declared labels by name.
         /// </summary>
@@ -53,12 +55,19 @@ namespace Sigil.NonGeneric
         /// </summary>
         public LocalLookup Locals { get { return InnerEmit.Locals; } }
 
+        /// <summary>
+        /// Returns true if this Emit can make use of unverifiable instructions.
+        /// </summary>
+        public bool AllowsUnverifiableCIL { get { return InnerEmit.AllowsUnverifiableCIL; } }
+
         private Emit(Emit<NonGenericPlaceholderDelegate> innerEmit, bool isDynamicMethod, bool isMethod, bool isConstructor)
         {
             InnerEmit = innerEmit;
             IsDynamicMethod = isDynamicMethod;
             IsMethod = isMethod;
             IsConstructor = isConstructor;
+
+            Shorthand = new EmitShorthand(this);
         }
 
         private static void ValidateReturnAndParameterTypes(Type returnType, Type[] parameterTypes, ValidationOptions validationOptions)
@@ -190,17 +199,7 @@ namespace Sigil.NonGeneric
             return CreateDelegate<DelegateType>(out ignored, optimizationOptions);
         }
 
-        private static bool HasFlag(MethodAttributes value, MethodAttributes flag)
-        {
-            return (value & flag) != 0;
-        }
-
         private static bool HasFlag(CallingConventions value, CallingConventions flag)
-        {
-            return (value & flag) != 0;
-        }
-
-        private static bool HasFlag(ValidationOptions value, ValidationOptions flag)
         {
             return (value & flag) != 0;
         }
@@ -431,6 +430,17 @@ namespace Sigil.NonGeneric
         public string Instructions()
         {
             return InnerEmit.Instructions();
+        }
+
+        /// <summary>
+        /// Returns a proxy for this Emit that exposes method names that more closely
+        /// match the fields on System.Reflection.Emit.OpCodes.
+        /// 
+        /// IF you're well versed in ILGenerator, the shorthand version may be easier to use.
+        /// </summary>
+        public EmitShorthand AsShorthand()
+        {
+            return Shorthand;
         }
     }
 }

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace SigilTests
 {
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Disassembler
     {
         [TestMethod]

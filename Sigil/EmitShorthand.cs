@@ -199,10 +199,10 @@ namespace Sigil
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.CreateDelegate" />
-        public DelegateType CreateDelegate()
+        /// <summary cref="M:Sigil.Emit`1.CreateDelegate(Sigil.OptimizationOptions)" />
+        public DelegateType CreateDelegate(OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
-            return InnerEmit.CreateDelegate();
+            return InnerEmit.CreateDelegate(optimizationOptions);
         }
 
         /// <summary cref="M:Sigil.Emit`1.CreateMethod" />

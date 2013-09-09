@@ -10,7 +10,7 @@ namespace SigilTests
 {
     // These tests aren't about the interface, but about proving some internal details are robust.
     // Anything used in these tests isn't guaranteed to work between versions, and shouldn't be relied upon.
-    [TestClass]
+    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Internals
     {
         public static double _OrderSelect(Tuple<int, double> i)

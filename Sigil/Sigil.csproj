@@ -419,6 +419,7 @@
     <Compile Include="NonGeneric\Emit.WriteLine.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="NonGeneric\EmitShorthand.cs" />
     <Compile Include="Operation.cs" />
     <Compile Include="OperationResultUsage.cs" />
     <Compile Include="OptimizationOptions.cs" />
