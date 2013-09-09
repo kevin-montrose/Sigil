@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Switch
     {
         [TestMethod]
-        public void ReturnChecking()
+        public void ReturnCheckingNonGeneric()
         {
             {
-                var e1 = Emit<Action>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes);
                 var l1 = e1.DefineLabel("l1");
                 var l2 = e1.DefineLabel("l2");
 
@@ -30,12 +29,12 @@ namespace SigilTests
                 e1.MarkLabel(l2);
                 e1.Branch(l1);
 
-                var d1 = e1.CreateDelegate();
+                var d1 = e1.CreateDelegate<Action>();
                 d1();
             }
 
             {
-                var e1 = Emit<Action>.NewDynamicMethod();
+                var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes);
                 var l1 = e1.DefineLabel("l1");
                 var l2 = e1.DefineLabel("l2");
                 var l3 = e1.DefineLabel("l3");
@@ -53,11 +52,11 @@ namespace SigilTests
 
                 try
                 {
-                    e1.CreateDelegate();
+                    e1.CreateDelegate<Action>();
 
                     Assert.Fail();
                 }
-                catch (SigilVerificationException e)
+                catch (Sigil.SigilVerificationException e)
                 {
                     var f = e.GetDebugInfo();
                     Assert.AreEqual("All execution paths must end with Return", e.Message);
@@ -68,9 +67,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
-            var e1 = Emit<Func<int, bool>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(bool), new [] { typeof(int) });
             var l = e1.DefineLabel();
 
             e1.LoadArgument(0);
@@ -82,7 +81,7 @@ namespace SigilTests
             e1.LoadConstant(1);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<int, bool>>();
 
             Assert.IsTrue(d1(0));
             Assert.IsFalse(d1(1));

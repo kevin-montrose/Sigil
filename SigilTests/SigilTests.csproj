@@ -109,6 +109,33 @@
     <Compile Include="Converts.NonGeneric.cs">
       <DependentUpon>Converts.cs</DependentUpon>
     </Compile>
+    <Compile Include="WriteLine.NonGeneric.cs">
+      <DependentUpon>WriteLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Unbox.NonGeneric.cs">
+      <DependentUpon>Unbox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TypedReferences.NonGeneric.cs">
+      <DependentUpon>TypedReferences.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TryCatchFinally.NonGeneric.cs">
+      <DependentUpon>TryCatchFinally.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Throw.NonGeneric.cs">
+      <DependentUpon>Throw.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Switch.NonGeneric.cs">
+      <DependentUpon>Switch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Subtract.NonGeneric.cs">
+      <DependentUpon>Subtract.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreObject.NonGeneric.cs">
+      <DependentUpon>StoreObject.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StoreLocal.NonGeneric.cs">
+      <DependentUpon>StoreLocal.cs</DependentUpon>
+    </Compile>
     <Compile Include="StoreIndirect.NonGeneric.cs">
       <DependentUpon>StoreIndirect.cs</DependentUpon>
     </Compile>

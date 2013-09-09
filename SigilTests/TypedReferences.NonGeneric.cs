@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,18 +9,12 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass]
     public partial class TypedReferences
     {
-        public static int _MakeRef(TypedReference a)
-        {
-            return __refvalue( a, int?) ?? 314159;
-        }
-
         [TestMethod]
-        public void MakeRef()
+        public void MakeRefNonGeneric()
         {
-            var e1 = Emit<Func<int?, int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), new [] { typeof(int?) });
 
             e1.LoadArgumentAddress(0);
             e1.MakeReferenceAny<int?>();
@@ -29,7 +23,7 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<int?, int>>(out instrs);
 
             var a = d1(123);
             var b = d1(null);
@@ -39,9 +33,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void RefValue()
+        public void RefValueNonGeneric()
         {
-            var e1 = Emit<Func<int>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(int), Type.EmptyTypes);
             var a = e1.DeclareLocal<int?>("a");
             e1.LoadConstant(123);
             e1.NewObject<int?, int>();
@@ -53,7 +47,7 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<int>>(out instrs);
 
             var x = d1();
 
@@ -61,9 +55,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void RefType()
+        public void RefTypeNonGeneric()
         {
-            var e1 = Emit<Func<Type>>.NewDynamicMethod();
+            var e1 = Emit.NewDynamicMethod(typeof(Type), Type.EmptyTypes);
             var a = e1.DeclareLocal<int?>("a");
             e1.LoadConstant(123);
             e1.NewObject<int?, int>();
@@ -75,7 +69,7 @@ namespace SigilTests
             e1.Return();
 
             string instrs;
-            var d1 = e1.CreateDelegate(out instrs);
+            var d1 = e1.CreateDelegate<Func<Type>>(out instrs);
 
             var x = d1();
 

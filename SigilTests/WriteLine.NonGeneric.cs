@@ -5,18 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 
 namespace SigilTests
 {
-    [TestClass]
     public partial class WriteLine
     {
         [TestMethod]
-        public void WriteLineFormat()
+        public void WriteLineFormatNonGeneric()
         {
             {
-                var e = Emit<Func<string>>.NewDynamicMethod();
+                var e = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes);
                 var a = e.DeclareLocal<string>();
                 var b = e.DeclareLocal<byte>();
                 var c = e.DeclareLocal<object>();
@@ -54,7 +53,7 @@ namespace SigilTests
                 e.Call(typeof(Encoding).GetMethod("GetString", new[] { typeof(byte[]) }));
                 e.Return();
 
-                var del = e.CreateDelegate();
+                var del = e.CreateDelegate<Func<string>>();
                 var val = del();
 
                 Assert.AreEqual("a: hello world; b: 16; c: \r\n", val);
@@ -62,9 +61,9 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void WriteLineSimple()
+        public void WriteLineSimpleNonGeneric()
         {
-            var el = Emit<Func<string>>.NewDynamicMethod();
+            var el = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes);
             var guid = Guid.NewGuid().ToString();
 
             el.DeclareLocal<MemoryStream>("MemoryStream");
@@ -91,7 +90,7 @@ namespace SigilTests
             el.Call(typeof (Encoding).GetMethod("GetString", new[] { typeof(byte[]) }));
             el.Return();
 
-            var del = el.CreateDelegate();
+            var del = el.CreateDelegate<Func<string>>();
             var val = del();
 
             Assert.AreEqual(guid + Environment.NewLine, val);

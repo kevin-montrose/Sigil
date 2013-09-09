@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Sigil;
+using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,20 +10,12 @@ using System.Threading.Tasks;
 
 namespace SigilTests
 {
-    [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class TryCatchFinally
     {
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public static void Throws()
-        {
-            if(DateTime.UtcNow > new DateTime(1970, 1, 1))
-                throw new Exception("Whatever");
-        }
-
         [TestMethod]
-        public void Simple()
+        public void SimpleNonGeneric()
         {
-            var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes, "E1");
             var y = e1.DeclareLocal<string>("y");
 
             e1.LoadConstant("");
@@ -38,15 +30,15 @@ namespace SigilTests
             e1.LoadLocal(y);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<string>>();
 
             Assert.AreEqual("Whatever", d1());
         }
 
         [TestMethod]
-        public void Finally()
+        public void FinallyNonGeneric()
         {
-            var e1 = Emit<Func<string>>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes, "E1");
             var y = e1.DeclareLocal<string>("y");
 
             e1.LoadConstant("");
@@ -70,27 +62,27 @@ namespace SigilTests
             e1.LoadLocal(y);
             e1.Return();
 
-            var d1 = e1.CreateDelegate();
+            var d1 = e1.CreateDelegate<Func<string>>();
 
             Assert.AreEqual("Finally!", d1());
         }
 
         [TestMethod]
-        public void IsCatchAll()
+        public void IsCatchAllNonGeneric()
         {
-            var e1 = Emit<Action>.NewDynamicMethod("E1");
+            var e1 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E1");
             var t1 = e1.BeginExceptionBlock();
             var c1 = e1.BeginCatchAllBlock(t1);
 
             Assert.IsTrue(c1.IsCatchAll);
 
-            var e2 = Emit<Action>.NewDynamicMethod("E2");
+            var e2 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E2");
             var t2 = e2.BeginExceptionBlock();
             var c2 = e2.BeginCatchBlock<Exception>(t2);
 
             Assert.IsTrue(c2.IsCatchAll);
 
-            var e3 = Emit<Action>.NewDynamicMethod("E3");
+            var e3 = Emit.NewDynamicMethod(typeof(void), Type.EmptyTypes, "E3");
             var t3 = e3.BeginExceptionBlock();
             var c3 = e3.BeginCatchBlock<StackOverflowException>(t3);
 
