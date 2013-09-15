@@ -21,7 +21,8 @@ namespace Sigil
                         new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
                         new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
                         new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
-                        new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType })
+                        new StackTransition(new [] { typeof(AnyPointerType) }, new [] { toType }),
+                        new StackTransition(new [] { typeof(AnyByRefType) }, new [] { toType })
                     
                     },
                     method

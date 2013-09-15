@@ -3312,7 +3312,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("Convert expected a double, float, int, long, native int, or pointer; found System.Object", e.Message);
+                    Assert.AreEqual("Convert expected a by ref, double, float, int, long, native int, or pointer; found System.Object", e.Message);
                 }
             }
 
@@ -3327,7 +3327,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("ConvertOverflow expected a double, float, int, long, native int, or pointer; found System.Object", e.Message);
+                    Assert.AreEqual("ConvertOverflow expected a by ref, double, float, int, long, native int, or pointer; found System.Object", e.Message);
                 }
             }
 
@@ -3342,7 +3342,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("UnsignedConvertOverflow expected a double, float, int, long, native int, or pointer; found System.Object", e.Message);
+                    Assert.AreEqual("UnsignedConvertOverflow expected a by ref, double, float, int, long, native int, or pointer; found System.Object", e.Message);
                 }
             }
         }

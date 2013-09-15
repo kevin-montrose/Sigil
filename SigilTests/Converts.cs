@@ -373,5 +373,40 @@ namespace SigilTests
                 Assert.AreEqual((ulong)12345678, d1(12345678f));
             }
         }
+
+        class _ByRef
+        {
+            public int Foo;
+        }
+
+        [TestMethod]
+        public void ByRef()
+        {
+            {
+                var emit = Emit<Func<_ByRef, int>>.NewDynamicMethod();
+                emit.LoadArgument(0);
+                emit.LoadFieldAddress(typeof(_ByRef).GetField("Foo"));
+                emit.Convert<int>();
+                emit.Return();
+
+                var del = emit.CreateDelegate();
+
+                var x = del(new _ByRef());
+                Assert.AreNotEqual(0, x);
+            }
+
+            {
+                var emit = Emit<Func<_ByRef, double>>.NewDynamicMethod();
+                emit.LoadArgument(0);
+                emit.LoadFieldAddress(typeof(_ByRef).GetField("Foo"));
+                emit.Convert<double>();
+                emit.Return();
+
+                var del = emit.CreateDelegate();
+
+                var x = del(new _ByRef());
+                Assert.AreNotEqual(0, x);
+            }
+        }
     }
 }
