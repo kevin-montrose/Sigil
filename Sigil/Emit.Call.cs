@@ -127,7 +127,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Call, emit.MtdBuilder, Wrap(transitions, "Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
+            UpdateState(OpCodes.Call, emit.MtdBuilder, emit.ParameterTypes, Wrap(transitions, "Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
 
             return this;
         }
@@ -202,7 +202,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Call, method, Wrap(transitions, "Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
+            UpdateState(OpCodes.Call, method, ((LinqArray<ParameterInfo>)method.GetParameters()).Select(s => s.ParameterType).AsEnumerable(), Wrap(transitions, "Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
 
             return this;
         }

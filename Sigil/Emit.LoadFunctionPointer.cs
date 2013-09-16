@@ -31,7 +31,7 @@ namespace Sigil
                     paramList.ToArray()
                 );
 
-            UpdateState(OpCodes.Ldftn, method, Wrap(new[] { new StackTransition(new TypeOnStack[0], new[] { type }) }, "LoadFunctionPointer"));
+            UpdateState(OpCodes.Ldftn, method, paramList.AsEnumerable(), Wrap(new[] { new StackTransition(new TypeOnStack[0], new[] { type }) }, "LoadFunctionPointer"));
 
             return this;
         }

@@ -509,7 +509,7 @@ namespace Sigil.Impl
             Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { d } });
         }
 
-        public void Emit(OpCode op, MethodInfo method)
+        public void Emit(OpCode op, MethodInfo method, IEnumerable<Type> parameterTypes)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
@@ -527,7 +527,7 @@ namespace Sigil.Impl
                 }
             );
 
-            var parameters = ((LinqArray<ParameterInfo>)method.GetParameters()).Select(p => p.ParameterType).ToList();
+            var parameters = new LinqList<Type>(parameterTypes);
             if(!method.IsStatic)
             {
                 var declaring = method.DeclaringType;
@@ -772,7 +772,7 @@ namespace Sigil.Impl
             Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = paras.ToArray() });
         }
 
-        public void EmitCall(OpCode op, MethodInfo method, Type[] arglist)
+        public void EmitCall(OpCode op, MethodInfo method, IEnumerable<Type> parameterTypes, Type[] arglist)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));
 
@@ -790,7 +790,7 @@ namespace Sigil.Impl
                 }
             );
 
-            var parameters = ((LinqArray<ParameterInfo>)method.GetParameters()).Select(p => p.ParameterType).ToList();
+            var parameters = new LinqList<Type>(parameterTypes);
             if (!method.IsStatic)
             {
                 var declaring = method.DeclaringType;

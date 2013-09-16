@@ -376,7 +376,9 @@ namespace SigilTests
 
         class _ByRef
         {
+#pragma warning disable 0649
             public int Foo;
+#pragma warning restore 0649
         }
 
         [TestMethod]

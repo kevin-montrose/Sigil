@@ -1001,17 +1001,17 @@ namespace Sigil
             IL.Emit(instr, param, out update);
         }
 
-        private void UpdateState(OpCode instr, MethodInfo method, TransitionWrapper transitions, bool firstParamIsThis = false, Type[] arglist = null)
+        private void UpdateState(OpCode instr, MethodInfo method, IEnumerable<Type> parameterTypes, TransitionWrapper transitions, bool firstParamIsThis = false, Type[] arglist = null)
         {
             UpdateStackAndInstrStream(instr, transitions, firstParamIsThis);
 
             if (arglist == null)
             {
-                IL.Emit(instr, method);
+                IL.Emit(instr, method, parameterTypes);
             }
             else
             {
-                IL.EmitCall(instr, method, arglist);
+                IL.EmitCall(instr, method, parameterTypes, arglist);
             }
         }
 

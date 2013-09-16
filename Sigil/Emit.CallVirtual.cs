@@ -81,7 +81,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Callvirt, method, Wrap(transitions, "CallVirtual"), arglist: arglist);
+            UpdateState(OpCodes.Callvirt, method, ((LinqArray<ParameterInfo>)method.GetParameters()).Select(s => s.ParameterType).AsEnumerable(), Wrap(transitions, "CallVirtual"), arglist: arglist);
 
             return this;
         }

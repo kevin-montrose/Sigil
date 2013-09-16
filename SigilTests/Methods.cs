@@ -87,7 +87,10 @@ namespace SigilTests
 
             e1.Return();
 
-            e1.CreateMethod();
+            string instrs;
+            e1.CreateMethod(out instrs);
+
+            Assert.AreEqual("", instrs);
 
             var type = t.CreateType();
             var recur = type.GetMethod("Recursive", BindingFlags.Public | BindingFlags.Static);

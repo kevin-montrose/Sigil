@@ -164,7 +164,7 @@ namespace Sigil
                 throw new ArgumentNullException("method");
             }
 
-            UpdateState(OpCodes.Ldtoken, method, Wrap(StackTransition.Push<RuntimeMethodHandle>(), "LoadConstant"));
+            UpdateState(OpCodes.Ldtoken, method, Type.EmptyTypes, Wrap(StackTransition.Push<RuntimeMethodHandle>(), "LoadConstant"));
 
             return this;
         }
