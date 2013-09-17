@@ -523,7 +523,9 @@ namespace Sigil.Impl
                         il.Emit(op, method);
                     }
 
-                    log.AppendLine(op + " " + method); 
+                    var mtdString = method is MethodBuilder ? method.Name : method.ToString();
+
+                    log.AppendLine(op + " " + mtdString); 
                 }
             );
 
@@ -786,7 +788,9 @@ namespace Sigil.Impl
                         il.EmitCall(op, method, arglist);
                     }
 
-                    log.AppendLine(op + " " + method + " __arglist(" + Join(", ", arglist) + ")");
+                    var mtdString = method is MethodBuilder ? method.Name : method.ToString();
+
+                    log.AppendLine(op + " " + mtdString + " __arglist(" + Join(", ", arglist) + ")");
                 }
             );
 

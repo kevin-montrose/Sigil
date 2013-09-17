@@ -126,26 +126,7 @@ namespace Sigil
             AllowsUnverifiableCIL = allowUnverifiable;
 
             ReturnType = TypeOnStack.Get(returnType);
-            ParameterTypes = 
-                LinqAlternative.Select(
-                    parameterTypes,
-                    type =>
-                    {
-                        // All 32-bit ints on the stack
-                        if(type == typeof(byte) || type == typeof(sbyte) || type == typeof(short) || type == typeof(ushort) || type == typeof(uint))
-                        {
-                            type = typeof(int);
-                        }
-
-                        // Just a 64-bit int on the stack
-                        if(type == typeof(ulong))
-                        {
-                            type = typeof(long);
-                        }
-
-                        return type;
-                    }
-                ).ToArray();
+            ParameterTypes = parameterTypes;
 
             IL = new BufferedILGenerator<DelegateType>();
             

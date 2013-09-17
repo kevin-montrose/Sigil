@@ -90,7 +90,7 @@ namespace SigilTests
             string instrs;
             e1.CreateMethod(out instrs);
 
-            Assert.AreEqual("", instrs);
+            Assert.AreEqual("ldarg.0\r\nldc.i4.0\r\nbne.un.s continue\r\nldc.i4.1\r\nret\r\n\r\ncontinue:\r\nldarg.0\r\ndup\r\nldc.i4.m1\r\nadd\r\ncall Recursive\r\nmul\r\nret\r\n", instrs);
 
             var type = t.CreateType();
             var recur = type.GetMethod("Recursive", BindingFlags.Public | BindingFlags.Static);
