@@ -111,6 +111,8 @@ namespace Sigil.Impl
                 throw new InvalidOperationException("Sigil does not currently support generic types; found " + type);
             }
 
+            if (type == typeof(char)) type = typeof(ushort);
+
             var ret = TypeCache.Get(type);
 
             return
