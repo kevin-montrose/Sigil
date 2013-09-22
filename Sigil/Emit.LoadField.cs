@@ -43,11 +43,23 @@ namespace Sigil
                     UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, Wrap(StackTransition.None(), "LoadField"));
                 }
 
-                var transitions =
-                    new[]
-                    {
-                        new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType })
-                    };
+                StackTransition[] transitions;
+                if (field.DeclaringType.IsValueType)
+                {
+                    transitions =
+                        new[]
+                        {
+                            new StackTransition(new [] { field.DeclaringType.MakePointerType() }, new [] { field.FieldType })
+                        };
+                }
+                else
+                {
+                    transitions =
+                        new[]
+                        {
+                            new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType })
+                        };
+                }
 
                 UpdateState(OpCodes.Ldfld, field, Wrap(transitions, "LoadField"));
             }

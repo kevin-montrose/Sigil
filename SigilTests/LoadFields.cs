@@ -40,5 +40,23 @@ namespace SigilTests
 
             Assert.AreEqual(31415926, d2());
         }
+
+        public struct B
+        {
+            public int X;
+        }
+
+        [TestMethod]
+        public void ValueType()
+        {
+            var e1 = Emit<Func<B, int>>.NewDynamicMethod("E1");
+            e1.LoadArgumentAddress(0);
+            e1.LoadField(typeof(B).GetField("X"));
+            e1.Return();
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual(255, d1(new B { X = 255 }));
+        }
     }
 }
