@@ -49,6 +49,7 @@ namespace Sigil
                     transitions =
                         new[]
                         {
+                            new StackTransition(new [] { field.DeclaringType.MakePointerType() }, new [] { field.FieldType }),
                             new StackTransition(new [] { field.DeclaringType.MakePointerType() }, new [] { field.FieldType })
                         };
                 }
