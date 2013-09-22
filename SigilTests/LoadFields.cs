@@ -57,6 +57,15 @@ namespace SigilTests
             var d1 = e1.CreateDelegate();
 
             Assert.AreEqual(255, d1(new B { X = 255 }));
+
+            var e2 = Emit<Func<B, int>>.NewDynamicMethod("E2");
+            e2.LoadArgument(0);
+            e2.LoadField(typeof(B).GetField("X"));
+            e2.Return();
+
+            var d2 = e2.CreateDelegate();
+
+            Assert.AreEqual(255, d1(new B { X = 255 }));
         }
     }
 }
