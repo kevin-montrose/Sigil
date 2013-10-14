@@ -141,7 +141,7 @@ namespace Sigil
         /// </summary>
         private void Validate()
         {
-            var tracer = new ReturnTracer(Branches, Marks, Returns);
+            var tracer = new ReturnTracer(Branches, Marks, Returns, Throws);
 
             var result = tracer.Verify();
             if (!result.IsSuccess)

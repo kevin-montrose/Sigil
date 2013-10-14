@@ -185,6 +185,14 @@ namespace Sigil.Impl
             }
         }
 
+        public VerificationResult Throw()
+        {
+            EmptyCurrentScope();
+            MarkCreatesNewVerifier = true;
+
+            return VerificationResult.Successful();
+        }
+
         public VerificationResult Return()
         {
             EmptyCurrentScope();

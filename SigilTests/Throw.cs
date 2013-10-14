@@ -18,7 +18,6 @@ namespace SigilTests
             e1.LoadConstant("Hello!");
             e1.NewObject<Exception, string>();
             e1.Throw();
-            e1.Return();
 
             var d1 = e1.CreateDelegate();
 

@@ -14,6 +14,17 @@ namespace Sigil
         public Emit<DelegateType> Throw()
         {
             UpdateState(OpCodes.Throw, Wrap(StackTransition.Pop<Exception>(), "Throw"));
+            UpdateState(Wrap(new[] { new StackTransition(new[] { typeof(PopAllType) }, Type.EmptyTypes) }, "Throw"));
+
+            Throws.Add(IL.Index);
+
+            MustMark = true;
+
+            var verify = CurrentVerifiers.Throw();
+            if (!verify.Success)
+            {
+                throw new SigilVerificationException("Throw", verify, IL.Instructions(AllLocals));
+            }
 
             return this;
         }

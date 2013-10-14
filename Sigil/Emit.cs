@@ -42,6 +42,7 @@ namespace Sigil
         private LinqList<SigilTuple<OpCode, Label, int>> Branches;
         private LinqDictionary<Label, int> Marks;
         private LinqList<int> Returns;
+        private LinqList<int> Throws;
 
         private LinqDictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>> BranchPatches;
 
@@ -141,6 +142,7 @@ namespace Sigil
             Branches = new LinqList<SigilTuple<OpCode, Label, int>>();
             Marks = new LinqDictionary<Label, int>();
             Returns = new LinqList<int>();
+            Throws = new LinqList<int>();
 
             BranchPatches = new LinqDictionary<int, SigilTuple<Label, UpdateOpCodeDelegate, OpCode>>();
 

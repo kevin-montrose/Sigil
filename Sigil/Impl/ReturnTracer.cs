@@ -95,12 +95,14 @@ namespace Sigil.Impl
         private LinqList<SigilTuple<OpCode, Label, int>> Branches;
         private LinqDictionary<Label, int> Marks;
         private LinqList<int> Returns;
+        private LinqList<int> Throws;
 
-        public ReturnTracer(LinqList<SigilTuple<OpCode, Label, int>> branches, LinqDictionary<Label, int> marks, LinqList<int> returns) 
+        public ReturnTracer(LinqList<SigilTuple<OpCode, Label, int>> branches, LinqDictionary<Label, int> marks, LinqList<int> returns, LinqList<int> throws) 
         {
             Branches = branches;
             Marks = marks;
             Returns = returns;
+            Throws = throws;
         }
 
         private static bool IsUnconditionalBranch(OpCode op)
@@ -124,8 +126,15 @@ namespace Sigil.Impl
 
             var nextBranches = Branches.Where(b => b.Item3 >= startAt).GroupBy(g => g.Item3).OrderBy(x => x.Key).FirstOrDefault();
             var orReturn = Returns.Where(ix => ix >= startAt && (nextBranches != null ? ix < nextBranches.Key : true)).Count();
+            var orThrow = Throws.Where(ix => ix >= startAt && (nextBranches != null ? ix < nextBranches.Key : true)).Count();
 
             if (orReturn != 0)
+            {
+                Cache[startAt] = cached = ReturnTracerResult.Success();
+                return cached;
+            }
+
+            if (orThrow != 0)
             {
                 Cache[startAt] = cached = ReturnTracerResult.Success();
                 return cached;
