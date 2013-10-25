@@ -17,6 +17,17 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Rethrow, Wrap(StackTransition.None(), "ReThrow"));
+            UpdateState(Wrap(new[] { new StackTransition(new[] { typeof(PopAllType) }, Type.EmptyTypes) }, "ReThrow"));
+
+            Throws.Add(IL.Index);
+
+            MustMark = true;
+
+            var verify = CurrentVerifiers.ReThrow();
+            if (!verify.Success)
+            {
+                throw new SigilVerificationException("ReThrow", verify, IL.Instructions(AllLocals));
+            }
 
             return this;
         }

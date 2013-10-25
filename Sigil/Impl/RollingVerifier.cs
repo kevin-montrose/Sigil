@@ -185,6 +185,11 @@ namespace Sigil.Impl
             }
         }
 
+        public VerificationResult ReThrow()
+        {
+            return Throw();
+        }
+
         public VerificationResult Throw()
         {
             EmptyCurrentScope();

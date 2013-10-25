@@ -25,7 +25,6 @@ namespace SigilTests
             var t = e1.BeginExceptionBlock();
             e1.Call(m);
             var c = e1.BeginCatchAllBlock(t);
-            e1.Pop();
             e1.ReThrow();
             e1.EndCatchBlock(c);
             e1.EndExceptionBlock(t);
