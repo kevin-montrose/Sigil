@@ -100,7 +100,7 @@ namespace SigilTests
                     del();
                     Assert.Fail();
                 }
-                catch (Exception e)
+                catch (Sigil.SigilVerificationException e)
                 {
                     Assert.AreEqual("Add expects 2 values on the stack", e.Message);
                 }

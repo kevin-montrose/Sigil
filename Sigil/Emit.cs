@@ -105,16 +105,11 @@ namespace Sigil
         /// </summary>
         public LabelLookup Labels { get; private set; }
 
-       //private VerifiableTracker CurrentVerifier;
         private RollingVerifier CurrentVerifiers;
 
         private bool MustMark;
 
         private LinqList<int> ElidableCasts;
-
-        // Stores the stack during a BranchIf*; knowing that when the label is marked it'll need to be verified
-        private LinqDictionary<Label, LinqList<VerifiableTracker>> StateAtConditionalBranchToLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
-        private LinqDictionary<Label, VerifiableTracker> StateAtLabel = new LinqDictionary<Label, VerifiableTracker>();
 
         private LinqDictionary<int, LinqList<TypeOnStack>> TypesProducedAtIndex;
 

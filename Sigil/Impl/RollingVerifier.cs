@@ -72,7 +72,7 @@ namespace Sigil.Impl
             }
         }
 
-        public VerificationResult Mark(Label label)
+        public virtual VerificationResult Mark(Label label)
         {
             if (CurrentlyInScope.Count > 0)
             {
@@ -185,12 +185,12 @@ namespace Sigil.Impl
             }
         }
 
-        public VerificationResult ReThrow()
+        public virtual VerificationResult ReThrow()
         {
             return Throw();
         }
 
-        public VerificationResult Throw()
+        public virtual VerificationResult Throw()
         {
             EmptyCurrentScope();
             MarkCreatesNewVerifier = true;
@@ -198,7 +198,7 @@ namespace Sigil.Impl
             return VerificationResult.Successful();
         }
 
-        public VerificationResult Return()
+        public virtual VerificationResult Return()
         {
             EmptyCurrentScope();
             MarkCreatesNewVerifier = true;
@@ -206,7 +206,7 @@ namespace Sigil.Impl
             return VerificationResult.Successful();
         }
 
-        public VerificationResult UnconditionalBranch(Label to)
+        public virtual VerificationResult UnconditionalBranch(Label to)
         {
             var intoVerified = VerifyBranchInto(to);
             if (intoVerified != null)
@@ -243,7 +243,7 @@ namespace Sigil.Impl
             return VerificationResult.Successful();
         }
 
-        public VerificationResult ConditionalBranch(params Label[] toLabels)
+        public virtual VerificationResult ConditionalBranch(params Label[] toLabels)
         {
             foreach(var to in toLabels)
             {
@@ -441,7 +441,7 @@ namespace Sigil.Impl
             return ret;
         }
 
-        public VerificationResult Transition(InstructionAndTransitions legalTransitions)
+        public virtual VerificationResult Transition(InstructionAndTransitions legalTransitions)
         {
             var stacks = new LinqList<LinqStack<LinqList<TypeOnStack>>>();
 
@@ -461,7 +461,7 @@ namespace Sigil.Impl
             return last;
         }
 
-        public LinqStack<TypeOnStack> InferStack(int ofDepth)
+        public virtual LinqStack<TypeOnStack> InferStack(int ofDepth)
         {
             return CurrentlyInScope.First().InferStack(ofDepth);
         }

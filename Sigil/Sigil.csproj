@@ -218,6 +218,7 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Impl\RollingVerifier.NoVerification.cs" />
     <Compile Include="NonGeneric\Emit.ArgumentList.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>

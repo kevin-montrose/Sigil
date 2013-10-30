@@ -6,7 +6,7 @@ namespace Sigil.Impl
     {
         public bool Success { get; private set; }
         public LinqStack<LinqList<TypeOnStack>> Stack { get; private set; }
-        public int StackSize { get { return Stack.Count; } }
+        public int StackSize { get { return Stack != null ? Stack.Count : 0; } }
 
         public VerifiableTracker Verifier { get; private set; }
 
