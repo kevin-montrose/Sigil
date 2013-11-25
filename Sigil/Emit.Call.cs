@@ -70,7 +70,8 @@ namespace Sigil
                 throw new ArgumentNullException("emit");
             }
 
-            if (emit.MtdBuilder == null)
+            MethodInfo methodInfo = emit.MtdBuilder ?? (MethodInfo)emit.DynMethod;
+            if (methodInfo == null)
             {
                 throw new InvalidOperationException("emit must be building a method");
             }
@@ -91,16 +92,19 @@ namespace Sigil
             }
 
             // Instance methods expect this to preceed parameters
-            if (HasFlag(emit.CallingConventions, CallingConventions.HasThis))
+            var declaring = methodInfo.DeclaringType;
+            if (declaring != null)
             {
-                var declaring = emit.MtdBuilder.DeclaringType;
-
-                if (declaring.IsValueType)
+                if (HasFlag(emit.CallingConventions, CallingConventions.HasThis))
                 {
-                    declaring = declaring.MakePointerType();
-                }
 
-                expectedParams.Insert(0, TypeOnStack.Get(declaring));
+                    if (declaring.IsValueType)
+                    {
+                        declaring = declaring.MakePointerType();
+                    }
+
+                    expectedParams.Insert(0, TypeOnStack.Get(declaring));
+                }
             }
 
             var resultType = emit.ReturnType == TypeOnStack.Get(typeof(void)) ? null : emit.ReturnType;
@@ -127,7 +131,7 @@ namespace Sigil
                     };
             }
 
-            UpdateState(OpCodes.Call, emit.MtdBuilder, emit.ParameterTypes, Wrap(transitions, "Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
+            UpdateState(OpCodes.Call, methodInfo, emit.ParameterTypes, Wrap(transitions, "Call"), firstParamIsThis: firstParamIsThis, arglist: arglist);
 
             return this;
         }
