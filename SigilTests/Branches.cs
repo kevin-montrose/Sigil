@@ -31,6 +31,8 @@ namespace SigilTests
             e1.Return();
             e1.MarkLabel(l1);
             e1.Branch(l3);
+
+            // simply getting here w/o throwing an exception counts as "passing"
         }
 
         [TestMethod]
