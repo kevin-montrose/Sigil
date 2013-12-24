@@ -72,12 +72,28 @@ namespace Sigil
         /// </summary>
         public bool AllowsUnverifiableCIL { get; private set; }
 
+        private int _MaxStackSize;
         /// <summary>
         /// Returns the maxmimum number of items on the stack for the IL stream created with the current emit.
         /// 
         /// This is not the maximum that *can be placed*, but the maximum that actually are.
         /// </summary>
-        public int MaxStackSize { get; private set; }
+        public int MaxStackSize
+        {
+            get
+            {
+                if (!IsVerifying)
+                {
+                    throw new InvalidOperationException("MaxStackSize is not available on non-verifying Emits");
+                }
+
+                return _MaxStackSize;
+            }
+            private set
+            {
+                _MaxStackSize = value;
+            }
+        }
 
         private LinqList<Local> FreedLocals { get; set; }
 
@@ -106,11 +122,15 @@ namespace Sigil
 
         private LinqDictionary<int, LinqList<TypeOnStack>> TypesProducedAtIndex;
 
+        private bool IsVerifying;
+
         private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, bool doVerify)
         {
             CallingConventions = callConvention;
 
             AllowsUnverifiableCIL = allowUnverifiable;
+
+            IsVerifying = doVerify;
 
             ReturnType = TypeOnStack.Get(returnType);
             ParameterTypes = parameterTypes;
@@ -155,7 +175,7 @@ namespace Sigil
             TypesProducedAtIndex = new LinqDictionary<int, LinqList<TypeOnStack>>();
 
             var start = DefineLabel("__start");
-            CurrentVerifiers = doVerify ? new RollingVerifier(start) : new RollingVerifierWithoutVerification(start);
+            CurrentVerifiers = IsVerifying ? new RollingVerifier(start) : new RollingVerifierWithoutVerification(start);
             MarkLabel(start);
         }
 
@@ -501,7 +521,7 @@ namespace Sigil
         /// </summary>
         public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null, bool doVerify = true)
         {
-            return DisassemblerDynamicMethod(name: name, module: module, doVerify: true);
+            return DisassemblerDynamicMethod(name: name, module: module, doVerify: doVerify);
         }
 
         internal static Emit<DelegateType> DisassemblerDynamicMethod(Type[] parameters = null, string name = null, ModuleBuilder module = null, bool doVerify = true)
@@ -871,7 +891,10 @@ namespace Sigil
                 throw new SigilVerificationException(transitions.MethodName, verifyRes, IL.Instructions(AllLocals));
             }
 
-            MaxStackSize = Math.Max(verifyRes.StackSize, MaxStackSize);
+            if (IsVerifying)
+            {
+                MaxStackSize = Math.Max(verifyRes.StackSize, MaxStackSize);
+            }
         }
 
         private void UpdateState(TransitionWrapper transitions)

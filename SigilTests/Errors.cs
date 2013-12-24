@@ -4865,5 +4865,21 @@ namespace SigilTests
                 Assert.AreEqual("Add expected a by ref, double, float, int, long, native int, or pointer; found System.String", e.Message);
             }
         }
+
+        [TestMethod]
+        public void MaxStackNonVerifying()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1", doVerify: false);
+
+            try
+            {
+                Assert.AreEqual(0, e1.MaxStackSize);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (InvalidOperationException e)
+            {
+                Assert.AreEqual("MaxStackSize is not available on non-verifying Emits", e.Message);
+            }
+        }
     }
 }

@@ -19,7 +19,8 @@ namespace Sigil.Impl
 
         public override LinqStack<TypeOnStack> InferStack(int ofDepth)
         {
-            return new LinqStack<TypeOnStack>();
+            //return new LinqStack<TypeOnStack>();
+            return null;
         }
 
         public override VerificationResult Mark(Label label)
