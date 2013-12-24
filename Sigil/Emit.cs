@@ -106,7 +106,7 @@ namespace Sigil
 
         private LinqDictionary<int, LinqList<TypeOnStack>> TypesProducedAtIndex;
 
-        private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
+        private Emit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, bool doVerify)
         {
             CallingConventions = callConvention;
 
@@ -155,13 +155,13 @@ namespace Sigil
             TypesProducedAtIndex = new LinqDictionary<int, LinqList<TypeOnStack>>();
 
             var start = DefineLabel("__start");
-            CurrentVerifiers = new RollingVerifier(start);
+            CurrentVerifiers = doVerify ? new RollingVerifier(start) : new RollingVerifierWithoutVerification(start);
             MarkLabel(start);
         }
 
-        internal static Emit<NonGenericPlaceholderDelegate> MakeNonGenericEmit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable)
+        internal static Emit<NonGenericPlaceholderDelegate> MakeNonGenericEmit(CallingConventions callConvention, Type returnType, Type[] parameterTypes, bool allowUnverifiable, bool doVerify)
         {
-            return new Emit<NonGenericPlaceholderDelegate>(callConvention, returnType, parameterTypes, allowUnverifiable);
+            return new Emit<NonGenericPlaceholderDelegate>(callConvention, returnType, parameterTypes, allowUnverifiable, doVerify);
         }
 
         /// <summary>
@@ -495,13 +495,16 @@ namespace Sigil
         /// If name is not defined, a sane default is generated.
         /// 
         /// If module is not defined, a module with the same trust as the executing assembly is used instead.
+        /// 
+        /// By default, Sigil runs a rolling verification of the delegate being built.  Pass doVerify as false
+        /// to disable all verification.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null)
+        public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null, bool doVerify = true)
         {
-            return DisassemblerDynamicMethod(name: name, module: module);
+            return DisassemblerDynamicMethod(name: name, module: module, doVerify: true);
         }
 
-        internal static Emit<DelegateType> DisassemblerDynamicMethod(Type[] parameters = null, string name = null, ModuleBuilder module = null)
+        internal static Emit<DelegateType> DisassemblerDynamicMethod(Type[] parameters = null, string name = null, ModuleBuilder module = null, bool doVerify = true)
         {
             module = module ?? Module;
 
@@ -517,7 +520,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, module, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module));
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(module), doVerify);
             ret.DynMethod = dynMethod;
 
             return ret;
@@ -530,7 +533,7 @@ namespace Sigil
         /// 
         /// If owner is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null)
+        public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null, bool doVerify = true)
         {
             if (owner == null)
             {
@@ -549,7 +552,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, owner, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module));
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module), doVerify);
             ret.DynMethod = dynMethod;
 
             return ret;
@@ -590,7 +593,7 @@ namespace Sigil
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, bool doVerify = true)
         {
             if (type == null)
             {
@@ -623,7 +626,7 @@ namespace Sigil
                 parameterTypes = pList.ToArray();
             }
 
-            var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode);
+            var ret = new Emit<DelegateType>(callingConvention, returnType, parameterTypes, allowUnverifiableCode, doVerify);
             ret.MtdBuilder = methodBuilder;
 
             return ret;
@@ -634,9 +637,9 @@ namespace Sigil
         /// 
         /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
         /// </summary>
-        public static Emit<DelegateType> BuildStaticMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildStaticMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, bool doVerify = true)
         {
-            return BuildMethod(type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode);
+            return BuildMethod(type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode, doVerify);
         }
 
         /// <summary>
@@ -644,9 +647,9 @@ namespace Sigil
         /// 
         /// Equivalent to calling to BuildMethod, but with CallingConventions.HasThis.
         /// </summary>
-        public static Emit<DelegateType> BuildInstanceMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildInstanceMethod(TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, bool doVerify = true)
         {
-            return BuildMethod(type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode);
+            return BuildMethod(type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode, doVerify);
         }
 
         /// <summary>
@@ -656,7 +659,7 @@ namespace Sigil
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false)
+        public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, bool doVerify = true)
         {
             if (type == null)
             {
@@ -691,7 +694,7 @@ namespace Sigil
 
             parameterTypes = pList.ToArray();
 
-            var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode);
+            var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, doVerify);
             ret.ConstrBuilder = constructorBuilder;
 
             return ret;
