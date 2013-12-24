@@ -310,5 +310,59 @@ namespace SigilTests
 
             Assert.AreEqual(123 + 456 + 7, d1("123", 456, 7.89));
         }
+
+        [TestMethod]
+        public void DynamicRecursive()
+        {
+            var impl = Emit<Func<int,int>>.NewDynamicMethod("factorial");
+            var lbl = impl.DefineLabel();
+            impl.LoadArgument(0);
+            impl.BranchIfTrue(lbl);
+            impl.LoadConstant(0);
+            impl.Return();
+            impl.MarkLabel(lbl);
+            impl.LoadArgument(0);
+            impl.LoadArgument(0);
+            impl.LoadConstant(1);
+            impl.Subtract();
+            impl.Call(impl);
+            impl.Add();
+            impl.Return();
+
+            string instr;
+            var del = impl.CreateDelegate(out instr);
+            Assert.AreEqual(del(1), 1);
+            Assert.AreEqual(del(2), 3);
+            Assert.AreEqual(del(3), 6);
+            Assert.IsFalse(instr.Contains("tail."));
+        }
+
+        [TestMethod]
+        public void DynamicRecursiveTail()
+        {
+            var impl = Emit<Func<int, int, int>>.NewDynamicMethod("factorialImpl");
+            var @else = impl.DefineLabel();
+
+            impl.LoadArgument(0);     // if(x0 != 0) return x1
+            impl.BranchIfTrue(@else);
+            impl.LoadArgument(1);
+            impl.Return();
+            impl.MarkLabel(@else);
+            impl.LoadArgument(0);     // return FactorialImpl(x0 - 1, x0 + x1)
+            impl.LoadConstant(1);
+            impl.Subtract();
+            impl.LoadArgument(0);
+            impl.LoadArgument(1);
+            impl.Add();
+            impl.Call(impl);          // <- tail call
+            impl.Return();
+
+            string instr;
+            var del = impl.CreateDelegate(out instr);
+            Assert.AreEqual(del(1, 0), 1);
+            Assert.AreEqual(del(2, 0), 3);
+            Assert.AreEqual(del(3, 0), 6);
+            Assert.IsTrue(instr.Contains("tail."));
+        }
     }
 }

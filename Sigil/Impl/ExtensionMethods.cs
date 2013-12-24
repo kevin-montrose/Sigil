@@ -74,7 +74,7 @@ namespace Sigil.Impl
         {
             // wildcards match *everything*
             if (type1 == TypeOnStack.Get<WildcardType>() || type2 == TypeOnStack.Get<WildcardType>()) return true;
-            
+
             if (type1.IsArray && type2.IsArray)
             {
                 if (type1.Type.GetArrayRank() == type2.Type.GetArrayRank())
@@ -122,11 +122,13 @@ namespace Sigil.Impl
             var t1 = type1.Type;
             var t2 = type2.Type;
 
-            t1 = Alias(t1);
-            t2 = Alias(t2);
 
             // The null type can be assigned to any reference type
+            if (t1 == typeof(NullType) && !t2.IsValueType) return true;
             if (t2 == typeof(NullType) && !t1.IsValueType) return true;
+
+            t1 = Alias(t1);
+            t2 = Alias(t2);
 
             return ReallyIsAssignableFrom(t1, t2);
         }
