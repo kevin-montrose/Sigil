@@ -32,21 +32,6 @@ namespace SigilTests
         }
 
         [TestMethod]
-        public void BadValidationOptions()
-        {
-            try
-            {
-                Emit<Action>.NewDynamicMethod(validationOptions: (ValidationOptions)123);
-
-                Assert.Fail();
-            }
-            catch (ArgumentException e)
-            {
-                Assert.AreEqual("validationOptions contained unknown flags, found 123", e.Message);
-            }
-        }
-
-        [TestMethod]
         public void BadNonTerminalReturn()
         {
             var e1 = Emit<Action>.NewDynamicMethod();

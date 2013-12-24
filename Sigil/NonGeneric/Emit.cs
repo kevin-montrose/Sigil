@@ -70,7 +70,7 @@ namespace Sigil.NonGeneric
             Shorthand = new EmitShorthand(this);
         }
 
-        private static void ValidateReturnAndParameterTypes(Type returnType, Type[] parameterTypes, ValidationOptions validationOptions)
+        private static void ValidateReturnAndParameterTypes(Type returnType, Type[] parameterTypes)
         {
             if (returnType == null)
             {
@@ -90,11 +90,6 @@ namespace Sigil.NonGeneric
                     throw new ArgumentException("parameterTypes contains a null reference at index " + i);
                 }
             }
-
-            if ((validationOptions & ~ValidationOptions.All) != 0)
-            {
-                throw new ArgumentException("validationOptions contained unknown flags, found " + validationOptions);
-            }
         }
 
         /// <summary>
@@ -104,13 +99,13 @@ namespace Sigil.NonGeneric
         /// 
         /// If module is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit NewDynamicMethod(Type returnType, Type[] parameterTypes, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
+        public static Emit NewDynamicMethod(Type returnType, Type[] parameterTypes, string name = null, ModuleBuilder module = null)
         {
-            ValidateReturnAndParameterTypes(returnType, parameterTypes, validationOptions);
+            ValidateReturnAndParameterTypes(returnType, parameterTypes);
 
             module = module ?? Emit<NonGenericPlaceholderDelegate>.Module;
 
-            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module), validationOptions);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module));
 
             var ret = new Emit(innerEmit, isDynamicMethod: true, isMethod: false, isConstructor: false);
             ret.Module = module;
@@ -264,7 +259,7 @@ namespace Sigil.NonGeneric
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit BuildMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        public static Emit BuildMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false)
         {
             if (type == null)
             {
@@ -278,7 +273,7 @@ namespace Sigil.NonGeneric
 
             Emit<NonGenericPlaceholderDelegate>.CheckAttributesAndConventions(attributes, callingConvention);
 
-            ValidateReturnAndParameterTypes(returnType, parameterTypes, validationOptions);
+            ValidateReturnAndParameterTypes(returnType, parameterTypes);
 
             var passedParameterTypes = parameterTypes;
 
@@ -291,7 +286,7 @@ namespace Sigil.NonGeneric
                 parameterTypes = pList.ToArray();
             }
 
-            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, returnType, parameterTypes, allowUnverifiableCode, validationOptions);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, returnType, parameterTypes, allowUnverifiableCode);
             
             var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: true, isConstructor: false);
             ret.Name = name;
@@ -309,9 +304,9 @@ namespace Sigil.NonGeneric
         /// 
         /// Equivalent to calling to BuildMethod, but with CallingConventions.HasThis.
         /// </summary>
-        public static Emit BuildInstanceMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        public static Emit BuildInstanceMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
         {
-            return BuildMethod(returnType, parameterTypes, type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode, validationOptions);
+            return BuildMethod(returnType, parameterTypes, type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode);
         }
 
         /// <summary>
@@ -319,9 +314,9 @@ namespace Sigil.NonGeneric
         /// 
         /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
         /// </summary>
-        public static Emit BuildStaticMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        public static Emit BuildStaticMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
         {
-            return BuildMethod(returnType, parameterTypes, type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode, validationOptions);
+            return BuildMethod(returnType, parameterTypes, type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode);
         }
 
         /// <summary>
@@ -385,7 +380,7 @@ namespace Sigil.NonGeneric
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit BuildConstructor(Type[] parameterTypes, TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, ValidationOptions validationOptions = ValidationOptions.All)
+        public static Emit BuildConstructor(Type[] parameterTypes, TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false)
         {
             if (type == null)
             {
@@ -399,7 +394,7 @@ namespace Sigil.NonGeneric
                 throw new ArgumentException("Constructors always have a this reference");
             }
 
-            ValidateReturnAndParameterTypes(type, parameterTypes, validationOptions);
+            ValidateReturnAndParameterTypes(type, parameterTypes);
 
             var passedParameters = parameterTypes;
 
@@ -409,7 +404,7 @@ namespace Sigil.NonGeneric
 
             parameterTypes = pList.ToArray();
 
-            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, validationOptions);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode);
 
             var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: false, isConstructor: true);
             ret.ReturnType = type;

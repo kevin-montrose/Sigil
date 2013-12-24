@@ -218,7 +218,9 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
-    <Compile Include="Impl\RollingVerifier.NoVerification.cs" />
+    <Compile Include="Impl\RollingVerifier.NoVerification.cs">
+      <DependentUpon>RollingVerifier.cs</DependentUpon>
+    </Compile>
     <Compile Include="NonGeneric\Emit.ArgumentList.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
@@ -452,7 +454,6 @@
     <Compile Include="Parameter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SigilVerificationException.cs" />
-    <Compile Include="ValidationOptions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Sigil.snk" />

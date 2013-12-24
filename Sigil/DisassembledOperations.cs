@@ -132,7 +132,7 @@ namespace Sigil
             this[i].Apply(emit);
         }
 
-        private Emit<DelegateType> EmitFrom(int from, int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
+        private Emit<DelegateType> EmitFrom(int from, int length, string name = null, ModuleBuilder module = null)
         {
             if (from < 0 || from > Operations.Count)
             {
@@ -153,8 +153,7 @@ namespace Sigil
                 Emit<DelegateType>.DisassemblerDynamicMethod(
                     LinqAlternative.Select(Parameters, p => p.ParameterType).ToArray(),
                     name,
-                    module,
-                    validationOptions
+                    module
                 );
 
             for (var i = 0; i < length; i++)
@@ -165,7 +164,7 @@ namespace Sigil
             return e1;
         }
 
-        private Emit<DelegateType> Emit(int length, string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
+        private Emit<DelegateType> Emit(int length, string name = null, ModuleBuilder module = null)
         {
             if (!CanEmit)
             {
@@ -177,15 +176,15 @@ namespace Sigil
                 throw new InvalidOperationException("length must be between 0 and "+Operations.Count+", inclusive; found "+length);
             }
 
-            return EmitFrom(0, length, name, module, validationOptions);
+            return EmitFrom(0, length, name, module);
         }
 
         /// <summary>
         /// Emits the disassembled instructions into a new Emit.
         /// </summary>
-        public Emit<DelegateType> EmitAll(string name = null, ModuleBuilder module = null, ValidationOptions validationOptions = ValidationOptions.All)
+        public Emit<DelegateType> EmitAll(string name = null, ModuleBuilder module = null)
         {
-            return Emit(this.Count, name, module, validationOptions);
+            return Emit(this.Count, name, module);
         }
 
         /// <summary>
