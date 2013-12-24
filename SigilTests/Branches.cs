@@ -14,6 +14,26 @@ namespace SigilTests
     public partial class Branches
     {
         [TestMethod]
+        public void ExpectingNullType()
+        {
+            var strLen = typeof(string).GetProperty("Length");
+            var e1 = Emit<Func<string, int>>.NewDynamicMethod();
+            var l1 = e1.DefineLabel();
+            var l2 = e1.DefineLabel();
+            var l3 = e1.DefineLabel();
+            e1.LoadNull();
+            e1.Branch(l1);
+            e1.MarkLabel(l2);
+            e1.LoadArgument(0);
+
+            e1.MarkLabel(l3);
+            e1.Call(strLen.GetMethod);
+            e1.Return();
+            e1.MarkLabel(l1);
+            e1.Branch(l3);
+        }
+
+        [TestMethod]
         public void Scan()
         {
             var terms = new[] { "hello", "world", "fizz", "buzz" };
