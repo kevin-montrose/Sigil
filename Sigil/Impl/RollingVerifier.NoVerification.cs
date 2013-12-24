@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Sigil.Impl
 {
@@ -19,7 +17,6 @@ namespace Sigil.Impl
 
         public override LinqStack<TypeOnStack> InferStack(int ofDepth)
         {
-            //return new LinqStack<TypeOnStack>();
             return null;
         }
 
