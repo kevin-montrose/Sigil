@@ -60,9 +60,9 @@ namespace Sigil.Impl
             var ret =
                 new VerifiableTracker(BeganAt, IsBaseless)
                 {
-                    StartingStack = /*IsBaseless ? */new LinqStack<LinqList<TypeOnStack>>(StartingStack.AsEnumerable()),// : new LinqStack<LinqList<TypeOnStack>>(),
+                    StartingStack = new LinqStack<LinqList<TypeOnStack>>(StartingStack.Reverse().AsEnumerable()),
                     Transitions = trans,
-                    CachedVerifyStack = canReuseCache ? new LinqStack<LinqList<TypeOnStack>>(CachedVerifyStack.AsEnumerable()) : null,
+                    CachedVerifyStack = canReuseCache ? new LinqStack<LinqList<TypeOnStack>>(CachedVerifyStack.Reverse().AsEnumerable()) : null,
                     CachedVerifyIndex = canReuseCache ? CachedVerifyIndex : null
                 };
 
@@ -361,7 +361,7 @@ namespace Sigil.Impl
                     MarkedLabelsAtTransitions = new LinqDictionary<Label,int>(MarkedLabelsAtTransitions),
                     BranchesAtTransitions = new LinqDictionary<Label,int>(BranchesAtTransitions),
                     Transitions = new LinqList<InstructionAndTransitions>(Transitions.AsEnumerable()),
-                    StartingStack = new LinqStack<LinqList<TypeOnStack>>(StartingStack)
+                    StartingStack = new LinqStack<LinqList<TypeOnStack>>(StartingStack.Reverse())
                 };
         }
 
