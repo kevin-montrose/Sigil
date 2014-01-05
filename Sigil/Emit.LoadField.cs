@@ -49,6 +49,7 @@ namespace Sigil
                     transitions =
                         new[]
                         {
+                            // This transition isn't really to spec... but it seems to work consistently in .NET soooo.... yeah
                             new StackTransition(new [] { field.DeclaringType }, new [] { field.FieldType }),
                             new StackTransition(new [] { field.DeclaringType.MakePointerType() }, new [] { field.FieldType })
                         };
