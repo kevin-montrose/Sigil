@@ -56,5 +56,34 @@ namespace SigilTests
                 Assert.AreEqual(12, x.Instance);
             }
         }
+
+        struct _ValueType
+        {
+            public string A;
+        }
+
+        [TestMethod]
+        public void ValueType()
+        {
+            var field = typeof(_ValueType).GetField("A");
+
+            var e1 = Emit<Func<_ValueType>>.NewDynamicMethod();
+            using (var loc = e1.DeclareLocal<_ValueType>())
+            {
+                e1.LoadLocalAddress(loc);           // _ValueType*
+                e1.InitializeObject<_ValueType>();  // --empty--
+                e1.LoadLocalAddress(loc);           // _ValueType*
+                e1.LoadConstant("hello world");     // _ValueType* string
+                e1.StoreField(field);               // --empty--
+                e1.LoadLocal(loc);                  // ValueType
+                e1.Return();                        // --empty--
+            }
+
+            var d1 = e1.CreateDelegate();
+
+            var x = d1();
+            Assert.AreEqual("hello world", x.A);
+            
+        }
     }
 }

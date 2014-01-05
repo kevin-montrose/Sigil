@@ -41,10 +41,16 @@ namespace Sigil
                     UpdateState(OpCodes.Unaligned, (byte)unaligned.Value, Wrap(StackTransition.None(), "StoreField"));
                 }
 
+                var onType = field.DeclaringType;
+                if (onType.IsValueType)
+                {
+                    onType = onType.MakePointerType();
+                }
+
                 var transitions =
                     new[]
                     {
-                        new StackTransition(new [] { field.FieldType, field.DeclaringType }, Type.EmptyTypes)
+                        new StackTransition(new [] { field.FieldType, onType }, Type.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stfld, field, Wrap(transitions, "StoreField"));
