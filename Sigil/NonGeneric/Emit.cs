@@ -99,13 +99,13 @@ namespace Sigil.NonGeneric
         /// 
         /// If module is not defined, a module with the same trust as the executing assembly is used instead.
         /// </summary>
-        public static Emit NewDynamicMethod(Type returnType, Type[] parameterTypes, string name = null, ModuleBuilder module = null, bool doVerify = true)
+        public static Emit NewDynamicMethod(Type returnType, Type[] parameterTypes, string name = null, ModuleBuilder module = null, bool doVerify = true, bool strictBranchVerification = false)
         {
             ValidateReturnAndParameterTypes(returnType, parameterTypes);
 
             module = module ?? Emit<NonGenericPlaceholderDelegate>.Module;
 
-            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module), doVerify);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, returnType, parameterTypes, Emit<NonGenericPlaceholderDelegate>.AllowsUnverifiableCode(module), doVerify, strictBranchVerification);
 
             var ret = new Emit(innerEmit, isDynamicMethod: true, isMethod: false, isConstructor: false);
             ret.Module = module;
@@ -259,7 +259,7 @@ namespace Sigil.NonGeneric
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit BuildMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, bool doVerify = true)
+        public static Emit BuildMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, bool doVerify = true, bool strictBranchVerification = false)
         {
             if (type == null)
             {
@@ -286,7 +286,7 @@ namespace Sigil.NonGeneric
                 parameterTypes = pList.ToArray();
             }
 
-            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, returnType, parameterTypes, allowUnverifiableCode, doVerify);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, returnType, parameterTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
             
             var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: true, isConstructor: false);
             ret.Name = name;
@@ -380,7 +380,7 @@ namespace Sigil.NonGeneric
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
         /// </summary>
-        public static Emit BuildConstructor(Type[] parameterTypes, TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, bool doVerify = true)
+        public static Emit BuildConstructor(Type[] parameterTypes, TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, bool doVerify = true, bool strictBranchVerification = false)
         {
             if (type == null)
             {
@@ -404,7 +404,7 @@ namespace Sigil.NonGeneric
 
             parameterTypes = pList.ToArray();
 
-            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, doVerify);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
 
             var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: false, isConstructor: true);
             ret.ReturnType = type;
