@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Sigil.xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -43,7 +45,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Sigil\**\*.cs" Exclude="..\Sigil\obj\**" />
+    <Compile Include="..\Sigil\*.cs" />
+    <Compile Include="..\Sigil\Impl\*.cs">
+      <Link>Impl\%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\Sigil\NonGeneric\*.cs">
+      <Link>NonGeneric\%(FileName)</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Sigil.snk" />

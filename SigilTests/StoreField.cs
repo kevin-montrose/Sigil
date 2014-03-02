@@ -59,7 +59,9 @@ namespace SigilTests
 
         struct _ValueType
         {
+#pragma warning disable 0649
             public string A;
+#pragma warning restore 0649
         }
 
         [TestMethod]
