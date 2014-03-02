@@ -38,7 +38,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Sigil.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Sigil\Properties\Sigil.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -55,7 +55,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Sigil.snk" />
+    <None Include="..\Sigil\Properties\*">
+      <Link>Properties\%(Filename)</Link>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
