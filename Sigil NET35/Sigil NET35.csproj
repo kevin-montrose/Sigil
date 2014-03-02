@@ -55,9 +55,12 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Sigil\Properties\*">
+    <None Include="..\Sigil\Properties\*.snk">
       <Link>Properties\%(Filename)</Link>
     </None>
+    <Compile Include="..\Sigil\Properties\*.cs">
+      <Link>Properties\%(Filename)</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
