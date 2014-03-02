@@ -316,9 +316,9 @@ namespace Sigil.NonGeneric
         /// 
         /// Equivalent to calling to BuildMethod, but with CallingConventions.HasThis.
         /// </summary>
-        public static Emit BuildInstanceMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        public static Emit BuildInstanceMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, bool doVerify = true, bool strictBranchVerification = false)
         {
-            return BuildMethod(returnType, parameterTypes, type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode);
+            return BuildMethod(returnType, parameterTypes, type, name, attributes, CallingConventions.HasThis, allowUnverifiableCode, doVerify, strictBranchVerification);
         }
 
         /// <summary>
@@ -326,9 +326,9 @@ namespace Sigil.NonGeneric
         /// 
         /// Equivalent to calling to BuildMethod, but with MethodAttributes.Static set and CallingConventions.Standard.
         /// </summary>
-        public static Emit BuildStaticMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false)
+        public static Emit BuildStaticMethod(Type returnType, Type[] parameterTypes, TypeBuilder type, string name, MethodAttributes attributes, bool allowUnverifiableCode = false, bool doVerify = true, bool strictBranchVerification = false)
         {
-            return BuildMethod(returnType, parameterTypes, type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode);
+            return BuildMethod(returnType, parameterTypes, type, name, attributes | MethodAttributes.Static, CallingConventions.Standard, allowUnverifiableCode, doVerify, strictBranchVerification);
         }
 
         /// <summary>
