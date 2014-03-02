@@ -17,7 +17,7 @@ namespace Sigil.Impl
 
         private bool MarkCreatesNewVerifier;
 
-        /// From the spec:
+        /// From the spec [see section - III.1.7.5 Backward branch constraints]:
         ///   In particular, if that single-pass analysis arrives at an instruction, call it location X, that 
         ///   immediately follows an unconditional branch, and where X is not the target of an earlier branch 
         ///   instruction, then the state of the evaluation stack at X, clearly, cannot be derived from existing 

@@ -519,8 +519,11 @@ namespace Sigil
         /// 
         /// If module is not defined, a module with the same trust as the executing assembly is used instead.
         /// 
-        /// By default, Sigil runs a rolling verification of the delegate being built.  Pass doVerify as false
-        /// to disable all verification.
+        /// If doVerify is false (default is true) Sigil will *not* throw an exception on invalid IL.  This is faster, but the benefits
+        /// of Sigil are reduced to "a nicer ILGenerator interface".
+        /// 
+        /// If strictBranchValidation is true (default is false) Sigil will enforce "Backward branch constraints" which are *technically* required
+        /// for valid CIL, but in practice often ignored.  The most common case to set this option is if you are generating types to write to disk.
         /// </summary>
         public static Emit<DelegateType> NewDynamicMethod(string name = null, ModuleBuilder module = null, bool doVerify = true, bool strictBranchVerification = false)
         {
@@ -555,6 +558,12 @@ namespace Sigil
         /// If name is not defined, a sane default is generated.
         /// 
         /// If owner is not defined, a module with the same trust as the executing assembly is used instead.
+        /// 
+        /// If doVerify is false (default is true) Sigil will *not* throw an exception on invalid IL.  This is faster, but the benefits
+        /// of Sigil are reduced to "a nicer ILGenerator interface".
+        /// 
+        /// If strictBranchValidation is true (default is false) Sigil will enforce "Backward branch constraints" which are *technically* required
+        /// for valid CIL, but in practice often ignored.  The most common case to set this option is if you are generating types to write to disk.
         /// </summary>
         public static Emit<DelegateType> NewDynamicMethod(Type owner, string name = null, bool doVerify = true, bool strictBranchVerification = false)
         {
@@ -615,6 +624,12 @@ namespace Sigil
         /// The DelegateType and MethodBuilder must agree on return types, parameter types, and parameter counts.
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
+        /// 
+        /// If doVerify is false (default is true) Sigil will *not* throw an exception on invalid IL.  This is faster, but the benefits
+        /// of Sigil are reduced to "a nicer ILGenerator interface".
+        /// 
+        /// If strictBranchValidation is true (default is false) Sigil will enforce "Backward branch constraints" which are *technically* required
+        /// for valid CIL, but in practice often ignored.  The most common case to set this option is if you are generating types to write to disk.
         /// </summary>
         public static Emit<DelegateType> BuildMethod(TypeBuilder type, string name, MethodAttributes attributes, CallingConventions callingConvention, bool allowUnverifiableCode = false, bool doVerify = true, bool strictBranchVerification = false)
         {
@@ -681,6 +696,12 @@ namespace Sigil
         /// The DelegateType and TypeBuilder must agree on parameter types and parameter counts.
         /// 
         /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
+        /// 
+        /// If doVerify is false (default is true) Sigil will *not* throw an exception on invalid IL.  This is faster, but the benefits
+        /// of Sigil are reduced to "a nicer ILGenerator interface".
+        /// 
+        /// If strictBranchValidation is true (default is false) Sigil will enforce "Backward branch constraints" which are *technically* required
+        /// for valid CIL, but in practice often ignored.  The most common case to set this option is if you are generating types to write to disk.
         /// </summary>
         public static Emit<DelegateType> BuildConstructor(TypeBuilder type, MethodAttributes attributes, CallingConventions callingConvention = CallingConventions.HasThis, bool allowUnverifiableCode = false, bool doVerify = true, bool strictBranchVerification = false)
         {
