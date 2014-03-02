@@ -7,7 +7,7 @@ namespace Sigil.Impl
     internal class RollingVerifierWithoutVerification : RollingVerifier
     {
         public RollingVerifierWithoutVerification(Label beginAt)
-            : base(beginAt)
+            : base(beginAt, strictBranchVerification: false)
         { }
 
         public override VerificationResult ConditionalBranch(params Label[] toLabels)

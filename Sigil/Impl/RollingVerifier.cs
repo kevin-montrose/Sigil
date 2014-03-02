@@ -17,14 +17,33 @@ namespace Sigil.Impl
 
         private bool MarkCreatesNewVerifier;
 
-        public RollingVerifier(Label beginAt)
+        /// From the spec:
+        ///   In particular, if that single-pass analysis arrives at an instruction, call it location X, that 
+        ///   immediately follows an unconditional branch, and where X is not the target of an earlier branch 
+        ///   instruction, then the state of the evaluation stack at X, clearly, cannot be derived from existing 
+        ///   information. In this case, the CLI demands that the evaluation stack at X be empty.
+        /// 
+        /// In practice, DynamicMethods don't need to follow this rule *but* that doesn't mean stricter
+        /// verification won't be needed elsewhere.
+        /// 
+        /// If this is set, then an "expectation of empty stack" transition is inserted before unconditional branches
+        /// where needed.
+        private bool UsesStrictBranchVerification;
+
+        private LinqHashSet<Label> MustBeEmptyWhenBranchedTo;
+
+        public RollingVerifier(Label beginAt, bool strictBranchVerification)
         {
+            UsesStrictBranchVerification = strictBranchVerification;
+
             RestoreOnMark = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
             RestoreStacksOnMark = new LinqDictionary<Label, LinqList<LinqStack<LinqList<TypeOnStack>>>>();
             VerifyFromLabel = new LinqDictionary<Label, LinqList<VerifiableTracker>>();
 
             StacksAtLabels = new LinqDictionary<Label, SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>();
             ExpectedStacksAtLabels = new LinqDictionary<Label, LinqList<SigilTuple<bool, LinqStack<LinqList<TypeOnStack>>>>>();
+
+            MustBeEmptyWhenBranchedTo = new LinqHashSet<Label>();
 
             EmptyCurrentScope();
             
@@ -74,6 +93,12 @@ namespace Sigil.Impl
 
         public virtual VerificationResult Mark(Label label)
         {
+            // This is, effectively, "follows an unconditional branch & hasn't been seen before"
+            if (MarkCreatesNewVerifier && UsesStrictBranchVerification && !ExpectedStacksAtLabels.ContainsKey(label))
+            {
+                MustBeEmptyWhenBranchedTo.Add(label);
+            }
+
             if (CurrentlyInScope.Count > 0)
             {
                 StacksAtLabels[label] = GetCurrentStack();
@@ -93,7 +118,7 @@ namespace Sigil.Impl
             }
 
             LinqList<VerifiableTracker> restore;
-            if(RestoreOnMark.TryGetValue(label, out restore))
+            if (RestoreOnMark.TryGetValue(label, out restore))
             {
                 // don't copy, we want the *exact* same verifiers restore here
                 AddRange(restore, RestoreStacksOnMark[label]);
@@ -124,7 +149,7 @@ namespace Sigil.Impl
         private void RemoveUnnecessaryVerifiers()
         {
             // if anything's rooted, we only need one of them (since the IL stream being currently valid means they must in the future)
-            var rooted = CurrentlyInScope.Where(c => !c.IsBaseless).ToList();
+            var rooted = CurrentlyInScope.Where(c => !c.IsBaseless && c.CanBePruned).ToList();
             if (rooted.Count >= 2)
             {
                 for (var i = 1; i < rooted.Count; i++)
@@ -149,6 +174,8 @@ namespace Sigil.Impl
                                 if (ix == i) return -1;
 
                                 if (curStack.Count != cx.Count) return -1;
+
+                                if (!CurrentlyInScope[ix].CanBePruned) return -1;
 
                                 for (var j = 0; j < curStack.Count; j++)
                                 {
@@ -208,6 +235,18 @@ namespace Sigil.Impl
 
         public virtual VerificationResult UnconditionalBranch(Label to)
         {
+            // If we've recorded elsewhere that the label we're branching to *must* receive
+            // an empty stack, then inject a transition that expects that
+            if (MustBeEmptyWhenBranchedTo.Contains(to))
+            {
+                var trans = new LinqList<StackTransition>();
+                trans.Add(new StackTransition(sizeMustBe: 0));
+
+                var stackIsEmpty = Transition(new InstructionAndTransitions(null, null, trans));
+
+                if (stackIsEmpty != null) return stackIsEmpty;
+            }
+
             var intoVerified = VerifyBranchInto(to);
             if (intoVerified != null)
             {

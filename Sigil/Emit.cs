@@ -178,7 +178,7 @@ namespace Sigil
             TypesProducedAtIndex = new LinqDictionary<int, LinqList<TypeOnStack>>();
 
             var start = DefineLabel("__start");
-            CurrentVerifiers = IsVerifying ? new RollingVerifier(start) : new RollingVerifierWithoutVerification(start);
+            CurrentVerifiers = IsVerifying ? new RollingVerifier(start, UsesStrictBranchVerification) : new RollingVerifierWithoutVerification(start);
             MarkLabel(start);
         }
 

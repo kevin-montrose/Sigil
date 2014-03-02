@@ -524,5 +524,36 @@ namespace SigilTests
                 d1(new LdfldaClass());
             }
         }
+
+        [TestMethod]
+        public void StrictBranchVerification()
+        {
+            // See: https://github.com/kevin-montrose/Sigil/issues/15
+
+            var il = Sigil.Emit<Func<int>>.NewDynamicMethod(strictBranchVerification: true);
+            var a = il.DefineLabel();
+            var b = il.DefineLabel();
+            var c = il.DefineLabel();
+
+            il.Branch(a);
+
+            il.MarkLabel(b);    // <- See that there?  The spec says we assume the stack is empty NOW since we haven't seen a branch to B
+            il.LoadConstant(3);
+            il.Branch(c);
+
+            il.MarkLabel(a);    // stack should be assumed to be empty, because we SAW a branch to A
+            il.LoadConstant(2);
+
+            try
+            {
+                il.Branch(b);       // <- should explode, stack is *known* to be empty at b but there's a constant on the stack at this branch
+                
+                Assert.Fail();
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Branch expected the stack of be empty", e.Message);
+            }
+        }
     }
 }

@@ -20,10 +20,13 @@ namespace Sigil.Impl
 
         private LinqStack<LinqList<TypeOnStack>> StartingStack = new LinqStack<LinqList<TypeOnStack>>();
 
-        public VerifiableTracker(Label beganAt, bool baseless = false, VerifiableTracker createdFrom = null) 
+        public bool CanBePruned { get; private set; }
+
+        public VerifiableTracker(Label beganAt, bool baseless = false, VerifiableTracker createdFrom = null, bool canBePruned = true) 
         {
             IsBaseless = baseless;
             BeganAt = beganAt;
+            CanBePruned = canBePruned;
 
             MarkedLabelsAtTransitions[beganAt] = 0;
 
@@ -39,7 +42,6 @@ namespace Sigil.Impl
             var shouldTake = branchTo != Transitions.Count;
 
             var trans = new LinqList<InstructionAndTransitions>(branchTo + other.Transitions.Count);
-            //trans.AddRange(shouldTake ? Transitions.Take(branchTo) : Transitions);
 
             if (shouldTake)
             {
