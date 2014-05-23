@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Globalization;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sigil;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace SigilTests
 
             public ThreeClass(string a, int b, List<double> c)
             {
-                Value = a + " @" + b + " ==> " + string.Join(", ", c);
+                Value = a + " @" + b + " ==> " + string.Join(", ", c.Select(d => d.ToString(CultureInfo.InvariantCulture)));
             }
         }
 

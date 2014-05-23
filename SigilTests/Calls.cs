@@ -12,6 +12,70 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Calls
     {
+        public class ClassWithCtor
+        {
+            public ClassWithCtor(string value)
+            {
+                this.Value = value;
+            }
+
+            public string Value { get; private set; }
+        }
+
+        [TestMethod]
+        public void CallBaseConstructor()
+        {
+            AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("SigilTests_CallBaseConstructor"),
+                                                                                     AssemblyBuilderAccess.RunAndCollect);
+
+            ModuleBuilder module = assembly.DefineDynamicModule("RuntimeModule");
+
+            TypeBuilder type = module.DefineType("Class", TypeAttributes.Class, typeof (ClassWithCtor));
+
+            Emit<Action> ctor = Emit<Action>.BuildConstructor(type, MethodAttributes.Public);
+
+            ConstructorInfo baseCtor = typeof (ClassWithCtor).GetConstructor(new[] {typeof(string)});
+
+            ctor.LoadArgument(0);
+            ctor.LoadConstant("abc123");
+            ctor.Call(baseCtor);
+            ctor.Return();
+            ctor.CreateConstructor();
+
+            Type createdType = type.CreateType();
+
+            ClassWithCtor instance = (ClassWithCtor)Activator.CreateInstance(createdType);
+            Assert.IsInstanceOfType(instance, createdType);
+            Assert.AreEqual("abc123", instance.Value);
+        }
+
+        [TestMethod]
+        public void CallBaseConstructorNonGeneric()
+        {
+            AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("SigilTests_CallBaseConstructorNonGeneric"),
+                                                                                     AssemblyBuilderAccess.RunAndCollect);
+
+            ModuleBuilder module = assembly.DefineDynamicModule("RuntimeModule");
+
+            TypeBuilder type = module.DefineType("Class", TypeAttributes.Class, typeof(ClassWithCtor));
+
+            Sigil.NonGeneric.Emit ctor = Sigil.NonGeneric.Emit.BuildConstructor(Type.EmptyTypes, type, MethodAttributes.Public);
+
+            ConstructorInfo baseCtor = typeof(ClassWithCtor).GetConstructor(new[] { typeof(string) });
+
+            ctor.LoadArgument(0);
+            ctor.LoadConstant("abc123");
+            ctor.Call(baseCtor);
+            ctor.Return();
+            ctor.CreateConstructor();
+
+            Type createdType = type.CreateType();
+
+            ClassWithCtor instance = (ClassWithCtor)Activator.CreateInstance(createdType);
+            Assert.IsInstanceOfType(instance, createdType);
+            Assert.AreEqual("abc123", instance.Value);
+        }
+
         [TestMethod]
         public void ValueTypeCallIndirect()
         {

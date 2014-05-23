@@ -210,5 +210,44 @@ namespace Sigil
 
             return this;
         }
+
+
+        /// <summary>
+        /// Calls the given constructor.  Pops its arguments in reverse order (left-most deepest in the stack).
+        /// 
+        /// The `this` reference should appear before any parameters.
+        /// </summary>
+        public Emit<DelegateType> Call(ConstructorInfo cons)
+        {
+            if (cons == null)
+            {
+                throw new ArgumentNullException("cons");
+            }
+
+            if (HasFlag(cons.CallingConvention, CallingConventions.VarArgs) && !HasFlag(cons.CallingConvention, CallingConventions.Standard))
+            {
+                throw new NotSupportedException("Calling constructors with VarArgs is currently not supported.");
+            }
+
+            var expectedParams = ((LinqArray<ParameterInfo>)cons.GetParameters()).Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
+
+            var declaring = cons.DeclaringType;
+
+            if (declaring.IsValueType)
+            {
+                declaring = declaring.MakePointerType();
+            }
+
+            expectedParams.Insert(0, TypeOnStack.Get(declaring));
+
+            IEnumerable<StackTransition> transitions = new[]
+                                                       {
+                                                           new StackTransition(expectedParams.Reverse().AsEnumerable(), new TypeOnStack[0])
+                                                       };
+
+            UpdateState(OpCodes.Call, cons, ((LinqArray<ParameterInfo>)cons.GetParameters()).Select(s => s.ParameterType).AsEnumerable(), Wrap(transitions, "Call"));
+
+            return this;
+        }
     }
 }
