@@ -240,10 +240,11 @@ namespace Sigil
 
             expectedParams.Insert(0, TypeOnStack.Get(declaring));
 
-            IEnumerable<StackTransition> transitions = new[]
-                                                       {
-                                                           new StackTransition(expectedParams.Reverse().AsEnumerable(), new TypeOnStack[0])
-                                                       };
+            var transitions = 
+                new[]
+                {
+                    new StackTransition(expectedParams.Reverse().AsEnumerable(), new TypeOnStack[0])
+                };
 
             UpdateState(OpCodes.Call, cons, ((LinqArray<ParameterInfo>)cons.GetParameters()).Select(s => s.ParameterType).AsEnumerable(), Wrap(transitions, "Call"));
 
