@@ -66,6 +66,7 @@ namespace Sigil
 
         internal ConstructorBuilder ConstrBuilder { get; set; }
         private bool ConstructorBuilt;
+        internal bool IsBuildingConstructor { get; set; }
 
         /// <summary>
         /// Returns true if this Emit can make use of unverifiable instructions.
@@ -740,6 +741,7 @@ namespace Sigil
 
             var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
             ret.ConstrBuilder = constructorBuilder;
+            ret.IsBuildingConstructor = true;
 
             return ret;
         }

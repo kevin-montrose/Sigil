@@ -229,6 +229,11 @@ namespace Sigil
                 throw new NotSupportedException("Calling constructors with VarArgs is currently not supported.");
             }
 
+            if (!IsBuildingConstructor)
+            {
+                throw new SigilVerificationException("Constructors may only be called directly from within a constructor, use NewObject to allocate a new object with a specific constructor.", IL.Instructions(AllLocals));
+            }
+
             var expectedParams = ((LinqArray<ParameterInfo>)cons.GetParameters()).Select(s => TypeOnStack.Get(s.ParameterType)).ToList();
 
             var declaring = cons.DeclaringType;

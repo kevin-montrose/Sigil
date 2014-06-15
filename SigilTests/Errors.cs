@@ -11,6 +11,30 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Errors
     {
+        class _CallContructorFromNonConstructor
+        {
+            public _CallContructorFromNonConstructor() { }
+        }
+
+        [TestMethod]
+        public void CallContructorFromNonConstructor()
+        {
+            var cons = typeof(_CallContructorFromNonConstructor).GetConstructor(Type.EmptyTypes);
+
+            var e1 = Emit<Action>.NewDynamicMethod();
+            e1.NewObject(cons);
+
+            try
+            {
+                e1.Call(cons);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Constructors may only be called directly from within a constructor, use NewObject to allocate a new object with a specific constructor.", e.Message);
+            }
+        }
+
         [TestMethod]
         public void DisassemblingClosure()
         {

@@ -67,6 +67,8 @@ namespace Sigil.NonGeneric
             IsMethod = isMethod;
             IsConstructor = isConstructor;
 
+            innerEmit.IsBuildingConstructor = isConstructor;
+
             Shorthand = new EmitShorthand(this);
         }
 
