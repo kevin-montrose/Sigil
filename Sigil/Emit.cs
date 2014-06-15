@@ -65,8 +65,9 @@ namespace Sigil
         private bool MethodBuilt;
 
         internal ConstructorBuilder ConstrBuilder { get; set; }
-        private bool ConstructorBuilt;
         internal bool IsBuildingConstructor { get; set; }
+        internal Type ConstructorDefinedInType { get; set; }
+        private bool ConstructorBuilt;
 
         /// <summary>
         /// Returns true if this Emit can make use of unverifiable instructions.

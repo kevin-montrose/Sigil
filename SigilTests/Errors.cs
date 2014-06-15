@@ -11,6 +11,81 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class Errors
     {
+        class _CallNonBaseClassConstructor1
+        {
+            public string Foo;
+
+            public _CallNonBaseClassConstructor1(string foo)
+            {
+                Foo = foo;
+            }
+        }
+
+        class _CallNonBaseClassConstructor2 : _CallNonBaseClassConstructor1
+        {
+            public _CallNonBaseClassConstructor2(string bar) : base(bar + bar) { }
+        }
+
+        [TestMethod]
+        public void CallNonBaseClassConstructor()
+        {
+            var assembly = 
+                AppDomain.CurrentDomain.DefineDynamicAssembly(
+                    new AssemblyName("SigilTests_CallNonBaseClassConstructor"),
+                    System.Reflection.Emit.AssemblyBuilderAccess.RunAndCollect
+                );
+
+            var module = assembly.DefineDynamicModule("RuntimeModule");
+            var type = module.DefineType("_CallNonBaseClassConstructor3", TypeAttributes.Class, typeof(_CallNonBaseClassConstructor2));
+
+            var ctor = Emit<Action>.BuildConstructor(type, MethodAttributes.Public);
+
+            var baseBaseCtor = typeof(_CallNonBaseClassConstructor1).GetConstructor(new[] { typeof(string) });
+
+            ctor.LoadArgument(0);
+            ctor.LoadConstant("abc123");
+
+            try
+            {
+                ctor.Call(baseBaseCtor);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Only constructors defined in the current class or it's base class may be called", e.Message);
+            }
+        }
+
+        [TestMethod]
+        public void CallNonBaseClassConstructorNonGeneric()
+        {
+            var assembly =
+                AppDomain.CurrentDomain.DefineDynamicAssembly(
+                    new AssemblyName("SigilTests_CallNonBaseClassConstructorNonGeneric"),
+                    System.Reflection.Emit.AssemblyBuilderAccess.RunAndCollect
+                );
+
+            var module = assembly.DefineDynamicModule("RuntimeModule");
+            var type = module.DefineType("_CallNonBaseClassConstructor3", TypeAttributes.Class, typeof(_CallNonBaseClassConstructor2));
+
+            var ctor = Sigil.NonGeneric.Emit.BuildConstructor(Type.EmptyTypes, type, MethodAttributes.Public);
+
+            var baseBaseCtor = typeof(_CallNonBaseClassConstructor1).GetConstructor(new[] { typeof(string) });
+
+            ctor.LoadArgument(0);
+            ctor.LoadConstant("abc123");
+
+            try
+            {
+                ctor.Call(baseBaseCtor);
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Only constructors defined in the current class or it's base class may be called", e.Message);
+            }
+        }
+
         class _CallContructorFromNonConstructor
         {
             public _CallContructorFromNonConstructor() { }

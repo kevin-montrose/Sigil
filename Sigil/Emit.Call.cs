@@ -211,6 +211,18 @@ namespace Sigil
             return this;
         }
 
+        private bool IsLegalConstructoCall(ConstructorInfo cons)
+        {
+            var consDeclaredIn = cons.DeclaringType;
+
+            var curType = ConstructorDefinedInType ?? (ConstrBuilder.DeclaringType);
+            var baseType = curType.BaseType;
+
+            var inCurrentType = curType == consDeclaredIn;
+            var inBaseType = baseType != null && consDeclaredIn == baseType;
+
+            return inCurrentType || inBaseType;
+        }
 
         /// <summary>
         /// Calls the given constructor.  Pops its arguments in reverse order (left-most deepest in the stack).
@@ -232,6 +244,11 @@ namespace Sigil
             if (!IsBuildingConstructor)
             {
                 throw new SigilVerificationException("Constructors may only be called directly from within a constructor, use NewObject to allocate a new object with a specific constructor.", IL.Instructions(AllLocals));
+            }
+
+            if (!IsLegalConstructoCall(cons))
+            {
+                throw new SigilVerificationException("Only constructors defined in the current class or it's base class may be called", IL.Instructions(AllLocals));
             }
 
             var expectedParams = ((LinqArray<ParameterInfo>)cons.GetParameters()).Select(s => TypeOnStack.Get(s.ParameterType)).ToList();

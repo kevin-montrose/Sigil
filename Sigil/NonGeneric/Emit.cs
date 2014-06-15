@@ -425,6 +425,7 @@ namespace Sigil.NonGeneric
             parameterTypes = pList.ToArray();
 
             var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
+            innerEmit.ConstructorDefinedInType = type;
 
             var ret = new Emit(innerEmit, isDynamicMethod: false, isMethod: false, isConstructor: true);
             ret.ReturnType = type;
