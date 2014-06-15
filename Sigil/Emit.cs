@@ -1024,6 +1024,13 @@ namespace Sigil
             }
         }
 
+        private void UpdateState(OpCode instr, ConstructorInfo cons, IEnumerable<Type> parameterTypes, TransitionWrapper transitions)
+        {
+            UpdateStackAndInstrStream(instr, transitions, firstParamIsThis: true);
+
+            IL.Emit(instr, cons, parameterTypes);
+        }
+
         private void UpdateState(OpCode instr, ConstructorInfo cons, TransitionWrapper transitions)
         {
             UpdateStackAndInstrStream(instr, transitions);

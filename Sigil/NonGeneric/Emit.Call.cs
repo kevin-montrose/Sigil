@@ -21,5 +21,17 @@ namespace Sigil.NonGeneric
             InnerEmit.Call(method, arglist);
             return this;
         }
+
+
+        /// <summary>
+        /// Calls the given constructor.  Pops its arguments in reverse order (left-most deepest in the stack).
+        /// 
+        /// The `this` reference should appear before any parameters.
+        /// </summary>
+        public Emit Call(ConstructorInfo constructor)
+        {
+            InnerEmit.Call(constructor);
+            return this;
+        }
     }
 }

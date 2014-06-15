@@ -547,6 +547,42 @@ namespace Sigil.Impl
             Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { method } });
         }
 
+        public void Emit(OpCode op, ConstructorInfo cons, IEnumerable<Type> parameterTypes)
+        {
+            InstructionSizes.Add(() => InstructionSize.Get(op));
+
+            LengthCache.Clear();
+
+            Buffer.Add(
+                (il, logOnly, log) =>
+                {
+                    if (!logOnly)
+                    {
+                        il.Emit(op, cons);
+                    }
+
+                    var mtdString = cons is ConstructorBuilder ? cons.Name : cons.ToString();
+
+                    log.AppendLine(op + " " + mtdString);
+                }
+            );
+
+            var parameters = new LinqList<Type>(parameterTypes);
+            var declaring = cons.DeclaringType;
+
+            if (declaring.IsValueType)
+            {
+                declaring = declaring.MakePointerType();
+            }
+
+            parameters.Insert(0, declaring);
+
+
+            TraversableBuffer.Add(new BufferedILInstruction { IsInstruction = op, MethodReturnType = typeof(void), MethodParameterTypes = parameters });
+
+            Operations.Add(new Operation<DelegateType> { OpCode = op, Parameters = new object[] { cons } });
+        }
+
         public void Emit(OpCode op, ConstructorInfo cons)
         {
             InstructionSizes.Add(() => InstructionSize.Get(op));

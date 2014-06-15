@@ -3795,12 +3795,29 @@ namespace SigilTests
 
             try
             {
-                e1.Call(null);
+                e1.Call((MethodInfo)null);
                 Assert.Fail();
             }
             catch (ArgumentNullException e)
             {
                 Assert.AreEqual("method", e.ParamName);
+            }
+        }
+
+
+        [TestMethod]
+        public void NullCallConstructor()
+        {
+            var e1 = Emit<Action>.NewDynamicMethod("E1");
+
+            try
+            {
+                e1.Call((ConstructorInfo)null);
+                Assert.Fail();
+            }
+            catch (ArgumentNullException e)
+            {
+                Assert.AreEqual("cons", e.ParamName);
             }
         }
 
