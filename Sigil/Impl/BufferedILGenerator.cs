@@ -45,6 +45,13 @@ namespace Sigil.Impl
 
             return instr.MethodParameterTypes.Any(p => p.IsPointer);
         }
+
+        internal bool TakesByRefArgs()
+        {
+            var instr = this;
+
+            return instr.MethodParameterTypes.Any(p => p.IsByRef);
+        }
     }
 
     internal class BufferedILGenerator<DelegateType>

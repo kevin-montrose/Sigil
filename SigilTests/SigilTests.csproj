@@ -115,6 +115,7 @@
       <DependentUpon>Errors.cs</DependentUpon>
     </Compile>
     <Compile Include="NoVerification.cs" />
+    <Compile Include="Tail.cs" />
     <Compile Include="WriteLine.NonGeneric.cs">
       <DependentUpon>WriteLine.cs</DependentUpon>
     </Compile>
