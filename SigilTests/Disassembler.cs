@@ -10,6 +10,9 @@ namespace SigilTests
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public class Disassembler
     {
+        // these only work in Release because the IL generated differs in Debug, so exact
+        // matches aren't gonna work
+#if !DEBUG
         [TestMethod]
         public void Simple()
         {
@@ -480,6 +483,7 @@ namespace SigilTests
             Assert.IsTrue(methods.Any(m => m == typeof(Math).GetMethod("Pow", new[] { typeof(double), typeof(double) })));
             Assert.AreEqual(2, methods.Count);
             Assert.IsTrue(ops.CanEmit);
-        }
+        }    
+#endif
     }
 }
