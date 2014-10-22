@@ -73,6 +73,19 @@ namespace Sigil
                 instr = OpCodes.Ldind_I1;
             }
 
+            if (type == typeof(bool) && !instr.HasValue)
+            {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(bool*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(bool).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
+                instr = OpCodes.Ldind_I1;
+            }
+
             if (type == typeof(byte) && !instr.HasValue)
             {
                 transitions =
@@ -107,6 +120,19 @@ namespace Sigil
                         new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
                         new StackTransition(new [] { typeof(ushort*) }, new[] { typeof(int) }),
                         new StackTransition(new [] { typeof(ushort).MakeByRefType() }, new[] { typeof(int) })
+                    };
+
+                instr = OpCodes.Ldind_U2;
+            }
+
+            if (type == typeof(char) && !instr.HasValue)
+            {
+                transitions =
+                    new[] 
+                    {
+                        new StackTransition(new [] { typeof(NativeIntType) }, new [] { typeof(int) }),
+                        new StackTransition(new [] { typeof(char*) }, new[] { typeof(int) }),
+                        new StackTransition(new [] { typeof(char).MakeByRefType() }, new[] { typeof(int) })
                     };
 
                 instr = OpCodes.Ldind_U2;
