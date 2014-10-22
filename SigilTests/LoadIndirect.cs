@@ -153,6 +153,27 @@ namespace SigilTests
 
                 Assert.AreEqual((IntPtr)3, z);
             }
+
+            {
+                var e1 = Emit<Func<bool, bool>>.NewDynamicMethod();
+                e1.LoadArgumentAddress(0);
+                e1.LoadIndirect<bool>();
+                e1.Return();
+
+                var d1 = e1.CreateDelegate();
+                Assert.AreEqual(true, d1(true));
+                Assert.AreEqual(false, d1(false));
+            }
+
+            {
+                var e1 = Emit<Func<char, char>>.NewDynamicMethod();
+                e1.LoadArgumentAddress(0);
+                e1.LoadIndirect<char>();
+                e1.Return();
+
+                var d1 = e1.CreateDelegate();
+                Assert.AreEqual('a', d1('a'));
+            }
         }
     }
 }
