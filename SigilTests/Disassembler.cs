@@ -484,6 +484,22 @@ namespace SigilTests
             Assert.AreEqual(2, methods.Count);
             Assert.IsTrue(ops.CanEmit);
         }    
+
+        [TestMethod]
+        public void SingleFloat()
+        {
+            Func<float> del = () => 0.5f;
+
+            var ops = Sigil.Disassembler<Func<float>>.Disassemble(del);
+
+            var recompiled = ops.EmitAll();
+            Assert.IsNotNull(recompiled);
+
+            string instrs;
+            var r1 = recompiled.CreateDelegate(out instrs);
+            Assert.IsNotNull(r1);
+            Assert.AreEqual("ldc.r4 0.5\r\nret\r\n", instrs);
+        }    
 #endif
     }
 }
