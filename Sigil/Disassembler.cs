@@ -3325,6 +3325,22 @@ namespace Sigil
             return BitConverter.ToDouble(arr, 0);
         }
 
+        private static float ReadSingle(byte[] cil, int at)
+        {
+            var arr = new byte[4];
+            arr[0] = cil[at];
+            arr[1] = cil[at + 1];
+            arr[2] = cil[at + 2];
+            arr[3] = cil[at + 3];
+
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(arr);
+            }
+
+            return BitConverter.ToSingle(arr, 0);
+        }
+
         private static object[] ReadOperands(Module mod, OpCode op, byte[] cil, int instrStart, int operandStart, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, ref int advance)
         {
             switch (op.OperandType)
@@ -3404,7 +3420,14 @@ namespace Sigil
 
                 case OperandType.ShortInlineR:
                     advance += 4;
-                    return new object[] { ReadShort(cil, operandStart) };
+                    if (op == OpCodes.Ldc_R4)
+                    {
+                        return new object[] { ReadSingle(cil, operandStart) };
+                    }
+                    else
+                    {
+                        return new object[] { ReadShort(cil, operandStart) };
+                    }
  
                 case OperandType.ShortInlineVar:
                     advance += 1;
