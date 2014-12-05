@@ -129,5 +129,26 @@ namespace SigilTests
                 Assert.AreEqual("No local with name 'a' found", e.Message);
             }
         }
+
+        [TestMethod]
+        public void LocalReuseInitializedToDefault()
+        {
+            var e1 = Emit<Func<bool>>.NewDynamicMethod();
+            using(var loc = e1.DeclareLocal<bool>())
+            {
+                e1.LoadConstant(true);
+                e1.StoreLocal(loc);
+            }
+
+            using (var loc = e1.DeclareLocal<bool>())
+            {
+                e1.LoadLocal(loc);
+                e1.Return();
+            }
+
+            var d1 = e1.CreateDelegate();
+
+            Assert.AreEqual(false, d1());
+        }
     }
 }
