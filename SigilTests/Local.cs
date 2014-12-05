@@ -45,7 +45,7 @@ namespace SigilTests
             catch (SigilVerificationException e)
             {
                 var debug = e.GetDebugInfo();
-                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldloc.0 // System.Int32 a\r\nldloc.1 // System.Int32 b\r\nldloc.2 // System.Int32 c\r\nldloc.2 // System.Int32 d\r\nstloc.0 // System.Int32 a\r\nstloc.0 // System.Int32 a\r\nstloc.1 // System.Int32 b\r\nstloc.1 // System.Int32 b\r\n", debug);
+                Assert.AreEqual("Stack\r\n=====\r\n--empty--\r\n\r\nInstructions\r\n============\r\nldloc.0 // System.Int32 a\r\nldloc.1 // System.Int32 b\r\nldloc.2 // System.Int32 c\r\nldc.i4.0\r\nstloc.2 // System.Int32 d\r\nldloc.2 // System.Int32 d\r\nstloc.0 // System.Int32 a\r\nstloc.0 // System.Int32 a\r\nstloc.1 // System.Int32 b\r\nstloc.1 // System.Int32 b\r\n", debug);
             }
         }
 
@@ -104,7 +104,7 @@ namespace SigilTests
             var d1 = e1.CreateDelegate(out instrs);
 
             Assert.AreEqual(1, d1());
-            Assert.AreEqual("ldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nldloc.0\r\nret\r\n", instrs);
+            Assert.AreEqual("ldloc.0\r\nldc.i4.1\r\nadd\r\nldc.i4.0\r\nstloc.0\r\nstloc.0\r\nldloc.0\r\nret\r\n", instrs);
         }
 
         [TestMethod]

@@ -79,6 +79,101 @@ namespace Sigil
 
             CurrentLocals[ret.Name] = ret;
 
+            // we need to initialize this local to it's default value, because otherwise
+            //   it might be read from to get some non-sense
+            if (existingLocal != null)
+            {
+                if (!type.IsValueType)
+                {
+                    // reference types all get nulled
+                    LoadNull();
+                    StoreLocal(ret);
+                }
+                else
+                {
+                    // handle known primitives better
+                    //   so as not to confuse the JIT
+                    var defaultLoaded = false;
+
+                    if (type == typeof(bool))
+                    {
+                        LoadConstant(default(bool));
+                        defaultLoaded = true; 
+                    }
+
+                    if (type == typeof(byte))
+                    {
+                        LoadConstant(default(byte));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(sbyte))
+                    {
+                        LoadConstant(default(sbyte));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(short))
+                    {
+                        LoadConstant(default(short));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(ushort))
+                    {
+                        LoadConstant(default(ushort));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(int))
+                    {
+                        LoadConstant(default(int));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(uint))
+                    {
+                        LoadConstant(default(uint));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(long))
+                    {
+                        LoadConstant(default(long));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(ulong))
+                    {
+                        LoadConstant(default(ulong));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(float))
+                    {
+                        LoadConstant(default(float));
+                        defaultLoaded = true;
+                    }
+
+                    if (type == typeof(double))
+                    {
+                        LoadConstant(default(double));
+                        defaultLoaded = true;
+                    }
+
+                    if (defaultLoaded)
+                    {
+                        StoreLocal(ret);
+                    }
+                    else
+                    {
+                        // if it's use defined though, we've got little choice
+                        LoadLocalAddress(ret);
+                        NewObject(type);
+                    }
+                }
+            }
+
             return ret;
         }
 
