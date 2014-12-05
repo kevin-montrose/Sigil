@@ -133,22 +133,44 @@ namespace SigilTests
         [TestMethod]
         public void LocalReuseInitializedToDefault()
         {
-            var e1 = Emit<Func<bool>>.NewDynamicMethod();
-            using(var loc = e1.DeclareLocal<bool>())
             {
-                e1.LoadConstant(true);
-                e1.StoreLocal(loc);
+                var e1 = Emit<Func<bool>>.NewDynamicMethod();
+                using (var loc = e1.DeclareLocal<bool>())
+                {
+                    e1.LoadConstant(true);
+                    e1.StoreLocal(loc);
+                }
+
+                using (var loc = e1.DeclareLocal<bool>())
+                {
+                    e1.LoadLocal(loc);
+                    e1.Return();
+                }
+
+                var d1 = e1.CreateDelegate();
+
+                Assert.AreEqual(false, d1());
             }
 
-            using (var loc = e1.DeclareLocal<bool>())
             {
-                e1.LoadLocal(loc);
-                e1.Return();
+                var e1 = Emit<Func<DateTime>>.NewDynamicMethod();
+                using (var loc = e1.DeclareLocal<DateTime>())
+                {
+                    e1.LoadConstant(DateTime.MaxValue.Ticks);
+                    e1.NewObject<DateTime, long>();
+                    e1.StoreLocal(loc);
+                }
+
+                using (var loc = e1.DeclareLocal<DateTime>())
+                {
+                    e1.LoadLocal(loc);
+                    e1.Return();
+                }
+
+                var d1 = e1.CreateDelegate();
+
+                Assert.AreEqual(default(DateTime), d1());
             }
-
-            var d1 = e1.CreateDelegate();
-
-            Assert.AreEqual(false, d1());
         }
     }
 }

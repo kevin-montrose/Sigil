@@ -169,7 +169,7 @@ namespace Sigil
                     {
                         // if it's use defined though, we've got little choice
                         LoadLocalAddress(ret);
-                        NewObject(type);
+                        InitializeObject(type);
                     }
                 }
             }
