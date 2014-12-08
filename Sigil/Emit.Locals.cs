@@ -39,6 +39,20 @@ namespace Sigil
         /// </summary>
         public Local DeclareLocal(Type type, string name = null)
         {
+            return DeclareLocal(type, name, initializeReused: true);
+        }
+
+        /// <summary>
+        /// Declare a new local of the given type in the current method.
+        /// 
+        /// Name is optional, and only provided for debugging purposes.  It has no
+        /// effect on emitted IL.
+        /// 
+        /// Be aware that each local takes some space on the stack, inefficient use of locals
+        /// could lead to StackOverflowExceptions at runtime.
+        /// </summary>
+        public Local DeclareLocal(Type type, string name, bool initializeReused)
+        {
             if (type == null)
             {
                 throw new ArgumentNullException("type");
@@ -81,7 +95,7 @@ namespace Sigil
 
             // we need to initialize this local to it's default value, because otherwise
             //   it might be read from to get some non-sense
-            if (existingLocal != null)
+            if (existingLocal != null && initializeReused)
             {
                 if (!type.IsValueType)
                 {
