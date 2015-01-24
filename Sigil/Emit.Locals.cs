@@ -22,10 +22,14 @@ namespace Sigil
         /// 
         /// Be aware that each local takes some space on the stack, inefficient use of locals
         /// could lead to StackOverflowExceptions at runtime.
+        /// 
+        /// Jil will reuse local index on the stack if the corresponding Local instance has been disposed.
+        /// By default Jil will set reused locals to their default value, you can change this behavior
+        /// by passing initializeReused = false.
         /// </summary>
-        public Local DeclareLocal<Type>(string name = null)
+        public Local DeclareLocal<Type>(string name = null, bool initializeReused = true)
         {
-            return DeclareLocal(typeof(Type), name);
+            return DeclareLocal(typeof(Type), name, initializeReused);
         }
 
         /// <summary>
@@ -36,22 +40,12 @@ namespace Sigil
         /// 
         /// Be aware that each local takes some space on the stack, inefficient use of locals
         /// could lead to StackOverflowExceptions at runtime.
-        /// </summary>
-        public Local DeclareLocal(Type type, string name = null)
-        {
-            return DeclareLocal(type, name, initializeReused: true);
-        }
-
-        /// <summary>
-        /// Declare a new local of the given type in the current method.
         /// 
-        /// Name is optional, and only provided for debugging purposes.  It has no
-        /// effect on emitted IL.
-        /// 
-        /// Be aware that each local takes some space on the stack, inefficient use of locals
-        /// could lead to StackOverflowExceptions at runtime.
+        /// Jil will reuse local index on the stack if the corresponding Local instance has been disposed.
+        /// By default Jil will set reused locals to their default value, you can change this behavior
+        /// by passing initializeReused = false.
         /// </summary>
-        public Local DeclareLocal(Type type, string name, bool initializeReused)
+        public Local DeclareLocal(Type type, string name = null, bool initializeReused = true)
         {
             if (type == null)
             {
@@ -199,10 +193,14 @@ namespace Sigil
         /// 
         /// Be aware that each local takes some space on the stack, inefficient use of locals
         /// could lead to StackOverflowExceptions at runtime.
+        /// 
+        /// Jil will reuse local index on the stack if the corresponding Local instance has been disposed.
+        /// By default Jil will set reused locals to their default value, you can change this behavior
+        /// by passing initializeReused = false.
         /// </summary>
-        public Emit<DelegateType> DeclareLocal<Type>(out Local local, string name = null)
+        public Emit<DelegateType> DeclareLocal<Type>(out Local local, string name = null, bool initializeReused = true)
         {
-            return DeclareLocal(typeof(Type), out local, name);
+            return DeclareLocal(typeof(Type), out local, name, initializeReused);
         }
 
         /// <summary>
@@ -213,10 +211,14 @@ namespace Sigil
         /// 
         /// Be aware that each local takes some space on the stack, inefficient use of locals
         /// could lead to StackOverflowExceptions at runtime.
+        /// 
+        /// Jil will reuse local index on the stack if the corresponding Local instance has been disposed.
+        /// By default Jil will set reused locals to their default value, you can change this behavior
+        /// by passing initializeReused = false.
         /// </summary>
-        public Emit<DelegateType> DeclareLocal(Type type, out Local local, string name = null)
+        public Emit<DelegateType> DeclareLocal(Type type, out Local local, string name = null, bool initializeReused = true)
         {
-            local = DeclareLocal(type, name);
+            local = DeclareLocal(type, name, initializeReused);
 
             return this;
         }

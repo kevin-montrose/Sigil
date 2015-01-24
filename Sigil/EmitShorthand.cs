@@ -62,30 +62,30 @@ namespace Sigil
             return InnerEmit.Instructions();
         }
 
-        /// <summary cref="M:Sigil.Emit`1.DeclareLocal``1(System.String)" />
-        public Local DeclareLocal<Type>(string name = null)
+        /// <summary cref="M:Sigil.Emit`1.DeclareLocal``1(System.String, System.Boolean)" />
+        public Local DeclareLocal<Type>(string name = null, bool initializeReused = true)
         {
-            return DeclareLocal(typeof(Type), name);
+            return DeclareLocal(typeof(Type), name, initializeReused);
         }
 
-        /// <summary cref="M:Sigil.Emit`1.DeclareLocal``1(System.String)" />
-        public EmitShorthand<DelegateType> DeclareLocal<Type>(out Local local, string name = null)
+        /// <summary cref="M:Sigil.Emit`1.DeclareLocal``1(Sigil.Local, System.String, System.Boolean)" />
+        public EmitShorthand<DelegateType> DeclareLocal<Type>(out Local local, string name = null, bool initializeReused = true)
         {
-            local = DeclareLocal<Type>(name);
+            local = DeclareLocal<Type>(name, initializeReused);
 
             return this;
         }
 
-        /// <summary cref="M:Sigil.Emit`1.DeclareLocal(System.Type, System.String)" />
-        public Local DeclareLocal(Type type, string name = null)
+        /// <summary cref="M:Sigil.Emit`1.DeclareLocal(System.Type, System.String, System.Boolean)" />
+        public Local DeclareLocal(Type type, string name = null, bool initializeReused = true)
         {
-            return InnerEmit.DeclareLocal(type, name);
+            return InnerEmit.DeclareLocal(type, name, initializeReused);
         }
 
-        /// <summary cref="M:Sigil.Emit`1.DeclareLocal(System.Type, System.String)" />
-        public EmitShorthand<DelegateType> DeclareLocal(Type type, out Local local, string name = null)
+        /// <summary cref="M:Sigil.Emit`1.DeclareLocal(System.Type, Sigil.Local, System.String, System.Boolean)" />
+        public EmitShorthand<DelegateType> DeclareLocal(Type type, out Local local, string name = null, bool initializeReused = true)
         {
-            local = DeclareLocal(type, name);
+            local = DeclareLocal(type, name, initializeReused);
 
             return this;
         }
