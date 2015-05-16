@@ -5,7 +5,7 @@ namespace Sigil.Impl
 {
     internal static class InstructionSize
     {
-        public static int Get(OpCode op)
+        public static int Get(OpCode op, Sigil.Label[] labels = null)
         {
             var baseSize = op.Size;
             int operandSize;
@@ -21,7 +21,7 @@ namespace Sigil.Impl
                 case OperandType.InlineR: operandSize = 8; break;
                 case OperandType.InlineSig: operandSize = 4; break;
                 case OperandType.InlineString: operandSize = 4; break;
-                case OperandType.InlineSwitch: operandSize = 4; break;
+                case OperandType.InlineSwitch: operandSize = 4 + labels.Length * 4; break;
                 case OperandType.InlineTok: operandSize = 4; break;
                 case OperandType.InlineType: operandSize = 4; break;
                 case OperandType.InlineVar: operandSize = 2; break;

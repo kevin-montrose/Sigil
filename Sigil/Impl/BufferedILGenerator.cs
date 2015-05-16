@@ -728,7 +728,7 @@ namespace Sigil.Impl
                     localOp = newOpcode;
                 };
 
-            InstructionSizes.Add(() => InstructionSize.Get(localOp));
+            InstructionSizes.Add(() => InstructionSize.Get(localOp, labels));
 
             LengthCache.Clear();
 
