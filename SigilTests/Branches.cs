@@ -571,5 +571,40 @@ namespace SigilTests
 
             Assert.AreEqual(314, del());
         }
+
+        [TestMethod]
+        public void BigSwitch()
+        {
+            var e1 = Emit<Func<uint, uint>>.NewDynamicMethod();
+
+            // prep labels
+            var before = e1.DefineLabel();
+            var first = e1.DefineLabel();
+            var defaultLabel = e1.DefineLabel();
+
+            // prep switch targets
+            var labels = new Sigil.Label[30];
+            for (int i = 1; i < labels.Length; i++)
+                labels[i] = defaultLabel;
+            labels[0] = first;
+
+            // emit trivial switch
+            e1.MarkLabel(before);
+            e1.LoadArgument(0);
+            e1.Switch(labels);
+
+            e1.MarkLabel(defaultLabel);
+            e1.LoadConstant(0u);
+            e1.StoreArgument(0);
+            e1.Branch(before);
+
+            e1.MarkLabel(first);
+            e1.LoadArgument(0);
+            e1.Return();
+
+            var del = e1.CreateDelegate();
+
+            Assert.AreEqual(0u, del(42));
+        }
     }
 }
