@@ -13,18 +13,18 @@ Unlike ILGenerator, Sigil will fail as soon as an error is detected in the emitt
 Sigil is oriented mostly towards DynamicMethod, but does support creating methods with TypeBuilder.
 
 To create an `Emit<DelegateType>`:
-```
+```C#
 var emiter = Emit<Func<int>>.NewDynamicMethod("MyMethod");
 ```
 
 To build a static method with Sigil:
-```
+```C#
 TypeBuilder myBuilder = ...;
 var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Static", MethodAttributes.Static | MethodAttributes.Public, CallingConventions.Standard);
 ```
 
 To build an instance method with Sigil:  
-```
+```C#
 TypeBuilder myBuilder = ...;
 var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Instance", MethodAttributes.Public, CallingConventions.Standard | CallingConventions.HasThis);
 // Technically this is a Func<myBuilder, int string>; but because myBuilder isn't complete
@@ -40,7 +40,7 @@ There are methods on `Emit<DelegateType>` for each legal CIL opcode.  Note that 
 
 DynamicMethods are created using a different Module with the current assembly's trust level, if loaded under full trust unverifiable instructions are legal.
 
-```
+```C#
 // Create a delegate that sums two integers
 var emiter = Emit<Func<int, int, int>>.NewDynamicMethod("MyMethod");
 emiter.LoadArgument(0);
@@ -55,7 +55,7 @@ Console.WriteLine(del(314, 159));
 
 Sigil validates the CIL stream as each instruction is added, and throws a `SigilVerificationException` as soon as an illegal program is detected.
 
-```
+```C#
 var emiter = Emit<Func<int, string, int>>.NewDynamicMethod("MyMethod");
 emiter.LoadArgument(0);
 emiter.LoadArgument(1);
@@ -74,7 +74,7 @@ If a local is unused in a method body, a SigilVerificationException will be thro
 Locals implement IDisposable, letting you free locals up for Sigil to reuse.  This can result in more compact code, and a smaller stack frame.
 
 The following code only allocates a single local  
-```
+```C#
 var e1 = Emit<Func<int>>.NewDynamicMethod();
 
 using (var a = e1.DeclareLocal<int>("a"))
@@ -98,7 +98,7 @@ using (var b = e1.DeclareLocal<int>("b"))
 The methods `DefineLabel` and `MarkLabel`, and the instruction family `Branch*` and `Leave` are provided to specify control flow.
 
 For example:
-```
+```C#
 var emiter = Emit<Func<int>>.NewDynamicMethod("Unconditional");
 
 var label1 = emiter.DefineLabel("label1");
@@ -128,7 +128,7 @@ d();  // returns 3
 Sigil exposes `BeginExceptionBlock`, `EndExceptionBlock`, `BeginCatchBlock`, `BeginCatchAllBlock`, `EndCatchBlock`, `BeginFinallyBlock`, and `EndFinallyBlock`.
 
 An example of dynamically building a try/catch block:
-```
+```C#
 MethodInfo mayFail = ...;
 MethodInfo alwaysCall = ...;
 var emiter = Emit<Func<string, bool>>.NewDynamicMethod("TryCatchFinally");
@@ -172,7 +172,7 @@ var del = emiter.CreateDelegate();
 ```
 
 The above is equivalent to:
-```
+```C#
 Func<string, bool> del =
    s => 
    {
@@ -205,13 +205,13 @@ Already really familiar with `ILGenerator` and `OpCodes`?  `Emit<DelegateType>.A
 as `Emit<DelegateType>` but with shorter, more familiar names.
 
 Loading a constant with `Emit<DelegateType>`:
-```
+```C#
 Emit<DelegateType> emit = ...;
 emit.LoadConstant(123);
 ```
 
 Loading a constant with `Emit<DelegateType>.AsShorthand()`:
-```
+```C#
 Emit<DelegateType> emit = ...;
 var e = emit.AsShorthand();
 e.Ldc(123);
@@ -283,7 +283,7 @@ The `Disassembler<DelegateType>.Disassemble(...)` method returns a `DisassembleO
 the inner workings of the delegate, and re-emit it under certain circumstances.
 
 For example:
-```
+```C#
 Func<string, int> del =
     str =>
     {
