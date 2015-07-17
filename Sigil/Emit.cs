@@ -521,7 +521,7 @@ namespace Sigil
         public ConstructorBuilder CreateTypeInitializer(OptimizationOptions optimizationOptions = OptimizationOptions.All) 
         {
             string ignored;
-            return CreateConstructor(out ignored, optimizationOptions);
+            return CreateTypeInitializer(out ignored, optimizationOptions);
         }
 
         private static void ValidateNewParameters<CheckDelegateType>()
