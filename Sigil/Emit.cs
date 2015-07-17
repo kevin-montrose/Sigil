@@ -428,7 +428,7 @@ namespace Sigil
         /// </summary>
         public ConstructorBuilder CreateConstructor(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
-            if (ConstrBuilder == null || IsBuildingConstructor)
+            if (ConstrBuilder == null || !IsBuildingConstructor)
             {
                 throw new InvalidOperationException("Emit was not created to build a constructor, thus CreateConstructor cannot be called");
             }
@@ -485,7 +485,7 @@ namespace Sigil
         /// </summary>
         public ConstructorBuilder CreateTypeInitializer(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All) 
         {
-            if (ConstrBuilder == null || !IsBuildingConstructor) 
+            if (ConstrBuilder == null || IsBuildingConstructor) 
             {
                 throw new InvalidOperationException("Emit was not created to build a type initializer, thus CreateTypeInitializer cannot be called");
             }
