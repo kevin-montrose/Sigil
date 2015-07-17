@@ -428,7 +428,7 @@ namespace Sigil
         /// </summary>
         public ConstructorBuilder CreateConstructor(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All)
         {
-            if (ConstrBuilder == null)
+            if (ConstrBuilder == null || IsBuildingConstructor)
             {
                 throw new InvalidOperationException("Emit was not created to build a constructor, thus CreateConstructor cannot be called");
             }
@@ -462,6 +462,63 @@ namespace Sigil
         /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
         /// </summary>
         public ConstructorBuilder CreateConstructor(OptimizationOptions optimizationOptions = OptimizationOptions.All)
+        {
+            string ignored;
+            return CreateConstructor(out ignored, optimizationOptions);
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the ConstructorBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
+        /// 
+        /// `instructions` will be set to a representation of the instructions making up the returned constructor.
+        /// Note that this string is typically *not* enough to regenerate the constructor, it is available for
+        /// debugging purposes only.  Consumers may find it useful to log the instruction stream in case
+        /// the returned constructor fails validation (indicative of a bug in Sigil) or
+        /// behaves unexpectedly (indicative of a logic bug in the consumer code).
+        /// </summary>
+        public ConstructorBuilder CreateTypeInitializer(out string instructions, OptimizationOptions optimizationOptions = OptimizationOptions.All) 
+        {
+            if (ConstrBuilder == null || !IsBuildingConstructor) 
+            {
+                throw new InvalidOperationException("Emit was not created to build a type initializer, thus CreateTypeInitializer cannot be called");
+            }
+
+            if (ConstructorBuilt) 
+            {
+                instructions = null;
+                return ConstrBuilder;
+            }
+
+            ConstructorBuilt = true;
+
+            Seal(optimizationOptions);
+
+            var il = ConstrBuilder.GetILGenerator();
+            instructions = IL.UnBuffer(il);
+
+            AutoNamer.Release(this);
+
+            return ConstrBuilder;
+        }
+
+        /// <summary>
+        /// Writes the CIL stream out to the ConstructorBuilder used to create this Emit.
+        /// 
+        /// Validation that cannot be run until a method is finished is run, and various instructions
+        /// are re-written to choose "optimal" forms (Br may become Br_S, for example).
+        /// 
+        /// Once this method is called the Emit may no longer be modified.
+        /// 
+        /// Returns a ConstructorBuilder, which can be used to define overrides or for further inspection.
+        /// </summary>
+        public ConstructorBuilder CreateTypeInitializer(OptimizationOptions optimizationOptions = OptimizationOptions.All) 
         {
             string ignored;
             return CreateConstructor(out ignored, optimizationOptions);
@@ -693,7 +750,7 @@ namespace Sigil
         }
 
         /// <summary>
-        /// Creates a new Emit, suitable for building a constructo on the given TypeBuilder.
+        /// Creates a new Emit, suitable for building a constructor on the given TypeBuilder.
         /// 
         /// The DelegateType and TypeBuilder must agree on parameter types and parameter counts.
         /// 
@@ -743,6 +800,52 @@ namespace Sigil
             var ret = new Emit<DelegateType>(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
             ret.ConstrBuilder = constructorBuilder;
             ret.IsBuildingConstructor = true;
+
+            return ret;
+        }
+
+        /// <summary>
+        /// Creates a new Emit, suitable for building a type initializer on the given TypeBuilder.
+        /// 
+        /// The DelegateType and TypeBuilder must agree on parameter types and parameter counts.
+        /// 
+        /// If you intend to use unveriable code, you must set allowUnverifiableCode to true.
+        /// 
+        /// If doVerify is false (default is true) Sigil will *not* throw an exception on invalid IL.  This is faster, but the benefits
+        /// of Sigil are reduced to "a nicer ILGenerator interface".
+        /// 
+        /// If strictBranchValidation is true (default is false) Sigil will enforce "Backward branch constraints" which are *technically* required
+        /// for valid CIL, but in practice often ignored.  The most common case to set this option is if you are generating types to write to disk.
+        /// </summary>
+        public static Emit<DelegateType> BuildTypeInitializer(TypeBuilder type, bool allowUnverifiableCode = false, bool doVerify = true, bool strictBranchVerification = false) 
+        {
+            if (type == null) 
+            {
+                throw new ArgumentNullException("type");
+            }
+
+            ValidateNewParameters<DelegateType>();
+
+            var delType = typeof(DelegateType);
+
+            var invoke = delType.GetMethod("Invoke");
+            var returnType = invoke.ReturnType;
+            var parameters = invoke.GetParameters();
+
+            if (returnType != typeof(void)) 
+            {
+                throw new ArgumentException("DelegateType used must return void");
+            }
+
+            if (parameters.Length > 0) 
+            {
+                throw new ArgumentException("A type initializer can have no arguments.");
+            }
+
+            var constructorBuilder = type.DefineTypeInitializer();
+
+            var ret = new Emit<DelegateType>(CallingConventions.Standard, typeof(void), Type.EmptyTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
+            ret.ConstrBuilder = constructorBuilder;
 
             return ret;
         }

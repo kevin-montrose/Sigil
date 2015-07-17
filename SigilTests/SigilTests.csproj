@@ -116,6 +116,10 @@
     </Compile>
     <Compile Include="NoVerification.cs" />
     <Compile Include="Tail.cs" />
+    <Compile Include="TypeInitializer.cs" />
+    <Compile Include="TypeInitializer.NonGeneric.cs">
+      <DependentUpon>TypeInitializer.cs</DependentUpon>
+    </Compile>
     <Compile Include="WriteLine.NonGeneric.cs">
       <DependentUpon>WriteLine.cs</DependentUpon>
     </Compile>

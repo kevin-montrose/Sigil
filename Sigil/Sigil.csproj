@@ -220,6 +220,7 @@
     <Compile Include="Emit.TryCatchFinally.cs">
       <DependentUpon>Emit.cs</DependentUpon>
     </Compile>
+    <Compile Include="Impl\NonGenericEmitType.cs" />
     <Compile Include="Impl\RollingVerifier.NoVerification.cs">
       <DependentUpon>RollingVerifier.cs</DependentUpon>
     </Compile>
