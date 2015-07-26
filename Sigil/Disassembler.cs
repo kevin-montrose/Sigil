@@ -87,7 +87,8 @@ namespace Sigil
 
             var asDel = (Delegate)(object)del;
 
-            var body = asDel.Method.GetMethodBody();
+            var method = asDel.Method;
+            var body = method.GetMethodBody();
 
             var cil = body.GetILAsByteArray();
             var locals = body.LocalVariables;
@@ -160,13 +161,73 @@ namespace Sigil
                 prevCount = needsInference.Count;
             }
 
+
+            var hasThis = (method.CallingConvention | CallingConventions.HasThis) != 0;
+            bool usesThis;
+            if (hasThis)
+            {
+                usesThis = false;
+                // check to see if we actually use `this`, and if so we can't actually emit
+                foreach (var op in ops)
+                {
+                    if(op.Item2.IsOpCode)
+                    {
+                        var opcode = op.Item2.OpCode;
+
+                        if(opcode == OpCodes.Ldarg_0)
+                        {
+                            usesThis = true;
+                            break;
+                        }
+
+                        var pointsToIntArg =
+                            opcode == OpCodes.Ldarg ||
+                            opcode == OpCodes.Ldarga ||
+                            opcode == OpCodes.Starg;
+
+                        if (pointsToIntArg)
+                        {
+                            var param = (int)LinqAlternative.ElementAt(op.Item2.Parameters, 0);
+
+                            if (param == 0)
+                            {
+                                usesThis = true;
+                                break;
+                            }
+                        }
+
+                        var pointsToShortArg =
+                            opcode == OpCodes.Ldarg_S ||
+                            opcode == OpCodes.Ldarga_S ||
+                            opcode == OpCodes.Starg_S;
+
+                        if (pointsToShortArg)
+                        {
+                            var param = (ushort)LinqAlternative.ElementAt(op.Item2.Parameters, 0);
+
+                            if (param == 0)
+                            {
+                                usesThis = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                usesThis = false;
+            }
+
+            var canBeEmitted = asDel.Target == null || !usesThis;
+
             return
                 new DisassembledOperations<DelegateType>(
                     new List<Operation<DelegateType>>(new LinqList<SigilTuple<int, Operation<DelegateType>>>(ops).Select(d => d.Item2).AsEnumerable()), 
                     ps, 
                     ls,
                     asLabels,
-                    asDel.Target == null
+                    canBeEmitted
                 );
         }
 
