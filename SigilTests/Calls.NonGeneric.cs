@@ -277,5 +277,31 @@ namespace SigilTests
 
             Assert.AreEqual(123 + 456 + 7, d1("123", 456, 7.89));
         }
+
+        [TestMethod]
+        public void DynamicRecursiveNonGeneric()
+        {
+            var impl = Emit.NewDynamicMethod(typeof(int), new[] { typeof(int) }, "factorial");
+            var lbl = impl.DefineLabel();
+            impl.LoadArgument(0);
+            impl.BranchIfTrue(lbl);
+            impl.LoadConstant(0);
+            impl.Return();
+            impl.MarkLabel(lbl);
+            impl.LoadArgument(0);
+            impl.LoadArgument(0);
+            impl.LoadConstant(1);
+            impl.Subtract();
+            impl.Call(impl);
+            impl.Add();
+            impl.Return();
+
+            string instr;
+            var del = impl.CreateDelegate<Func<int, int>>(out instr);
+            Assert.AreEqual(del(1), 1);
+            Assert.AreEqual(del(2), 3);
+            Assert.AreEqual(del(3), 6);
+            Assert.IsFalse(instr.Contains("tail."));
+        }
     }
 }
