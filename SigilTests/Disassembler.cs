@@ -21,10 +21,24 @@ namespace SigilTests
             var ops = Sigil.Disassembler<Func<int, int, int>>.Disassemble(d1);
 
             Assert.IsNotNull(ops);
-            Assert.AreEqual(OpCodes.Ldarg_0, ops[0].OpCode);
-            Assert.AreEqual(OpCodes.Ldarg_1, ops[1].OpCode);
-            Assert.AreEqual(OpCodes.Add, ops[2].OpCode);
-            Assert.AreEqual(OpCodes.Ret, ops[3].OpCode);
+
+            var firstOpIs0 = OpCodes.Ldarg_0 == ops[0].OpCode;
+
+            if (firstOpIs0)
+            {
+                Assert.AreEqual(OpCodes.Ldarg_0, ops[0].OpCode);
+                Assert.AreEqual(OpCodes.Ldarg_1, ops[1].OpCode);
+                Assert.AreEqual(OpCodes.Add, ops[2].OpCode);
+                Assert.AreEqual(OpCodes.Ret, ops[3].OpCode);
+            }
+            else
+            {
+                Assert.AreEqual(OpCodes.Ldarg_1, ops[0].OpCode);
+                Assert.AreEqual(OpCodes.Ldarg_2, ops[1].OpCode);
+                Assert.AreEqual(OpCodes.Add, ops[2].OpCode);
+                Assert.AreEqual(OpCodes.Ret, ops[3].OpCode);
+            }
+
             Assert.IsTrue(ops.CanEmit);
 
             var recompiled = ops.EmitAll();
@@ -42,7 +56,12 @@ namespace SigilTests
                 }
             }
 
-            Assert.AreEqual("ldarg.0\r\nldarg.1\r\nadd\r\nret\r\n", instrs);
+            const string Pre4_6 = "ldarg.0\r\nldarg.1\r\nadd\r\nret\r\n";
+            const string Post4_6 = "ldarg.1\r\nldarg.2\r\nadd\r\nret\r\n";
+
+            var isValid = Pre4_6 == instrs || Post4_6 == instrs;
+
+            Assert.IsTrue(isValid);
         }
 
         class _Volatile
@@ -78,7 +97,12 @@ namespace SigilTests
                 Assert.AreEqual(v1.Foo, v2.Foo);
             }
 
-            Assert.AreEqual("ldarg.0\r\nvolatile.ldfld Int32 Foo\r\nstloc.0\r\nldloc.0\r\nldarg.1\r\nadd\r\nstloc.0\r\nldarg.0\r\nldarg.1\r\nvolatile.stfld Int32 Foo\r\nret\r\n", instrs);
+            const string Pre4_6 = "ldarg.0\r\nvolatile.ldfld Int32 Foo\r\nstloc.0\r\nldloc.0\r\nldarg.1\r\nadd\r\nstloc.0\r\nldarg.0\r\nldarg.1\r\nvolatile.stfld Int32 Foo\r\nret\r\n";
+            const string Post4_6 = "ldarg.1\r\nvolatile.ldfld Int32 Foo\r\npop\r\nldarg.1\r\nldarg.2\r\nvolatile.stfld Int32 Foo\r\nret\r\n";
+
+            var isValid = Pre4_6 == instrs || Post4_6 == instrs;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         [TestMethod]
@@ -113,7 +137,12 @@ namespace SigilTests
                 }
             }
 
-            Assert.AreEqual("ldarg.0\r\nbrtrue.s _label5\r\nldc.i4.m1\r\nret\r\n\r\n_label5:\r\nldarg.1\r\nbrtrue.s _label10\r\nldc.i4.m1\r\nret\r\n\r\n_label10:\r\nldarg.0\r\nldarg.1\r\nmul\r\nstloc.0\r\nldloc.0\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label21\r\nldc.i4.1\r\nret\r\n\r\n_label21:\r\nldc.i4.0\r\nret\r\n", instrs);
+            const string Pre4_6 = "ldarg.0\r\nbrtrue.s _label5\r\nldc.i4.m1\r\nret\r\n\r\n_label5:\r\nldarg.1\r\nbrtrue.s _label10\r\nldc.i4.m1\r\nret\r\n\r\n_label10:\r\nldarg.0\r\nldarg.1\r\nmul\r\nstloc.0\r\nldloc.0\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label21\r\nldc.i4.1\r\nret\r\n\r\n_label21:\r\nldc.i4.0\r\nret\r\n";
+            const string Post4_6 = "ldarg.1\r\nbrtrue.s _label5\r\nldc.i4.m1\r\nret\r\n\r\n_label5:\r\nldarg.2\r\nbrtrue.s _label10\r\nldc.i4.m1\r\nret\r\n\r\n_label10:\r\nldarg.1\r\nldarg.2\r\nmul\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label19\r\nldc.i4.1\r\nret\r\n\r\n_label19:\r\nldc.i4.0\r\nret\r\n";
+
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         [TestMethod]
@@ -149,8 +178,13 @@ namespace SigilTests
                     Assert.AreEqual(d1(i, j), r1(i, j));
                 }
             }
+            
+            const string Pre4_6 = "--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloca.s 0\r\ncall System.String ToString()\r\nstloc.2\r\nleave.s _label24\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.1\r\nldloc.1\r\ncallvirt System.String get_Message()\r\nstloc.2\r\nleave.s _label24\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label24:\r\nldloc.2\r\nret\r\n";
+            const string Post4_6 = "--BeginExceptionBlock--\r\nldarg.1\r\nldarg.2\r\ndiv\r\nstloc.0\r\nldloca.s 0\r\ncall System.String ToString()\r\nstloc.1\r\nleave.s _label22\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\ncallvirt System.String get_Message()\r\nstloc.1\r\nleave.s _label22\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label22:\r\nldloc.1\r\nret\r\n";
 
-            Assert.AreEqual("--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloca.s 0\r\ncall System.String ToString()\r\nstloc.2\r\nleave.s _label24\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.1\r\nldloc.1\r\ncallvirt System.String get_Message()\r\nstloc.2\r\nleave.s _label24\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label24:\r\nldloc.2\r\nret\r\n", instrs);
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         [TestMethod]
@@ -190,8 +224,13 @@ namespace SigilTests
                     Assert.AreEqual(d1(i, j), r1(i, j));
                 }
             }
+            
+            const string Pre4_6 = "ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel0:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label17:\r\nldloc.0\r\nconv.r8\r\nret\r\n";
+            const string Post4_6 = "ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\nldarg.1\r\nldarg.2\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel0:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label17:\r\nldloc.0\r\nconv.r8\r\nret\r\n";
 
-            Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel0:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label17:\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         [TestMethod]
@@ -235,8 +274,13 @@ namespace SigilTests
                     Assert.AreEqual(d1(i, j), r1(i, j));
                 }
             }
+            
+            const string Pre4_6 = "ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nldc.i4.m1\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label17:\r\nleave.s _label24\r\n\r\n__autolabel2:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label24:\r\nldloc.0\r\nconv.r8\r\nret\r\n";
+            const string Post4_6 = "ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.1\r\nldarg.2\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label22\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nldc.i4.m1\r\nstloc.0\r\nleave.s _label22\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label22:\r\nldloc.0\r\nconv.r8\r\nret\r\n";
 
-            Assert.AreEqual("ldc.i4.0\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.1\r\ndiv\r\nstloc.0\r\nldloc.0\r\nldc.i4.1\r\nadd\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nldc.i4.m1\r\nstloc.0\r\nleave.s _label17\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label17:\r\nleave.s _label24\r\n\r\n__autolabel2:\r\n--BeginFinallyBlock--\r\nldloc.0\r\nldc.i4.2\r\nmul\r\nstloc.0\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label24:\r\nldloc.0\r\nconv.r8\r\nret\r\n", instrs);
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         [TestMethod]
@@ -298,7 +342,12 @@ namespace SigilTests
                 }
             }
 
-            Assert.AreEqual("ldstr ''\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nconv.r8\r\nldc.r8 3\r\ncall Double Pow(Double, Double)\r\npop\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.0\r\nmul\r\nldarg.0\r\nsub\r\nstloc.1\r\nldloc.1\r\nldarg.0\r\nldc.i4.1\r\nsub\r\ndiv\r\nstloc.s 5\r\nldloca.s 5\r\ncall System.String ToString()\r\nstloc.s 4\r\nleave.s _label114\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.2\r\nldstr 'foo - '\r\nldloc.2\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nnewobj Void .ctor(System.String)\r\nthrow\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.3\r\nldloc.3\r\ncallvirt System.String get_Message()\r\nldloc.3\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label91\r\n\r\n__autolabel2:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label91:\r\nleave.s _label112\r\n\r\n__autolabel3:\r\n--BeginFinallyBlock--\r\nldarg.1\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label111\r\n--BeginExceptionBlock--\r\nldloc.0\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label111\r\n\r\n__autolabel4:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nleave.s _label111\r\n\r\n__autolabel5:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label111:\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label112:\r\nldloc.0\r\nret\r\n\r\n_label114:\r\nldloc.s 4\r\nret\r\n", instrs);
+            const string Pre4_6 = "ldstr ''\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.0\r\nconv.r8\r\nldc.r8 3\r\ncall Double Pow(Double, Double)\r\npop\r\n--BeginExceptionBlock--\r\nldarg.0\r\nldarg.0\r\nmul\r\nldarg.0\r\nsub\r\nstloc.1\r\nldloc.1\r\nldarg.0\r\nldc.i4.1\r\nsub\r\ndiv\r\nstloc.s 5\r\nldloca.s 5\r\ncall System.String ToString()\r\nstloc.s 4\r\nleave.s _label114\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.2\r\nldstr 'foo - '\r\nldloc.2\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nnewobj Void .ctor(System.String)\r\nthrow\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.3\r\nldloc.3\r\ncallvirt System.String get_Message()\r\nldloc.3\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label91\r\n\r\n__autolabel2:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label91:\r\nleave.s _label112\r\n\r\n__autolabel3:\r\n--BeginFinallyBlock--\r\nldarg.1\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label111\r\n--BeginExceptionBlock--\r\nldloc.0\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label111\r\n\r\n__autolabel4:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nleave.s _label111\r\n\r\n__autolabel5:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label111:\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label112:\r\nldloc.0\r\nret\r\n\r\n_label114:\r\nldloc.s 4\r\nret\r\n";
+            const string Post4_6 = "ldstr ''\r\nstloc.0\r\n--BeginExceptionBlock--\r\n--BeginExceptionBlock--\r\nldarg.1\r\nconv.r8\r\nldc.r8 3\r\ncall Double Pow(Double, Double)\r\npop\r\n--BeginExceptionBlock--\r\nldarg.1\r\ndup\r\nmul\r\nldarg.1\r\nsub\r\nldarg.1\r\nldc.i4.1\r\nsub\r\ndiv\r\nstloc.1\r\nldloca.s 1\r\ncall System.String ToString()\r\nstloc.2\r\nleave.s _label111\r\n\r\n__autolabel0:\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.3\r\nldstr 'foo - '\r\nldloc.3\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nnewobj Void .ctor(System.String)\r\nthrow\r\n\r\n__autolabel1:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n--BeginCatchBlock(System.Exception)--\r\nstloc.s 4\r\nldloc.s 4\r\ncallvirt System.String get_Message()\r\nldloc.s 4\r\ncallvirt System.String get_Message()\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label109\r\n\r\n__autolabel2:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n--BeginFinallyBlock--\r\nldarg.2\r\nldc.i4.2\r\nrem\r\nbrtrue.s _label108\r\n--BeginExceptionBlock--\r\nldloc.0\r\ndup\r\ncall System.String Concat(System.String, System.String)\r\nstloc.0\r\nleave.s _label108\r\n\r\n__autolabel3:\r\n--BeginCatchBlock(System.Exception)--\r\npop\r\nleave.s _label108\r\n\r\n__autolabel4:\r\n--EndCatchBlock--\r\n--EndExceptionBlock--\r\n\r\n_label108:\r\n--EndFinallyBlock--\r\n--EndExceptionBlock--\r\n\r\n_label109:\r\nldloc.0\r\nret\r\n\r\n_label111:\r\nldloc.2\r\nret\r\n";
+
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         [TestMethod]
@@ -334,7 +383,12 @@ namespace SigilTests
                 Assert.IsTrue(a1.SequenceEqual(a2));
             }
 
-            Assert.AreEqual("ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.i4\r\nstloc.0\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.1\r\nsub\r\nstelem.i4\r\nldloc.0\r\nret\r\n", instrs);
+            const string Pre4_6 = "ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.i4\r\nstloc.0\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.1\r\nsub\r\nstelem.i4\r\nldloc.0\r\nret\r\n";
+            const string Post4_6 = "ldarg.2\r\nldarg.1\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 2\r\nldarg.1\r\nldarg.2\r\nldelem.i4\r\nstloc.0\r\nldarg.1\r\nldarg.2\r\nldloc.0\r\nldc.i4.1\r\nsub\r\nstelem.i4\r\nldloc.0\r\nret\r\n";
+
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         [TestMethod]
@@ -377,7 +431,12 @@ namespace SigilTests
                 Assert.IsTrue(a1.SequenceEqual(a2));
             }
 
-            Assert.AreEqual("ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.ref\r\nstloc.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.0\r\nble.s _label40\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.1\r\nsub\r\ncallvirt System.String Substring(Int32, Int32)\r\nstelem.ref\r\nbr.s _label48\r\n\r\n_label40:\r\nldarg.0\r\nldarg.1\r\nldstr 'hello world'\r\nstelem.ref\r\n\r\n_label48:\r\nldloc.0\r\nret\r\n", instrs);
+            const string Pre4_6 = "ldarg.1\r\nldarg.0\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 1\r\nldarg.0\r\nldarg.1\r\nldelem.ref\r\nstloc.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.0\r\nble.s _label40\r\nldarg.0\r\nldarg.1\r\nldloc.0\r\nldc.i4.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.1\r\nsub\r\ncallvirt System.String Substring(Int32, Int32)\r\nstelem.ref\r\nbr.s _label48\r\n\r\n_label40:\r\nldarg.0\r\nldarg.1\r\nldstr 'hello world'\r\nstelem.ref\r\n\r\n_label48:\r\nldloc.0\r\nret\r\n";
+            const string Post4_6 = "ldarg.2\r\nldarg.1\r\nldlen\r\nconv.i4\r\nrem\r\nstarg.s 2\r\nldarg.1\r\nldarg.2\r\nldelem.ref\r\nstloc.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.0\r\nble.s _label40\r\nldarg.1\r\nldarg.2\r\nldloc.0\r\nldc.i4.0\r\nldloc.0\r\ncallvirt Int32 get_Length()\r\nldc.i4.1\r\nsub\r\ncallvirt System.String Substring(Int32, Int32)\r\nstelem.ref\r\nbr.s _label48\r\n\r\n_label40:\r\nldarg.1\r\nldarg.2\r\nldstr 'hello world'\r\nstelem.ref\r\n\r\n_label48:\r\nldloc.0\r\nret\r\n";
+
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         delegate string LoadAndStoreIndictDel(ref string arr, int at);
@@ -416,7 +475,12 @@ namespace SigilTests
                 Assert.AreEqual(a1, a2);
             }
 
-            Assert.AreEqual("ldarg.0\r\nldind.ref\r\nstloc.0\r\nldc.i4.0\r\nstloc.1\r\nbr.s _label21\r\n\r\n_label7:\r\nldarg.0\r\nldarg.0\r\nldind.ref\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstind.ref\r\nldloc.1\r\nldc.i4.1\r\nadd\r\nstloc.1\r\n\r\n_label21:\r\nldloc.1\r\nldarg.1\r\nblt.s _label7\r\nldarg.0\r\nldind.ref\r\nret\r\n", instrs);
+            const string Pre4_6 = "ldarg.0\r\nldind.ref\r\nstloc.0\r\nldc.i4.0\r\nstloc.1\r\nbr.s _label21\r\n\r\n_label7:\r\nldarg.0\r\nldarg.0\r\nldind.ref\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstind.ref\r\nldloc.1\r\nldc.i4.1\r\nadd\r\nstloc.1\r\n\r\n_label21:\r\nldloc.1\r\nldarg.1\r\nblt.s _label7\r\nldarg.0\r\nldind.ref\r\nret\r\n";
+            const string Post4_6 = "ldarg.1\r\nldind.ref\r\nstloc.0\r\nldc.i4.0\r\nstloc.1\r\nbr.s _label21\r\n\r\n_label7:\r\nldarg.1\r\nldarg.1\r\nldind.ref\r\nldloc.0\r\ncall System.String Concat(System.String, System.String)\r\nstind.ref\r\nldloc.1\r\nldc.i4.1\r\nadd\r\nstloc.1\r\n\r\n_label21:\r\nldloc.1\r\nldarg.2\r\nblt.s _label7\r\nldarg.1\r\nldind.ref\r\nret\r\n";
+
+            var isValid = instrs == Pre4_6 || instrs == Post4_6;
+
+            Assert.IsTrue(isValid, instrs);
         }
 
         class ComplexClass
