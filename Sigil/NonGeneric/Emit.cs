@@ -549,7 +549,7 @@ namespace Sigil.NonGeneric
 
             InnerEmit.ConstrBuilder = constructorBuilder;
 
-            CreatedConstructor = InnerEmit.CreateConstructor(out instructions, optimizationOptions);
+            CreatedConstructor = InnerEmit.CreateTypeInitializer(out instructions, optimizationOptions);
 
             return CreatedConstructor;
         }
