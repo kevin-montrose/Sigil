@@ -37,9 +37,6 @@ namespace Sigil.NonGeneric
         /// <summary>
         /// Calls the method being constructed by the given emit.  Emits so used must have been constructed with BuildMethod or related methods.
         /// 
-        /// A delegate type must be provided.  If the given emit has not yet been used to create a delegate, it will be constrained to the passed delegate
-        /// type going forward.  If it has already been used to create a delegate, the delegate types must match.
-        /// 
         /// Pops its arguments in reverse order (left-most deepest in the stack), and pushes the return value if it is non-void.
         /// 
         /// If the given method is an instance method, the `this` reference should appear before any parameters.
@@ -47,7 +44,7 @@ namespace Sigil.NonGeneric
         /// Call does not respect overrides, the implementation defined by the given MethodInfo is what will be called at runtime.
         /// 
         /// To call overrides of instance methods, use CallVirtual.
-        /// 
+        /// Recursive calls can only be performed with DynamicMethods, other passed in Emits must already have their methods created.
         /// When calling VarArgs methods, arglist should be set to the types of the extra parameters to be passed.
         /// </summary>
         public Emit Call(Emit emit, Type[] arglist = null)

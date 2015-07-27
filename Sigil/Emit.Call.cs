@@ -62,6 +62,8 @@ namespace Sigil
         /// 
         /// To call overrides of instance methods, use CallVirtual.
         /// 
+        /// Recursive calls can only be performed with DynamicMethods, other passed in Emits must already have their methods created.
+        /// 
         /// When calling VarArgs methods, arglist should be set to the types of the extra parameters to be passed.
         /// </summary>
         public Emit<DelegateType> Call<MethodEmit>(Emit<MethodEmit> emit, Type[] arglist = null)
