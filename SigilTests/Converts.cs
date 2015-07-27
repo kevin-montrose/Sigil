@@ -151,6 +151,19 @@ namespace SigilTests
 
                 Assert.AreEqual(uintPtr, d1(123));
             }
+
+            {
+                var e1 = Emit<Func<int, bool>>.NewDynamicMethod();
+                e1.LoadArgument(0);
+                e1.Convert<bool>();
+                e1.Return();
+
+                var d1 = e1.CreateDelegate();
+
+                Assert.IsTrue(d1(1));
+                Assert.IsTrue(d1(2));
+                Assert.IsFalse(d1(0));
+            }
         }
 
         [TestMethod]

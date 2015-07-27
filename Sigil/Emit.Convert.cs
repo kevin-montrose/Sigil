@@ -65,7 +65,7 @@ namespace Sigil
                 return this;
             }
 
-            if (primitiveType == typeof(sbyte))
+            if (primitiveType == typeof(sbyte) || primitiveType == typeof(bool)) // bool is an int8 on the stack
             {
                 ConvertToSByte(transitions);
                 return this;
@@ -181,7 +181,7 @@ namespace Sigil
                 return this;
             }
 
-            if (primitiveType == typeof(sbyte))
+            if (primitiveType == typeof(sbyte) || primitiveType == typeof(bool)) // bool is an int8 on the stack
             {
                 ConvertToSByteOverflow(transitions);
                 return this;
