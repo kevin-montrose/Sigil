@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Sigil.NonGeneric
 {
@@ -228,6 +229,18 @@ namespace Sigil.NonGeneric
         public Emit NewObject(ConstructorInfo constructor)
         {
             InnerEmit.NewObject(constructor);
+            return this;
+        }
+
+        /// <summary>
+        /// Pops # of parameters from the stack, invokes the constructor, and pushes a reference to the new object onto the stack.
+        /// 
+        /// This method is provided as ConstructorBuilder cannot be inspected for parameter information at runtime.  If the passed parameterTypes
+        /// do not match the given constructor, the produced code will be invalid.
+        /// </summary>
+        public Emit NewObject(ConstructorBuilder constructor, Type[] parameterTypes)
+        {
+            InnerEmit.NewObject(constructor, parameterTypes);
             return this;
         }
     }

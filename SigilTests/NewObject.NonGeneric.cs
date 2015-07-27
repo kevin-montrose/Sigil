@@ -3,6 +3,8 @@ using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -66,6 +68,32 @@ namespace SigilTests
             var d1 = e1.CreateDelegate<Func<VT>>();
 
             Assert.AreEqual(3.1415926, d1().B);
+        }
+
+        [TestMethod]
+        public void ConstructorBuildersNonGeneric()
+        {
+            var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("ConstructorBuilders"), AssemblyBuilderAccess.Run);
+            var mod = asm.DefineDynamicModule("Mod");
+            var tb = mod.DefineType("Type");
+
+            var cb = Emit.BuildConstructor(new Type[0], tb, MethodAttributes.Public);
+            cb.Return();
+            var cons = cb.CreateConstructor();
+
+            var createProxy = Emit.BuildStaticMethod(typeof(object), new Type[0], tb, "Create", MethodAttributes.Public | MethodAttributes.Static, true, false);
+            createProxy.NewObject(cons, new Type[0]);
+            createProxy.Return();
+
+            createProxy.CreateMethod();
+
+            var t = tb.CreateType();
+
+            var mtd = t.GetMethod("Create");
+            var o = mtd.Invoke(null, new object[0]);
+
+            Assert.IsNotNull(o);
+            Assert.AreEqual("Type", o.GetType().Name);
         }
     }
 }

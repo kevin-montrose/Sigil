@@ -241,7 +241,35 @@ namespace Sigil
                 throw new ArgumentNullException("constructor");
             }
 
-            var expectedParams = ((LinqArray<ParameterInfo>)constructor.GetParameters()).Select(p => TypeOnStack.Get(p.ParameterType)).Reverse().ToList();
+            var pts = ((LinqArray<ParameterInfo>)constructor.GetParameters()).Select(p => p.ParameterType).ToArray();
+
+            return InnerNewObject(constructor, pts);
+        }
+
+        /// <summary>
+        /// Pops # of parameters from the stack, invokes the constructor, and pushes a reference to the new object onto the stack.
+        /// 
+        /// This method is provided as ConstructorBuilder cannot be inspected for parameter information at runtime.  If the passed parameterTypes
+        /// do not match the given constructor, the produced code will be invalid.
+        /// </summary>
+        public Emit<DelegateType> NewObject(ConstructorBuilder constructor, Type[] parameterTypes)
+        {
+            if(constructor == null)
+            {
+                throw new ArgumentNullException("constructor");
+            }
+
+            if (parameterTypes == null)
+            {
+                throw new ArgumentNullException("parameterTypes");
+            }
+
+            return InnerNewObject(constructor, parameterTypes);
+        }
+
+        Emit<DelegateType> InnerNewObject(ConstructorInfo constructor, Type[] parameterTypes)
+        {
+            var expectedParams = ((LinqArray<Type>)parameterTypes).Select(p => TypeOnStack.Get(p)).Reverse().ToList();
 
             var makesType = TypeOnStack.Get(constructor.DeclaringType);
 

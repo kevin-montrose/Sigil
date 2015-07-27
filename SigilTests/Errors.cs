@@ -1795,7 +1795,7 @@ namespace SigilTests
 
                 try
                 {
-                    e1.NewObject(null, null);
+                    e1.NewObject((Type)null, null);
                     Assert.Fail();
                 }
                 catch (ArgumentNullException e)

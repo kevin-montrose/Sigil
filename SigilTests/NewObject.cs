@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection.Emit;
+using System.Reflection;
 
 namespace SigilTests
 {
@@ -114,6 +116,32 @@ namespace SigilTests
             var d1 = e1.CreateDelegate();
 
             Assert.AreEqual(3.1415926, d1().B);
+        }
+
+        [TestMethod]
+        public void ConstructorBuilders()
+        {
+            var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("ConstructorBuilders"), AssemblyBuilderAccess.Run);
+            var mod = asm.DefineDynamicModule("Mod");
+            var tb = mod.DefineType("Type");
+
+            var cb = Emit<Action>.BuildConstructor(tb, MethodAttributes.Public);
+            cb.Return();
+            var cons = cb.CreateConstructor();
+
+            var createProxy = Emit<Func<object>>.BuildStaticMethod(tb, "Create", MethodAttributes.Public | MethodAttributes.Static, true, false);
+            createProxy.NewObject(cons, new Type[0]);
+            createProxy.Return();
+
+            createProxy.CreateMethod();
+
+            var t = tb.CreateType();
+
+            var mtd = t.GetMethod("Create");
+            var o = mtd.Invoke(null, new object[0]);
+
+            Assert.IsNotNull(o);
+            Assert.AreEqual("Type", o.GetType().Name);
         }
     }
 }
