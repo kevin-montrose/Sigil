@@ -6,6 +6,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+#if !COREFXTODO
         /// <summary>
         /// Converts a pointer or reference to a value on the stack into a TypedReference of the given type.
         /// 
@@ -39,5 +40,6 @@ namespace Sigil
 
             return this;
         }
+#endif
     }
 }

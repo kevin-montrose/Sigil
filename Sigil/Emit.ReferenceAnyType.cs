@@ -6,6 +6,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+#if !COREFXTODO
         /// <summary>
         /// Converts a TypedReference on the stack into a RuntimeTypeHandle for the type contained with it.
         /// 
@@ -22,5 +23,6 @@ namespace Sigil
 
             return this;
         }
+#endif
     }
 }

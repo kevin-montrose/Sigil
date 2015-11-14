@@ -52,7 +52,7 @@ namespace Sigil
                 throw new ArgumentNullException("primitiveType");
             }
 
-            if (!primitiveType.IsPrimitive || primitiveType == typeof(char))
+            if (!TypeHelpers.IsPrimitive(primitiveType) || primitiveType == typeof(char))
             {
                 throw new ArgumentException("Convert expects a non-character primitive type");
             }
@@ -158,7 +158,7 @@ namespace Sigil
                 throw new ArgumentNullException("primitiveType");
             }
 
-            if (!primitiveType.IsPrimitive || primitiveType == typeof(char))
+            if (!TypeHelpers.IsPrimitive(primitiveType) || primitiveType == typeof(char))
             {
                 throw new ArgumentException("ConvertOverflow expects a non-character primitive type");
             }
@@ -262,7 +262,7 @@ namespace Sigil
                 throw new ArgumentNullException("primitiveType");
             }
 
-            if (!primitiveType.IsPrimitive || primitiveType == typeof(char))
+            if (!TypeHelpers.IsPrimitive(primitiveType) || primitiveType == typeof(char))
             {
                 throw new ArgumentException("UnsignedConvertOverflow expects a non-character primitive type");
             }

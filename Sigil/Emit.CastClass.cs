@@ -37,7 +37,7 @@ namespace Sigil
                 throw new ArgumentNullException("referenceType");
             }
 
-            if (referenceType.IsValueType)
+            if (TypeHelpers.IsValueType(referenceType))
             {
                 throw new ArgumentException("Can only cast to ReferenceTypes, found " + referenceType);
             }

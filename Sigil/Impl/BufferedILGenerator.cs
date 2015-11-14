@@ -27,7 +27,7 @@ namespace Sigil.Impl
 
         public Type MethodReturnType { get; internal set; }
         public LinqRoot<Type> MethodParameterTypes { get; internal set; }
-
+#if !COREFXTODO
         public bool TakesTypedReference()
         {
             var instr = this;
@@ -36,6 +36,7 @@ namespace Sigil.Impl
 
             return instr.MethodParameterTypes.Any(p => p == typeof(TypedReference));
         }
+#endif
 
         public bool TakesManagedPointer()
         {
@@ -541,7 +542,7 @@ namespace Sigil.Impl
             {
                 var declaring = method.DeclaringType;
 
-                if (declaring.IsValueType)
+                if (TypeHelpers.IsValueType(declaring))
                 {
                     declaring = declaring.MakePointerType();
                 }
@@ -577,7 +578,7 @@ namespace Sigil.Impl
             var parameters = new LinqList<Type>(parameterTypes);
             var declaring = cons.DeclaringType;
 
-            if (declaring.IsValueType)
+            if (TypeHelpers.IsValueType(declaring))
             {
                 declaring = declaring.MakePointerType();
             }
@@ -842,7 +843,7 @@ namespace Sigil.Impl
             {
                 var declaring = method.DeclaringType;
 
-                if (declaring.IsValueType)
+                if (TypeHelpers.IsValueType(declaring))
                 {
                     declaring = declaring.MakePointerType();
                 }

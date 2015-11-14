@@ -28,7 +28,7 @@ namespace Sigil
                 throw new ArgumentNullException("valueType");
             }
 
-            if (!valueType.IsValueType || valueType.IsByRef || valueType.IsPointer)
+            if (!TypeHelpers.IsValueType(valueType) || valueType.IsByRef || valueType.IsPointer)
             {
                 throw new ArgumentException("Unbox expects a ValueType, found " + valueType);
             }

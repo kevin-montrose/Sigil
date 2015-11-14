@@ -25,7 +25,7 @@ namespace Sigil
                 throw new ArgumentNullException("valueType");
             }
 
-            if (!valueType.IsValueType || valueType == typeof(void))
+            if (!TypeHelpers.IsValueType(valueType) || valueType == typeof(void))
             {
                 throw new ArgumentException("Only ValueTypes can be boxed, found " + valueType, "valueType");
             }

@@ -124,11 +124,11 @@ namespace Sigil.NonGeneric
         {
             var baseTypes = new LinqHashSet<Type>();
             baseTypes.Add(delegateType);
-            var bType = delegateType.BaseType;
+            var bType = TypeHelpers.GetBaseType(delegateType);
             while (bType != null)
             {
                 baseTypes.Add(bType);
-                bType = bType.BaseType;
+                bType = TypeHelpers.GetBaseType(bType);
             }
 
             if (!baseTypes.Contains(typeof(Delegate)))
@@ -291,7 +291,7 @@ namespace Sigil.NonGeneric
             {
                 // Shove `this` in front, can't require it because it doesn't exist yet!
                 var pList = new List<Type>(parameterTypes);
-                pList.Insert(0, type);
+                pList.Insert(0, TypeHelpers.AsType(type));
 
                 parameterTypes = pList.ToArray();
             }
@@ -410,21 +410,25 @@ namespace Sigil.NonGeneric
                 throw new ArgumentException("Constructors always have a this reference");
             }
 
-            ValidateReturnAndParameterTypes(type, parameterTypes);
+            ValidateReturnAndParameterTypes(type
+#if COREFX
+                .AsType()
+#endif
+                , parameterTypes);
 
             var passedParameters = parameterTypes;
 
             // Constructors always have a `this`
             var pList = new List<Type>(parameterTypes);
-            pList.Insert(0, type);
+            pList.Insert(0, TypeHelpers.AsType(type));
 
             parameterTypes = pList.ToArray();
 
             var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(callingConvention, typeof(void), parameterTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
-            innerEmit.ConstructorDefinedInType = type;
+            innerEmit.ConstructorDefinedInType = TypeHelpers.AsType(type);
 
             var ret = new Emit(innerEmit, NonGenericEmitType.Constructor);
-            ret.ReturnType = type;
+            ret.ReturnType = TypeHelpers.AsType(type);
             ret.ParameterTypes = passedParameters;
             ret.Attributes = attributes;
             ret.CallingConvention = callingConvention;
@@ -452,10 +456,10 @@ namespace Sigil.NonGeneric
             }
 
             var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, typeof(void), Type.EmptyTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
-            innerEmit.ConstructorDefinedInType = type;
+            innerEmit.ConstructorDefinedInType = TypeHelpers.AsType(type);
 
             var ret = new Emit(innerEmit, NonGenericEmitType.TypeInitializer);
-            ret.ReturnType = type;
+            ret.ReturnType = TypeHelpers.AsType(type);
             ret.ParameterTypes = Type.EmptyTypes;
             ret.Attributes = 0;
             ret.CallingConvention = CallingConventions.Standard;

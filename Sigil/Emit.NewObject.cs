@@ -213,7 +213,11 @@ namespace Sigil
                 throw new ArgumentNullException("parameterTypes");
             }
 
-            var allCons = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance);
+            var allCons = type.GetConstructors(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance
+#if !COREFX
+                | BindingFlags.CreateInstance
+#endif
+                );
             var cons =
                 LinqAlternative
                     .Where(

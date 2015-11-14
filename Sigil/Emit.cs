@@ -18,7 +18,11 @@ namespace Sigil
 
         static Emit()
         {
+#if COREFX
+            var asm = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("Sigil.Emit.DynamicAssembly"), AssemblyBuilderAccess.Run);
+#else
             var asm = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("Sigil.Emit.DynamicAssembly"), AssemblyBuilderAccess.Run);
+#endif
             Module = asm.DefineDynamicModule("DynamicModule");
         }
 
@@ -530,11 +534,15 @@ namespace Sigil
 
             var baseTypes = new LinqHashSet<Type>();
             baseTypes.Add(delType);
+#if COREFX
+            var bType = delType.GetTypeInfo().BaseType;
+#else
             var bType = delType.BaseType;
+#endif
             while (bType != null)
             {
                 baseTypes.Add(bType);
-                bType = bType.BaseType;
+                bType = TypeHelpers.GetBaseType(bType);
             }
 
             if (!baseTypes.Contains(typeof(Delegate)))
@@ -545,7 +553,11 @@ namespace Sigil
 
         internal static bool AllowsUnverifiableCode(Module m)
         {
+#if COREFXTODO
+            return false; // at last check, no UnverifiableCodeAttribute in core-clr
+#else
             return Attribute.IsDefined(m, typeof(System.Security.UnverifiableCodeAttribute));
+#endif
         }
 
         internal static bool AllowsUnverifiableCode(ModuleBuilder m)
@@ -643,7 +655,7 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, owner, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(owner.Module), doVerify, strictBranchVerification);
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(TypeHelpers.GetModule(owner)), doVerify, strictBranchVerification);
             ret.DynMethod = dynMethod;
 
             return ret;
@@ -718,7 +730,7 @@ namespace Sigil
             {
                 // Shove `this` in front, can't require it because it doesn't exist yet!
                 var pList = new List<Type>(parameterTypes);
-                pList.Insert(0, type);
+                pList.Insert(0, TypeHelpers.AsType(type));
 
                 parameterTypes = pList.ToArray();
             }
@@ -793,7 +805,7 @@ namespace Sigil
 
             // Constructors always have a `this`
             var pList = new List<Type>(parameterTypes);
-            pList.Insert(0, type);
+            pList.Insert(0, TypeHelpers.AsType(type));
 
             parameterTypes = pList.ToArray();
 

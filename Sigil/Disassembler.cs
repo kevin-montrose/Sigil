@@ -1,4 +1,5 @@
-﻿using Sigil.Impl;
+﻿#if !COREFXTODO
+using Sigil.Impl;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -308,7 +309,7 @@ namespace Sigil
 
             if (op == OpCodes.Stelem_Ref)
             {
-                var vals = consumesType.Where(x => !x.Type.IsValueType).ToList();
+                var vals = consumesType.Where(x => !TypeHelpers.IsValueType(x.Type)).ToList();
                 var arr = vals.OrderByDescending(v => v.IsArray ? v.Type.GetArrayRank() : 0).First();
 
                 var elem = arr.Type.GetElementType();
@@ -3499,3 +3500,4 @@ namespace Sigil
         }
     }
 }
+#endif

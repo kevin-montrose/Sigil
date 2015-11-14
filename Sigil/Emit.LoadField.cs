@@ -44,7 +44,7 @@ namespace Sigil
                 }
 
                 StackTransition[] transitions;
-                if (field.DeclaringType.IsValueType)
+                if (TypeHelpers.IsValueType(field.DeclaringType))
                 {
                     transitions =
                         new[]

@@ -34,7 +34,7 @@ namespace Sigil
 
             var declaring = method.DeclaringType;
 
-            if (declaring.IsValueType)
+            if (TypeHelpers.IsValueType(declaring))
             {
                 declaring = declaring.MakePointerType();
             }

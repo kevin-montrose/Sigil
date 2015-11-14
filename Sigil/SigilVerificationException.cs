@@ -1,6 +1,8 @@
 ﻿using Sigil.Impl;
 using System;
+#if !COREFX
 using System.Runtime.Serialization;
+#endif
 using System.Text;
 
 namespace Sigil
@@ -14,8 +16,13 @@ namespace Sigil
     /// 
     /// SigilVerificationException will typically include the state of the stack (or stacks) at the instruction in error.
     /// </summary>
+#if !COREFX
     [Serializable]
-    public class SigilVerificationException : Exception, ISerializable
+#endif
+    public class SigilVerificationException : Exception
+#if !COREFX
+        , ISerializable
+#endif
     {
         private string[] Instructions;
         private VerificationResult VerificationFailure;
@@ -208,6 +215,7 @@ namespace Sigil
             }
         }
 
+#if !COREFX
         /// <summary>
         /// Implementation for ISerializable.
         /// </summary>
@@ -223,6 +231,7 @@ namespace Sigil
 
             base.GetObjectData(info, context);
         }
+#endif
 
         /// <summary>
         /// Returns the message and stacks on this exception, in string form.

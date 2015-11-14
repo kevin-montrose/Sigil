@@ -42,7 +42,7 @@ namespace Sigil
                 }
 
                 var onType = field.DeclaringType;
-                if (onType.IsValueType)
+                if (TypeHelpers.IsValueType(onType))
                 {
                     onType = onType.MakePointerType();
                 }

@@ -42,7 +42,9 @@ namespace Sigil
 
                     if (callIx == -1) continue;
                     if (call.TakesManagedPointer()) continue;
+#if !COREFXTODO
                     if (call.TakesTypedReference()) continue;
+#endif
                     if (call.TakesByRefArgs()) continue;
 
                     InsertInstruction(callIx, OpCodes.Tailcall);
@@ -101,7 +103,7 @@ namespace Sigil
                 if (HasFlag(emit.CallingConventions, CallingConventions.HasThis))
                 {
 
-                    if (declaring.IsValueType)
+                    if (TypeHelpers.IsValueType(declaring))
                     {
                         declaring = declaring.MakePointerType();
                     }
@@ -177,7 +179,7 @@ namespace Sigil
             {
                 var declaring = method.DeclaringType;
 
-                if (declaring.IsValueType)
+                if (TypeHelpers.IsValueType(declaring))
                 {
                     declaring = declaring.MakePointerType();
                 }
@@ -219,7 +221,11 @@ namespace Sigil
             var consDeclaredIn = cons.DeclaringType;
 
             var curType = ConstructorDefinedInType ?? (ConstrBuilder.DeclaringType);
+#if COREFX
+            var baseType = curType.GetTypeInfo().BaseType;
+#else
             var baseType = curType.BaseType;
+#endif
 
             var inCurrentType = curType == consDeclaredIn;
             var inBaseType = baseType != null && consDeclaredIn == baseType;
@@ -258,7 +264,7 @@ namespace Sigil
 
             var declaring = cons.DeclaringType;
 
-            if (declaring.IsValueType)
+            if (TypeHelpers.IsValueType(declaring))
             {
                 declaring = declaring.MakePointerType();
             }

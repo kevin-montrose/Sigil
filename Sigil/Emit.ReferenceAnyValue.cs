@@ -6,6 +6,7 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
+#if !COREFXTODO
         /// <summary>
         /// Converts a TypedReference on the stack into a reference to the contained object, given the type contained in the TypedReference.
         /// 
@@ -38,5 +39,6 @@ namespace Sigil
 
             return this;
         }
+#endif
     }
 }

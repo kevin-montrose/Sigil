@@ -106,7 +106,7 @@ namespace Sigil.Impl
 
         public static TypeOnStack Get(Type type)
         {
-            if (type.ContainsGenericParameters)
+            if (TypeHelpers.ContainsGenericParameters(type))
             {
                 throw new InvalidOperationException("Sigil does not currently support generic types; found " + type);
             }

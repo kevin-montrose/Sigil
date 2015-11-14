@@ -24,10 +24,14 @@ namespace Sigil.Impl
 
         public static bool IsVolatile(FieldInfo field)
         {
+#if COREFXTODO
+            return false;
+#else
             // field builder doesn't implement GetRequiredCustomModifiers
             if (field is FieldBuilder) return false;
 
             return Array.IndexOf(field.GetRequiredCustomModifiers(), typeof(System.Runtime.CompilerServices.IsVolatile)) >= 0;
+#endif
         }
 
         public static bool IsPrefix(OpCode op)
@@ -54,7 +58,7 @@ namespace Sigil.Impl
 
         private static Type Alias(Type t)
         {
-            if (t.IsValueType && t.IsEnum)
+            if (TypeHelpers.IsValueType(t) && TypeHelpers.IsEnum(t))
             {
                 return Alias(Enum.GetUnderlyingType(t));
             }
@@ -124,8 +128,8 @@ namespace Sigil.Impl
 
 
             // The null type can be assigned to any reference type
-            if (t1 == typeof(NullType) && !t2.IsValueType) return true;
-            if (t2 == typeof(NullType) && !t1.IsValueType) return true;
+            if (t1 == typeof(NullType) && !TypeHelpers.IsValueType(t2)) return true;
+            if (t2 == typeof(NullType) && !TypeHelpers.IsValueType(t1)) return true;
 
             t1 = Alias(t1);
             t2 = Alias(t2);
@@ -135,15 +139,15 @@ namespace Sigil.Impl
 
         private static LinqList<Type> GetBases(Type t)
         {
-            if (t.IsValueType) return new LinqList<Type>();
+            if (TypeHelpers.IsValueType(t)) return new LinqList<Type>();
 
             var ret = new LinqList<Type>();
-            t = t.BaseType;
+            t = TypeHelpers.GetBaseType(t);
 
             while (t != null)
             {
                 ret.Add(t);
-                t = t.BaseType;
+                t = TypeHelpers.GetBaseType(t);
             }
 
             return ret;
@@ -161,21 +165,21 @@ namespace Sigil.Impl
             }
 
             // quick and dirty base case
-            if (t1 == typeof(object) && !t2.IsValueType) return true;
+            if (t1 == typeof(object) && !TypeHelpers.IsValueType(t2)) return true;
 
             var t1Bases = GetBases(t1);
             var t2Bases = GetBases(t2);
 
             if (t2Bases.Any(t2b => TypeOnStack.Get(t1).IsAssignableFrom(TypeOnStack.Get(t2b)))) return true;
 
-            if (t1.IsInterface)
+            if (TypeHelpers.IsInterface(t1))
             {
                 var t2Interfaces = (LinqArray<Type>)t2.GetInterfaces();
 
                 return t2Interfaces.Any(t2i => TypeOnStack.Get(t1).IsAssignableFrom(TypeOnStack.Get(t2i)));
             }
 
-            if (t1.IsGenericType && t2.IsGenericType)
+            if (TypeHelpers.IsGenericType(t1) && TypeHelpers.IsGenericType(t2))
             {
                 var t1Def = t1.GetGenericTypeDefinition();
                 var t2Def = t2.GetGenericTypeDefinition();

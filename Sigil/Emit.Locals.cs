@@ -91,7 +91,7 @@ namespace Sigil
             //   it might be read from to get some non-sense
             if (existingLocal != null && initializeReused)
             {
-                if (!type.IsValueType)
+                if (!TypeHelpers.IsValueType(type))
                 {
                     // reference types all get nulled
                     LoadNull();

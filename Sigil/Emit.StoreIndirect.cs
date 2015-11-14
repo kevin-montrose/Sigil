@@ -47,7 +47,7 @@ namespace Sigil
                 return this;
             }
 
-            if (!type.IsValueType)
+            if (!TypeHelpers.IsValueType(type))
             {
                 var transition = 
                     new[] 

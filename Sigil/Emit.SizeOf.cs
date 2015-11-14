@@ -25,7 +25,7 @@ namespace Sigil
                 throw new ArgumentNullException("valueType");
             }
 
-            if (!valueType.IsValueType)
+            if (!TypeHelpers.IsValueType(valueType))
             {
                 throw new ArgumentException("valueType must be a ValueType");
             }

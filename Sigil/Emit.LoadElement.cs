@@ -48,7 +48,7 @@ namespace Sigil
                 instr = OpCodes.Ldelem_I;
             }
 
-            if (!elementType.IsValueType && !instr.HasValue)
+            if (!TypeHelpers.IsValueType(elementType) && !instr.HasValue)
             {
                 transitions =
                     new[] 

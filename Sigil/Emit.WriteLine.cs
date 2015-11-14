@@ -1,5 +1,6 @@
 ﻿using Sigil.Impl;
 using System;
+using System.Reflection;
 
 namespace Sigil
 {
@@ -32,7 +33,7 @@ namespace Sigil
             if (locals.Length == 0)
             {
                 LoadConstant(line);
-                return Call(typeof(Console).GetMethod("WriteLine", new[] { typeof(string) }));
+                return Call(TypeHelpers.GetMethod(typeof(Console), "WriteLine", new[] { typeof(string) }));
             }
 
             LoadConstant(line);
@@ -46,15 +47,15 @@ namespace Sigil
                 LoadConstant(i);
                 LoadLocal(locals[i]);
 
-                if (locals[i].LocalType.IsValueType)
+                if (TypeHelpers.IsValueType(locals[i].LocalType))
                 {
                     Box(locals[i].LocalType);
                 }
 
                 StoreElement<object>();
             }
-
-            return Call(typeof(Console).GetMethod("WriteLine", new [] { typeof(string), typeof(object[]) }));
+            
+            return Call(TypeHelpers.GetMethod(typeof(Console), "WriteLine", new [] { typeof(string), typeof(object[]) }));
         }
     }
 }

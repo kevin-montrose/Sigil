@@ -254,7 +254,7 @@ namespace Sigil
                 throw new InvalidOperationException("Cannot start CatchBlock on " + forTry + " while inner ExceptionBlock is still open");
             }
 
-            if (!typeof(Exception).IsAssignableFrom(exceptionType))
+            if (!TypeHelpers.IsAssignableFrom(typeof(Exception), exceptionType))
             {
                 throw new ArgumentException("BeginCatchBlock expects a type descending from Exception, found " + exceptionType, "exceptionType");
             }

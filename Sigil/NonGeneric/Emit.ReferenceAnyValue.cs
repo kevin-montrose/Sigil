@@ -4,6 +4,7 @@ namespace Sigil.NonGeneric
 {
     public partial class Emit
     {
+#if !COREFXTODO
         /// <summary>
         /// Converts a TypedReference on the stack into a reference to the contained object, given the type contained in the TypedReference.
         /// 
@@ -25,5 +26,6 @@ namespace Sigil.NonGeneric
             InnerEmit.ReferenceAnyValue(type);
             return this;
         }
+#endif
     }
 }
