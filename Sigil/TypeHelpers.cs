@@ -43,9 +43,15 @@ namespace Sigil
                 if (method.Name != name) continue;
                 var args = method.GetParameters();
                 if (args.Length != parameterTypes.Length) continue;
+                bool match = true;
                 for (int i = 0; i < args.Length; i++)
-                    if (args[i].ParameterType != parameterTypes[i]) continue;
-                return method;
+                {
+                    if (args[i].ParameterType != parameterTypes[i]) {
+                        match = false;
+                        break;
+                    }
+                }
+                if(match) return method;
             }
             return null;
         }

@@ -67,6 +67,8 @@ namespace SigilTests
             Assert.AreEqual("Finally!", d1());
         }
 
+#if !COREFXTODO
+
         [TestMethod]
         public void IsCatchAllNonGeneric()
         {
@@ -88,5 +90,6 @@ namespace SigilTests
 
             Assert.IsFalse(c3.IsCatchAll);
         }
+#endif
     }
 }

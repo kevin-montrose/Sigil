@@ -1,0 +1,32 @@
+﻿{
+  "version": "1.0.0-*",
+  "description": "SigilTests Console Application",
+  "authors": [ "Kevin Montrose" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+  "compile": [
+    "**/*.cs",
+    "../SigilTests/**/*.cs"
+  ],
+  "dependencies": {
+    "Sigil": { "target": "project" }
+  },
+  "compilationOptions": { "allowUnsafe": true },
+  "commands": {
+    "test": "xunit.runner.dnx"
+  },
+
+  "frameworks": {
+    "dnxcore50": {
+      "compilationOptions": { "define": [ "COREFX", "COREFXTODO" ] },
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-beta-23225",
+        "System.Collections": "4.0.11-beta-23409",
+        "System.Console": "4.0.0-beta-23225",
+        "xunit": "2.1.0",
+        "xunit.runner.dnx": "2.1.0-beta6-build191"
+      }
+    }
+  }
+}

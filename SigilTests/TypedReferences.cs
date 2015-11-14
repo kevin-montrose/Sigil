@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿#if !COREFXTODO
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sigil;
 using System;
 using System.Collections.Generic;
@@ -83,3 +84,4 @@ namespace SigilTests
         }
     }
 }
+#endif

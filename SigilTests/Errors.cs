@@ -3,6 +3,7 @@ using Sigil;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,11 +30,7 @@ namespace SigilTests
         [TestMethod]
         public void CallNonBaseClassConstructor()
         {
-            var assembly = 
-                AppDomain.CurrentDomain.DefineDynamicAssembly(
-                    new AssemblyName("SigilTests_CallNonBaseClassConstructor"),
-                    System.Reflection.Emit.AssemblyBuilderAccess.RunAndCollect
-                );
+            var assembly = DefineDynamicAssembly();
 
             var module = assembly.DefineDynamicModule("RuntimeModule");
             var type = module.DefineType("_CallNonBaseClassConstructor3", TypeAttributes.Class, typeof(_CallNonBaseClassConstructor2));
@@ -56,15 +53,25 @@ namespace SigilTests
             }
         }
 
+        internal static System.Reflection.Emit.AssemblyBuilder DefineDynamicAssembly([CallerMemberName]string name=null)
+        {
+#if COREFX
+            return System.Reflection.Emit.AssemblyBuilder.DefineDynamicAssembly(
+                    new AssemblyName(name),
+                    System.Reflection.Emit.AssemblyBuilderAccess.RunAndCollect
+                );
+#else
+            return AppDomain.CurrentDomain.DefineDynamicAssembly(
+                    new AssemblyName(name),
+                    System.Reflection.Emit.AssemblyBuilderAccess.RunAndCollect
+                );
+#endif
+
+        }
         [TestMethod]
         public void CallNonBaseClassConstructorNonGeneric()
         {
-            var assembly =
-                AppDomain.CurrentDomain.DefineDynamicAssembly(
-                    new AssemblyName("SigilTests_CallNonBaseClassConstructorNonGeneric"),
-                    System.Reflection.Emit.AssemblyBuilderAccess.RunAndCollect
-                );
-
+            var assembly = DefineDynamicAssembly();
             var module = assembly.DefineDynamicModule("RuntimeModule");
             var type = module.DefineType("_CallNonBaseClassConstructor3", TypeAttributes.Class, typeof(_CallNonBaseClassConstructor2));
 
@@ -109,7 +116,7 @@ namespace SigilTests
                 Assert.AreEqual("Constructors may only be called directly from within a constructor, use NewObject to allocate a new object with a specific constructor.", e.Message);
             }
         }
-
+#if !COREFXTODO
         [TestMethod]
         public void DisassemblingClosure()
         {
@@ -129,7 +136,7 @@ namespace SigilTests
                 Assert.AreEqual("Cannot emit this DisassembledOperations object, check CanEmit before calling any Emit methods", e.Message);
             }
         }
-
+#endif
         [TestMethod]
         public void BadNonTerminalReturn()
         {
@@ -4128,6 +4135,7 @@ namespace SigilTests
             }
         }
 
+#if !COREFXTODO
         [TestMethod]
         public void CatchInCatch()
         {
@@ -4145,7 +4153,7 @@ namespace SigilTests
                 Assert.IsTrue(s.Message.StartsWith("Cannot start a new catch block, "));
             }
         }
-
+#endif
         [TestMethod]
         public void NullTryCatch()
         {

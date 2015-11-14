@@ -8,3 +8,4 @@ obj/
 *.bak
 *TestResults*
 project.lock.json
+.vs/

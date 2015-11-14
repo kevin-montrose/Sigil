@@ -75,6 +75,7 @@ namespace SigilTests
             Assert.AreEqual("Finally!", d1());
         }
 
+#if !COREFXTODO
         [TestMethod]
         public void IsCatchAll()
         {
@@ -96,5 +97,6 @@ namespace SigilTests
 
             Assert.IsFalse(c3.IsCatchAll);
         }
+#endif
     }
 }

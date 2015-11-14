@@ -25,8 +25,7 @@ namespace SigilTests
         [TestMethod]
         public void CallBaseConstructor()
         {
-            AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("SigilTests_CallBaseConstructor"),
-                                                                                     AssemblyBuilderAccess.RunAndCollect);
+            AssemblyBuilder assembly = Errors.DefineDynamicAssembly();
 
             ModuleBuilder module = assembly.DefineDynamicModule("RuntimeModule");
 
@@ -52,8 +51,7 @@ namespace SigilTests
         [TestMethod]
         public void CallBaseConstructorNonGeneric()
         {
-            AssemblyBuilder assembly = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("SigilTests_CallBaseConstructorNonGeneric"),
-                                                                                     AssemblyBuilderAccess.RunAndCollect);
+            AssemblyBuilder assembly = Errors.DefineDynamicAssembly();
 
             ModuleBuilder module = assembly.DefineDynamicModule("RuntimeModule");
 

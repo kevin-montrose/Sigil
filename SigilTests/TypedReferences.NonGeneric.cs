@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿#if !COREFXTODO
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sigil.NonGeneric;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace SigilTests
 {
     public partial class TypedReferences
     {
+
         [TestMethod]
         public void MakeRefNonGeneric()
         {
@@ -77,3 +79,4 @@ namespace SigilTests
         }
     }
 }
+#endif

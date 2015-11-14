@@ -3,6 +3,7 @@ using Sigil;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,11 +18,18 @@ namespace SigilTests
         {
             return i.Item2;
         }
-
+        internal static Delegate CreateDelegate(Type delegateType, System.Reflection.MethodInfo method)
+        {
+#if COREFX
+            return method.CreateDelegate(delegateType);
+#else
+            return Delegate.CreateDelegate(delegateType, method);
+#endif
+        }
         [TestMethod]
         public void OrderBy()
         {
-            var sigilTypes = typeof(Emit<>).Assembly.GetTypes();
+            var sigilTypes = GetAssemblyTypes(typeof(Emit<>));
             var linq = sigilTypes.Single(t => t.Name == "LinqAlternative");
 
             var sigilListGeneric = sigilTypes.Single(t => t.Name == "LinqList`1");
@@ -46,7 +54,7 @@ namespace SigilTests
             }
 
             Func<Tuple<int, double>, double> p1 = _OrderSelect;
-            var p2 = Delegate.CreateDelegate(sigilFunc, this.GetType().GetMethod("_OrderSelect"));
+            var p2 = CreateDelegate(sigilFunc, this.GetType().GetMethod("_OrderSelect"));
 
             var asSigilList = sigilListCons.Invoke(new object[] { toSort });
 
@@ -65,10 +73,18 @@ namespace SigilTests
             }
         }
 
+        static Type[] GetAssemblyTypes(Type type)
+        {
+#if COREFX
+            return type.GetTypeInfo().Assembly.GetTypes();
+#else
+            return type.Assembly.GetTypes();
+#endif
+        }
         [TestMethod]
         public void OrderByDescending()
         {
-            var sigilTypes = typeof(Emit<>).Assembly.GetTypes();
+            var sigilTypes = GetAssemblyTypes(typeof(Emit<>));
             var linq = sigilTypes.Single(t => t.Name == "LinqAlternative");
 
             var sigilListGeneric = sigilTypes.Single(t => t.Name == "LinqList`1");
@@ -93,7 +109,7 @@ namespace SigilTests
             }
 
             Func<Tuple<int, double>, double> p1 = _OrderSelect;
-            var p2 = Delegate.CreateDelegate(sigilFunc, this.GetType().GetMethod("_OrderSelect"));
+            var p2 = CreateDelegate(sigilFunc, this.GetType().GetMethod("_OrderSelect"));
 
             var asSigilList = sigilListCons.Invoke(new object[] { toSort });
 
