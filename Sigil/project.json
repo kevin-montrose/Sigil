@@ -8,6 +8,9 @@
   "releaseNotes": "tba",
   "copyright": "2013-2015 Kevin Montrose",
   "requireLicenseAcceptance": false,
+  "compilationOptions": {
+    "keyFile": "../Sigil/Properties/Sigil.snk"
+  },
   "frameworks": {
     "net20": {
       "compilationOptions": { "define": [ "NET20" ] }
