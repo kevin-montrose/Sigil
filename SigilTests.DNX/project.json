@@ -19,7 +19,10 @@
 
   "frameworks": {
     "dnxcore50": {
-      "compilationOptions": { "define": [ "COREFX", "COREFXTODO" ] },
+      "compilationOptions": {
+        "define": [ "COREFX", "COREFXTODO" ],
+        "defineForCrazy": [ "COREFX", "COREFXTODO", "WTFDNXTEST" ]
+      },
       "dependencies": {
         "Microsoft.CSharp": "4.0.1-beta-23225",
         "System.Collections": "4.0.11-beta-23409",

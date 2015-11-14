@@ -16,7 +16,9 @@ namespace SigilTests
     {
         class SimpleClass
         {
+#pragma warning disable CS0649
             public volatile int A;
+#pragma warning restore CS0649
         }
 #if !COREFXTODO
         [TestMethod]

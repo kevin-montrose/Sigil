@@ -120,7 +120,14 @@ namespace SigilTests
 namespace Microsoft.VisualStudio.TestTools.UnitTesting
 {
     class TestClassAttribute : Attribute { }
+#if WTFDNXTEST
+    // disables all the tests except an example of the 4 that are foobar
+    class ActualTestMethodAttribute : Xunit.FactAttribute { }
+    class TestMethodAttribute : Attribute { }
+#else
     class TestMethodAttribute : Xunit.FactAttribute { }
+#endif
+
 }
 
 namespace System.Diagnostics.CodeAnalysis

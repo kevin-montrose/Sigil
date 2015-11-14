@@ -15,63 +15,76 @@ namespace SigilTests
     {
         internal static MethodInfo GetStreamWriterFlush()
         {
-            // note: on core-clr an overload shows up
-            return typeof(StreamWriter).GetMethod(nameof(StreamWriter.Flush));
+            // note: on core-clr an overload shows ups, so we need to explicitly
+            // look for the parameterless version
 
+#if WTFDNXTEST
             // very odd; this should work fine, but kinda breaks the test runner - doesn't
-            // complete cleanly
-            // return typeof(StreamWriter).GetMethod("Flush", Type.EmptyTypes);
-        } 
+            // complete cleanly; the test itself works in the debugger, so I don't think it
+            // is an stack-overflow, oom, infinite loop, or anything else braindead
+            return typeof(StreamWriter).GetMethod("Flush", Type.EmptyTypes);
+#endif          
+            return typeof(StreamWriter).GetMethod(nameof(StreamWriter.Flush));
+        }
+#if WTFDNXTEST
+        [ActualTestMethod]
+#elif !COREFX
         [TestMethod]
+#endif
         public void WriteLineFormat()
         {
-            {
-                var e = Emit<Func<string>>.NewDynamicMethod();
-                var a = e.DeclareLocal<string>();
-                var b = e.DeclareLocal<byte>();
-                var c = e.DeclareLocal<object>();
+            // Assert.Fail("didn't start method");
+            var e = Emit<Func<string>>.NewDynamicMethod();
+            var a = e.DeclareLocal<string>();
+            var b = e.DeclareLocal<byte>();
+            var c = e.DeclareLocal<object>();
                 
-                e.LoadConstant("hello world");
-                e.StoreLocal(a);
+            e.LoadConstant("hello world");
+            e.StoreLocal(a);
 
-                e.LoadConstant(16);
-                e.StoreLocal(b);
+            e.LoadConstant(16);
+            e.StoreLocal(b);
 
-                e.LoadNull();
-                e.StoreLocal(c);
+            e.LoadNull();
+            e.StoreLocal(c);
 
-                e.DeclareLocal<MemoryStream>("MemoryStream");
-                e.DeclareLocal<StreamWriter>("StreamWriter");
-                e.DeclareLocal<byte[]>("arr");
+            e.DeclareLocal<MemoryStream>("MemoryStream");
+            e.DeclareLocal<StreamWriter>("StreamWriter");
+            e.DeclareLocal<byte[]>("arr");
 
-                e.NewObject<MemoryStream>();
-                e.StoreLocal("MemoryStream");
-                e.LoadLocal("MemoryStream");
-                e.NewObject(typeof(StreamWriter), new[] { typeof(Stream) });
-                e.StoreLocal("StreamWriter");
-                e.LoadLocal("StreamWriter");
-                e.Call(typeof(Console).GetMethod("SetOut"));
+            e.NewObject<MemoryStream>();
+            e.StoreLocal("MemoryStream");
+            e.LoadLocal("MemoryStream");
+            e.NewObject(typeof(StreamWriter), new[] { typeof(Stream) });
+            e.StoreLocal("StreamWriter");
+            e.LoadLocal("StreamWriter");
+            e.Call(typeof(Console).GetMethod("SetOut"));
 
-                e.WriteLine("a: {0}; b: {1}; c: {2}", a, b, c);
+            e.WriteLine("a: {0}; b: {1}; c: {2}", a, b, c);
 
-                e.LoadLocal("StreamWriter");
-                e.Call(GetStreamWriterFlush());
-                e.LoadLocal("MemoryStream");
-                e.Call(typeof(MemoryStream).GetMethod("ToArray"));
-                e.StoreLocal("arr");
-                e.Call(typeof(Encoding).GetMethod("get_UTF8"));
-                e.LoadLocal("arr");
-                e.Call(typeof(Encoding).GetMethod("GetString", new[] { typeof(byte[]) }));
-                e.Return();
+            e.LoadLocal("StreamWriter");
+            e.Call(GetStreamWriterFlush());
+            e.LoadLocal("MemoryStream");
+            e.Call(typeof(MemoryStream).GetMethod("ToArray"));
+            e.StoreLocal("arr");
+            e.Call(typeof(Encoding).GetMethod("get_UTF8"));
+            e.LoadLocal("arr");
+            e.Call(typeof(Encoding).GetMethod("GetString", new[] { typeof(byte[]) }));
+            e.Return();
 
-                var del = e.CreateDelegate();
-                var val = del();
+            var del = e.CreateDelegate();
+            var val = del();
 
-                Assert.AreEqual("a: hello world; b: 16; c: \r\n", val);
-            }
+            Assert.AreEqual("a: hello world; b: 16; c: \r\n", val);
+
+            // Assert.Fail("exited method cleanly");
         }
 
+#if WTFDNXTEST
+        [ActualTestMethod]
+#elif !COREFX
         [TestMethod]
+#endif
         public void WriteLineSimple()
         {
             var el = Emit<Func<string>>.NewDynamicMethod();
