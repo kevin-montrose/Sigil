@@ -315,13 +315,13 @@
     <Compile Include="WriteLine.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sigil\Sigil.csproj">
-      <Project>{6053aead-828c-4137-96c5-3d3cfdbe3432}</Project>
-      <Name>Sigil</Name>
-    </ProjectReference>
+    <Compile Include="StoreArgument.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="StoreArgument.cs" />
+    <ProjectReference Include="..\Sigil NET45\Sigil NET45.csproj">
+      <Project>{cc8e294d-e06c-4420-a260-d515d89ec53a}</Project>
+      <Name>Sigil NET45</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
