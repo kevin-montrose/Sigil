@@ -38,10 +38,10 @@ namespace SigilTests
 
             var sigilFuncGeneric = sigilTypes.Single(t => t.Name == "SigilFunc`2");
             var sigilFunc = sigilFuncGeneric.MakeGenericType(typeof(Tuple<int, double>), typeof(double));
-
             var asEnumerable = sigilListT.GetMethod("AsEnumerable");
-
+            Assert.IsNotNull(asEnumerable);
             var orderByGeneric = sigilListT.GetMethod("OrderBy");
+            Assert.IsNotNull(orderByGeneric);
             var orderBy = orderByGeneric.MakeGenericMethod(typeof(double));
 
             var toSort = new List<Tuple<int, double>>();

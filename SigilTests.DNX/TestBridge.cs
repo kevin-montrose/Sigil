@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace SigilTests
@@ -10,17 +11,11 @@ namespace SigilTests
     {
         public static MethodInfo GetMethod(this Type type, string name)
         {
-            return type.GetTypeInfo().GetDeclaredMethod(name);
+            return type.GetRuntimeMethods().SingleOrDefault(x => x.Name == name);
         }
         public static MethodInfo GetMethod(this Type type, string name, Type[] parameterTypes)
         {
-            if (parameterTypes == null) parameterTypes = Type.EmptyTypes;
-            foreach(var method in type.GetTypeInfo().GetDeclaredMethods(name))
-            {
-                var args = method.GetParameters();
-                if (IsMatch(args, parameterTypes)) return method;
-            }
-            return null;
+            return type.GetRuntimeMethod(name, parameterTypes);
         }
         static bool IsMatch(ParameterInfo[] declared, Type[] expected)
         {
@@ -51,7 +46,7 @@ namespace SigilTests
         }
         public static Type CreateType(this System.Reflection.Emit.TypeBuilder type)
         {
-            return type.AsType();
+            return type.CreateTypeInfo().AsType();
         }
         public static FieldInfo GetField(this Type type, string name)
         {

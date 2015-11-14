@@ -1,8 +1,8 @@
 ﻿namespace SigilTests.DNX
 {
-    public class Program
+    public static class Program
     {
-        public void Main()
+        public static void Main()
         {
             System.Console.WriteLine("please use: dnx test");
         }

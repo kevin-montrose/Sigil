@@ -18,7 +18,7 @@ namespace SigilTests
         {
             public volatile int A;
         }
-
+#if !COREFXTODO
         [TestMethod]
         public void Simple()
         {
@@ -33,7 +33,7 @@ namespace SigilTests
             Assert.AreEqual(1, d1(new SimpleClass { A = 1 }));
             Assert.IsTrue(instrs.Contains("volatile."));
         }
-
+#endif
         class NoneClass
         {
             public int A;

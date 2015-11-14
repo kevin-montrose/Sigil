@@ -11,9 +11,11 @@ namespace SigilTests
 {
     public partial class WriteLine
     {
+
         [TestMethod]
         public void WriteLineFormatNonGeneric()
         {
+            Assert.IsFalse(true); // for some reason this breaks the runner
             {
                 var e = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes);
                 var a = e.DeclareLocal<string>();
