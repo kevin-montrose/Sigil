@@ -11,7 +11,13 @@ namespace SigilTests
     {
         public static MethodInfo GetMethod(this Type type, string name)
         {
-            return type.GetRuntimeMethods().SingleOrDefault(x => x.Name == name);
+            MethodInfo found = null;
+            foreach(var method in type.GetRuntimeMethods().Where(x => x.Name == name).Take(2))
+            {
+                if(found != null) throw new AmbiguousMatchException(name);
+                found = method;
+            }
+            return found;
         }
         public static MethodInfo GetMethod(this Type type, string name, Type[] parameterTypes)
         {

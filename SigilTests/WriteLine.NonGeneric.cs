@@ -15,7 +15,6 @@ namespace SigilTests
         [TestMethod]
         public void WriteLineFormatNonGeneric()
         {
-            Assert.IsFalse(true); // for some reason this breaks the runner
             {
                 var e = Emit.NewDynamicMethod(typeof(string), Type.EmptyTypes);
                 var a = e.DeclareLocal<string>();
@@ -46,7 +45,7 @@ namespace SigilTests
                 e.WriteLine("a: {0}; b: {1}; c: {2}", a, b, c);
 
                 e.LoadLocal("StreamWriter");
-                e.Call(typeof(StreamWriter).GetMethod("Flush"));
+                e.Call(GetStreamWriterFlush());
                 e.LoadLocal("MemoryStream");
                 e.Call(typeof(MemoryStream).GetMethod("ToArray"));
                 e.StoreLocal("arr");
@@ -83,7 +82,7 @@ namespace SigilTests
             el.WriteLine(guid);
             
             el.LoadLocal("StreamWriter");
-            el.Call(typeof (StreamWriter).GetMethod("Flush"));
+            el.Call(GetStreamWriterFlush());
             el.LoadLocal("MemoryStream");
             el.Call(typeof (MemoryStream).GetMethod("ToArray"));
             el.StoreLocal("arr");

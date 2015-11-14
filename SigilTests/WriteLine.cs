@@ -6,12 +6,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sigil;
+using System.Reflection;
 
 namespace SigilTests
 {
     [TestClass, System.Diagnostics.CodeAnalysis.ExcludeFromCodeCoverage]
     public partial class WriteLine
     {
+        internal static MethodInfo GetStreamWriterFlush()
+        {
+            // note: on core-clr an overload shows up
+            return typeof(StreamWriter).GetMethod(nameof(StreamWriter.Flush));
+
+            // very odd; this should work fine, but kinda breaks the test runner - doesn't
+            // complete cleanly
+            // return typeof(StreamWriter).GetMethod("Flush", Type.EmptyTypes);
+        } 
         [TestMethod]
         public void WriteLineFormat()
         {
@@ -45,7 +55,7 @@ namespace SigilTests
                 e.WriteLine("a: {0}; b: {1}; c: {2}", a, b, c);
 
                 e.LoadLocal("StreamWriter");
-                e.Call(typeof(StreamWriter).GetMethod("Flush"));
+                e.Call(GetStreamWriterFlush());
                 e.LoadLocal("MemoryStream");
                 e.Call(typeof(MemoryStream).GetMethod("ToArray"));
                 e.StoreLocal("arr");
@@ -82,7 +92,7 @@ namespace SigilTests
             el.WriteLine(guid);
             
             el.LoadLocal("StreamWriter");
-            el.Call(typeof (StreamWriter).GetMethod("Flush"));
+            el.Call(GetStreamWriterFlush());
             el.LoadLocal("MemoryStream");
             el.Call(typeof (MemoryStream).GetMethod("ToArray"));
             el.StoreLocal("arr");

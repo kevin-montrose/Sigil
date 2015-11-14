@@ -36,24 +36,7 @@ namespace Sigil
         }
         public static MethodInfo GetMethod(Type type, string name, Type[] parameterTypes)
         {
-            if (parameterTypes == null)
-                parameterTypes = Type.EmptyTypes;
-            foreach (var method in type.GetTypeInfo().DeclaredMethods)
-            {
-                if (method.Name != name) continue;
-                var args = method.GetParameters();
-                if (args.Length != parameterTypes.Length) continue;
-                bool match = true;
-                for (int i = 0; i < args.Length; i++)
-                {
-                    if (args[i].ParameterType != parameterTypes[i]) {
-                        match = false;
-                        break;
-                    }
-                }
-                if(match) return method;
-            }
-            return null;
+            return type.GetRuntimeMethod(name, parameterTypes);
         }
         public static bool IsInterface(Type type)
         {

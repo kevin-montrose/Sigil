@@ -555,7 +555,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("CallVirtual expected a System.Action`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]; found System.Action`1[[System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", e.Message);
+                    Assert.AreEqual($"CallVirtual expected a {typeof(Action<int>).FullName}; found {typeof(Action<string>).FullName}", e.Message);
                 }
             }
         }
@@ -2090,7 +2090,7 @@ namespace SigilTests
                 }
                 catch (SigilVerificationException e)
                 {
-                    Assert.AreEqual("LoadVirtualFunctionPointer expected a System.Collections.Generic.List`1[[System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]; found int", e.Message);
+                    Assert.AreEqual($"LoadVirtualFunctionPointer expected a {typeof(List<int>).FullName}; found int", e.Message);
                 }
             }
         }
