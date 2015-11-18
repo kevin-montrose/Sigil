@@ -4141,7 +4141,7 @@ namespace SigilTests
             var e1 = Emit<Action>.NewDynamicMethod("e1");
             var t = e1.BeginExceptionBlock();
 #if COREFX
-            var c1 = e1.BeginCatchBlock<Exception>(t);
+            var c1 = e1.BeginCatchBlock<ArgumentException>(t);
 #else
             var c1 = e1.BeginCatchBlock<StackOverflowException>(t);
 #endif
