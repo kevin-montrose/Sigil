@@ -42,7 +42,7 @@ namespace Sigil
 
                     if (callIx == -1) continue;
                     if (call.TakesManagedPointer()) continue;
-#if !COREFXTODO
+#if !COREFX // see https://github.com/dotnet/corefx/issues/4543 item 4
                     if (call.TakesTypedReference()) continue;
 #endif
                     if (call.TakesByRefArgs()) continue;

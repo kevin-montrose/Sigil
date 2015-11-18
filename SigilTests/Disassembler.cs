@@ -1,4 +1,4 @@
-﻿#if !COREFXTODO
+﻿#if !COREFXTODO // see https://github.com/dotnet/corefx/issues/4543 item 1
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Reflection.Emit;

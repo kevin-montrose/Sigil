@@ -1,4 +1,4 @@
-﻿#if !COREFXTODO
+﻿#if !COREFX // see https://github.com/dotnet/corefx/issues/4543 item 4
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Sigil.NonGeneric;
 using System;

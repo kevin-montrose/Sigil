@@ -20,7 +20,7 @@ namespace SigilTests
             public volatile int A;
 #pragma warning restore CS0649
         }
-#if !COREFXTODO
+#if !COREFXTODO // see https://github.com/dotnet/corefx/issues/4543 item 3
         [TestMethod]
         public void Simple()
         {

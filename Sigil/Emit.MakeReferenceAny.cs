@@ -1,4 +1,5 @@
-﻿using Sigil.Impl;
+﻿#if !COREFX // see https://github.com/dotnet/corefx/issues/4543 item 4
+using Sigil.Impl;
 using System;
 using System.Reflection.Emit;
 
@@ -6,7 +7,6 @@ namespace Sigil
 {
     public partial class Emit<DelegateType>
     {
-#if !COREFXTODO
         /// <summary>
         /// Converts a pointer or reference to a value on the stack into a TypedReference of the given type.
         /// 
@@ -40,6 +40,6 @@ namespace Sigil
 
             return this;
         }
-#endif
     }
 }
+#endif

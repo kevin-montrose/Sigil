@@ -1,4 +1,4 @@
-﻿#if !COREFXTODO
+﻿#if !COREFXTODO // see https://github.com/dotnet/corefx/issues/4543 item 1
 using Sigil.Impl;
 using System;
 using System.Collections.Generic;

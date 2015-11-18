@@ -1,10 +1,11 @@
-﻿using System;
+﻿#if !COREFX // see https://github.com/dotnet/corefx/issues/4543 item 4
+using System;
 
 namespace Sigil.NonGeneric
 {
     public partial class Emit
     {
-#if !COREFXTODO
+
         /// <summary>
         /// Converts a pointer or reference to a value on the stack into a TypedReference of the given type.
         /// 
@@ -26,6 +27,6 @@ namespace Sigil.NonGeneric
             InnerEmit.MakeReferenceAny(type);
             return this;
         }
-#endif
     }
 }
+#endif

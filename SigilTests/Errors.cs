@@ -116,7 +116,7 @@ namespace SigilTests
                 Assert.AreEqual("Constructors may only be called directly from within a constructor, use NewObject to allocate a new object with a specific constructor.", e.Message);
             }
         }
-#if !COREFXTODO
+#if !COREFXTODO // see https://github.com/dotnet/corefx/issues/4543 item 1
         [TestMethod]
         public void DisassemblingClosure()
         {
@@ -4135,13 +4135,16 @@ namespace SigilTests
             }
         }
 
-#if !COREFXTODO
         [TestMethod]
         public void CatchInCatch()
         {
             var e1 = Emit<Action>.NewDynamicMethod("e1");
             var t = e1.BeginExceptionBlock();
+#if COREFX
+            var c1 = e1.BeginCatchBlock<Exception>(t);
+#else
             var c1 = e1.BeginCatchBlock<StackOverflowException>(t);
+#endif
 
             try
             {
@@ -4153,7 +4156,7 @@ namespace SigilTests
                 Assert.IsTrue(s.Message.StartsWith("Cannot start a new catch block, "));
             }
         }
-#endif
+
         [TestMethod]
         public void NullTryCatch()
         {

@@ -551,14 +551,12 @@ namespace Sigil
             }
         }
 
+#if !COREFX // see https://github.com/dotnet/corefx/issues/4543 item 2
         internal static bool AllowsUnverifiableCode(Module m)
         {
-#if COREFXTODO
-            return false; // at last check, no UnverifiableCodeAttribute in core-clr
-#else
             return Attribute.IsDefined(m, typeof(System.Security.UnverifiableCodeAttribute));
-#endif
         }
+#endif
 
         internal static bool AllowsUnverifiableCode(ModuleBuilder m)
         {
@@ -655,7 +653,12 @@ namespace Sigil
 
             var dynMethod = new DynamicMethod(name, returnType, parameterTypes, owner, skipVisibility: true);
 
-            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, AllowsUnverifiableCode(TypeHelpers.GetModule(owner)), doVerify, strictBranchVerification);
+#if COREFX // see https://github.com/dotnet/corefx/issues/4543 item 2
+            const bool allowUnverifiable = false;
+#else
+            bool allowUnverifiable = AllowsUnverifiableCode(TypeHelpers.GetModule(owner));
+#endif
+            var ret = new Emit<DelegateType>(dynMethod.CallingConvention, returnType, parameterTypes, allowUnverifiable, doVerify, strictBranchVerification);
             ret.DynMethod = dynMethod;
 
             return ret;

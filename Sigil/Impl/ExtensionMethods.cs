@@ -22,17 +22,15 @@ namespace Sigil.Impl
             return "aeiou".IndexOf(c) != -1;
         }
 
+#if !COREFXTODO // see https://github.com/dotnet/corefx/issues/4543 item 3 - would rather not offer the API than be wrong
         public static bool IsVolatile(FieldInfo field)
         {
-#if COREFXTODO
-            return false;
-#else
             // field builder doesn't implement GetRequiredCustomModifiers
             if (field is FieldBuilder) return false;
 
             return Array.IndexOf(field.GetRequiredCustomModifiers(), typeof(System.Runtime.CompilerServices.IsVolatile)) >= 0;
-#endif
         }
+#endif
 
         public static bool IsPrefix(OpCode op)
         {

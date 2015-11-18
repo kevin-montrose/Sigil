@@ -1,9 +1,8 @@
-﻿
+﻿#if !COREFX // see https://github.com/dotnet/corefx/issues/4543 item 4
 namespace Sigil.NonGeneric
 {
     public partial class Emit
     {
-#if !COREFXTODO
         /// <summary>
         /// Converts a TypedReference on the stack into a RuntimeTypeHandle for the type contained with it.
         /// 
@@ -14,6 +13,6 @@ namespace Sigil.NonGeneric
             InnerEmit.ReferenceAnyType();
             return this;
         }
-#endif
     }
 }
+#endif

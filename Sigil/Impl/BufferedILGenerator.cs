@@ -27,7 +27,7 @@ namespace Sigil.Impl
 
         public Type MethodReturnType { get; internal set; }
         public LinqRoot<Type> MethodParameterTypes { get; internal set; }
-#if !COREFXTODO
+#if !COREFX // see https://github.com/dotnet/corefx/issues/4543 item 4
         public bool TakesTypedReference()
         {
             var instr = this;
