@@ -455,12 +455,12 @@ namespace Sigil.NonGeneric
                 throw new ArgumentNullException("type");
             }
 
-            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, typeof(void), Type.EmptyTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
+            var innerEmit = Emit<NonGenericPlaceholderDelegate>.MakeNonGenericEmit(CallingConventions.Standard, typeof(void), TypeHelpers.EmptyTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
             innerEmit.ConstructorDefinedInType = TypeHelpers.AsType(type);
 
             var ret = new Emit(innerEmit, NonGenericEmitType.TypeInitializer);
             ret.ReturnType = TypeHelpers.AsType(type);
-            ret.ParameterTypes = Type.EmptyTypes;
+            ret.ParameterTypes = TypeHelpers.EmptyTypes;
             ret.Attributes = 0;
             ret.CallingConvention = CallingConventions.Standard;
             ret.TypeBuilder = type;

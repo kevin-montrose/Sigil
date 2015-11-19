@@ -50,7 +50,7 @@ namespace Sigil
                 var transitions =
                     new[]
                     {
-                        new StackTransition(new [] { field.FieldType, onType }, Type.EmptyTypes)
+                        new StackTransition(new [] { field.FieldType, onType }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stfld, field, Wrap(transitions, "StoreField"));
@@ -65,7 +65,7 @@ namespace Sigil
                 var transitions =
                     new[]
                     {
-                        new StackTransition(new [] { field.FieldType }, Type.EmptyTypes)
+                        new StackTransition(new [] { field.FieldType }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stsfld, field, Wrap(transitions, "StoreField"));

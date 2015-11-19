@@ -35,12 +35,12 @@ namespace Sigil
 
             var transition =
                 new[] {
-                    new StackTransition(new [] { typeof(int), typeof(int), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(int), typeof(int), typeof(byte*) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(byte*) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(int), typeof(int), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(byte).MakeByRefType() }, Type.EmptyTypes)
+                    new StackTransition(new [] { typeof(int), typeof(int), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(int), typeof(byte*) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(byte*) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(int), typeof(byte).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(int), typeof(NativeIntType), typeof(byte).MakeByRefType() }, TypeHelpers.EmptyTypes)
                 };
 
             UpdateState(OpCodes.Initblk, Wrap(transition, "InitializeBlock"));

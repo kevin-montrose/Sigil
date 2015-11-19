@@ -36,15 +36,15 @@ namespace Sigil
             var transition =
                 new[]
                 {
-                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(byte*) }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(byte*) }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(byte*) }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
-                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(byte).MakeByRefType() }, Type.EmptyTypes)
+                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(byte*) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(byte*) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(byte*) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(NativeIntType), typeof(byte).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte*), typeof(byte).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType(), typeof(byte).MakeByRefType() }, TypeHelpers.EmptyTypes)
                 };
 
             UpdateState(OpCodes.Cpblk, Wrap(transition, "CopyBlock"));

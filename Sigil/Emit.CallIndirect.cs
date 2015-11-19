@@ -19,7 +19,7 @@ namespace Sigil
 #endif
         public Emit<DelegateType> CallIndirect(CallingConventions callConventions)
         {
-            return CallIndirect(callConventions, typeof(void), Type.EmptyTypes);
+            return CallIndirect(callConventions, typeof(void), TypeHelpers.EmptyTypes);
         }
 
         #region Generic CallIndirect Finder Helpers
@@ -331,7 +331,7 @@ namespace Sigil
                     transitions =
                         new[]
                         {
-                            new StackTransition(p, Type.EmptyTypes)
+                            new StackTransition(p, TypeHelpers.EmptyTypes)
                         };
                 }
             }
@@ -354,7 +354,7 @@ namespace Sigil
                     transitions =
                         new[]
                         {
-                            new StackTransition(p, Type.EmptyTypes)
+                            new StackTransition(p, TypeHelpers.EmptyTypes)
                         };
                 }
             }

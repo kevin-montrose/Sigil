@@ -17,7 +17,7 @@ namespace Sigil
             }
 
             UpdateState(OpCodes.Rethrow, Wrap(StackTransition.None(), "ReThrow"));
-            UpdateState(Wrap(new[] { new StackTransition(new[] { typeof(PopAllType) }, Type.EmptyTypes) }, "ReThrow"));
+            UpdateState(Wrap(new[] { new StackTransition(new[] { typeof(PopAllType) }, TypeHelpers.EmptyTypes) }, "ReThrow"));
 
             Throws.Add(IL.Index);
 

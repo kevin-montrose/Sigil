@@ -45,8 +45,8 @@ namespace Sigil
             var transitions =
                 new[]
                 {
-                    new StackTransition(new [] { typeof(int) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(NativeIntType) }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(int) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
                 };
 
             var labelsCopy = ((LinqArray<Label>)labels).Select(l => l).ToArray();

@@ -27,18 +27,32 @@
     "net45": {
       "compilationOptions": { "define": [ "NET45" ] }
     },
+    "dotnet5.2": {
+      "compilationOptions": { "define": [ "COREFX", "COREFXTODO" ] },
+      "dependencies": {
+        "Microsoft.CSharp": "4.0.1-*",
+        "System.Collections": "4.0.11-*",
+        "System.Reflection.Emit": "4.0.1-*",
+        "System.Reflection.Emit.ILGeneration": "4.0.1-*",
+        "System.Reflection.Emit.Lightweight": "4.0.1-*",
+        "System.Reflection.TypeExtensions": "4.1.0-*",
+        "System.Text.RegularExpressions": "4.0.11-*",
+        "System.Console": "4.0.0-*",
+        "System.Reflection.Metadata": "1.1.1-*"
+      }
+    },
     "dotnet5.4": {
       "compilationOptions": { "define": [ "COREFX", "COREFXTODO" ] },
       "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23516",
-        "System.Collections": "4.0.11-beta-23516",
-        "System.Reflection.Emit": "4.0.1-beta-23516",
-        "System.Reflection.Emit.ILGeneration": "4.0.1-beta-23516",
-        "System.Reflection.Emit.Lightweight": "4.0.1-beta-23516",
-        "System.Reflection.TypeExtensions": "4.1.0-beta-23516",
-        "System.Text.RegularExpressions": "4.0.11-beta-23516",
-        "System.Console": "4.0.0-beta-23516",
-        "System.Reflection.Metadata": "1.1.1-beta-23516"
+        "Microsoft.CSharp": "4.0.1-*",
+        "System.Collections": "4.0.11-*",
+        "System.Reflection.Emit": "4.0.1-*",
+        "System.Reflection.Emit.ILGeneration": "4.0.1-*",
+        "System.Reflection.Emit.Lightweight": "4.0.1-*",
+        "System.Reflection.TypeExtensions": "4.1.0-*",
+        "System.Text.RegularExpressions": "4.0.11-*",
+        "System.Console": "4.0.0-*",
+        "System.Reflection.Metadata": "1.1.1-*"
       }
     }
   }

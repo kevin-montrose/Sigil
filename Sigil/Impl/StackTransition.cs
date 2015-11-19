@@ -55,7 +55,7 @@ namespace Sigil.Impl
             return "(" + string.Join(", ", ((LinqArray<TypeOnStack>)PoppedFromStack).Select(p => p.ToString()).ToArray()) + ") => (" + string.Join(", ", ((LinqArray<TypeOnStack>)PushedToStack).Select(p => p.ToString()).ToArray()) + ")";
         }
 
-        public static StackTransition[] None() { return new[] { new StackTransition(Type.EmptyTypes, Type.EmptyTypes) }; }
+        public static StackTransition[] None() { return new[] { new StackTransition(TypeHelpers.EmptyTypes, TypeHelpers.EmptyTypes) }; }
         public static StackTransition[] Push<PushType>() { return Push(typeof(PushType)); }
         public static StackTransition[] Push(Type pushType) { return Push(TypeOnStack.Get(pushType)); }
         public static StackTransition[] Push(TypeOnStack pushType) { return new[] { new StackTransition(new TypeOnStack[0], new[] { pushType }) }; }

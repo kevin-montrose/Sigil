@@ -81,7 +81,7 @@ namespace Sigil
             var transitions =
                 new[] 
                 {
-                    new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, Type.EmptyTypes)
+                    new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, TypeHelpers.EmptyTypes)
                 };
 
             UpdateOpCodeDelegate update;
@@ -135,7 +135,7 @@ namespace Sigil
             var transitions =
                 new[] 
                 {
-                    new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, Type.EmptyTypes)
+                    new StackTransition(new [] { typeof(WildcardType), typeof(WildcardType) }, TypeHelpers.EmptyTypes)
                 };
 
             UpdateOpCodeDelegate update;
@@ -170,13 +170,13 @@ namespace Sigil
                 Wrap(
                     new[]
                     {
-                        new StackTransition(new [] { typeof(int), typeof(int) }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(long), typeof(long) }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(float), typeof(float) }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(double), typeof(double) }, Type.EmptyTypes)
+                        new StackTransition(new [] { typeof(int), typeof(int) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(int), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(int) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(long), typeof(long) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(float), typeof(float) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(double), typeof(double) }, TypeHelpers.EmptyTypes)
                     },
                     name
                 );
@@ -594,7 +594,7 @@ namespace Sigil
             var transitions = 
                 new []
                 {
-                    new StackTransition(new [] { typeof(WildcardType) }, Type.EmptyTypes)
+                    new StackTransition(new [] { typeof(WildcardType) }, TypeHelpers.EmptyTypes)
                 };
 
             UpdateOpCodeDelegate update;
@@ -652,7 +652,7 @@ namespace Sigil
             var transitions =
                 new[]
                 {
-                    new StackTransition(new [] { typeof(WildcardType) }, Type.EmptyTypes)
+                    new StackTransition(new [] { typeof(WildcardType) }, TypeHelpers.EmptyTypes)
                 };
 
             UpdateOpCodeDelegate update;

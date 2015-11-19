@@ -41,7 +41,7 @@ namespace Sigil
 
             if (type.IsPointer)
             {
-                var transition = new[] { new StackTransition(new[] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes) };
+                var transition = new[] { new StackTransition(new[] { typeof(NativeIntType), typeof(NativeIntType) }, TypeHelpers.EmptyTypes) };
 
                 UpdateState(OpCodes.Stind_I, Wrap(transition, "StoreIndirect"));
                 return this;
@@ -52,9 +52,9 @@ namespace Sigil
                 var transition = 
                     new[] 
                     { 
-                        new StackTransition(new[] { type, type.MakePointerType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { type, type.MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { type, typeof(NativeIntType) }, Type.EmptyTypes),
+                        new StackTransition(new[] { type, type.MakePointerType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { type, type.MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { type, typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
                     };
 
                 UpdateState(OpCodes.Stind_Ref, Wrap(transition, "StoreIndirect"));
@@ -66,11 +66,11 @@ namespace Sigil
                 var transition =
                     new[] 
                     { 
-                        new StackTransition(new[] { typeof(int), typeof(byte*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(sbyte*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(sbyte).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
+                        new StackTransition(new[] { typeof(int), typeof(byte*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(byte).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(sbyte*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(sbyte).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stind_I1, Wrap(transition, "StoreIndirect"));
@@ -82,11 +82,11 @@ namespace Sigil
                 var transition =
                     new[] 
                     { 
-                        new StackTransition(new[] { typeof(int), typeof(short*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(short).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(ushort*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(ushort).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
+                        new StackTransition(new[] { typeof(int), typeof(short*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(short).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(ushort*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(ushort).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stind_I2, Wrap(transition, "StoreIndirect"));
@@ -98,11 +98,11 @@ namespace Sigil
                 var transition =
                     new[] 
                     { 
-                        new StackTransition(new[] { typeof(int), typeof(int*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(int).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(uint*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(uint).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, Type.EmptyTypes)
+                        new StackTransition(new[] { typeof(int), typeof(int*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(int).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(uint*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(uint).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(int), typeof(NativeIntType) }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stind_I4, Wrap(transition, "StoreIndirect"));
@@ -114,11 +114,11 @@ namespace Sigil
                 var transition =
                     new[] 
                     { 
-                        new StackTransition(new[] { typeof(long), typeof(long*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(long), typeof(long).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(long), typeof(ulong*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(long), typeof(ulong).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(long), typeof(NativeIntType) }, Type.EmptyTypes)
+                        new StackTransition(new[] { typeof(long), typeof(long*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(long).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(ulong*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(ulong).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(long), typeof(NativeIntType) }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stind_I8, Wrap(transition, "StoreIndirect"));
@@ -130,9 +130,9 @@ namespace Sigil
                 var transition =
                     new[] 
                     { 
-                        new StackTransition(new[] { typeof(float), typeof(float*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(float), typeof(float).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(float), typeof(NativeIntType) }, Type.EmptyTypes)
+                        new StackTransition(new[] { typeof(float), typeof(float*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(float), typeof(float).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(float), typeof(NativeIntType) }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stind_R4, Wrap(transition, "StoreIndirect"));
@@ -144,9 +144,9 @@ namespace Sigil
                 var transition =
                     new[] 
                     { 
-                        new StackTransition(new[] { typeof(double), typeof(double*) }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(double), typeof(double).MakeByRefType() }, Type.EmptyTypes),
-                        new StackTransition(new[] { typeof(double), typeof(NativeIntType) }, Type.EmptyTypes)
+                        new StackTransition(new[] { typeof(double), typeof(double*) }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(double), typeof(double).MakeByRefType() }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new[] { typeof(double), typeof(NativeIntType) }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stind_R8, Wrap(transition, "StoreIndirect"));

@@ -35,7 +35,7 @@ namespace Sigil
 
             // Note that Leave *always* nuked the stack; nothing survies exiting an exception block
             UpdateOpCodeDelegate update;
-            UpdateState(OpCodes.Leave, label, Wrap(new[] { new StackTransition(new [] { typeof(PopAllType) }, Type.EmptyTypes) }, "Leave"), out update);
+            UpdateState(OpCodes.Leave, label, Wrap(new[] { new StackTransition(new [] { typeof(PopAllType) }, TypeHelpers.EmptyTypes) }, "Leave"), out update);
 
             Branches.Add(SigilTuple.Create(OpCodes.Leave, label, IL.Index));
 

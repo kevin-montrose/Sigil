@@ -31,9 +31,9 @@ namespace Sigil
             var transitions =
                 new[]
                 {
-                    new StackTransition(new [] { typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakePointerType() }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakeByRefType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType() }, TypeHelpers.EmptyTypes),
                 };
 
             UpdateState(OpCodes.Initobj, valueType, Wrap(transitions, "InitializeObject"));

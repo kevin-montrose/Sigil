@@ -560,7 +560,7 @@ namespace Sigil
 
         internal static bool AllowsUnverifiableCode(ModuleBuilder m)
         {
-            var canaryMethod = new DynamicMethod("__Canary" + Guid.NewGuid(), typeof(void), Type.EmptyTypes, m);
+            var canaryMethod = new DynamicMethod("__Canary" + Guid.NewGuid(), typeof(void), TypeHelpers.EmptyTypes, m);
             var il = canaryMethod.GetILGenerator();
             il.Emit(OpCodes.Ldc_I4, 1024);
             il.Emit(OpCodes.Localloc);
@@ -859,7 +859,7 @@ namespace Sigil
 
             var constructorBuilder = type.DefineTypeInitializer();
 
-            var ret = new Emit<DelegateType>(CallingConventions.Standard, typeof(void), Type.EmptyTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
+            var ret = new Emit<DelegateType>(CallingConventions.Standard, typeof(void), TypeHelpers.EmptyTypes, allowUnverifiableCode, doVerify, strictBranchVerification);
             ret.ConstrBuilder = constructorBuilder;
 
             return ret;

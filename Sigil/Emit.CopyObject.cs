@@ -37,15 +37,15 @@ namespace Sigil
             var transitions =
                 new[] 
                 {
-                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakePointerType(), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakeByRefType(), typeof(NativeIntType) }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(NativeIntType), valueType.MakePointerType() }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakePointerType(), valueType.MakePointerType() }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakeByRefType(), valueType.MakePointerType() }, Type.EmptyTypes),
-                    new StackTransition(new [] { typeof(NativeIntType), valueType.MakeByRefType() }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakePointerType(), valueType.MakeByRefType() }, Type.EmptyTypes),
-                    new StackTransition(new [] { valueType.MakeByRefType(), valueType.MakeByRefType() }, Type.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType(), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType(), typeof(NativeIntType) }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType), valueType.MakePointerType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType(), valueType.MakePointerType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType(), valueType.MakePointerType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { typeof(NativeIntType), valueType.MakeByRefType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakePointerType(), valueType.MakeByRefType() }, TypeHelpers.EmptyTypes),
+                    new StackTransition(new [] { valueType.MakeByRefType(), valueType.MakeByRefType() }, TypeHelpers.EmptyTypes),
                 };
 
             UpdateState(OpCodes.Cpobj, valueType, Wrap(transitions, "CopyObject"));

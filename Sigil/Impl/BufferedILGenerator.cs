@@ -190,7 +190,11 @@ namespace Sigil.Impl
                     ).ToDictionary(d => (int)d.Index, d => d);
         }
 
+#if DOTNET5_2
+        private static Regex _ExtractLocal = new Regex(@"\s+(?<locId>\d+)");
+#else
         private static Regex _ExtractLocal = new Regex(@"\s+(?<locId>\d+)", RegexOptions.Compiled);
+#endif
 
         private static Local ExtractLocal(string from, LinqList<Local> locals, int ix)
         {

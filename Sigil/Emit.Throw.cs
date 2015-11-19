@@ -14,7 +14,7 @@ namespace Sigil
         public Emit<DelegateType> Throw()
         {
             UpdateState(OpCodes.Throw, Wrap(StackTransition.Pop<Exception>(), "Throw"));
-            UpdateState(Wrap(new[] { new StackTransition(new[] { typeof(PopAllType) }, Type.EmptyTypes) }, "Throw"));
+            UpdateState(Wrap(new[] { new StackTransition(new[] { typeof(PopAllType) }, TypeHelpers.EmptyTypes) }, "Throw"));
 
             Throws.Add(IL.Index);
 

@@ -35,8 +35,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { elementType, typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { elementType, typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { elementType, typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { elementType, typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_I;
@@ -46,8 +46,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { elementType, typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { elementType, typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { elementType, typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { elementType, typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_Ref;
@@ -57,8 +57,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { typeof(int), typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(int), typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { typeof(int), typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(int), typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_I1;
@@ -68,8 +68,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { typeof(int), typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(int), typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { typeof(int), typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(int), typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_I2;
@@ -79,8 +79,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { typeof(int), typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(int), typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { typeof(int), typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(int), typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_I4;
@@ -90,8 +90,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { typeof(long), typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(long), typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { typeof(long), typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(long), typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_I8;
@@ -101,8 +101,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { typeof(float), typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(float), typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { typeof(float), typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(float), typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_R4;
@@ -112,8 +112,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { typeof(double), typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { typeof(double), typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { typeof(double), typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { typeof(double), typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 instr = OpCodes.Stelem_R8;
@@ -123,8 +123,8 @@ namespace Sigil
             {
                 transitions =
                     new[] {
-                        new StackTransition(new [] { elementType, typeof(NativeIntType), arrayType }, Type.EmptyTypes),
-                        new StackTransition(new [] { elementType, typeof(int), arrayType }, Type.EmptyTypes)
+                        new StackTransition(new [] { elementType, typeof(NativeIntType), arrayType }, TypeHelpers.EmptyTypes),
+                        new StackTransition(new [] { elementType, typeof(int), arrayType }, TypeHelpers.EmptyTypes)
                     };
 
                 UpdateState(OpCodes.Stelem, elementType, Wrap(transitions, "StoreElement"));

@@ -10,6 +10,7 @@ namespace Sigil
     internal static class TypeHelpers
     {
 #if COREFX
+        public static readonly Type[] EmptyTypes = new Type[0];
         public static Type GetBaseType(Type type)
         {
             return type.GetTypeInfo().BaseType;
@@ -55,6 +56,7 @@ namespace Sigil
             return x.GetTypeInfo().IsAssignableFrom(y.GetTypeInfo());
         }
 #else
+        public static readonly Type[] EmptyTypes = Type.EmptyTypes;
         public static Type GetBaseType(Type type)
         {
             return type.BaseType;
