@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Sigil
+namespace Sigil.Impl
 {
     /// <summary>
     /// Contains helper methods to shim over the difference between different Type APIs in
