@@ -1,5 +1,5 @@
 ﻿{
-  "version": "4.5.1",
+  "version": "4.5.2-beta",
   "description": "A fail-fast validation helper for .NET CIL generation.",
   "authors": [ "kmontrose" ],
   "tags": [ "cil msil il bytecode" ],
