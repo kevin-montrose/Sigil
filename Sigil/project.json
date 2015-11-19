@@ -5,7 +5,7 @@
   "tags": [ "cil msil il bytecode" ],
   "projectUrl": "https://github.com/kevin-montrose/Sigil",
   "licenseUrl": "http://opensource.org/licenses/MS-PL",
-  "releaseNotes": "Added Core-CLR support (beta-8 tooling)",
+  "releaseNotes": "Added Core-CLR support (rc1 tooling)",
   "copyright": "2013-2015 Kevin Montrose",
   "requireLicenseAcceptance": false,
   "compilationOptions": {
@@ -27,19 +27,18 @@
     "net45": {
       "compilationOptions": { "define": [ "NET45" ] }
     },
-    "dnx451": { },
-    "dnxcore50": {
+    "dotnet5.4": {
       "compilationOptions": { "define": [ "COREFX", "COREFXTODO" ] },
       "dependencies": {
-        "Microsoft.CSharp": "4.0.1-beta-23225",
-        "System.Collections": "4.0.11-beta-23409",
-        "System.Reflection.Emit": "4.0.1-beta-*",
-        "System.Reflection.Emit.ILGeneration": "4.0.1-beta-*",
-        "System.Reflection.Emit.Lightweight": "4.0.1-beta-*",
-        "System.Reflection.TypeExtensions": "4.0.1-beta-*",
-        "System.Text.RegularExpressions": "4.0.11-beta-23409",
-        "System.Console": "4.0.0-beta-23225",
-        "System.Reflection.Metadata": "1.1.0-alpha-00014"
+        "Microsoft.CSharp": "4.0.1-beta-23516",
+        "System.Collections": "4.0.11-beta-23516",
+        "System.Reflection.Emit": "4.0.1-beta-23516",
+        "System.Reflection.Emit.ILGeneration": "4.0.1-beta-23516",
+        "System.Reflection.Emit.Lightweight": "4.0.1-beta-23516",
+        "System.Reflection.TypeExtensions": "4.1.0-beta-23516",
+        "System.Text.RegularExpressions": "4.0.11-beta-23516",
+        "System.Console": "4.0.0-beta-23516",
+        "System.Reflection.Metadata": "1.1.1-beta-23516"
       }
     }
   }
