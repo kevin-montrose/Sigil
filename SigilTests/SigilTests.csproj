@@ -51,7 +51,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -120,6 +122,14 @@
     <Compile Include="TypeInitializer.NonGeneric.cs">
       <DependentUpon>TypeInitializer.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoadFunctionPointer.cs" />
+    <Compile Include="LoadFunctionPointer.NonGeneric.cs">
+      <DependentUpon>LoadFunctionPointer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LoadVirtualFunctionPointer.cs" />
+	<Compile Include="LoadVirtualFunctionPointer.NonGeneric.cs">
+	  <DependentUpon>LoadVirtualFunctionPointer.cs</DependentUpon>
+	</Compile>
     <Compile Include="WriteLine.NonGeneric.cs">
       <DependentUpon>WriteLine.cs</DependentUpon>
     </Compile>
