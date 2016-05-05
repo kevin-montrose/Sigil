@@ -49,7 +49,7 @@ namespace SigilTests
             Assert.AreEqual(result, helloWorld);
         }
 
-        private class _TailBugWithMismatchedReturnTypes
+        class _TailBugWithMismatchedReturnTypes
         {
             public string String { get; set; }
         }
@@ -75,6 +75,29 @@ namespace SigilTests
 
             var obj = f();
             Assert.AreEqual("please work", obj.String);
+        }
+
+        static string _TailCallReturnsAssignableButDifferent(int ignored)
+        {
+            return "hello";
+        }
+
+        [TestMethod]
+        public void TailCallReturnsAssignableButDifferent()
+        {
+            var mtd = typeof(Tail).GetMethod("_TailCallReturnsAssignableButDifferent", BindingFlags.Static | BindingFlags.NonPublic);
+
+            var emit = Emit<Func<int, object>>.NewDynamicMethod();
+            emit.LoadArgument(0);
+            emit.Call(mtd);
+            emit.Return();
+
+            string ops;
+            var del = emit.CreateDelegate(out ops);
+
+            Assert.AreEqual("ldarg.0\r\ntail.call System.String _TailCallReturnsAssignableButDifferent(Int32)\r\nret\r\n", ops);
+
+            Assert.AreEqual("hello", del(-1));
         }
     }
 }
