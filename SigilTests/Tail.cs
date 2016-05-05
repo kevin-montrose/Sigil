@@ -49,21 +49,21 @@ namespace SigilTests
             Assert.AreEqual(result, helloWorld);
         }
 
-        private class ClassWithProperty
+        private class _Issue23
         {
             public string String { get; set; }
         }
 
         [TestMethod]
-        public void TailBugWithVoidMethods()
+        public void Issue23()
         {
             // generate a method that creates a new instance of ClassWithProperty, assigns the property, and returns
 
-            var emit = Emit<Func<ClassWithProperty>>.NewDynamicMethod();
+            var emit = Emit<Func<_Issue23>>.NewDynamicMethod();
 
-            emit.NewObject<ClassWithProperty>(); // obj
+            emit.NewObject<_Issue23>(); // obj
 
-            var prop = typeof(ClassWithProperty).GetProperty("String");
+            var prop = typeof(_Issue23).GetProperty("String");
             emit.Duplicate();                   // obj obj
             emit.LoadConstant("please work");   // obj obj string
             emit.CallVirtual(prop.SetMethod);   // obj
