@@ -49,6 +49,33 @@ namespace SigilTests
             Assert.AreEqual(result, helloWorld);
         }
 
+        private class ClassWithProperty
+        {
+            public string String { get; set; }
+        }
 
+        [TestMethod]
+        public void TailBugWithVoidMethods()
+        {
+            // generate a method that creates a new instance of ClassWithProperty, assigns the property, and returns
+
+            var emit = Emit<Func<ClassWithProperty>>.NewDynamicMethod();
+
+            emit.NewObject<ClassWithProperty>(); // obj
+
+            var prop = typeof(ClassWithProperty).GetProperty("String");
+            emit.Duplicate();                   // obj obj
+            emit.LoadConstant("please work");   // obj obj string
+            emit.CallVirtual(prop.SetMethod);   // obj
+
+            emit.Return();
+
+            var f = emit.CreateDelegate();
+
+            Assert.IsFalse(emit.Instructions().Contains("tail."));
+
+            var obj = f();
+            Assert.AreEqual("please work", obj.String);
+        }
     }
 }

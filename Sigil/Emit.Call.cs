@@ -10,6 +10,8 @@ namespace Sigil
     {
         private void InjectTailCall()
         {
+            var delegateReturnsVoid = ReturnType.Type == typeof(void);
+
             for (var i = 0; i < IL.Index; i++)
             {
                 var instr = IL[i];
@@ -46,6 +48,9 @@ namespace Sigil
                     if (call.TakesTypedReference()) continue;
 #endif
                     if (call.TakesByRefArgs()) continue;
+
+                    var callReturnsVoid = call.MethodReturnType == typeof(void);
+                    if (delegateReturnsVoid != callReturnsVoid) continue;
 
                     InsertInstruction(callIx, OpCodes.Tailcall);
                     i++;
