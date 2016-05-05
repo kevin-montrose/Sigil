@@ -49,30 +49,29 @@ namespace SigilTests
             Assert.AreEqual(result, helloWorld);
         }
 
-        private class _Issue23
+        private class _TailBugWithMismatchedReturnTypes
         {
             public string String { get; set; }
         }
 
         [TestMethod]
-        public void Issue23()
+        public void TailBugWithMismatchedReturnTypes()
         {
-            // generate a method that creates a new instance of ClassWithProperty, assigns the property, and returns
+            var emit = Emit<Func<_TailBugWithMismatchedReturnTypes>>.NewDynamicMethod();
 
-            var emit = Emit<Func<_Issue23>>.NewDynamicMethod();
+            emit.NewObject<_TailBugWithMismatchedReturnTypes>(); // obj
 
-            emit.NewObject<_Issue23>(); // obj
-
-            var prop = typeof(_Issue23).GetProperty("String");
+            var prop = typeof(_TailBugWithMismatchedReturnTypes).GetProperty("String");
             emit.Duplicate();                   // obj obj
             emit.LoadConstant("please work");   // obj obj string
             emit.CallVirtual(prop.SetMethod);   // obj
 
             emit.Return();
 
-            var f = emit.CreateDelegate();
+            string ops;
+            var f = emit.CreateDelegate(out ops);
 
-            Assert.IsFalse(emit.Instructions().Contains("tail."));
+            Assert.AreEqual("newobj Void .ctor()\r\ndup\r\nldstr 'please work'\r\ncallvirt Void set_String(System.String)\r\nret\r\n", ops);
 
             var obj = f();
             Assert.AreEqual("please work", obj.String);
