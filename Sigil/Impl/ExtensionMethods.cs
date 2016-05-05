@@ -165,6 +165,9 @@ namespace Sigil.Impl
             // quick and dirty base case
             if (t1 == typeof(object) && !TypeHelpers.IsValueType(t2)) return true;
 
+            // you have to box in this case
+            if (t1 == typeof(object) && TypeHelpers.IsValueType(t2)) return false;
+
             var t1Bases = GetBases(t1);
             var t2Bases = GetBases(t2);
 

@@ -430,19 +430,26 @@ namespace SigilTests
         [TestMethod]
         public void MissingBoxDoesntFailValidation()
         {
-            var mtd = typeof(string).GetMethod("Format", new[] { typeof(string), typeof(object) });
+            try
+            {
+                var mtd = typeof(string).GetMethod("Format", new[] { typeof(string), typeof(object) });
 
-            var il = Emit<Action>.NewDynamicMethod();
-            il.LoadConstant("{0}");
-            il.LoadConstant(3);
-            il.Call(mtd);
-            il.Pop();
-            il.Return();
+                var il = Emit<Action>.NewDynamicMethod();
+                il.LoadConstant("{0}");
+                il.LoadConstant(3);
+                il.Call(mtd);
+                il.Pop();
+                il.Return();
 
-            string ops;
-            var del = il.CreateDelegate(out ops);
+                var del = il.CreateDelegate();
 
-            del();
+                del();
+                Assert.Fail("Shouldn't be possible");
+            }
+            catch (SigilVerificationException e)
+            {
+                Assert.AreEqual("Call expected a System.Object; found int", e.Message);
+            }
         }
     }
 }
