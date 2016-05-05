@@ -1,11 +1,11 @@
 ﻿{
-  "version": "4.5.3",
+  "version": "4.6.0",
   "description": "A fail-fast validation helper for .NET CIL generation.",
   "authors": [ "kmontrose" ],
   "tags": [ "cil msil il bytecode" ],
   "projectUrl": "https://github.com/kevin-montrose/Sigil",
   "licenseUrl": "http://opensource.org/licenses/MS-PL",
-  "releaseNotes": "Fix nasty bug with tailcalls",
+  "releaseNotes": "Fix bugs with tailcalls, verification around object <-> ValueType relations, and add new options for loading function pointers.",
   "copyright": "2013-2016 Kevin Montrose",
   "requireLicenseAcceptance": false,
   "compilationOptions": {
