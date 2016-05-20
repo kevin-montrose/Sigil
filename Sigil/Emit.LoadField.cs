@@ -28,12 +28,8 @@ namespace Sigil
             {
                 throw new ArgumentException("unaligned cannot be used with static fields");
             }
-
-#if COREFXTODO // see https://github.com/dotnet/corefx/issues/4543 item 3
-            var useVolatile = isVolatile ?? false;
-#else
+            
             var useVolatile = isVolatile ?? ExtensionMethods.IsVolatile(field);
-#endif
 
             if (!field.IsStatic)
             {
