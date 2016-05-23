@@ -17,7 +17,8 @@
   "authors": [ "kmontrose" ],
   "copyright": "2013-2016 Kevin Montrose",
   "buildOptions": {
-    "keyFile": "../Sigil/Properties/Sigil.snk"
+    "keyFile": "../Sigil/Properties/Sigil.snk",
+    "xmlDoc": true
   },
   "frameworks": {
     "net20": {
