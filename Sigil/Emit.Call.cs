@@ -54,7 +54,7 @@ namespace Sigil
                     //   means we can't just turn the call into a jump
                     //   since _something_ has to preceed or survive the call to
                     //   make the ret legal
-                    if (!delegateReturns.IsAssignableFrom(callReturns)) continue;
+                    if (!ExtensionMethods.IsAssignableFrom(delegateReturns, callReturns)) continue;
 
                     // there's one case not being handled explicitly here,
                     //   which is the call must consume the _entire_ stack.

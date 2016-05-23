@@ -65,6 +65,11 @@ namespace Sigil.Impl
             return ret;
         }
 
+        public static bool IsAssignableFrom(Type type1, Type type2)
+        {
+            return IsAssignableFrom(TypeOnStack.Get(type1), TypeOnStack.Get(type2));
+        }
+
         public static bool IsAssignableFrom(Type type1, TypeOnStack type2)
         {
             return TypeOnStack.Get(type1).IsAssignableFrom(type2);
@@ -72,6 +77,9 @@ namespace Sigil.Impl
 
         public static bool IsAssignableFrom(TypeOnStack type1, TypeOnStack type2)
         {
+            // voids aren't assignable
+            if (type1.IsVoid || type2.IsVoid) return false;
+
             // wildcards match *everything*
             if (type1 == TypeOnStack.Get<WildcardType>() || type2 == TypeOnStack.Get<WildcardType>()) return true;
 

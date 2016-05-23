@@ -71,6 +71,8 @@ namespace Sigil.Impl
 
         public bool IsMarkable { get { return UsedBy != null; } }
 
+        public bool IsVoid { get { return Type == typeof(void); } }
+
         internal LinqHashSet<SigilTuple<InstructionAndTransitions, int>> UsedBy { get; set; }
 
         /// <summary>
