@@ -3,7 +3,7 @@
     "summary": "A fail-fast validation helper for .NET CIL generation.",
     "tags": [ "cil msil il bytecode" ],
     "owners": [ "kmontrose" ],
-    "releaseNotes": ".NET Core RC2 update",
+    "releaseNotes": ".NET Core RC2 update and bug fixes",
     "requireLicenseAcceptance": false,
     "projectUrl": "https://github.com/kevin-montrose/Sigil",
     "licenseUrl": "http://opensource.org/licenses/MS-PL",
@@ -12,7 +12,7 @@
       "url": "https://github.com/kevin-montrose/Sigil"
     }    
   },
-  "version": "4.6.1",
+  "version": "4.7.0",
   "description": "A fail-fast validation helper for .NET CIL generation.",
   "authors": [ "kmontrose" ],
   "copyright": "2013-2016 Kevin Montrose",
