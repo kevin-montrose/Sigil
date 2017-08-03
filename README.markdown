@@ -1,14 +1,14 @@
-#Sigil
+# Sigil
 
 A fail-fast, validating helper for [DynamicMethod](http://msdn.microsoft.com/en-us/library/system.reflection.emit.dynamicmethod.aspx) and [ILGenerator](http://msdn.microsoft.com/en-us/library/system.reflection.emit.ilgenerator.aspx).
 
-##Usage
+## Usage
 
 Sigil is a roughly 1-to-1 replacement for ILGenerator.  Rather than calling ILGenerator.Emit(OpCode, ...), you call Emit<DelegateType>.OpCode(...).
 
 Unlike ILGenerator, Sigil will fail as soon as an error is detected in the emitted IL.
 
-###Creating an Emit
+### Creating an Emit
 
 Sigil is oriented mostly towards DynamicMethod, but does support creating methods with TypeBuilder.
 
@@ -34,7 +34,7 @@ var emiter = Emit<Func<int, string>>.BuildMethod(myBuilder, "Instance", MethodAt
 
 Call `CreateDelegate()` and `CreateMethod()` to finish building with DynamicMethod and TypeBuilder respectively.
 
-###Instructions and Validation
+### Instructions and Validation
 
 There are methods on `Emit<DelegateType>` for each legal CIL opcode.  Note that not all CIL opcodes are legal within DynamicMethods.
 
@@ -65,7 +65,7 @@ emiter.Return();
 
 SigilVerificationExceptions include the types on the stack when thrown, to aid in debugging.
 
-###Locals
+### Locals
 
 Sigil exposes `DeclareLocal<Type>()` for creating new locals, and a number of OpCodes take locals as operands.
 
@@ -93,7 +93,7 @@ using (var b = e1.DeclareLocal<int>("b"))
 }
 ```
 
-###Labels and Branches
+### Labels and Branches
 
 The methods `DefineLabel` and `MarkLabel`, and the instruction family `Branch*` and `Leave` are provided to specify control flow.
 
@@ -123,7 +123,7 @@ var d = emiter.CreateDelegate();
 d();  // returns 3
 ```
 
-###Try, Catch, and Finally
+### Try, Catch, and Finally
 
 Sigil exposes `BeginExceptionBlock`, `EndExceptionBlock`, `BeginCatchBlock`, `BeginCatchAllBlock`, `EndCatchBlock`, `BeginFinallyBlock`, and `EndFinallyBlock`.
 
@@ -197,7 +197,7 @@ Func<string, bool> del =
    };
 ```
 
-###Better Names And Call Chaining
+### Better Names And Call Chaining
 
 Don't know all the IL instructions offhand?  The interface on `Emit<DelegateType>` has longer, more descriptive, names for all supported OpCodes.
 
@@ -220,7 +220,7 @@ e.Ldc(123);
 Furthermore, most Sigil methods return `this` to allow for call chaining.  Those methods (like `DeclareLocal<T>()`) that would normally return
 a value also have an override which places results in out parameters.
 
-###Automated OpCode Choice
+### Automated OpCode Choice
 
 Many methods in Sigil map to multiple OpCodes, the ideal one is chosen automatically.
 
@@ -256,7 +256,7 @@ While generally 1-to-1, Sigil does provide single methods for "families" of opco
  - `StoreIndirect(...)` -&gt; Stind_* depending on the type  
  - `StoreLocal(Local)` -&gt; Stloc_0 through Stloc_3, and Stloc_S are used if possible  
 
-###Debugging
+### Debugging
 
 In addition to failing fast, Sigil also exposes some additional information to aid in debugging.
 
@@ -265,7 +265,7 @@ Message property, also has a GetDebugInfo method which returns additional detail
 
 Be aware that these features are meant as debugging aids, and their contents and the formatting of said contents may change at any time.
 
-###Non-Generic Interface
+### Non-Generic Interface
 
 The normal Sigil interface is generic, allowing many type constraints to be enforced at compile time.  For cases where a type isn't available
 at compile time all Sigil methods with generic parameters have overrides that take a `System.Type` directly.
@@ -275,7 +275,7 @@ but takes types directly instead of via generic parameters.
 
 Using the generic version of Sigil when possible is strongly recommended.
 
-###Disassembly
+### Disassembly
 
 The `Disassembler<DelegateType>` adds limited support for disassembling .NET delegates starting with Sigil 3.0.0.
 
@@ -306,13 +306,13 @@ The `DisassembledOperations<DelegateType>.EmitAll(...)` method emits decompiled 
 will be applied so the CIL generated will not necessarily be exactly the same.  Also be aware that Sigil cannot emit delegates that close over
 variables, you can check the `CanEmit` property on `DisassembledOperations<DelegateType>` to distiguish these delegates.
 
-###Unsupported Operations
+### Unsupported Operations
 
 Fault blocks are not supported because of their rarity (there is no C# equivalent) and because they are forbidden in dynamic methods.
 
 Sigil does not support Calli when disassembling delegates, as the C# compilers will not emit that instruction it is currently untestable.
 
-###Performance
+### Performance
 
 Since Sigil performs a great deal of verification it is necessarily slower than using ILGenerator directly.  That being said, Sigil should be adequately performant for most purposes.
 
