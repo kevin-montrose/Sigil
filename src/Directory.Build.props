@@ -1,0 +1,32 @@
+<Project>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>7.3</LangVersion>
+
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\Sigil.snk</AssemblyOriginatorKeyFile>
+    
+    <Authors>kmontrose</Authors>
+    <Copyright>2013-2019 Kevin Montrose</Copyright>
+    <PackageId>$(AssemblyName)</PackageId>
+    <PackageTags>cil msil il bytecode</PackageTags>
+    <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/kevin-montrose/Sigil</PackageProjectUrl>
+    
+    <RepositoryUrl>https://github.com/kevin-montrose/Sigil</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.0.25" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All"/>
+  </ItemGroup>
+</Project>

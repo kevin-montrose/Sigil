@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24606.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29230.61
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SigilTests", "SigilTests\SigilTests.csproj", "{53266E21-FEBB-4155-9937-75B909134D5E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SigilTests", "tests\SigilTests\SigilTests.csproj", "{53266E21-FEBB-4155-9937-75B909134D5E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8B252003-1909-4EA3-8BD9-2D20341F9143}"
 	ProjectSection(SolutionItems) = preProject
@@ -11,23 +11,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE.txt = LICENSE.txt
 		NuGet.Config = NuGet.Config
 		README.markdown = README.markdown
+		Sigil.snk = Sigil.snk
+		version.json = version.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestRunner", "TestRunner\TestRunner.csproj", "{1FE8362E-A099-4739-9B1F-12ADCF10BA02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sigil", "src\Sigil\Sigil.csproj", "{86B7204B-A776-4414-B592-F96318E77818}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET35", "Sigil NET35\Sigil NET35.csproj", "{546A8668-56BF-4F71-A9F9-489B2BA5B5E4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4F746F5E-38B4-4519-A7EB-83D6B546972D}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET40", "Sigil NET40\Sigil NET40.csproj", "{D422375C-6C71-4569-A63E-3FA875070BB3}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET30", "Sigil NET30\Sigil NET30.csproj", "{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET20", "Sigil NET20\Sigil NET20.csproj", "{2DBFBF4D-85B9-4785-B77E-F5635B2AE599}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sigil NET45", "Sigil NET45\Sigil NET45.csproj", "{CC8E294D-E06C-4420-A260-D515D89EC53A}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Sigil", "Sigil\Sigil.xproj", "{3F959AB7-A1C2-41DA-A1F3-981EA89A0067}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "SigilTests.DNX", "SigilTests.DNX\SigilTests.DNX.xproj", "{AC7E3C9D-9B25-4DA8-9D1D-FD7EE39A6A9E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{A15EB1CA-8E4E-40FA-A084-647F82E6DAE7}"
+	ProjectSection(SolutionItems) = preProject
+		tests\Directory.Build.props = tests\Directory.Build.props
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,40 +37,19 @@ Global
 		{53266E21-FEBB-4155-9937-75B909134D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53266E21-FEBB-4155-9937-75B909134D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53266E21-FEBB-4155-9937-75B909134D5E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1FE8362E-A099-4739-9B1F-12ADCF10BA02}.Release|Any CPU.Build.0 = Release|Any CPU
-		{546A8668-56BF-4F71-A9F9-489B2BA5B5E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{546A8668-56BF-4F71-A9F9-489B2BA5B5E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{546A8668-56BF-4F71-A9F9-489B2BA5B5E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{546A8668-56BF-4F71-A9F9-489B2BA5B5E4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D422375C-6C71-4569-A63E-3FA875070BB3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D422375C-6C71-4569-A63E-3FA875070BB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D422375C-6C71-4569-A63E-3FA875070BB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D422375C-6C71-4569-A63E-3FA875070BB3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5A3ECA06-60D3-4AF1-B65B-12CB71514FB6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2DBFBF4D-85B9-4785-B77E-F5635B2AE599}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2DBFBF4D-85B9-4785-B77E-F5635B2AE599}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2DBFBF4D-85B9-4785-B77E-F5635B2AE599}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2DBFBF4D-85B9-4785-B77E-F5635B2AE599}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CC8E294D-E06C-4420-A260-D515D89EC53A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CC8E294D-E06C-4420-A260-D515D89EC53A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CC8E294D-E06C-4420-A260-D515D89EC53A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CC8E294D-E06C-4420-A260-D515D89EC53A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F959AB7-A1C2-41DA-A1F3-981EA89A0067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F959AB7-A1C2-41DA-A1F3-981EA89A0067}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F959AB7-A1C2-41DA-A1F3-981EA89A0067}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F959AB7-A1C2-41DA-A1F3-981EA89A0067}.Release|Any CPU.Build.0 = Release|Any CPU
-		{AC7E3C9D-9B25-4DA8-9D1D-FD7EE39A6A9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{AC7E3C9D-9B25-4DA8-9D1D-FD7EE39A6A9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{AC7E3C9D-9B25-4DA8-9D1D-FD7EE39A6A9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{AC7E3C9D-9B25-4DA8-9D1D-FD7EE39A6A9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86B7204B-A776-4414-B592-F96318E77818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86B7204B-A776-4414-B592-F96318E77818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86B7204B-A776-4414-B592-F96318E77818}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86B7204B-A776-4414-B592-F96318E77818}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{53266E21-FEBB-4155-9937-75B909134D5E} = {A15EB1CA-8E4E-40FA-A084-647F82E6DAE7}
+		{86B7204B-A776-4414-B592-F96318E77818} = {4F746F5E-38B4-4519-A7EB-83D6B546972D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6063DA5B-B74E-4E3A-948E-A7EBCBD0675C}
 	EndGlobalSection
 EndGlobal

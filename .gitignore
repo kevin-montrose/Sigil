@@ -9,3 +9,4 @@ obj/
 *TestResults*
 project.lock.json
 .vs/
+**/.nupkgs/*
