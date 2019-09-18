@@ -7,13 +7,20 @@
 
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>..\..\Sigil.snk</AssemblyOriginatorKeyFile>
+    <PackageCertificateKeyFile>..\..\Sigil.snk</PackageCertificateKeyFile>
     
     <Authors>kmontrose</Authors>
     <Copyright>2013-2019 Kevin Montrose</Copyright>
+    <Description>A fail-fast validation helper for .NET CIL generation.</Description>
     <PackageId>$(AssemblyName)</PackageId>
     <PackageTags>cil msil il bytecode</PackageTags>
     <PackageLicenseExpression>MS-PL</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/kevin-montrose/Sigil</PackageProjectUrl>
+    <PackageReleaseNotes>
+Drops support for versions of .NET Framework before 4.6.1.
+Adds netstandard 2.1 and 2.2 targets.
+Fixes a number of bugs around overflowing arithemtic operations.
+    </PackageReleaseNotes>
     
     <RepositoryUrl>https://github.com/kevin-montrose/Sigil</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
