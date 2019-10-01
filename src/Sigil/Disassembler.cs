@@ -1,6 +1,7 @@
 ﻿using Sigil.Impl;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -114,7 +115,7 @@ namespace Sigil
             var needsInference = new List<SigilTuple<int, Operation<DelegateType>>>();
             var ops = 
                 new List<SigilTuple<int, Operation<DelegateType>>>(
-                    GetOperations(asDel.Method.Module, cil, ps, ls, labels, excBlocks, asLabels, needsInference)
+                    GetOperations(asDel.Method.Module, cil, GetGenericArgs(method.DeclaringType), method.GetGenericArguments(), ps, ls, labels, excBlocks, asLabels, needsInference)
                 );
 
             var markAt = new Dictionary<int, SigilTuple<int, string>>();
@@ -228,6 +229,18 @@ namespace Sigil
                     asLabels,
                     canBeEmitted
                 );
+        }
+
+        private static Type[] GetGenericArgs(Type type)
+        {
+            var result = new List<Type[]>();
+            while (type != null)
+            {
+                result.Add(type.GetGenericArguments());
+                type = type.DeclaringType;
+            }
+
+            return result.SelectMany(xs => xs).ToArray();
         }
 
         private static List<SigilTuple<int, Operation<DelegateType>>> InferTypes(
@@ -446,6 +459,8 @@ namespace Sigil
         private static IEnumerable<SigilTuple<int, Operation<DelegateType>>> GetOperations(
             Module mod, 
             byte[] cil, 
+            Type[] typeGenericArgs,
+            Type[] methodGenericArgs,
             IEnumerable<Parameter> ps, 
             IEnumerable<Local> ls, 
             LabelTracker labels, 
@@ -578,7 +593,7 @@ namespace Sigil
             {
                 var startsAt = i;
                 Operation<DelegateType> op;
-                i += ReadOp(mod, cil, i, parameterLookup, localLookup, prefixes, labels, labelAccumulator, out op);
+                i += ReadOp(mod, cil, i, typeGenericArgs, methodGenericArgs, parameterLookup, localLookup, prefixes, labels, labelAccumulator, out op);
 
                 if (op != null)
                 {
@@ -762,7 +777,9 @@ namespace Sigil
         private static int ReadOp(
             Module mod, 
             byte[] cil, 
-            int ix, 
+            int ix,
+            Type[] typeGenericArgs,
+            Type[] methodGenericArgs,
             IDictionary<int, Parameter> pLookup, 
             IDictionary<int, Local> lLookup, 
             PrefixTracker prefixes, 
@@ -788,7 +805,7 @@ namespace Sigil
                 advance++;
             }
 
-            var operand = ReadOperands(mod, opcode, cil, ix, ix + advance, pLookup, lLookup, ref advance);
+            var operand = ReadOperands(mod, opcode, cil, ix, ix + advance, typeGenericArgs, methodGenericArgs, ref advance);
 
             op = MakeReplayableOperation(opcode, operand, prefixes, labels, labelAccumulator, lLookup);
 
@@ -3401,7 +3418,7 @@ namespace Sigil
             return BitConverter.ToSingle(arr, 0);
         }
 
-        private static object[] ReadOperands(Module mod, OpCode op, byte[] cil, int instrStart, int operandStart, IDictionary<int, Parameter> pLookup, IDictionary<int, Local> lLookup, ref int advance)
+        private static object[] ReadOperands(Module mod, OpCode op, byte[] cil, int instrStart, int operandStart, Type[] typeGenericArgs, Type[] methodGenericArgs, ref int advance)
         {
             switch (op.OperandType)
             {
@@ -3435,7 +3452,7 @@ namespace Sigil
                 case OperandType.InlineType:
                 case OperandType.InlineMethod:
                     advance += 4;
-                    var mem = mod.ResolveMember(ReadInt(cil, operandStart));
+                    var mem = mod.ResolveMember(ReadInt(cil, operandStart), typeGenericArgs, methodGenericArgs);
                     return new object[] { mem };
 
                 case OperandType.InlineI:

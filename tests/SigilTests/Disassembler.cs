@@ -684,6 +684,40 @@ ret
             Assert.NotNull(r1);
             Assert.Equal("ldc.r4 0.5\r\nret\r\n", instrs);
         }
+
+        [Fact]
+        public void MethodMentionsGenericParam()
+        {
+            TestGenericParam(MentionsGenericParam<int>);
+            TestGenericParam(HasGenericParam<int>.MentionsGenericParam);
+            TestGenericParam(Outer_HasGenericParam<int>.Inner_HasGenericParam<string>.MentionsOuterGenericParam);
+            TestGenericParam(Outer_HasGenericParam<string>.Inner_HasGenericParam<int>.MentionsInnerGenericParam);
+        }
+
+        static T MentionsGenericParam<T>() => default(T);
+        private static class HasGenericParam<T>
+        {
+            public static T MentionsGenericParam() => default(T);
+        }
+        private static class Outer_HasGenericParam<T>
+        {
+            public static class Inner_HasGenericParam<U>
+            {
+                public static T MentionsOuterGenericParam() => default(T);
+                public static U MentionsInnerGenericParam() => default(U);
+            }
+        }
+        private void TestGenericParam(Func<int> method)
+        {
+            var ops = Sigil.Disassembler<Func<int>>.Disassemble(method);
+
+            var recompiled = ops.EmitAll();
+            Assert.NotNull(recompiled);
+
+            var r1 = recompiled.CreateDelegate(out string instrs);
+            Assert.NotNull(r1);
+            Assert.Equal("ldloca.s 0\r\ninitobj System.Int32\r\nldloc.0\r\nret\r\n", instrs);
+        }
     }
 }
 #endif
